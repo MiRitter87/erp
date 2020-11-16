@@ -1,0 +1,178 @@
+<?xml version="1.0"?>
+<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <modelVersion>4.0.0</modelVersion>
+  
+	<parent>
+	  <groupId>net.gmx.michaelritter</groupId>
+	  <artifactId>erp</artifactId>
+	  <version>0.0.1-SNAPSHOT</version>
+	</parent>
+	
+	<artifactId>backend</artifactId>
+	<packaging>war</packaging>
+	<name>Enterprise Resource Planning - Backend</name>
+  
+  	<properties>
+		<cxf.version>3.3.5</cxf.version>
+		<log4j2.version>2.12.1</log4j2.version>
+		<junit.jupiter.version>5.6.2</junit.jupiter.version>
+		<junit.platform.version>1.6.2</junit.platform.version>
+		<jersey.version>2.32</jersey.version>
+		<hibernate.core.version>5.4.9.Final</hibernate.core.version>
+		<hibernate.validator.version>6.1.6.Final</hibernate.validator.version>
+	</properties>
+  
+	<!-- External libraries of the project -->
+	<dependencies>
+		<!-- Framework for SOAP WebServices -->
+		<dependency>
+			<groupId>org.apache.cxf</groupId>
+			<artifactId>cxf-rt-frontend-jaxws</artifactId>
+			<version>${cxf.version}</version>
+	 	</dependency>
+		<dependency>
+			<groupId>org.apache.cxf</groupId>
+			<artifactId>cxf-rt-transports-http</artifactId>
+			<version>${cxf.version}</version>
+		</dependency>
+		
+		<!-- WebService Annotations SOAP -->
+		<dependency>
+	 		<groupId>com.sun.xml.ws</groupId>
+	 		<artifactId>jaxws-ri</artifactId>
+	 		<version>2.3.3</version>
+	 		<type>pom</type>
+		</dependency>
+		
+		<!-- Jersey for RESTful Service -->
+		<dependency>
+    		<groupId>org.glassfish.jersey.containers</groupId>
+   			<artifactId>jersey-container-servlet</artifactId>
+    		<version>${jersey.version}</version>
+		</dependency>
+		
+		<!-- Jersey: Needed for correct Servlet initialization (Dependency Injection Implementation) -->
+		<dependency>
+    		<groupId>org.glassfish.jersey.inject</groupId>
+    		<artifactId>jersey-hk2</artifactId>
+    		<version>${jersey.version}</version>
+		</dependency>
+		
+		<!-- Jersey: For usage of JSON media type -->
+		<dependency>
+ 			<groupId>org.glassfish.jersey.media</groupId>
+  			<artifactId>jersey-media-json-jackson</artifactId>
+  			<version>${jersey.version}</version>
+		</dependency>
+		
+		<!-- Spring for WebService Servlet mapping and configuration -->
+		<dependency>
+	  		<groupId>org.springframework</groupId>
+	   		<artifactId>spring-webmvc</artifactId>
+	   		<version>5.2.4.RELEASE</version>
+		</dependency>
+		
+		<!-- HSQL database for data storage -->
+		<dependency>
+    		<groupId>org.hsqldb</groupId>
+    		<artifactId>hsqldb</artifactId>
+    		<version>2.5.0</version>
+    		<scope>runtime</scope>
+		</dependency>
+		
+		<!-- Object-relational mapping using hibernate -->
+		<dependency>
+	    	<groupId>org.hibernate</groupId>
+	    	<artifactId>hibernate-core</artifactId>
+	    	<version>${hibernate.core.version}</version>
+		</dependency>
+		
+		<!-- Usage of custom servlets -->
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>javax.servlet-api</artifactId>
+			<version>4.0.1</version>
+			<scope>provided</scope>
+		</dependency>
+		
+		<!-- Log4J Logging -->
+		<dependency>
+    		<groupId>org.apache.logging.log4j</groupId>
+    		<artifactId>log4j-api</artifactId>
+    		<version>${log4j2.version}</version>
+  		</dependency>
+  		<dependency>
+    		<groupId>org.apache.logging.log4j</groupId>
+    		<artifactId>log4j-core</artifactId>
+    		<version>${log4j2.version}</version>
+  		</dependency>
+  		<dependency>
+    		<groupId>org.apache.logging.log4j</groupId>
+    		<artifactId>log4j-web</artifactId>
+    		<version>${log4j2.version}</version>
+  		</dependency>
+  		
+  		<!-- JUnit 5 -->
+  		<dependency>
+  			<groupId>org.junit.jupiter</groupId>
+ 			<artifactId>junit-jupiter-engine</artifactId>
+  			<version>${junit.jupiter.version}</version>
+  			<scope>test</scope>
+		</dependency>
+     	<dependency>
+		    <groupId>org.junit.platform</groupId>
+		    <artifactId>junit-platform-launcher</artifactId>
+		    <version>${junit.platform.version}</version>
+		    <scope>test</scope>
+		</dependency>
+		<dependency>
+    		<groupId>org.junit.platform</groupId>
+    		<artifactId>junit-platform-runner</artifactId>
+    		<version>${junit.platform.version}</version>
+    		<scope>test</scope>
+		</dependency>
+		
+		<!-- Bean Validation Framework: Used to validate data models. -->
+		<dependency>
+		    <groupId>javax.validation</groupId>
+		    <artifactId>validation-api</artifactId>
+		    <version>2.0.0.Final</version>
+		</dependency>
+		
+		<!-- The Hibernate reference implementation of the Validation API. This is distinct from the persistence part of Hibernate. -->
+		<dependency>
+	    	<groupId>org.hibernate.validator</groupId>
+	    	<artifactId>hibernate-validator</artifactId>
+	    	<version>${hibernate.validator.version}</version>
+		</dependency>
+		<dependency>
+		    <groupId>org.hibernate.validator</groupId>
+		    <artifactId>hibernate-validator-annotation-processor</artifactId>
+		    <version>${hibernate.validator.version}</version>
+		</dependency>
+		
+		<!-- Expression Language Dependencies needed by the Validation API. -->
+		<dependency>
+		    <groupId>javax.el</groupId>
+		    <artifactId>javax.el-api</artifactId>
+		    <version>3.0.0</version>
+		</dependency>
+		<dependency>
+	   		<groupId>org.glassfish.web</groupId>
+	    	<artifactId>javax.el</artifactId>
+	    	<version>2.2.6</version>
+		</dependency>
+	</dependencies>
+	
+	<build>
+		<plugins>
+			<!-- This plugin executes JUnit 5 tests in the test phase of the build . -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>3.0.0-M4</version>
+            </plugin>
+		</plugins>
+	</build>
+</project>

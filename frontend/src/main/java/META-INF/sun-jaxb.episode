@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<bindings version="2.1" xmlns="http://java.sun.com/xml/ns/jaxb">
+  <!--
+
+Diese Datei wurde mit der JavaTM Architecture for XML Binding(JAXB) Reference Implementation, v2.3.0 generiert 
+Siehe <a href="https://javaee.github.io/jaxb-v2/">https://javaee.github.io/jaxb-v2/</a> 
+Änderungen an dieser Datei gehen bei einer Neukompilierung des Quellschemas verloren. 
+Generiert: 2020.05.25 um 08:33:35 AM CEST 
+
+  -->
+  <bindings scd="x-schema::tns" xmlns:tns="http://webservice.backend/">
+    <schemaBindings map="false">
+      <package name="employeegui.ws.generated"/>
+    </schemaBindings>
+    <bindings scd="~tns:webServiceResult">
+      <class ref="employeegui.ws.generated.WebServiceResult"/>
+    </bindings>
+    <bindings scd="~tns:employees">
+      <class ref="employeegui.ws.generated.Employees"/>
+    </bindings>
+    <bindings scd="~tns:addEmployee">
+      <class ref="employeegui.ws.generated.AddEmployee"/>
+    </bindings>
+    <bindings scd="~tns:addEmployeeResponse">
+      <class ref="employeegui.ws.generated.AddEmployeeResponse"/>
+    </bindings>
+    <bindings scd="~tns:deleteEmployee">
+      <class ref="employeegui.ws.generated.DeleteEmployee"/>
+    </bindings>
+    <bindings scd="~tns:deleteEmployeeResponse">
+      <class ref="employeegui.ws.generated.DeleteEmployeeResponse"/>
+    </bindings>
+    <bindings scd="~tns:employee">
+      <class ref="employeegui.ws.generated.Employee"/>
+    </bindings>
+    <bindings scd="~tns:getEmployee">
+      <class ref="employeegui.ws.generated.GetEmployee"/>
+    </bindings>
+    <bindings scd="~tns:getEmployeeResponse">
+      <class ref="employeegui.ws.generated.GetEmployeeResponse"/>
+    </bindings>
+    <bindings scd="~tns:getEmployees">
+      <class ref="employeegui.ws.generated.GetEmployees"/>
+    </bindings>
+    <bindings scd="~tns:getEmployeesResponse">
+      <class ref="employeegui.ws.generated.GetEmployeesResponse"/>
+    </bindings>
+    <bindings scd="~tns:webServiceMessage">
+      <class ref="employeegui.ws.generated.WebServiceMessage"/>
+    </bindings>
+    <bindings scd="~tns:webServiceMessageType">
+      <typesafeEnumClass ref="employeegui.ws.generated.WebServiceMessageType"/>
+    </bindings>
+    <bindings scd="~tns:gender">
+      <typesafeEnumClass ref="employeegui.ws.generated.Gender"/>
+    </bindings>
+  </bindings>
+</bindings>
+

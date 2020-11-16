@@ -1,0 +1,6 @@
+Jedes Stammdatenobjekt taucht im Navigationsbaum auf und bietet 4 Views an. Jede View ist über einen Navigations-Unterpunkt getrennt aufrufbar:
+
+-Objekt anlegen:	Eine View, in der ein Objekt mit allen relevanten Attributen angelegt werden kann.
+-Objekt ändern: 	Eine View analog der Anlegen-View. Nicht-änderbare Attribute werden nur als Label angezeigt.
+-Objekt anzeigen: 	Eine View analog der Anlegen-View. Alle Felder sind schreibgeschützt (Label).
+-Objektliste:		Eine View mit tabellarischer Anzeige aller Stammdatenobjekte. Hier können einzelne Zeilen markiert und gelöscht werden.

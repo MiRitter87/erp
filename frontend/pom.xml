@@ -1,0 +1,102 @@
+<?xml version="1.0"?>
+<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<modelVersion>4.0.0</modelVersion>
+	
+	<parent>
+	  <groupId>net.gmx.michaelritter</groupId>
+	  <artifactId>erp</artifactId>
+	  <version>0.0.1-SNAPSHOT</version>
+	</parent>
+	
+	<artifactId>frontend</artifactId>
+	<packaging>jar</packaging>
+	<name>Enterprise Resource Planning - Frontend</name>
+  
+	<dependencies>
+		<!-- Application logging with LOG4J framework -->
+		<dependency>
+    		<groupId>org.apache.logging.log4j</groupId>
+    		<artifactId>log4j-api</artifactId>
+    		<version>2.12.1</version>
+  		</dependency>
+  		<dependency>
+    		<groupId>org.apache.logging.log4j</groupId>
+    		<artifactId>log4j-core</artifactId>
+    		<version>2.12.1</version>
+  		</dependency>
+		
+		<!-- Access WebService -->
+		<dependency>
+    		<groupId>javax.xml.ws</groupId>
+    		<artifactId>jaxws-api</artifactId>
+    		<version>2.3.1</version>
+		</dependency>
+		
+		<dependency>
+    		<groupId>com.sun.xml.ws</groupId>
+    		<artifactId>jaxws-rt</artifactId>
+    		<version>2.3.3</version>
+		</dependency>
+	</dependencies>
+  
+	<build>
+		<plugins>
+			<plugin>
+				<!-- Build an executable JAR -->
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+				<version>3.2.0</version>
+			</plugin>
+			
+			<plugin>
+   			 	<!-- Add necessary jar files to released project jar file -->
+        		<artifactId>maven-assembly-plugin</artifactId>
+        			<executions>
+          				<execution>
+            				<phase>package</phase>
+            					<goals>
+              						<goal>single</goal>
+            					</goals>
+          				</execution>
+        			</executions>
+       			 <configuration>
+          			<descriptorRefs>
+            			<descriptorRef>jar-with-dependencies</descriptorRef>
+          			</descriptorRefs>
+          			<archive>
+            			<manifest>
+              				<mainClass>employeegui.controller.MainController</mainClass>
+            			</manifest>
+          			</archive>
+        		</configuration>
+      		</plugin>
+      		
+      		<plugin>
+      		<!-- Copy project folders to target folder -->
+            	<groupId>org.apache.maven.plugins</groupId>
+            	<artifactId>maven-resources-plugin</artifactId>
+            	<version>3.1.0</version>
+            	<executions>
+            		<execution>
+            			<id>copy-resources</id>
+            			<phase>package</phase>
+            			<goals>
+            				<goal>copy-resources</goal>
+            			</goals>
+            			<configuration>
+            				<!-- Configuration files that are needed outside of the jar for application configuration by user/admin. -->
+            				<outputDirectory>${basedir}/target/conf</outputDirectory>
+            				<resources>
+            					<resource>
+            						<directory>conf</directory>
+            						<filtering>true</filtering>
+            					</resource>
+            				</resources>
+            			</configuration>
+            		</execution>
+            	</executions>
+        	</plugin>
+		</plugins>
+	</build>
+</project>
