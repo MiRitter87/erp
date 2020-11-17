@@ -23,7 +23,7 @@ import frontend.view.employee.EditEmployeeView;
  * 
  * @author Michael
  */
-public class EditEmployeeController {
+public class EditEmployeeController extends EmployeeController {
 	/**
 	 * The controller of the main view.
 	 */
@@ -53,6 +53,11 @@ public class EditEmployeeController {
 	 * Application logging.
 	 */
 	public static final Logger logger = LogManager.getLogger(EditEmployeeController.class);
+	
+	/**
+	 * The currently selected employee for editing.
+	 */
+	private Employee selectedEmployee;
 
 	/**
 	 * Initializes the controller
@@ -66,6 +71,7 @@ public class EditEmployeeController {
 		this.employeeWebServiceDao = new EmployeeWebServiceDao();
 		this.employees = new EmployeeList();
 		this.initializeGenderComboBox();
+		this.selectedEmployee = null;
 		
 		//Initialize the employees for the selection.
 		try {
@@ -137,7 +143,75 @@ public class EditEmployeeController {
 	 * @param saveEvent The action event of the button click.
 	 */
 	public void saveEmployeeHandler(ActionEvent saveEvent) {
-		//TODO Implement
+		//Validation of user input
+		try {					
+			this.validateInput();
+		}
+		catch(Exception exception) {
+			JOptionPane.showMessageDialog(this.editEmployeeView, exception.getMessage(), 
+					this.resources.getString("gui.error"), JOptionPane.ERROR_MESSAGE);
+			logger.info("User failed to edit employee due to a validation error: " +exception.getMessage());
+			return;
+		}
+		
+		//Validating succeeded - Try to persist changes
+		try {
+			this.updateEmployeeFromViewInput();
+			this.employeeWebServiceDao.updateEmployee(this.selectedEmployee);
+			this.clearInputFields();
+			this.selectedEmployee = null;
+			
+			//The combo box for employee selection needs to be re-initialized in order to show the changes.
+			this.editEmployeeView.getCbEmployee().removeAllItems();
+			this.initializeEmployeeComboBox();
+		}
+		catch(Exception exception) {
+			JOptionPane.showMessageDialog(this.editEmployeeView, exception.getMessage(), this.resources.getString("gui.error"), JOptionPane.ERROR_MESSAGE);
+			logger.info("Updating employee failed: " +exception.getMessage());
+		}
+	}
+	
+	
+	/**
+	 * Updates the data of the currently selected employee with the data from the input fields.
+	 */
+	private void updateEmployeeFromViewInput() {
+		ComboBoxItem selectedGender = (ComboBoxItem) this.editEmployeeView.getCbGender().getSelectedItem();
+		
+		this.selectedEmployee.setFirstName(this.editEmployeeView.getTextFieldFirstName().getText());
+		this.selectedEmployee.setLastName(this.editEmployeeView.getTextFieldLastName().getText());
+		this.selectedEmployee.setGender(this.getSelectedGender(selectedGender));
+	}
+
+
+	/**
+	 * Validates the user input.
+	 * 
+	 * @exception Exception Indicating failed validation.
+	 */
+	private void validateInput() throws Exception {
+		ComboBoxItem selectedGender = (ComboBoxItem) this.editEmployeeView.getCbGender().getSelectedItem();
+		ComboBoxItem selectedEmployee = (ComboBoxItem) this.editEmployeeView.getCbEmployee().getSelectedItem();
+		
+		//Assure that an employee to be edited is selected in the ComboBox.		
+		if(selectedEmployee.getId() == "") {
+			throw new Exception(this.resources.getString("gui.employee.error.noEmployeeSelected"));
+		}
+		
+		//Validation of input fields.
+		this.validateInput(this.editEmployeeView.getTextFieldFirstName().getText(), 
+				this.editEmployeeView.getTextFieldLastName().getText(), selectedGender);
+	}
+	
+	
+	/**
+	 * Clears the input fields of the employee form.
+	 */
+	private void clearInputFields() {
+		this.editEmployeeView.getCbEmployee().setSelectedIndex(0);
+		this.editEmployeeView.getTextFieldFirstName().setText("");
+		this.editEmployeeView.getTextFieldLastName().setText("");
+		this.editEmployeeView.getCbGender().setSelectedIndex(0);
 	}
 	
 	
@@ -162,18 +236,19 @@ public class EditEmployeeController {
 	        
 	    	//Selection of empty employee: Clear input fields
 	    	if(selectedItem.getId() == "") {
+	    		this.selectedEmployee = null;
 	    		this.editEmployeeView.getTextFieldFirstName().setText("");
 	    		this.editEmployeeView.getTextFieldLastName().setText("");
 	    		this.editEmployeeView.getCbGender().setSelectedIndex(0);
 	    	}
 	    	else {
 	    		//Employee selected: Fill input fields accordingly.
-	    		Employee selectedEmployee = this.employees.getEmployeeById(Integer.valueOf(selectedItem.getId()));
+	    		this.selectedEmployee = this.employees.getEmployeeById(Integer.valueOf(selectedItem.getId()));
 	    		
-	    		if(selectedEmployee != null) {
+	    		if(this.selectedEmployee != null) {
 	    			this.editEmployeeView.getTextFieldFirstName().setText(selectedEmployee.getFirstName());
 	    			this.editEmployeeView.getTextFieldLastName().setText(selectedEmployee.getLastName());
-	    			this.setCbGender(selectedEmployee);
+	    			this.setCbGender(this.selectedEmployee);
 	    		}
 	    	}
 	    }
@@ -185,7 +260,7 @@ public class EditEmployeeController {
 	 * 
 	 * @param selectedEmployee The employee providing the gender to be set.
 	 */
-	public void setCbGender(final Employee selectedEmployee) {
+	private void setCbGender(final Employee selectedEmployee) {
 		int numberOfItems = this.editEmployeeView.getCbGender().getItemCount();
 		int currentIndex = 0;
 		ComboBoxItem currentItem;
