@@ -15,6 +15,7 @@ import frontend.model.ComboBoxItem;
 import frontend.model.Employee;
 import frontend.model.EmployeeList;
 import frontend.model.Gender;
+import frontend.view.View;
 import frontend.view.employee.EditEmployeeView;
 
 /**
@@ -146,7 +147,7 @@ public class EditEmployeeController {
 	 * @param cancelEvent The action event of the button click.
 	 */
 	public void cancelHandler(ActionEvent cancelEvent) {
-		// TODO Implement
+		this.mainViewController.navigateToView(View.STARTPAGE);
 	}
 	
 	
@@ -159,21 +160,48 @@ public class EditEmployeeController {
 	    if (itemEvent.getStateChange() == ItemEvent.SELECTED) {
 	    	ComboBoxItem selectedItem = (ComboBoxItem) itemEvent.getItem();
 	        
-	    	//TODO Implement
-	    	//No selection: Clear input fields
+	    	//Selection of empty employee: Clear input fields
 	    	if(selectedItem.getId() == "") {
 	    		this.editEmployeeView.getTextFieldFirstName().setText("");
 	    		this.editEmployeeView.getTextFieldLastName().setText("");
 	    		this.editEmployeeView.getCbGender().setSelectedIndex(0);
 	    	}
 	    	else {
+	    		//Employee selected: Fill input fields accordingly.
 	    		Employee selectedEmployee = this.employees.getEmployeeById(Integer.valueOf(selectedItem.getId()));
 	    		
 	    		if(selectedEmployee != null) {
-	    			
+	    			this.editEmployeeView.getTextFieldFirstName().setText(selectedEmployee.getFirstName());
+	    			this.editEmployeeView.getTextFieldLastName().setText(selectedEmployee.getLastName());
+	    			this.setCbGender(selectedEmployee);
 	    		}
 	    	}
 	    }
+	}
+	
+	
+	/**
+	 * Sets the gender combo box to the gender of the given employee.
+	 * 
+	 * @param selectedEmployee The employee providing the gender to be set.
+	 */
+	public void setCbGender(final Employee selectedEmployee) {
+		int numberOfItems = this.editEmployeeView.getCbGender().getItemCount();
+		int currentIndex = 0;
+		ComboBoxItem currentItem;
+		
+		while(currentIndex < numberOfItems) {
+			currentItem = this.editEmployeeView.getCbGender().getItemAt(currentIndex);
+			
+			if(currentItem.getId() == selectedEmployee.getGender().toString()) {
+				this.editEmployeeView.getCbGender().setSelectedIndex(currentIndex);
+				return;
+			}
+			
+			currentIndex++;
+		}
+
+		this.editEmployeeView.getCbGender().setSelectedIndex(0);
 	}
 	
 
