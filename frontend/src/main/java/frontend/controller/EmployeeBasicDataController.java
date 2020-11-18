@@ -92,7 +92,7 @@ public class EmployeeBasicDataController {
 	 * @param e The action event of the button click.
 	 */
 	public void addEmployeeHandler(ActionEvent e) {
-		Employee newEmployee = new Employee();
+		String employeeId = this.employeeBasicDataView.getTextFieldEmployeeId().getText();
 		
 		//Validation of user input
 		try {					
@@ -107,14 +107,14 @@ public class EmployeeBasicDataController {
 		
 		//Validating succeeded - Try to persist new employee
 		try {
-			newEmployee = this.getEmployeeFromViewInput();
+			Employee newEmployee = this.getEmployeeFromViewInput();
 			this.employeeWebServiceDao.insertEmpoyee(newEmployee);
 			this.clearInputFields();
 			this.employees.addEmployee(newEmployee);
 			this.addEmployeeToTable(newEmployee);
 		}
 		catch(EntityAlreadyExistsException alreadyExistsException ) {
-			String message = MessageFormat.format(this.resources.getString("gui.employee.error.idExists"), newEmployee.getId());
+			String message = MessageFormat.format(this.resources.getString("gui.employee.error.idExists"), employeeId);
 			JOptionPane.showMessageDialog(this.employeeBasicDataView, message, this.resources.getString("gui.error"), JOptionPane.ERROR_MESSAGE);
 			logger.error("Failed to add employee to internal table: ", message);
 		}
@@ -150,12 +150,8 @@ public class EmployeeBasicDataController {
 	 * @return An employee.
 	 */
 	private Employee getEmployeeFromViewInput() {
-		Employee newEmployee = new Employee();
-		
-		newEmployee.setId(Integer.valueOf(this.employeeBasicDataView.getTextFieldEmployeeId().getText()));
-		newEmployee.setFirstName(this.employeeBasicDataView.getTextFieldFirstName().getText());
-		newEmployee.setLastName(this.employeeBasicDataView.getTextFieldLastName().getText());
-		newEmployee.setGender(this.getSelectedGender());
+		Employee newEmployee = new Employee(this.employeeBasicDataView.getTextFieldFirstName().getText(), 
+				this.employeeBasicDataView.getTextFieldLastName().getText(), this.getSelectedGender());
 		
 		return newEmployee;
 	}

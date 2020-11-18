@@ -33,14 +33,27 @@ public class Employee {
 	 */
 	private EmployeeSalary salaryData;
 	
-	//TODO: Neues Attribut "initialHash" und Hashfunktion. Dann über änderbare Attribute den Hash bilden für Abgleich ob Objekt geändert wurde.
+	/**
+	 * The initial HashCode of the employee after initialization.
+	 */
+	private int initialHash;
+	
 	
 	/**
-	 * Default constructor.
+	 * Initializes the employee.
+	 * 
+	 * @param firstName The first name of the employee.
+	 * @param lastName The last name of the employee.
+	 * @param gender The gender of the employee.
 	 */
-	public Employee() {
+	public Employee(final String firstName, final String lastName, final Gender gender) {
+		this.firstName = firstName;
+		this.lastName = lastName;
+		this.gender = gender;
 		
+		this.initialHash = this.hashCode();
 	}
+	
 	
 	/**
 	 * Initialize the model using data provided by the employee WebService model.
@@ -55,6 +68,8 @@ public class Employee {
 		
 		if(webServiceEmployee.getSalaryData() != null)
 			this.salaryData = new EmployeeSalary(webServiceEmployee.getSalaryData());
+		
+		this.initialHash = this.hashCode();
 	}
 	
 	
@@ -68,6 +83,8 @@ public class Employee {
 		this.firstName = webServiceEmployee.getFirstName();
 		this.lastName = webServiceEmployee.getLastName();
 		this.gender = Gender.convertToGender(webServiceEmployee.getGender());
+		
+		this.initialHash = this.hashCode();
 	}
 	
 	
@@ -169,5 +186,62 @@ public class Employee {
 		stringBuilder.append(this.lastName);
 		
 		return stringBuilder.toString();
+	}
+	
+	
+	/**
+	 * Checks if the object has been edited after initialization.
+	 * 
+	 * @return true, if object has been edited.
+	 */
+	public boolean isEdited() {
+		int currentHash = this.hashCode();
+		
+		if(initialHash != currentHash)
+			return true;
+		else		
+			return false;
+	}
+
+	
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((firstName == null) ? 0 : firstName.hashCode());
+		result = prime * result + ((gender == null) ? 0 : gender.hashCode());
+		result = prime * result + ((id == null) ? 0 : id.hashCode());
+		result = prime * result + ((lastName == null) ? 0 : lastName.hashCode());
+		return result;
+	}
+
+	
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Employee other = (Employee) obj;
+		if (firstName == null) {
+			if (other.firstName != null)
+				return false;
+		} else if (!firstName.equals(other.firstName))
+			return false;
+		if (gender != other.gender)
+			return false;
+		if (id == null) {
+			if (other.id != null)
+				return false;
+		} else if (!id.equals(other.id))
+			return false;
+		if (lastName == null) {
+			if (other.lastName != null)
+				return false;
+		} else if (!lastName.equals(other.lastName))
+			return false;
+		return true;
 	}
 }

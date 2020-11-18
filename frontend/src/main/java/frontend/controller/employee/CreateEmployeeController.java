@@ -91,8 +91,6 @@ public class CreateEmployeeController extends EmployeeController {
 	 * @param e The action event of the button click.
 	 */
 	public void addEmployeeHandler(ActionEvent e) {
-		Employee newEmployee = new Employee();
-		
 		//Validation of user input
 		try {					
 			this.validateInput();
@@ -106,7 +104,7 @@ public class CreateEmployeeController extends EmployeeController {
 		
 		//Validating succeeded - Try to persist new employee
 		try {
-			newEmployee = this.getEmployeeFromViewInput();
+			Employee newEmployee = this.getEmployeeFromViewInput();
 			this.employeeWebServiceDao.insertEmpoyee(newEmployee);
 			this.clearInputFields();
 		}
@@ -136,12 +134,10 @@ public class CreateEmployeeController extends EmployeeController {
 	 * @return An employee.
 	 */
 	private Employee getEmployeeFromViewInput() {
-		Employee newEmployee = new Employee();
 		ComboBoxItem selectedGender = (ComboBoxItem) this.createEmployeeView.getCbGender().getSelectedItem();
 		
-		newEmployee.setFirstName(this.createEmployeeView.getTextFieldFirstName().getText());
-		newEmployee.setLastName(this.createEmployeeView.getTextFieldLastName().getText());
-		newEmployee.setGender(this.getSelectedGender(selectedGender));
+		Employee newEmployee = new Employee(this.createEmployeeView.getTextFieldFirstName().getText(),
+				this.createEmployeeView.getTextFieldLastName().getText(), this.getSelectedGender(selectedGender));
 		
 		return newEmployee;
 	}
