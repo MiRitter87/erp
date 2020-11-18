@@ -11,6 +11,7 @@ import org.apache.logging.log4j.Logger;
 
 import frontend.controller.MainViewController;
 import frontend.dao.EmployeeWebServiceDao;
+import frontend.exception.DataNotChangedException;
 import frontend.model.ComboBoxItem;
 import frontend.model.Employee;
 import frontend.model.EmployeeList;
@@ -147,6 +148,12 @@ public class EditEmployeeController extends EmployeeController {
 		try {					
 			this.validateInput();
 		}
+		catch(DataNotChangedException notChangedException) {
+			JOptionPane.showMessageDialog(this.editEmployeeView, this.resources.getString("gui.employee.error.notEdited"), 
+					this.resources.getString("gui.information"), JOptionPane.INFORMATION_MESSAGE);
+			logger.info("User tried to save an employee without any changes made.");
+			return;
+		}
 		catch(Exception exception) {
 			JOptionPane.showMessageDialog(this.editEmployeeView, exception.getMessage(), 
 					this.resources.getString("gui.error"), JOptionPane.ERROR_MESSAGE);
@@ -191,16 +198,19 @@ public class EditEmployeeController extends EmployeeController {
 	 */
 	private void validateInput() throws Exception {
 		ComboBoxItem selectedGender = (ComboBoxItem) this.editEmployeeView.getCbGender().getSelectedItem();
-		ComboBoxItem selectedEmployee = (ComboBoxItem) this.editEmployeeView.getCbEmployee().getSelectedItem();
 		
 		//Assure that an employee to be edited is selected in the ComboBox.		
-		if(selectedEmployee.getId() == "") {
+		if(this.selectedEmployee == null) {
 			throw new Exception(this.resources.getString("gui.employee.error.noEmployeeSelected"));
 		}
 		
 		//Validation of input fields.
 		this.validateInput(this.editEmployeeView.getTextFieldFirstName().getText(), 
 				this.editEmployeeView.getTextFieldLastName().getText(), selectedGender);
+		
+		//Check if anything has changed.
+		if(!this.selectedEmployee.isEdited())
+			throw new DataNotChangedException();
 	}
 	
 	

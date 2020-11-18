@@ -200,7 +200,7 @@ public class Employee {
 	public boolean isEdited() {
 		int currentHash = this.hashCode();
 		
-		if(initialHash != currentHash)
+		if(this.initialHash != currentHash)
 			return true;
 		else		
 			return false;
