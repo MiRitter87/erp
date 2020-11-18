@@ -40,11 +40,23 @@ public class EmployeeSalary {
 	
 	
 	/**
-	 * Initialize the model using data provided by the WebService model.
+	 * Initialize the model using data provided by the employee WebService model.
 	 * 
-	 * @param webServiceSalary The salary data as provided by the WebService
+	 * @param webServiceSalary The salary data as provided by the employee WebService
 	 */
 	public EmployeeSalary(final frontend.generated.ws.soap.employee.EmployeeSalary webServiceEmployeeSalary) {
+		this.id = webServiceEmployeeSalary.getId();
+		this.monthlySalary = webServiceEmployeeSalary.getMonthlySalary();
+		this.salaryLastChange = webServiceEmployeeSalary.getSalaryLastChange().toGregorianCalendar().getTime();
+	}
+	
+	
+	/**
+	 * Initialize the model using data provided by the department WebService model.
+	 * 
+	 * @param webServiceSalary The salary data as provided by the department WebService
+	 */
+	public EmployeeSalary(final frontend.generated.ws.soap.department.EmployeeSalary webServiceEmployeeSalary) {
 		this.id = webServiceEmployeeSalary.getId();
 		this.monthlySalary = webServiceEmployeeSalary.getMonthlySalary();
 		this.salaryLastChange = webServiceEmployeeSalary.getSalaryLastChange().toGregorianCalendar().getTime();

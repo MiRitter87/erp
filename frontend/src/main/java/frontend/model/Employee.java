@@ -84,6 +84,9 @@ public class Employee {
 		this.lastName = webServiceEmployee.getLastName();
 		this.gender = Gender.convertToGender(webServiceEmployee.getGender());
 		
+		if(webServiceEmployee.getSalaryData() != null)
+			this.salaryData = new EmployeeSalary(webServiceEmployee.getSalaryData());
+		
 		this.initialHash = this.hashCode();
 	}
 	
