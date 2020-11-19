@@ -13,7 +13,6 @@ import frontend.dao.EmployeeWebServiceDao;
 import frontend.model.ComboBoxItem;
 import frontend.model.Employee;
 import frontend.model.Gender;
-import frontend.view.View;
 import frontend.view.employee.CreateEmployeeView;
 
 /**
@@ -159,7 +158,7 @@ public class CreateEmployeeController extends EmployeeController {
 	 * @param e The action event of the button click.
 	 */
 	public void cancelHandler(ActionEvent e) {
-		this.mainViewController.navigateToView(View.STARTPAGE);
+		this.mainViewController.switchToStartpage();
 	}
 
 

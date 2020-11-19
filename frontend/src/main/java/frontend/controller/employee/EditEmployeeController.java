@@ -16,7 +16,6 @@ import frontend.model.ComboBoxItem;
 import frontend.model.Employee;
 import frontend.model.EmployeeList;
 import frontend.model.Gender;
-import frontend.view.View;
 import frontend.view.employee.EditEmployeeView;
 
 /**
@@ -29,6 +28,11 @@ public class EditEmployeeController extends EmployeeController {
 	 * The controller of the main view.
 	 */
 	private MainViewController mainViewController;
+	
+	/**
+	 * The controller of the salary view.
+	 */
+	private EmployeeSalaryController employeeSalaryController;
 	
 	/**
 	 * Access to localized application resources.
@@ -231,7 +235,7 @@ public class EditEmployeeController extends EmployeeController {
 	 * @param cancelEvent The action event of the button click.
 	 */
 	public void cancelHandler(ActionEvent cancelEvent) {
-		this.mainViewController.navigateToView(View.STARTPAGE);
+		this.mainViewController.switchToStartpage();
 	}
 	
 	
@@ -287,6 +291,22 @@ public class EditEmployeeController extends EmployeeController {
 		}
 
 		this.editEmployeeView.getCbGender().setSelectedIndex(0);
+	}
+	
+	
+	/**
+	 * Handles a click at the "salary data"-button.
+	 * 
+	 * @param salaryDataButtonClick The action event of the button click.
+	 */
+	public void btnSalaryDataHandler(ActionEvent salaryDataButtonClick) {
+		if(this.selectedEmployee == null) {
+			JOptionPane.showMessageDialog(this.editEmployeeView, this.resources.getString("gui.employee.error.noEmployeeSelected"), 
+					this.resources.getString("gui.error"), JOptionPane.ERROR_MESSAGE);
+		}
+		
+		this.employeeSalaryController = new EmployeeSalaryController(this.mainViewController, this.selectedEmployee, this.employeeWebServiceDao);
+		this.mainViewController.switchToSalaryView(this.employeeSalaryController);
 	}
 	
 

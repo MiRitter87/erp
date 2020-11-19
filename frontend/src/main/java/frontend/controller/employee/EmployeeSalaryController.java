@@ -1,4 +1,4 @@
-package frontend.controller;
+package frontend.controller.employee;
 
 import java.awt.event.ActionEvent;
 import java.text.DateFormat;
@@ -9,10 +9,11 @@ import javax.swing.JOptionPane;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import frontend.controller.MainViewController;
 import frontend.dao.EmployeeWebServiceDao;
 import frontend.model.Employee;
 import frontend.model.EmployeeSalary;
-import frontend.view.EmployeeSalaryView;
+import frontend.view.employee.EmployeeSalaryView;
 
 /**
  * Controls all actions directly happening within the employee salary view.

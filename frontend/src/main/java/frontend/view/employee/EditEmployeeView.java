@@ -75,9 +75,9 @@ public class EditEmployeeView extends JPanel {
 		this.editEmployeeController = editEmployeeController;
 		GridBagLayout gridBagLayout = new GridBagLayout();
 		gridBagLayout.columnWidths = new int[]{0, 0, 0};
-		gridBagLayout.rowHeights = new int[]{0, 0, 0, 0, 0, 0, 0, 0};
+		gridBagLayout.rowHeights = new int[]{0, 0, 0, 0, 0, 0, 0, 0, 0};
 		gridBagLayout.columnWeights = new double[]{0.0, 1.0, Double.MIN_VALUE};
-		gridBagLayout.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
+		gridBagLayout.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
 		setLayout(gridBagLayout);
 		
 		JLabel lblHeader = new JLabel(this.resources.getString("gui.employee.header.edit"));
@@ -102,13 +102,14 @@ public class EditEmployeeView extends JPanel {
 		gbc_cbEmployee.fill = GridBagConstraints.HORIZONTAL;
 		gbc_cbEmployee.gridx = 1;
 		gbc_cbEmployee.gridy = 1;
+		gbc_cbEmployee.gridwidth = 2;
 		add(cbEmployee, gbc_cbEmployee);
 		
 		JSeparator separator = new JSeparator();
 		GridBagConstraints gbc_separator = new GridBagConstraints();
+		gbc_separator.gridwidth = 3;
 		gbc_separator.insets = new Insets(0, 0, 5, 0);
 		gbc_separator.fill = GridBagConstraints.HORIZONTAL;
-		gbc_separator.gridwidth = 2;
 		gbc_separator.gridx = 0;
 		gbc_separator.gridy = 2;
 		add(separator, gbc_separator);
@@ -127,6 +128,7 @@ public class EditEmployeeView extends JPanel {
 		gbc_textFieldFirstName.fill = GridBagConstraints.HORIZONTAL;
 		gbc_textFieldFirstName.gridx = 1;
 		gbc_textFieldFirstName.gridy = 3;
+		gbc_textFieldFirstName.gridwidth = 2;
 		add(textFieldFirstName, gbc_textFieldFirstName);
 		textFieldFirstName.setColumns(10);
 		
@@ -140,6 +142,7 @@ public class EditEmployeeView extends JPanel {
 		textFieldLastName = new JTextField();
 		((AbstractDocument)textFieldLastName.getDocument()).setDocumentFilter(new ExtendedDocumentFilter(50, false));
 		GridBagConstraints gbc_textFieldLastName = new GridBagConstraints();
+		gbc_textFieldLastName.gridwidth = 2;
 		gbc_textFieldLastName.insets = new Insets(0, 0, 5, 0);
 		gbc_textFieldLastName.fill = GridBagConstraints.HORIZONTAL;
 		gbc_textFieldLastName.gridx = 1;
@@ -156,6 +159,7 @@ public class EditEmployeeView extends JPanel {
 		
 		cbGender = new JComboBox<ComboBoxItem>();
 		GridBagConstraints gbc_cbGender = new GridBagConstraints();
+		gbc_cbGender.gridwidth = 2;
 		gbc_cbGender.insets = new Insets(0, 0, 5, 0);
 		gbc_cbGender.fill = GridBagConstraints.HORIZONTAL;
 		gbc_cbGender.gridx = 1;
@@ -169,7 +173,7 @@ public class EditEmployeeView extends JPanel {
 			}
 		});
 		GridBagConstraints gbc_btnSave = new GridBagConstraints();
-		gbc_btnSave.insets = new Insets(0, 0, 0, 5);
+		gbc_btnSave.insets = new Insets(0, 0, 5, 5);
 		gbc_btnSave.gridx = 0;
 		gbc_btnSave.gridy = 6;
 		add(btnSave, gbc_btnSave);
@@ -181,9 +185,21 @@ public class EditEmployeeView extends JPanel {
 			}
 		});
 		GridBagConstraints gbc_btnCancel = new GridBagConstraints();
+		gbc_btnCancel.insets = new Insets(0, 0, 5, 0);
 		gbc_btnCancel.gridx = 1;
 		gbc_btnCancel.gridy = 6;
 		add(btnCancel, gbc_btnCancel);
+		
+		JButton btnNewButton = new JButton(this.resources.getString("gui.employee.salary.toolTip"));
+		btnNewButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent salaryDataEvent) {
+				editEmployeeController.btnSalaryDataHandler(salaryDataEvent);
+			}
+		});
+		GridBagConstraints gbc_btnNewButton = new GridBagConstraints();
+		gbc_btnNewButton.gridx = 2;
+		gbc_btnNewButton.gridy = 6;
+		add(btnNewButton, gbc_btnNewButton);
 	}
 
 	/**

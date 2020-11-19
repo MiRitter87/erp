@@ -1,20 +1,15 @@
 package frontend.view;
 
 /**
- * All views the application offers.
+ * Views of the application.
  * 
  * @author Michael
  */
-public enum View {
+public enum View {	
 	/**
-	 * The initial application screen.
+	 * Employee overview.
 	 */
-	STARTPAGE,
-	
-	/**
-	 * Employee creation.
-	 */
-	EMPLOYEE_CREATE,
+	EMPLOYEE_OVERVIEW,
 	
 	/**
 	 * Employee edit.

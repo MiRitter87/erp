@@ -86,14 +86,14 @@ public class MainView extends JFrame {
 		JMenuItem miEmployeeEdit = new JMenuItem(this.resources.getString("gui.mainMenu.object.edit"));
 		miEmployeeEdit.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				mainViewController.navigateToView(View.EMPLOYEE_EDIT);
+				mainViewController.switchToEditEmployeeView();
 			}
 		});
 		menuEmployee.add(miEmployeeEdit);
 		menuEmployee.add(miEmployeeOverview);
 		miEmployeeCreate.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				mainViewController.navigateToView(View.EMPLOYEE_CREATE);	
+				mainViewController.switchToCreateEmployeeView();
 			}
 		});
 		menuHr.add(menuDepartment);

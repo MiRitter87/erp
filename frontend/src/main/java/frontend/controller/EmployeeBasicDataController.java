@@ -9,6 +9,7 @@ import javax.swing.JOptionPane;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import frontend.controller.employee.EmployeeSalaryController;
 import frontend.dao.EmployeeWebServiceDao;
 import frontend.exception.EntityAlreadyExistsException;
 import frontend.model.ComboBoxItem;
@@ -317,7 +318,7 @@ public class EmployeeBasicDataController {
 				throw new Exception(MessageFormat.format(this.resources.getString("gui.employee.error.notFound"), employeeId));	
 			
 			this.employeeSalaryController = new EmployeeSalaryController(this.mainViewController, employee, this.employeeWebServiceDao);
-			this.mainViewController.switchToSalaryView();
+			this.mainViewController.switchToSalaryView(this.employeeSalaryController);
 		}
 		catch(Exception exception) {
 			JOptionPane.showMessageDialog(this.employeeBasicDataView, exception.getMessage(), 
