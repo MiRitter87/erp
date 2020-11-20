@@ -77,8 +77,7 @@ public class EmployeeSalaryView extends JPanel {
 		JButton btnBack = new JButton(this.resources.getString("gui.general.back"));
 		btnBack.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				//TODO Switch back to the calling view. This can be employee overview or edit view.
-				employeeSalaryController.getMainViewController().switchToEmployeeBasicDataView();
+				employeeSalaryController.btnBackHandler(e);
 			}
 		});
 		

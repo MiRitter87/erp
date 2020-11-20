@@ -16,7 +16,7 @@ import frontend.controller.MainViewController;
 
 /**
  * The entry point view of the application.
- * It provides an import form for employee data as well as a table that displays all employees.
+ * It provides a menu as well as a content area.
  * 
  * @author Michael
  */
@@ -79,14 +79,14 @@ public class MainView extends JFrame {
 		JMenuItem miEmployeeOverview = new JMenuItem(this.resources.getString("gui.mainMenu.object.overview"));
 		miEmployeeOverview.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				mainViewController.switchToEmployeeBasicDataView();	
+				mainViewController.switchToEmployeeBasicDataView(null);	
 			}
 		});
 		
 		JMenuItem miEmployeeEdit = new JMenuItem(this.resources.getString("gui.mainMenu.object.edit"));
 		miEmployeeEdit.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				mainViewController.switchToEditEmployeeView();
+				mainViewController.switchToEditEmployeeView(null);
 			}
 		});
 		menuEmployee.add(miEmployeeEdit);

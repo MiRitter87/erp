@@ -2,6 +2,7 @@ package frontend.controller;
 
 
 import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
 
 import frontend.controller.employee.EditEmployeeController;
 import frontend.controller.employee.EmployeeSalaryController;
@@ -38,12 +39,20 @@ public class MainViewController {
 	
 	/**
 	 * Switches the currently displayed content area to the employee basic data view.
+	 * 
+	 * @param employeeOverviewController The controller of the employee overview. Can be null, if the view has not been called before or should not be recycled.
 	 */
-	public void switchToEmployeeBasicDataView() {
-		EmployeeBasicDataController employeeBasicDataController = new EmployeeBasicDataController(this);
+	public void switchToEmployeeBasicDataView(final EmployeeBasicDataController employeeOverviewController) {
+		EmployeeBasicDataController controller;
+		
+		if(employeeOverviewController != null)
+			controller = employeeOverviewController;
+		else
+			controller = new EmployeeBasicDataController(this);
+			
 		this.mainView.getContentPane().removeAll();
-		this.mainView.getContentPane().add(employeeBasicDataController.getEmployeeBasicDataView());
-		this.mainView.revalidate();
+		this.mainView.getContentPane().add(controller.getEmployeeBasicDataView());
+		SwingUtilities.updateComponentTreeUI(this.mainView);
 	}
 	
 	
@@ -92,13 +101,21 @@ public class MainViewController {
 	
 	
 	/**
-	 * Switches the currently displayed content area to the employee edit view.
+	 * Switches the currently displayed content area to the employee edit view. 
+	 * 
+	 * @param editEmployeeController The controller of the edit employee view. Can be null, if the view has not been called before should not be recycled.
 	 */
-	public void switchToEditEmployeeView() {
-		EditEmployeeController controller = new EditEmployeeController(this);
+	public void switchToEditEmployeeView(final EditEmployeeController editEmployeeController) {
+		EditEmployeeController controller;
+		
+		if(editEmployeeController != null)
+			controller = editEmployeeController;
+		else
+			controller = new EditEmployeeController(this);
+		
 		this.mainView.getContentPane().removeAll();
 		this.mainView.getContentPane().add(controller.getEditEmployeeView());
-		this.mainView.revalidate();
+		SwingUtilities.updateComponentTreeUI(this.mainView);
 	}
 	
 	

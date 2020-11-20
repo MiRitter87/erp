@@ -9,6 +9,7 @@ import javax.swing.JOptionPane;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import frontend.controller.EmployeeBasicDataController;
 import frontend.controller.MainViewController;
 import frontend.dao.EmployeeWebServiceDao;
 import frontend.model.Employee;
@@ -47,6 +48,16 @@ public class EmployeeSalaryController {
 	private EmployeeWebServiceDao employeeWebServiceDao;
 	
 	/**
+	 * The controller of the employee overview.
+	 */
+	private EmployeeBasicDataController employeeOverviewController;
+	
+	/**
+	 * The controller of the edit employee view.
+	 */
+	private EditEmployeeController editEmployeeController;
+	
+	/**
 	 * Application logging.
 	 */
 	public static final Logger logger = LogManager.getLogger(EmployeeSalaryController.class);
@@ -56,6 +67,8 @@ public class EmployeeSalaryController {
 	 * Initializes the controller.
 	 * 
 	 * @param mainViewController The controller of the main view.
+	 * @param selectedEmployee The employee that has been selected to show the salary data.
+	 * @param employeeWebServiceDao The WebService DAO for employee access.
 	 */
 	public EmployeeSalaryController(final MainViewController mainViewController, final Employee selectedEmployee,
 			final EmployeeWebServiceDao employeeWebServiceDao) {
@@ -65,6 +78,11 @@ public class EmployeeSalaryController {
 		this.employeeSalaryView = new EmployeeSalaryView(this);
 		this.resources = ResourceBundle.getBundle("frontend");
 		this.employeeWebServiceDao = employeeWebServiceDao;
+		
+		//Initially the controller of the potentially calling views are set to null.
+		//The calling controller has to be explicitly set afterwards.
+		this.editEmployeeController = null;
+		this.employeeOverviewController = null;
 		
 		this.initializeViewData();
 	}
@@ -167,6 +185,22 @@ public class EmployeeSalaryController {
 	
 	
 	/**
+	 * Handles a click at the "back"-button of the employee salary view.
+	 * 
+	 * @param e The action event of the button click.
+	 */
+	public void btnBackHandler(ActionEvent e) {	
+		if(this.employeeOverviewController != null && this.editEmployeeController == null) {
+			this.getMainViewController().switchToEmployeeBasicDataView(this.employeeOverviewController);
+		}
+		
+		if(this.employeeOverviewController == null && this.editEmployeeController != null) {
+			this.getMainViewController().switchToEditEmployeeView(this.editEmployeeController);
+		}
+	}
+	
+	
+	/**
 	 * Initializes the display elements of the view.
 	 */
 	public void initializeViewData() {
@@ -203,9 +237,20 @@ public class EmployeeSalaryController {
 	public MainViewController getMainViewController() {
 		return mainViewController;
 	}
+	
+	
+	/**
+	 * @param employeeOverviewController the employeeOverviewController to set
+	 */
+	public void setEmployeeOverviewController(EmployeeBasicDataController employeeOverviewController) {
+		this.employeeOverviewController = employeeOverviewController;
+	}
 
 
-	public void setMainViewController(MainViewController mainViewController) {
-		this.mainViewController = mainViewController;
+	/**
+	 * @param editEmployeeController the editEmployeeController to set
+	 */
+	public void setEditEmployeeController(EditEmployeeController editEmployeeController) {
+		this.editEmployeeController = editEmployeeController;
 	}
 }

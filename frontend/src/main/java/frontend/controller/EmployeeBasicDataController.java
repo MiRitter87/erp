@@ -318,6 +318,7 @@ public class EmployeeBasicDataController {
 				throw new Exception(MessageFormat.format(this.resources.getString("gui.employee.error.notFound"), employeeId));	
 			
 			this.employeeSalaryController = new EmployeeSalaryController(this.mainViewController, employee, this.employeeWebServiceDao);
+			this.employeeSalaryController.setEmployeeOverviewController(this);
 			this.mainViewController.switchToSalaryView(this.employeeSalaryController);
 		}
 		catch(Exception exception) {

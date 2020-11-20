@@ -306,6 +306,7 @@ public class EditEmployeeController extends EmployeeController {
 		}
 		
 		this.employeeSalaryController = new EmployeeSalaryController(this.mainViewController, this.selectedEmployee, this.employeeWebServiceDao);
+		this.employeeSalaryController.setEditEmployeeController(this);
 		this.mainViewController.switchToSalaryView(this.employeeSalaryController);
 	}
 	
