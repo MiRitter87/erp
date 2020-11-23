@@ -11,7 +11,6 @@ import org.apache.logging.log4j.Logger;
 
 import frontend.controller.MainViewController;
 import frontend.dao.EmployeeWebServiceDao;
-import frontend.exception.DataNotChangedException;
 import frontend.model.ComboBoxItem;
 import frontend.model.Employee;
 import frontend.model.EmployeeList;
@@ -152,12 +151,6 @@ public class EditEmployeeController extends EmployeeController {
 		try {					
 			this.validateInput();
 		}
-		catch(DataNotChangedException notChangedException) {
-			JOptionPane.showMessageDialog(this.editEmployeeView, this.resources.getString("gui.employee.error.notEdited"), 
-					this.resources.getString("gui.information"), JOptionPane.INFORMATION_MESSAGE);
-			logger.info("User tried to save an employee without any changes made.");
-			return;
-		}
 		catch(Exception exception) {
 			JOptionPane.showMessageDialog(this.editEmployeeView, exception.getMessage(), 
 					this.resources.getString("gui.error"), JOptionPane.ERROR_MESSAGE);
@@ -165,10 +158,19 @@ public class EditEmployeeController extends EmployeeController {
 			return;
 		}
 		
-		//Validating succeeded - Try to persist changes
+		//Validation successful - Update model with new data from input fields and check if anything has changed
+		this.updateEmployeeFromViewInput();
+		if(!this.selectedEmployee.isEdited()) {
+			JOptionPane.showMessageDialog(this.editEmployeeView, this.resources.getString("gui.employee.error.notEdited"), 
+					this.resources.getString("gui.information"), JOptionPane.INFORMATION_MESSAGE);
+			logger.info("User tried to save an employee without any changes made.");
+			return;
+		}
+		
+		//Changes exist - Try to persist those changes
 		try {
-			this.updateEmployeeFromViewInput();
 			this.employeeWebServiceDao.updateEmployee(this.selectedEmployee);
+			this.selectedEmployee.reHash();
 			this.clearInputFields();
 			this.selectedEmployee = null;
 			
@@ -211,10 +213,6 @@ public class EditEmployeeController extends EmployeeController {
 		//Validation of input fields.
 		this.validateInput(this.editEmployeeView.getTextFieldFirstName().getText(), 
 				this.editEmployeeView.getTextFieldLastName().getText(), selectedGender);
-		
-		//Check if anything has changed.
-		if(!this.selectedEmployee.isEdited())
-			throw new DataNotChangedException();
 	}
 	
 	

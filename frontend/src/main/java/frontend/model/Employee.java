@@ -34,9 +34,9 @@ public class Employee {
 	private EmployeeSalary salaryData;
 	
 	/**
-	 * The initial HashCode of the employee after initialization.
+	 * The HashCode of the employee state that has been persisted to the backend database.
 	 */
-	private int initialHash;
+	private int persistedHash;
 	
 	
 	/**
@@ -51,7 +51,7 @@ public class Employee {
 		this.lastName = lastName;
 		this.gender = gender;
 		
-		this.initialHash = this.hashCode();
+		this.persistedHash = this.hashCode();
 	}
 	
 	
@@ -69,7 +69,7 @@ public class Employee {
 		if(webServiceEmployee.getSalaryData() != null)
 			this.salaryData = new EmployeeSalary(webServiceEmployee.getSalaryData());
 		
-		this.initialHash = this.hashCode();
+		this.persistedHash = this.hashCode();
 	}
 	
 	
@@ -87,7 +87,7 @@ public class Employee {
 		if(webServiceEmployee.getSalaryData() != null)
 			this.salaryData = new EmployeeSalary(webServiceEmployee.getSalaryData());
 		
-		this.initialHash = this.hashCode();
+		this.persistedHash = this.hashCode();
 	}
 	
 	
@@ -200,10 +200,19 @@ public class Employee {
 	public boolean isEdited() {
 		int currentHash = this.hashCode();
 		
-		if(this.initialHash != currentHash)
+		if(this.persistedHash != currentHash)
 			return true;
 		else		
 			return false;
+	}
+	
+	
+	/**
+	 * Calculates the hash code of the current object state.
+	 * The hashCode is then stored as reference for further checks if object has changed.
+	 */
+	public void reHash() {
+		this.persistedHash = this.hashCode();
 	}
 
 	
