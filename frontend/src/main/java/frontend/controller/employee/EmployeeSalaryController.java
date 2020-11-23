@@ -110,49 +110,12 @@ public class EmployeeSalaryController {
 	
 	
 	/**
-	 * Checks if the salary data have been changed.
-	 * 
-	 * @return true, if data have changed; false otherwise.
-	 */
-	private boolean salaryDataChanged() {
-		int formerSalary;
-		int currentSalary;
-		
-		//No salary defined formerly but a salary is defined in text field.
-		if(this.selectedEmployee.getSalaryData() == null && this.employeeSalaryView.getTextFieldSalary().getText() != null)
-			return true;
-		
-		//Salary defined formerly does not equal the salary defined in text field.
-		formerSalary = this.selectedEmployee.getSalaryData().getMonthlySalary();
-		currentSalary = Integer.parseInt(this.employeeSalaryView.getTextFieldSalary().getText());
-		
-		if(currentSalary != formerSalary)
-			return true;
-		
-		
-		return false;
-	}
-	
-	
-	/**
-	 * Updates the employee model with the salary data.
-	 */
-	private void updateEmployeeModel() {
-		int salary = Integer.parseInt(this.employeeSalaryView.getTextFieldSalary().getText());
-		
-		if(this.selectedEmployee.getSalaryData() == null)
-			this.selectedEmployee.setSalaryData(new EmployeeSalary(salary));
-		else
-			this.selectedEmployee.getSalaryData().setMonthlySalary(salary);
-	}
-	
-	
-	/**
 	 * Handles a click at the "save"-button.
 	 * 
 	 * @param e The action event of the button click.
 	 */
 	public void saveSalaryHandler(ActionEvent e) {
+		//Validation of user input
 		try {					
 			this.validateInput();
 		}
@@ -162,25 +125,35 @@ public class EmployeeSalaryController {
 			return;
 		}
 		
-		if(this.salaryDataChanged()) {
-			this.updateEmployeeModel();
+		//Validation successful - Update existing salary and check if anything has changed.
+		if(this.selectedEmployee.getSalaryData() != null) {
+			int salary = Integer.parseInt(this.employeeSalaryView.getTextFieldSalary().getText());
+			this.selectedEmployee.getSalaryData().setMonthlySalary(salary);
 			
-			try {
-				this.employeeWebServiceDao.updateEmployee(this.selectedEmployee);
-				this.initializeViewData();		//Update view to show the new change date
-			} catch (Exception e1) {
-				JOptionPane.showMessageDialog(this.employeeSalaryView, this.resources.getString("gui.employee.error.updateSalary"), 
-						this.resources.getString("gui.error"), JOptionPane.ERROR_MESSAGE);
-				logger.error("Updating salary data of employee failed: " +e1.getMessage());
+			if(this.selectedEmployee.getSalaryData().isEdited() == false) {
+				JOptionPane.showMessageDialog(this.employeeSalaryView,this.resources.getString("gui.employee.information.salaryNotChanged"), 
+						this.resources.getString("gui.information"), JOptionPane.INFORMATION_MESSAGE);
+				return;
 			}
+		}
+		
+		//Validation successful - No salary exists yet. Create new one.
+		if(this.selectedEmployee.getSalaryData() == null) {
+			//No salary exists yet
+			int salary = Integer.parseInt(this.employeeSalaryView.getTextFieldSalary().getText());
+			this.selectedEmployee.setSalaryData(new EmployeeSalary(this.selectedEmployee.getId(), salary));
+		}
 
+		//Changes exist - Try to persist those changes.
+		try {
+			this.employeeWebServiceDao.updateEmployee(this.selectedEmployee);
+			this.initializeViewData();		//Update view to show the new change date
+		} catch (Exception e1) {
+			JOptionPane.showMessageDialog(this.employeeSalaryView, this.resources.getString("gui.employee.error.updateSalary"), 
+					this.resources.getString("gui.error"), JOptionPane.ERROR_MESSAGE);
+			logger.error("Updating salary data of employee failed: " +e1.getMessage());
 		}
-		else {
-			//Information PopUp
-			JOptionPane.showMessageDialog(this.employeeSalaryView,this.resources.getString("gui.employee.information.salaryNotChanged"), 
-					this.resources.getString("gui.information"), JOptionPane.INFORMATION_MESSAGE);
-			return;
-		}
+
 	}
 	
 	

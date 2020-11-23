@@ -129,9 +129,6 @@ public class Employee {
 
 	public void setSalaryData(EmployeeSalary employeeSalary) {
 		this.salaryData = employeeSalary;
-		
-		if(employeeSalary != null)
-			this.salaryData.setId(this.id);
 	}
 
 	/**
