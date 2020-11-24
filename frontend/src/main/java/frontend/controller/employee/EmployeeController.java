@@ -57,4 +57,24 @@ public class EmployeeController {
 		else
 			return null;
 	}
+	
+	
+	/**
+	 * Gets the localized text of the given gender.
+	 * 
+	 * @param gender The gender.
+	 * @return The localized gender text.
+	 */
+	protected String getGenderText(final Gender gender) {
+		switch(gender) {
+			case FEMALE: {
+				return this.resources.getString("gui.employee.gender.female");
+			}
+			case MALE: {
+				return this.resources.getString("gui.employee.gender.male");
+			}
+		}
+
+		return "";
+	}
 }

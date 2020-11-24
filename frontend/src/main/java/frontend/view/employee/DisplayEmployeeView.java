@@ -33,6 +33,26 @@ public class DisplayEmployeeView extends JPanel {
 	 */
 	@SuppressWarnings("unused")
 	private DisplayEmployeeController displayEmployeeController;
+	
+	/**
+	 * The combo box for employee selection.
+	 */
+	private JComboBox<ComboBoxItem> cbEmployee;
+	
+	/**
+	 * Label for display of employee first name.
+	 */
+	private JLabel lblFirstNameContent;
+	
+	/**
+	 * Label for display of employee last name.
+	 */
+	private JLabel lblLastNameContent;
+	
+	/**
+	 * Label for display of employee gender.
+	 */
+	private JLabel lblGenderContent;
 
 	
 	/**
@@ -64,7 +84,8 @@ public class DisplayEmployeeView extends JPanel {
 		gbc_lblEmployee.gridy = 1;
 		add(lblEmployee, gbc_lblEmployee);
 		
-		JComboBox<ComboBoxItem> cbEmployee = new JComboBox<ComboBoxItem>();
+		cbEmployee = new JComboBox<ComboBoxItem>();
+		cbEmployee.addItemListener(displayEmployeeController::cbEmployeeItemStateChanged);
 		GridBagConstraints gbc_cbEmployee = new GridBagConstraints();
 		gbc_cbEmployee.insets = new Insets(0, 0, 5, 0);
 		gbc_cbEmployee.fill = GridBagConstraints.HORIZONTAL;
@@ -88,7 +109,7 @@ public class DisplayEmployeeView extends JPanel {
 		gbc_lblFirstName.gridy = 3;
 		add(lblFirstName, gbc_lblFirstName);
 		
-		JLabel lblFirstNameContent = new JLabel("");
+		lblFirstNameContent = new JLabel("");
 		GridBagConstraints gbc_lblFirstNameContent = new GridBagConstraints();
 		gbc_lblFirstNameContent.insets = new Insets(0, 0, 5, 0);
 		gbc_lblFirstNameContent.fill = GridBagConstraints.HORIZONTAL;
@@ -103,7 +124,7 @@ public class DisplayEmployeeView extends JPanel {
 		gbc_lblLastName.gridy = 4;
 		add(lblLastName, gbc_lblLastName);
 		
-		JLabel lblLastNameContent = new JLabel("");
+		lblLastNameContent = new JLabel("");
 		GridBagConstraints gbc_lblLastNameContent = new GridBagConstraints();
 		gbc_lblLastNameContent.insets = new Insets(0, 0, 5, 0);
 		gbc_lblLastNameContent.fill = GridBagConstraints.HORIZONTAL;
@@ -118,7 +139,7 @@ public class DisplayEmployeeView extends JPanel {
 		gbc_lblGender.gridy = 5;
 		add(lblGender, gbc_lblGender);
 		
-		JLabel lblGenderContent = new JLabel("");
+		lblGenderContent = new JLabel("");
 		GridBagConstraints gbc_lblGenderContent = new GridBagConstraints();
 		gbc_lblGenderContent.insets = new Insets(0, 0, 5, 0);
 		gbc_lblGenderContent.fill = GridBagConstraints.HORIZONTAL;
@@ -139,5 +160,37 @@ public class DisplayEmployeeView extends JPanel {
 		gbc_btnSalary.gridy = 6;
 		add(btnSalary, gbc_btnSalary);
 
+	}
+
+
+	/**
+	 * @return the cbEmployee
+	 */
+	public JComboBox<ComboBoxItem> getCbEmployee() {
+		return cbEmployee;
+	}
+
+
+	/**
+	 * @return the lblFirstNameContent
+	 */
+	public JLabel getLblFirstNameContent() {
+		return lblFirstNameContent;
+	}
+
+
+	/**
+	 * @return the lblLastNameContent
+	 */
+	public JLabel getLblLastNameContent() {
+		return lblLastNameContent;
+	}
+
+
+	/**
+	 * @return the lblGenderContent
+	 */
+	public JLabel getLblGenderContent() {
+		return lblGenderContent;
 	}
 }
