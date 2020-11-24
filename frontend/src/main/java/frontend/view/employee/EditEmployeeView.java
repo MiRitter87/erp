@@ -190,16 +190,16 @@ public class EditEmployeeView extends JPanel {
 		gbc_btnCancel.gridy = 6;
 		add(btnCancel, gbc_btnCancel);
 		
-		JButton btnNewButton = new JButton(this.resources.getString("gui.employee.salary.toolTip"));
-		btnNewButton.addActionListener(new ActionListener() {
+		JButton btnSalary = new JButton(this.resources.getString("gui.employee.salary.toolTip"));
+		btnSalary.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent salaryDataEvent) {
 				editEmployeeController.btnSalaryDataHandler(salaryDataEvent);
 			}
 		});
-		GridBagConstraints gbc_btnNewButton = new GridBagConstraints();
-		gbc_btnNewButton.gridx = 2;
-		gbc_btnNewButton.gridy = 6;
-		add(btnNewButton, gbc_btnNewButton);
+		GridBagConstraints gbc_btnSalary = new GridBagConstraints();
+		gbc_btnSalary.gridx = 2;
+		gbc_btnSalary.gridy = 6;
+		add(btnSalary, gbc_btnSalary);
 	}
 
 	/**

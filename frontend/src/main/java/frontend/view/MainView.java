@@ -90,6 +90,14 @@ public class MainView extends JFrame {
 			}
 		});
 		menuEmployee.add(miEmployeeEdit);
+		
+		JMenuItem miEmployeeDisplay = new JMenuItem(this.resources.getString("gui.mainMenu.object.display"));
+		miEmployeeDisplay.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				mainViewController.switchToDisplayEmployeeView(null);
+			}
+		});
+		menuEmployee.add(miEmployeeDisplay);
 		menuEmployee.add(miEmployeeOverview);
 		miEmployeeCreate.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {

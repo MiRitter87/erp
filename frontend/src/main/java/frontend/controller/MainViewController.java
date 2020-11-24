@@ -7,6 +7,7 @@ import javax.swing.SwingUtilities;
 import frontend.controller.employee.EditEmployeeController;
 import frontend.controller.employee.EmployeeSalaryController;
 import frontend.controller.employee.CreateEmployeeController;
+import frontend.controller.employee.DisplayEmployeeController;
 import frontend.view.MainView;
 
 /**
@@ -40,7 +41,7 @@ public class MainViewController {
 	/**
 	 * Switches the currently displayed content area to the employee basic data view.
 	 * 
-	 * @param employeeOverviewController The controller of the employee overview. Can be null, if the view has not been called before or should not be recycled.
+	 * @param employeeOverviewController The controller of the employee overview. Can be null, if the view has not been called before or should not be reused.
 	 */
 	public void switchToEmployeeBasicDataView(final EmployeeBasicDataController employeeOverviewController) {
 		EmployeeBasicDataController controller;
@@ -103,7 +104,7 @@ public class MainViewController {
 	/**
 	 * Switches the currently displayed content area to the employee edit view. 
 	 * 
-	 * @param editEmployeeController The controller of the edit employee view. Can be null, if the view has not been called before should not be recycled.
+	 * @param editEmployeeController The controller of the edit employee view. Can be null, if the view has not been called before or should not be reused.
 	 */
 	public void switchToEditEmployeeView(final EditEmployeeController editEmployeeController) {
 		EditEmployeeController controller;
@@ -115,6 +116,25 @@ public class MainViewController {
 		
 		this.mainView.getContentPane().removeAll();
 		this.mainView.getContentPane().add(controller.getEditEmployeeView());
+		SwingUtilities.updateComponentTreeUI(this.mainView);
+	}
+	
+	
+	/**
+	 * Switches the currently displayed content area to the employee display view.
+	 * 
+	 * @param displayEmployeeController The controller of the display employee view. Can be null, if the view has not been called before or should not be reused.
+	 */
+	public void switchToDisplayEmployeeView(final DisplayEmployeeController displayEmployeeController) {
+		DisplayEmployeeController controller;
+		
+		if(displayEmployeeController != null)
+			controller = displayEmployeeController;
+		else
+			controller = new DisplayEmployeeController(this);
+		
+		this.mainView.getContentPane().removeAll();
+		this.mainView.getContentPane().add(controller.getDisplayEmployeeView());
 		SwingUtilities.updateComponentTreeUI(this.mainView);
 	}
 	
