@@ -5,9 +5,10 @@ import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
 import frontend.controller.employee.EditEmployeeController;
-import frontend.controller.employee.EmployeeSalaryController;
+import frontend.controller.employee.EditEmployeeSalaryController;
 import frontend.controller.employee.CreateEmployeeController;
 import frontend.controller.employee.DisplayEmployeeController;
+import frontend.controller.employee.DisplayEmployeeSalaryController;
 import frontend.view.MainView;
 
 /**
@@ -58,13 +59,25 @@ public class MainViewController {
 	
 	
 	/**
-	 * Switches the currently displayed content area to the employee salary view.
+	 * Switches the currently displayed content area to the edit employee salary view.
 	 * 
-	 * @param salaryController The controller of the employee salary view.
+	 * @param salaryController The controller of the edit employee salary view.
 	 */
-	public void switchToSalaryView(final EmployeeSalaryController salaryController) {
+	public void switchToEditSalaryView(final EditEmployeeSalaryController editSalaryController) {
 		this.mainView.getContentPane().removeAll();
-		this.mainView.getContentPane().add(salaryController.getEmployeeSalaryView());
+		this.mainView.getContentPane().add(editSalaryController.getEditEmployeeSalaryView());
+		this.mainView.revalidate();
+	}
+	
+	
+	/**
+	 * Switches the currently displayed content area to the display employee salary view.
+	 * 
+	 * @param displaySalaryController The controller of the display employee salary view.
+	 */
+	public void switchToDisplaySalaryView(final DisplayEmployeeSalaryController displaySalaryController) {
+		this.mainView.getContentPane().removeAll();
+		this.mainView.getContentPane().add(displaySalaryController.getDisplayEmployeeSalaryView());
 		this.mainView.revalidate();
 	}
 	

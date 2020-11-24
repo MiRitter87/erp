@@ -9,7 +9,7 @@ import javax.swing.JOptionPane;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import frontend.controller.employee.EmployeeSalaryController;
+import frontend.controller.employee.EditEmployeeSalaryController;
 import frontend.dao.EmployeeWebServiceDao;
 import frontend.exception.EntityAlreadyExistsException;
 import frontend.model.ComboBoxItem;
@@ -33,7 +33,7 @@ public class EmployeeBasicDataController {
 	/**
 	 * The controller of the salary view.
 	 */
-	private EmployeeSalaryController employeeSalaryController;
+	private EditEmployeeSalaryController employeeSalaryController;
 	
 	/**
 	 * The view for employee basic data management.
@@ -317,9 +317,9 @@ public class EmployeeBasicDataController {
 			if(employee == null)
 				throw new Exception(MessageFormat.format(this.resources.getString("gui.employee.error.notFound"), employeeId));	
 			
-			this.employeeSalaryController = new EmployeeSalaryController(this.mainViewController, employee, this.employeeWebServiceDao);
+			this.employeeSalaryController = new EditEmployeeSalaryController(this.mainViewController, employee, this.employeeWebServiceDao);
 			this.employeeSalaryController.setEmployeeOverviewController(this);
-			this.mainViewController.switchToSalaryView(this.employeeSalaryController);
+			this.mainViewController.switchToEditSalaryView(this.employeeSalaryController);
 		}
 		catch(Exception exception) {
 			JOptionPane.showMessageDialog(this.employeeBasicDataView, exception.getMessage(), 
@@ -339,12 +339,12 @@ public class EmployeeBasicDataController {
 	}
 
 
-	public EmployeeSalaryController getEmployeeSalaryController() {
+	public EditEmployeeSalaryController getEmployeeSalaryController() {
 		return employeeSalaryController;
 	}
 
 
-	public void setEmployeeSalaryController(EmployeeSalaryController employeeSalaryController) {
+	public void setEmployeeSalaryController(EditEmployeeSalaryController employeeSalaryController) {
 		this.employeeSalaryController = employeeSalaryController;
 	}
 }

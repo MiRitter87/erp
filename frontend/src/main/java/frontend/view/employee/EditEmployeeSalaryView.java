@@ -4,7 +4,7 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.text.AbstractDocument;
 
-import frontend.controller.employee.EmployeeSalaryController;
+import frontend.controller.employee.EditEmployeeSalaryController;
 import frontend.view.components.ExtendedDocumentFilter;
 
 import java.awt.GridBagLayout;
@@ -25,14 +25,14 @@ import java.awt.event.ActionEvent;
  * 
  * @author Michael
  */
-public class EmployeeSalaryView extends JPanel {
+public class EditEmployeeSalaryView extends JPanel {
 
 	private static final long serialVersionUID = 1L;
 	
 	/**
 	 * Controller of this view.
 	 */
-	private EmployeeSalaryController employeeSalaryController;
+	private EditEmployeeSalaryController editEmployeeSalaryController;
 	
 	/**
 	 * Access to localized application resources.
@@ -52,10 +52,12 @@ public class EmployeeSalaryView extends JPanel {
 
 	/**
 	 * Create the panel.
+	 * 
+	 * @param editEmployeeSalaryController The controller of the view.
 	 */
-	public EmployeeSalaryView(final EmployeeSalaryController employeeSalaryController) {
+	public EditEmployeeSalaryView(final EditEmployeeSalaryController editEmployeeSalaryController) {
 		this.resources = ResourceBundle.getBundle("frontend");
-		this.employeeSalaryController = employeeSalaryController;
+		this.editEmployeeSalaryController = editEmployeeSalaryController;
 		
 		GridBagLayout gridBagLayout = new GridBagLayout();
 		gridBagLayout.columnWidths = new int[]{0, 0, 0};
@@ -65,8 +67,8 @@ public class EmployeeSalaryView extends JPanel {
 		setLayout(gridBagLayout);
 		
 		JLabel textLabel = new JLabel(MessageFormat.format(this.resources.getString("gui.employee.salary.header"),
-				this.employeeSalaryController.getSelectedEmployee().getFirstName(),
-				this.employeeSalaryController.getSelectedEmployee().getLastName()));
+				this.editEmployeeSalaryController.getSelectedEmployee().getFirstName(),
+				this.editEmployeeSalaryController.getSelectedEmployee().getLastName()));
 		textLabel.setFont(new Font("Tahoma", Font.BOLD, 13));
 		GridBagConstraints gbc_textLabel = new GridBagConstraints();
 		gbc_textLabel.insets = new Insets(0, 0, 5, 5);
@@ -77,7 +79,7 @@ public class EmployeeSalaryView extends JPanel {
 		JButton btnBack = new JButton(this.resources.getString("gui.general.back"));
 		btnBack.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				employeeSalaryController.btnBackHandler(e);
+				editEmployeeSalaryController.btnBackHandler(e);
 			}
 		});
 		
@@ -127,7 +129,7 @@ public class EmployeeSalaryView extends JPanel {
 		JButton btnSave = new JButton(this.resources.getString("gui.general.save"));
 		btnSave.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				employeeSalaryController.saveSalaryHandler(e);
+				editEmployeeSalaryController.saveSalaryHandler(e);
 			}
 		});
 		GridBagConstraints gbc_btnSave = new GridBagConstraints();

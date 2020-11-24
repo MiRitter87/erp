@@ -31,7 +31,7 @@ public class EditEmployeeController extends EmployeeController {
 	/**
 	 * The controller of the salary view.
 	 */
-	private EmployeeSalaryController employeeSalaryController;
+	private EditEmployeeSalaryController editEmployeeSalaryController;
 	
 	/**
 	 * Access to localized application resources.
@@ -303,9 +303,9 @@ public class EditEmployeeController extends EmployeeController {
 					this.resources.getString("gui.error"), JOptionPane.ERROR_MESSAGE);
 		}
 		
-		this.employeeSalaryController = new EmployeeSalaryController(this.mainViewController, this.selectedEmployee, this.employeeWebServiceDao);
-		this.employeeSalaryController.setEditEmployeeController(this);
-		this.mainViewController.switchToSalaryView(this.employeeSalaryController);
+		this.editEmployeeSalaryController = new EditEmployeeSalaryController(this.mainViewController, this.selectedEmployee, this.employeeWebServiceDao);
+		this.editEmployeeSalaryController.setEditEmployeeController(this);
+		this.mainViewController.switchToEditSalaryView(this.editEmployeeSalaryController);
 	}
 	
 

@@ -15,6 +15,8 @@ import java.awt.Insets;
 import javax.swing.JComboBox;
 import javax.swing.JSeparator;
 import javax.swing.JButton;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
 
 public class DisplayEmployeeView extends JPanel {
 
@@ -148,6 +150,11 @@ public class DisplayEmployeeView extends JPanel {
 		add(lblGenderContent, gbc_lblGenderContent);
 		
 		JButton btnCancel = new JButton(this.resources.getString("gui.general.cancel"));
+		btnCancel.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				displayEmployeeController.cancelHandler(arg0);
+			}
+		});
 		GridBagConstraints gbc_btnCancel = new GridBagConstraints();
 		gbc_btnCancel.insets = new Insets(0, 0, 0, 5);
 		gbc_btnCancel.gridx = 0;
@@ -155,6 +162,11 @@ public class DisplayEmployeeView extends JPanel {
 		add(btnCancel, gbc_btnCancel);
 		
 		JButton btnSalary = new JButton(this.resources.getString("gui.employee.salary.toolTip"));
+		btnSalary.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				displayEmployeeController.btnSalaryDataHandler(e);
+			}
+		});
 		GridBagConstraints gbc_btnSalary = new GridBagConstraints();
 		gbc_btnSalary.gridx = 1;
 		gbc_btnSalary.gridy = 6;

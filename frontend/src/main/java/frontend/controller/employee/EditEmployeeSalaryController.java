@@ -14,14 +14,14 @@ import frontend.controller.MainViewController;
 import frontend.dao.EmployeeWebServiceDao;
 import frontend.model.Employee;
 import frontend.model.EmployeeSalary;
-import frontend.view.employee.EmployeeSalaryView;
+import frontend.view.employee.EditEmployeeSalaryView;
 
 /**
- * Controls all actions directly happening within the employee salary view.
+ * Controls all actions directly happening within the edit employee salary view.
  * 
  * @author Michael
  */
-public class EmployeeSalaryController {
+public class EditEmployeeSalaryController {
 	/**
 	 * The controller of the main view.
 	 */
@@ -30,10 +30,10 @@ public class EmployeeSalaryController {
 	/**
 	 * The view for employee salary management.
 	 */
-	private EmployeeSalaryView employeeSalaryView;
+	private EditEmployeeSalaryView editEmployeeSalaryView;
 	
 	/**
-	 * The employee which salary data are being edited.
+	 * The employee whose salary data are being edited.
 	 */
 	private Employee selectedEmployee;
 	
@@ -60,7 +60,7 @@ public class EmployeeSalaryController {
 	/**
 	 * Application logging.
 	 */
-	public static final Logger logger = LogManager.getLogger(EmployeeSalaryController.class);
+	public static final Logger logger = LogManager.getLogger(EditEmployeeSalaryController.class);
 
 	
 	/**
@@ -70,17 +70,18 @@ public class EmployeeSalaryController {
 	 * @param selectedEmployee The employee that has been selected to show the salary data.
 	 * @param employeeWebServiceDao The WebService DAO for employee access.
 	 */
-	public EmployeeSalaryController(final MainViewController mainViewController, final Employee selectedEmployee,
+	public EditEmployeeSalaryController(final MainViewController mainViewController, final Employee selectedEmployee,
 			final EmployeeWebServiceDao employeeWebServiceDao) {
 		
 		this.selectedEmployee = selectedEmployee;
 		this.mainViewController = mainViewController;
-		this.employeeSalaryView = new EmployeeSalaryView(this);
+		this.editEmployeeSalaryView = new EditEmployeeSalaryView(this);
 		this.resources = ResourceBundle.getBundle("frontend");
 		this.employeeWebServiceDao = employeeWebServiceDao;
 		
 		//Initially the controller of the potentially calling views are set to null.
 		//The calling controller has to be explicitly set afterwards.
+		//TODO Refactoring: The edit salary function can only be called from the edit employee view and not from the employee overview.
 		this.editEmployeeController = null;
 		this.employeeOverviewController = null;
 		
@@ -95,13 +96,13 @@ public class EmployeeSalaryController {
 	 */
 	private void validateInput() throws Exception {
 		//Check if salary is not empty
-		if("".equals(this.employeeSalaryView.getTextFieldSalary().getText())) {
+		if("".equals(this.editEmployeeSalaryView.getTextFieldSalary().getText())) {
 			throw new Exception(this.resources.getString("gui.employee.error.salaryEmpty"));
 		}
 		
 		//Check if salary contains only numbers
 		try {
-			Integer.parseInt(this.employeeSalaryView.getTextFieldSalary().getText());
+			Integer.parseInt(this.editEmployeeSalaryView.getTextFieldSalary().getText());
 		}
 		catch(NumberFormatException exception) {
 			throw new Exception(this.resources.getString("gui.employee.error.salaryNotNumeric"));
@@ -120,18 +121,18 @@ public class EmployeeSalaryController {
 			this.validateInput();
 		}
 		catch(Exception exception) {
-			JOptionPane.showMessageDialog(this.employeeSalaryView, exception.getMessage(), 
+			JOptionPane.showMessageDialog(this.editEmployeeSalaryView, exception.getMessage(), 
 					this.resources.getString("gui.error"), JOptionPane.ERROR_MESSAGE);
 			return;
 		}
 		
 		//Validation successful - Update existing salary and check if anything has changed.
 		if(this.selectedEmployee.getSalaryData() != null) {
-			int salary = Integer.parseInt(this.employeeSalaryView.getTextFieldSalary().getText());
+			int salary = Integer.parseInt(this.editEmployeeSalaryView.getTextFieldSalary().getText());
 			this.selectedEmployee.getSalaryData().setMonthlySalary(salary);
 			
 			if(this.selectedEmployee.getSalaryData().isEdited() == false) {
-				JOptionPane.showMessageDialog(this.employeeSalaryView,this.resources.getString("gui.employee.information.salaryNotChanged"), 
+				JOptionPane.showMessageDialog(this.editEmployeeSalaryView,this.resources.getString("gui.employee.information.salaryNotChanged"), 
 						this.resources.getString("gui.information"), JOptionPane.INFORMATION_MESSAGE);
 				return;
 			}
@@ -140,7 +141,7 @@ public class EmployeeSalaryController {
 		//Validation successful - No salary exists yet. Create new one.
 		if(this.selectedEmployee.getSalaryData() == null) {
 			//No salary exists yet
-			int salary = Integer.parseInt(this.employeeSalaryView.getTextFieldSalary().getText());
+			int salary = Integer.parseInt(this.editEmployeeSalaryView.getTextFieldSalary().getText());
 			this.selectedEmployee.setSalaryData(new EmployeeSalary(this.selectedEmployee.getId(), salary));
 		}
 
@@ -149,7 +150,7 @@ public class EmployeeSalaryController {
 			this.employeeWebServiceDao.updateEmployee(this.selectedEmployee);
 			this.initializeViewData();		//Update view to show the new change date
 		} catch (Exception e1) {
-			JOptionPane.showMessageDialog(this.employeeSalaryView, this.resources.getString("gui.employee.error.updateSalary"), 
+			JOptionPane.showMessageDialog(this.editEmployeeSalaryView, this.resources.getString("gui.employee.error.updateSalary"), 
 					this.resources.getString("gui.error"), JOptionPane.ERROR_MESSAGE);
 			logger.error("Updating salary data of employee failed: " +e1.getMessage());
 		}
@@ -164,11 +165,11 @@ public class EmployeeSalaryController {
 	 */
 	public void btnBackHandler(ActionEvent e) {	
 		if(this.employeeOverviewController != null && this.editEmployeeController == null) {
-			this.getMainViewController().switchToEmployeeBasicDataView(this.employeeOverviewController);
+			this.mainViewController.switchToEmployeeBasicDataView(this.employeeOverviewController);
 		}
 		
 		if(this.employeeOverviewController == null && this.editEmployeeController != null) {
-			this.getMainViewController().switchToEditEmployeeView(this.editEmployeeController);
+			this.mainViewController.switchToEditEmployeeView(this.editEmployeeController);
 		}
 	}
 	
@@ -182,18 +183,18 @@ public class EmployeeSalaryController {
 		if(salary == null)
 			return;	
 		
-		this.employeeSalaryView.getTextFieldSalary().setText(String.valueOf(salary.getMonthlySalary()));
-		this.employeeSalaryView.getLblLastChangeValue().setText(DateFormat.getInstance().format(salary.getSalaryLastChange()));
+		this.editEmployeeSalaryView.getTextFieldSalary().setText(String.valueOf(salary.getMonthlySalary()));
+		this.editEmployeeSalaryView.getLblLastChangeValue().setText(DateFormat.getInstance().format(salary.getSalaryLastChange()));
 	}
 	
 	
-	public EmployeeSalaryView getEmployeeSalaryView() {
-		return employeeSalaryView;
+	public EditEmployeeSalaryView getEditEmployeeSalaryView() {
+		return editEmployeeSalaryView;
 	}
 	
 	
-	public void setEmployeeSalaryView(EmployeeSalaryView employeeSalaryView) {
-		this.employeeSalaryView = employeeSalaryView;
+	public void setEmployeeSalaryView(EditEmployeeSalaryView employeeSalaryView) {
+		this.editEmployeeSalaryView = employeeSalaryView;
 	}
 
 
@@ -206,11 +207,6 @@ public class EmployeeSalaryController {
 		this.selectedEmployee = selectedEmployee;
 	}
 
-
-	public MainViewController getMainViewController() {
-		return mainViewController;
-	}
-	
 	
 	/**
 	 * @param employeeOverviewController the employeeOverviewController to set

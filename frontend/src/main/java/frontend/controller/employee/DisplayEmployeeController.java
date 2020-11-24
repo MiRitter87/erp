@@ -1,5 +1,6 @@
 package frontend.controller.employee;
 
+import java.awt.event.ActionEvent;
 import java.awt.event.ItemEvent;
 import java.util.ResourceBundle;
 
@@ -25,6 +26,11 @@ public class DisplayEmployeeController extends EmployeeController {
 	 * The controller of the main view.
 	 */
 	private MainViewController mainViewController;
+	
+	/**
+	 * The controller of the salary view.
+	 */
+	private DisplayEmployeeSalaryController displayEmployeeSalaryController;
 	
 	/**
 	 * The view for employee display.
@@ -138,6 +144,33 @@ public class DisplayEmployeeController extends EmployeeController {
 	    		}
 	    	}
 	    }
+	}
+	
+	
+	/**
+	 * Handles a click at the "cancel"-button.
+	 * 
+	 * @param cancelEvent The action event of the button click.
+	 */
+	public void cancelHandler(ActionEvent cancelEvent) {
+		this.mainViewController.switchToStartpage();
+	}
+	
+	
+	/**
+	 * Handles a click at the "salary data"-button.
+	 * 
+	 * @param salaryDataButtonClick The action event of the button click.
+	 */
+	public void btnSalaryDataHandler(ActionEvent salaryDataButtonClick) {
+		if(this.selectedEmployee == null) {
+			JOptionPane.showMessageDialog(this.displayEmployeeView, this.resources.getString("gui.employee.error.noEmployeeSelected"), 
+					this.resources.getString("gui.error"), JOptionPane.ERROR_MESSAGE);
+		}
+		
+		this.displayEmployeeSalaryController = new DisplayEmployeeSalaryController(this.mainViewController, this.selectedEmployee);
+		this.displayEmployeeSalaryController.setDisplayEmployeeController(this);
+		this.mainViewController.switchToDisplaySalaryView(this.displayEmployeeSalaryController);
 	}
 	
 	
