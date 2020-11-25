@@ -58,9 +58,9 @@ public class EmployeeOverview extends JPanel {
 		
 		GridBagLayout gridBagLayout = new GridBagLayout();
 		gridBagLayout.columnWidths = new int[]{161, 0};
-		gridBagLayout.rowHeights = new int[] {0, 0, 0};
+		gridBagLayout.rowHeights = new int[] {0, 0, 0, 0};
 		gridBagLayout.columnWeights = new double[]{0.0, 1.0};
-		gridBagLayout.rowWeights = new double[]{0.0, 0.0, 1.0};
+		gridBagLayout.rowWeights = new double[]{0.0, 0.0, 1.0, 0.0};
 		this.setLayout(gridBagLayout);
 		
 		JLabel textLabel = new JLabel(this.resources.getString("gui.employee.header.overview"));
@@ -101,6 +101,7 @@ public class EmployeeOverview extends JPanel {
 		
 		JScrollPane scrollPane = new JScrollPane();
 		GridBagConstraints gbc_scrollPane = new GridBagConstraints();
+		gbc_scrollPane.insets = new Insets(0, 0, 5, 0);
 		gbc_scrollPane.gridwidth = 2;
 		gbc_scrollPane.fill = GridBagConstraints.BOTH;
 		gbc_scrollPane.gridx = 0;
@@ -110,6 +111,18 @@ public class EmployeeOverview extends JPanel {
 		tableEmployee = new JTable(3,3);
 		scrollPane.setViewportView(tableEmployee);
 		tableEmployee.setModel(new EmployeeTableModel());
+		
+		JButton btnCancel = new JButton(this.resources.getString("gui.general.cancel"));
+		btnCancel.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				employeeOverviewController.cancelHandler(arg0);
+			}
+		});
+		GridBagConstraints gbc_btnCancel = new GridBagConstraints();
+		gbc_btnCancel.insets = new Insets(0, 0, 0, 5);
+		gbc_btnCancel.gridx = 0;
+		gbc_btnCancel.gridy = 3;
+		add(btnCancel, gbc_btnCancel);
 	}
 
 

@@ -192,6 +192,16 @@ public class EmployeeOverviewController extends EmployeeController {
 	
 	
 	/**
+	 * Handles a click at the "cancel"-button.
+	 * 
+	 * @param cancelEvent The action event of the button click.
+	 */
+	public void cancelHandler(ActionEvent cancelEvent) {
+		this.mainViewController.switchToStartpage();
+	}
+	
+	
+	/**
 	 * 
 	 * @return The EmployeeOverview
 	 */
