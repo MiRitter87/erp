@@ -23,7 +23,7 @@ public class EmployeeOverviewController extends EmployeeController {
 	/**
 	 * The controller of the salary view.
 	 */
-	private EditEmployeeSalaryController employeeSalaryController;
+	private DisplayEmployeeSalaryController employeeSalaryController;
 	
 	/**
 	 * The view for the employee overview.
@@ -179,9 +179,9 @@ public class EmployeeOverviewController extends EmployeeController {
 			if(employee == null)
 				throw new Exception(MessageFormat.format(this.resources.getString("gui.employee.error.notFound"), employeeId));	
 			
-			this.employeeSalaryController = new EditEmployeeSalaryController(this.mainViewController, employee, this.employeeWebServiceDao);
+			this.employeeSalaryController = new DisplayEmployeeSalaryController(this.mainViewController, employee);
 			this.employeeSalaryController.setEmployeeOverviewController(this);
-			this.mainViewController.switchToEditSalaryView(this.employeeSalaryController);
+			this.mainViewController.switchToDisplaySalaryView(this.employeeSalaryController);
 		}
 		catch(Exception exception) {
 			JOptionPane.showMessageDialog(this.employeeOverview, exception.getMessage(), 
