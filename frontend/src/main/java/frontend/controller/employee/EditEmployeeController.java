@@ -2,7 +2,7 @@ package frontend.controller.employee;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ItemEvent;
-import java.util.ResourceBundle;
+import java.util.List;
 
 import javax.swing.JOptionPane;
 
@@ -14,7 +14,6 @@ import frontend.dao.EmployeeWebServiceDao;
 import frontend.model.ComboBoxItem;
 import frontend.model.Employee;
 import frontend.model.EmployeeList;
-import frontend.model.Gender;
 import frontend.view.employee.EditEmployeeView;
 
 /**
@@ -24,29 +23,14 @@ import frontend.view.employee.EditEmployeeView;
  */
 public class EditEmployeeController extends EmployeeController {
 	/**
-	 * The controller of the main view.
-	 */
-	private MainViewController mainViewController;
-	
-	/**
 	 * The controller of the salary view.
 	 */
 	private EditEmployeeSalaryController editEmployeeSalaryController;
 	
 	/**
-	 * Access to localized application resources.
-	 */
-	private ResourceBundle resources;
-	
-	/**
 	 * The view for employee edit.
 	 */
 	private EditEmployeeView editEmployeeView;
-	
-	/**
-	 * Access to employee data using a WebService.
-	 */
-	private EmployeeWebServiceDao employeeWebServiceDao;
 	
 	/**
 	 * The employees of the application. Those are candidates for the "edit"-function.
@@ -69,10 +53,8 @@ public class EditEmployeeController extends EmployeeController {
 	 * @param mainViewController The controller of the main view.
 	 */
 	public EditEmployeeController(final MainViewController mainViewController) {
+		super(mainViewController);
 		this.editEmployeeView = new EditEmployeeView(this);
-		this.mainViewController = mainViewController;
-		this.resources = ResourceBundle.getBundle("frontend");
-		this.employeeWebServiceDao = new EmployeeWebServiceDao();
 		this.employees = new EmployeeList();
 		this.initializeGenderComboBox();
 		this.selectedEmployee = null;
@@ -97,24 +79,13 @@ public class EditEmployeeController extends EmployeeController {
 	 * All employees are being displayed by ID, first name and last name.
 	 */
 	private void initializeEmployeeComboBox() {
-		StringBuilder builder;
+		List<ComboBoxItem> items = this.getEmployeeItemsForComboBox(this.employees);
 		
-		//An initial ComboBox entry allowing the user to de-select.
-		this.editEmployeeView.getCbEmployee().addItem(new ComboBoxItem("", ""));
-		
-		//One ComboBox entry for each employee.
-		for(Employee tempEmployee:this.employees.getEmployees()) {
-			builder = new StringBuilder();
-			builder.append(tempEmployee.getId().toString());
-			builder.append(" - ");
-			builder.append(tempEmployee.getFirstName());
-			builder.append(" ");
-			builder.append(tempEmployee.getLastName());
-			
-			this.editEmployeeView.getCbEmployee().addItem(new ComboBoxItem(tempEmployee.getId().toString(), builder.toString()));
+		for(ComboBoxItem item:items) {
+			this.editEmployeeView.getCbEmployee().addItem(item);
 		}
 		
-		this.editEmployeeView.getCbEmployee().setSelectedIndex(0);
+		this.editEmployeeView.getCbEmployee().setSelectedIndex(0);		
 	}
 	
 	
@@ -122,21 +93,10 @@ public class EditEmployeeController extends EmployeeController {
 	 * Provides the labels for the gender selection combo box.
 	 */
 	private void initializeGenderComboBox() {
-		//Add an initial ComboBox entry.
-		this.editEmployeeView.getCbGender().addItem(new ComboBoxItem("", ""));
+		List<ComboBoxItem> items = this.getGenderItemsForComboBox();
 		
-		//Add a ComboBox entry for each available gender.
-		for(Gender gender:Gender.values()) {
-			switch(gender) {
-				case FEMALE: {
-					this.editEmployeeView.getCbGender().addItem(new ComboBoxItem(gender.toString(), this.resources.getString("gui.employee.gender.female")));
-					break;
-				}
-				case MALE: {
-					this.editEmployeeView.getCbGender().addItem(new ComboBoxItem(gender.toString(), this.resources.getString("gui.employee.gender.male")));
-					break;
-				}
-			}
+		for(ComboBoxItem item:items) {
+			this.editEmployeeView.getCbGender().addItem(item);
 		}
 	}
 	

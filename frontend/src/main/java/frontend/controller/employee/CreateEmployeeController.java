@@ -1,7 +1,7 @@
 package frontend.controller.employee;
 
 import java.awt.event.ActionEvent;
-import java.util.ResourceBundle;
+import java.util.List;
 
 import javax.swing.JOptionPane;
 
@@ -9,10 +9,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import frontend.controller.MainViewController;
-import frontend.dao.EmployeeWebServiceDao;
 import frontend.model.ComboBoxItem;
 import frontend.model.Employee;
-import frontend.model.Gender;
 import frontend.view.employee.CreateEmployeeView;
 
 /**
@@ -21,25 +19,10 @@ import frontend.view.employee.CreateEmployeeView;
  * @author Michael
  */
 public class CreateEmployeeController extends EmployeeController {
-	/**
-	 * The controller of the main view.
-	 */
-	private MainViewController mainViewController;
-	
-	/**
-	 * Access to localized application resources.
-	 */
-	private ResourceBundle resources;
-	
-	/**
+		/**
 	 * The view for employee creation.
 	 */
 	private CreateEmployeeView createEmployeeView;
-	
-	/**
-	 * Access to employee data using a WebService.
-	 */
-	private EmployeeWebServiceDao employeeWebServiceDao;
 	
 	/**
 	 * Application logging.
@@ -53,11 +36,9 @@ public class CreateEmployeeController extends EmployeeController {
 	 * @param mainViewController The controller of the main view.
 	 */
 	public CreateEmployeeController(final MainViewController mainViewController) {
+		super(mainViewController);
 		this.createEmployeeView = new CreateEmployeeView(this);
-		this.mainViewController = mainViewController;
-		this.resources = ResourceBundle.getBundle("frontend");
 		this.initializeGenderComboBox();
-		this.employeeWebServiceDao = new EmployeeWebServiceDao();
 	}
 	
 	
@@ -65,21 +46,10 @@ public class CreateEmployeeController extends EmployeeController {
 	 * Provides the labels for the gender selection combo box.
 	 */
 	private void initializeGenderComboBox() {
-		//Add an initial ComboBox entry.
-		this.createEmployeeView.getCbGender().addItem(new ComboBoxItem("", ""));
+		List<ComboBoxItem> items = this.getGenderItemsForComboBox();
 		
-		//Add a ComboBox entry for each available gender.
-		for(Gender gender:Gender.values()) {
-			switch(gender) {
-				case FEMALE: {
-					this.createEmployeeView.getCbGender().addItem(new ComboBoxItem(gender.toString(), this.resources.getString("gui.employee.gender.female")));
-					break;
-				}
-				case MALE: {
-					this.createEmployeeView.getCbGender().addItem(new ComboBoxItem(gender.toString(), this.resources.getString("gui.employee.gender.male")));
-					break;
-				}
-			}
+		for(ComboBoxItem item:items) {
+			this.createEmployeeView.getCbGender().addItem(item);
 		}
 	}
 	

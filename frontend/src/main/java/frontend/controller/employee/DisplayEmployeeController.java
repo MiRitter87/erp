@@ -2,7 +2,7 @@ package frontend.controller.employee;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ItemEvent;
-import java.util.ResourceBundle;
+import java.util.List;
 
 import javax.swing.JOptionPane;
 
@@ -23,11 +23,6 @@ import frontend.view.employee.DisplayEmployeeView;
  */
 public class DisplayEmployeeController extends EmployeeController {
 	/**
-	 * The controller of the main view.
-	 */
-	private MainViewController mainViewController;
-	
-	/**
 	 * The controller of the salary view.
 	 */
 	private DisplayEmployeeSalaryController displayEmployeeSalaryController;
@@ -36,16 +31,6 @@ public class DisplayEmployeeController extends EmployeeController {
 	 * The view for employee display.
 	 */
 	private DisplayEmployeeView displayEmployeeView;
-	
-	/**
-	 * Access to localized application resources.
-	 */
-	private ResourceBundle resources;
-	
-	/**
-	 * Access to employee data using a WebService.
-	 */
-	private EmployeeWebServiceDao employeeWebServiceDao;
 	
 	/**
 	 * The employees of the application. Those are candidates for the "display"-function.
@@ -60,7 +45,7 @@ public class DisplayEmployeeController extends EmployeeController {
 	/**
 	 * Application logging.
 	 */
-	public static final Logger logger = LogManager.getLogger(EditEmployeeController.class);
+	public static final Logger logger = LogManager.getLogger(DisplayEmployeeController.class);
 
 	
 	/**
@@ -69,10 +54,8 @@ public class DisplayEmployeeController extends EmployeeController {
 	 * @param mainViewController The controller of the main view.
 	 */
 	public DisplayEmployeeController(final MainViewController mainViewController) {
+		super(mainViewController);
 		this.displayEmployeeView = new DisplayEmployeeView(this);
-		this.mainViewController = mainViewController;
-		this.resources = ResourceBundle.getBundle("frontend");
-		this.employeeWebServiceDao = new EmployeeWebServiceDao();
 		this.employees = new EmployeeList();
 		this.selectedEmployee = null;
 		
@@ -96,24 +79,13 @@ public class DisplayEmployeeController extends EmployeeController {
 	 * All employees are being displayed by ID, first name and last name.
 	 */
 	private void initializeEmployeeComboBox() {
-		StringBuilder builder;
+		List<ComboBoxItem> items = this.getEmployeeItemsForComboBox(this.employees);
 		
-		//An initial ComboBox entry allowing the user to de-select.
-		this.displayEmployeeView.getCbEmployee().addItem(new ComboBoxItem("", ""));
-		
-		//One ComboBox entry for each employee.
-		for(Employee tempEmployee:this.employees.getEmployees()) {
-			builder = new StringBuilder();
-			builder.append(tempEmployee.getId().toString());
-			builder.append(" - ");
-			builder.append(tempEmployee.getFirstName());
-			builder.append(" ");
-			builder.append(tempEmployee.getLastName());
-			
-			this.displayEmployeeView.getCbEmployee().addItem(new ComboBoxItem(tempEmployee.getId().toString(), builder.toString()));
+		for(ComboBoxItem item:items) {
+			this.displayEmployeeView.getCbEmployee().addItem(item);
 		}
 		
-		this.displayEmployeeView.getCbEmployee().setSelectedIndex(0);
+		this.displayEmployeeView.getCbEmployee().setSelectedIndex(0);	
 	}
 	
 	
