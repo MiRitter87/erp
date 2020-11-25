@@ -6,6 +6,7 @@ import javax.swing.SwingUtilities;
 
 import frontend.controller.employee.EditEmployeeController;
 import frontend.controller.employee.EditEmployeeSalaryController;
+import frontend.controller.employee.EmployeeOverviewController;
 import frontend.controller.employee.CreateEmployeeController;
 import frontend.controller.employee.DisplayEmployeeController;
 import frontend.controller.employee.DisplayEmployeeSalaryController;
@@ -44,16 +45,16 @@ public class MainViewController {
 	 * 
 	 * @param employeeOverviewController The controller of the employee overview. Can be null, if the view has not been called before or should not be reused.
 	 */
-	public void switchToEmployeeBasicDataView(final EmployeeBasicDataController employeeOverviewController) {
-		EmployeeBasicDataController controller;
+	public void switchToEmployeeOverview(final EmployeeOverviewController employeeOverviewController) {
+		EmployeeOverviewController controller;
 		
 		if(employeeOverviewController != null)
 			controller = employeeOverviewController;
 		else
-			controller = new EmployeeBasicDataController(this);
+			controller = new EmployeeOverviewController(this);
 			
 		this.mainView.getContentPane().removeAll();
-		this.mainView.getContentPane().add(controller.getEmployeeBasicDataView());
+		this.mainView.getContentPane().add(controller.getEmployeeOverview());
 		SwingUtilities.updateComponentTreeUI(this.mainView);
 	}
 	

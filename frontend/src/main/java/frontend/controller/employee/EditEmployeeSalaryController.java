@@ -9,7 +9,6 @@ import javax.swing.JOptionPane;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import frontend.controller.EmployeeBasicDataController;
 import frontend.controller.MainViewController;
 import frontend.dao.EmployeeWebServiceDao;
 import frontend.model.Employee;
@@ -50,7 +49,7 @@ public class EditEmployeeSalaryController {
 	/**
 	 * The controller of the employee overview.
 	 */
-	private EmployeeBasicDataController employeeOverviewController;
+	private EmployeeOverviewController employeeOverviewController;
 	
 	/**
 	 * The controller of the edit employee view.
@@ -165,7 +164,7 @@ public class EditEmployeeSalaryController {
 	 */
 	public void btnBackHandler(ActionEvent e) {	
 		if(this.employeeOverviewController != null && this.editEmployeeController == null) {
-			this.mainViewController.switchToEmployeeBasicDataView(this.employeeOverviewController);
+			this.mainViewController.switchToEmployeeOverview(this.employeeOverviewController);
 		}
 		
 		if(this.employeeOverviewController == null && this.editEmployeeController != null) {
@@ -211,7 +210,7 @@ public class EditEmployeeSalaryController {
 	/**
 	 * @param employeeOverviewController the employeeOverviewController to set
 	 */
-	public void setEmployeeOverviewController(EmployeeBasicDataController employeeOverviewController) {
+	public void setEmployeeOverviewController(EmployeeOverviewController employeeOverviewController) {
 		this.employeeOverviewController = employeeOverviewController;
 	}
 

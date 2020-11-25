@@ -2,9 +2,7 @@ package frontend.controller.employee;
 
 import java.awt.event.ActionEvent;
 import java.text.DateFormat;
-import java.util.ResourceBundle;
 
-import frontend.controller.EmployeeBasicDataController;
 import frontend.controller.MainViewController;
 import frontend.model.Employee;
 import frontend.model.EmployeeSalary;
@@ -32,14 +30,9 @@ public class DisplayEmployeeSalaryController {
 	private Employee selectedEmployee;
 	
 	/**
-	 * Access to localized application resources.
-	 */
-	private ResourceBundle resources;
-	
-	/**
 	 * The controller of the employee overview.
 	 */
-	private EmployeeBasicDataController employeeOverviewController;
+	private EmployeeOverviewController employeeOverviewController;
 	
 	/**
 	 * The controller of the display employee view.
@@ -57,7 +50,6 @@ public class DisplayEmployeeSalaryController {
 		this.selectedEmployee = selectedEmployee;
 		this.mainViewController = mainViewController;
 		this.displayEmployeeSalaryView = new DisplayEmployeeSalaryView(this);
-		this.resources = ResourceBundle.getBundle("frontend");
 		
 		//Initially the controller of the potentially calling views are set to null.
 		//The calling controller has to be explicitly set afterwards.
@@ -89,7 +81,7 @@ public class DisplayEmployeeSalaryController {
 	 */
 	public void btnBackHandler(ActionEvent e) {	
 		if(this.employeeOverviewController != null && this.displayEmployeeController == null) {
-			this.mainViewController.switchToEmployeeBasicDataView(this.employeeOverviewController);
+			this.mainViewController.switchToEmployeeOverview(this.employeeOverviewController);
 		}
 		
 		if(this.employeeOverviewController == null && this.displayEmployeeController != null) {
@@ -108,7 +100,7 @@ public class DisplayEmployeeSalaryController {
 	/**
 	 * @param employeeOverviewController the employeeOverviewController to set
 	 */
-	public void setEmployeeOverviewController(EmployeeBasicDataController employeeOverviewController) {
+	public void setEmployeeOverviewController(EmployeeOverviewController employeeOverviewController) {
 		this.employeeOverviewController = employeeOverviewController;
 	}
 

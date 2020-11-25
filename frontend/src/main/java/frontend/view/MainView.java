@@ -79,7 +79,7 @@ public class MainView extends JFrame {
 		JMenuItem miEmployeeOverview = new JMenuItem(this.resources.getString("gui.mainMenu.object.overview"));
 		miEmployeeOverview.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				mainViewController.switchToEmployeeBasicDataView(null);	
+				mainViewController.switchToEmployeeOverview(null);	
 			}
 		});
 		
