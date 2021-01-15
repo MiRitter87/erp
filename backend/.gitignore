@@ -1,2 +1,10 @@
+# Eclipse
+/.settings
+.classpath
+.project
+
+# Build
 /target/
+
+# Local application testing
 /database
