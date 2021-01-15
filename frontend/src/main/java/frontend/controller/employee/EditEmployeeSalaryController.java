@@ -80,7 +80,6 @@ public class EditEmployeeSalaryController {
 		
 		//Initially the controller of the potentially calling views are set to null.
 		//The calling controller has to be explicitly set afterwards.
-		//TODO Refactoring: The edit salary function can only be called from the edit employee view and not from the employee overview.
 		this.editEmployeeController = null;
 		this.employeeOverviewController = null;
 		
