@@ -62,26 +62,17 @@ public class MainView extends JFrame {
 		
 		JMenu menuHr = new JMenu(this.resources.getString("gui.mainMenu.hr"));
 		menuBar.add(menuHr);
-		
-		JMenuItem menuDepartment = new JMenuItem(this.resources.getString("gui.mainMenu.hr.dept"));
-		menuDepartment.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				mainViewController.switchToDepartmentView();				
-			}
-		});
-		
+
 		JMenu menuEmployee = new JMenu(this.resources.getString("gui.mainMenu.hr.employee"));
 		menuHr.add(menuEmployee);
 		
 		JMenuItem miEmployeeCreate = new JMenuItem(this.resources.getString("gui.mainMenu.object.create"));
-		menuEmployee.add(miEmployeeCreate);
-		
-		JMenuItem miEmployeeOverview = new JMenuItem(this.resources.getString("gui.mainMenu.object.overview"));
-		miEmployeeOverview.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {
-				mainViewController.switchToEmployeeOverview(null);	
+		miEmployeeCreate.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				mainViewController.switchToCreateEmployeeView();
 			}
 		});
+		menuEmployee.add(miEmployeeCreate);
 		
 		JMenuItem miEmployeeEdit = new JMenuItem(this.resources.getString("gui.mainMenu.object.edit"));
 		miEmployeeEdit.addActionListener(new ActionListener() {
@@ -98,13 +89,34 @@ public class MainView extends JFrame {
 			}
 		});
 		menuEmployee.add(miEmployeeDisplay);
-		menuEmployee.add(miEmployeeOverview);
-		miEmployeeCreate.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				mainViewController.switchToCreateEmployeeView();
+		
+		JMenuItem miEmployeeOverview = new JMenuItem(this.resources.getString("gui.mainMenu.object.overview"));
+		miEmployeeOverview.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				mainViewController.switchToEmployeeOverview(null);	
 			}
 		});
+		menuEmployee.add(miEmployeeOverview);
+		
+		JMenu menuDepartment = new JMenu(this.resources.getString("gui.mainMenu.hr.dept"));
 		menuHr.add(menuDepartment);
+		
+		JMenuItem miDepartmentCreate = new JMenuItem(this.resources.getString("gui.mainMenu.object.create"));
+		menuDepartment.add(miDepartmentCreate);
+		
+		JMenuItem miDepartmentEdit = new JMenuItem(this.resources.getString("gui.mainMenu.object.edit"));
+		menuDepartment.add(miDepartmentEdit);
+		
+		JMenuItem miDepartmentDisplay = new JMenuItem(this.resources.getString("gui.mainMenu.object.display"));
+		menuDepartment.add(miDepartmentDisplay);
+		
+		JMenuItem miDepartmentOverview = new JMenuItem(this.resources.getString("gui.mainMenu.object.overview"));
+		miDepartmentOverview.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				mainViewController.switchToDepartmentView();
+			}
+		});
+		menuDepartment.add(miDepartmentOverview);
 		
 		setLocationRelativeTo(null);
 		setVisible(true);
