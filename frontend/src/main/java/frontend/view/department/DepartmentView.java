@@ -10,7 +10,7 @@ import java.awt.Font;
 import java.awt.Insets;
 import javax.swing.JTextField;
 
-import frontend.controller.department.DepartmentController;
+import frontend.controller.department.DepartmentOverviewController;
 import frontend.model.ComboBoxItem;
 import frontend.view.components.DepartmentTableModel;
 import frontend.view.components.ExtendedDocumentFilter;
@@ -71,7 +71,7 @@ public class DepartmentView extends JPanel {
 	 * Controller of this view.
 	 */
 	@SuppressWarnings("unused")
-	private DepartmentController departmentController;
+	private DepartmentOverviewController departmentController;
 	
 	
 	/**
@@ -79,7 +79,7 @@ public class DepartmentView extends JPanel {
 	 * 
 	 * @param departmentController The controller of this view.
 	 */
-	public DepartmentView(final DepartmentController departmentController) {
+	public DepartmentView(final DepartmentOverviewController departmentController) {
 		this.resources = ResourceBundle.getBundle("frontend");
 		this.departmentController = departmentController;
 		

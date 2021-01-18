@@ -25,7 +25,7 @@ import frontend.view.department.DepartmentView;
  * 
  * @author Michael
  */
-public class DepartmentController {
+public class DepartmentOverviewController {
 	
 	/**
 	 * The view for department management.
@@ -40,7 +40,7 @@ public class DepartmentController {
 	/**
 	 * Application logging.
 	 */
-	public static final Logger logger = LogManager.getLogger(DepartmentController.class);
+	public static final Logger logger = LogManager.getLogger(DepartmentOverviewController.class);
 	
 	/**
 	 * The departments that are managed by the department view.
@@ -66,7 +66,7 @@ public class DepartmentController {
 	/**
 	 * Initializes the DepartmentController.
 	 */
-	public DepartmentController() {
+	public DepartmentOverviewController() {
 		this.departmentView = new DepartmentView(this);
 		this.resources = ResourceBundle.getBundle("frontend");
 		this.employees = new EmployeeList();
