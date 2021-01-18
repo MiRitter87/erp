@@ -7,6 +7,8 @@ import javax.swing.SwingUtilities;
 import frontend.controller.employee.EditEmployeeController;
 import frontend.controller.employee.EditEmployeeSalaryController;
 import frontend.controller.employee.EmployeeOverviewController;
+import frontend.controller.department.DepartmentController;
+import frontend.controller.department.DisplayDepartmentController;
 import frontend.controller.employee.CreateEmployeeController;
 import frontend.controller.employee.DisplayEmployeeController;
 import frontend.controller.employee.DisplayEmployeeSalaryController;
@@ -79,6 +81,17 @@ public class MainViewController {
 	public void switchToDisplaySalaryView(final DisplayEmployeeSalaryController displaySalaryController) {
 		this.mainView.getContentPane().removeAll();
 		this.mainView.getContentPane().add(displaySalaryController.getDisplayEmployeeSalaryView());
+		this.mainView.revalidate();
+	}
+	
+	
+	/**
+	 * Switches the currently displayed content area to the display department view.
+	 */
+	public void switchToDisplayDepartmentView() {
+		DisplayDepartmentController controller = new DisplayDepartmentController(this);
+		this.mainView.getContentPane().removeAll();
+		this.mainView.getContentPane().add(controller.getDisplayDepartmentView());
 		this.mainView.revalidate();
 	}
 	

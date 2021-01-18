@@ -1,4 +1,4 @@
-package frontend.view;
+package frontend.view.department;
 
 import javax.swing.JPanel;
 import java.awt.GridBagLayout;
@@ -10,7 +10,7 @@ import java.awt.Font;
 import java.awt.Insets;
 import javax.swing.JTextField;
 
-import frontend.controller.DepartmentController;
+import frontend.controller.department.DepartmentController;
 import frontend.model.ComboBoxItem;
 import frontend.view.components.DepartmentTableModel;
 import frontend.view.components.ExtendedDocumentFilter;

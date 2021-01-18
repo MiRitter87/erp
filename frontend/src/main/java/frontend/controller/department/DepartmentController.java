@@ -1,4 +1,4 @@
-package frontend.controller;
+package frontend.controller.department;
 
 import java.awt.event.ActionEvent;
 import java.text.MessageFormat;
@@ -17,8 +17,8 @@ import frontend.model.Department;
 import frontend.model.DepartmentList;
 import frontend.model.Employee;
 import frontend.model.EmployeeList;
-import frontend.view.DepartmentView;
 import frontend.view.components.DepartmentTableModel;
+import frontend.view.department.DepartmentView;
 
 /**
  * Controls all actions directly happening within the DepartmentView.
