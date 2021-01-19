@@ -36,10 +36,35 @@ public class EditDepartmentView extends JPanel {
 	/**
 	 * The controller of this view.
 	 */
+	@SuppressWarnings("unused")
 	private EditDepartmentController editDepartmentController;
+	
+	/**
+	 * ComboBox for department selection.
+	 */
+	private JComboBox<ComboBoxItem> cbDepartment;
+	
+	/**
+	 * ComboBox for head of department selection.
+	 */
+	private JComboBox<ComboBoxItem> cbHead;
+	
+	/**
+	 * Label for display of department code.
+	 */
+	private JLabel lblCodeContent;
+	
+	/**
+	 * Input field for department name.
+	 */
 	private JTextField textFieldName;
+	
+	/**
+	 * Input field for department description
+	 */
 	private JTextField textFieldDescription;
 
+	
 	/**
 	 * Create the panel.
 	 * 
@@ -70,7 +95,8 @@ public class EditDepartmentView extends JPanel {
 		gbc_lblDepartment.gridy = 1;
 		add(lblDepartment, gbc_lblDepartment);
 		
-		JComboBox<ComboBoxItem> cbDepartment = new JComboBox<ComboBoxItem>();
+		cbDepartment = new JComboBox<ComboBoxItem>();
+		cbDepartment.addItemListener(editDepartmentController::cbDepartmentItemStateChanged);
 		GridBagConstraints gbc_cbDepartment = new GridBagConstraints();
 		gbc_cbDepartment.insets = new Insets(0, 0, 5, 0);
 		gbc_cbDepartment.fill = GridBagConstraints.HORIZONTAL;
@@ -94,7 +120,7 @@ public class EditDepartmentView extends JPanel {
 		gbc_lblCode.gridy = 3;
 		add(lblCode, gbc_lblCode);
 		
-		JLabel lblCodeContent = new JLabel("");
+		lblCodeContent = new JLabel("");
 		GridBagConstraints gbc_lblCodeContent = new GridBagConstraints();
 		gbc_lblCodeContent.fill = GridBagConstraints.HORIZONTAL;
 		gbc_lblCodeContent.insets = new Insets(0, 0, 5, 0);
@@ -141,7 +167,7 @@ public class EditDepartmentView extends JPanel {
 		gbc_lblHead.gridy = 6;
 		add(lblHead, gbc_lblHead);
 		
-		JComboBox<ComboBoxItem> cbHead = new JComboBox<ComboBoxItem>();
+		cbHead = new JComboBox<ComboBoxItem>();
 		GridBagConstraints gbc_cbHead = new GridBagConstraints();
 		gbc_cbHead.insets = new Insets(0, 0, 5, 0);
 		gbc_cbHead.fill = GridBagConstraints.HORIZONTAL;
@@ -163,4 +189,43 @@ public class EditDepartmentView extends JPanel {
 		add(btnCancel, gbc_btnCancel);
 	}
 
+	
+	/**
+	 * @return the cbDepartment
+	 */
+	public JComboBox<ComboBoxItem> getCbDepartment() {
+		return cbDepartment;
+	}
+
+	
+	/**
+	 * @return the cbHead
+	 */
+	public JComboBox<ComboBoxItem> getCbHead() {
+		return cbHead;
+	}
+
+	
+	/**
+	 * @return the lblCodeContent
+	 */
+	public JLabel getLblCodeContent() {
+		return lblCodeContent;
+	}
+
+
+	/**
+	 * @return the textFieldName
+	 */
+	public JTextField getTextFieldName() {
+		return textFieldName;
+	}
+
+	
+	/**
+	 * @return the textFieldDescription
+	 */
+	public JTextField getTextFieldDescription() {
+		return textFieldDescription;
+	}
 }
