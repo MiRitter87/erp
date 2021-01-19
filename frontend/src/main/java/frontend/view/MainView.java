@@ -105,6 +105,11 @@ public class MainView extends JFrame {
 		menuDepartment.add(miDepartmentCreate);
 		
 		JMenuItem miDepartmentEdit = new JMenuItem(this.resources.getString("gui.mainMenu.object.edit"));
+		miDepartmentEdit.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				mainViewController.switchToEditDepartmentView();
+			}
+		});
 		menuDepartment.add(miDepartmentEdit);
 		
 		JMenuItem miDepartmentDisplay = new JMenuItem(this.resources.getString("gui.mainMenu.object.display"));

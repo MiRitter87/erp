@@ -9,6 +9,7 @@ import frontend.controller.employee.EditEmployeeSalaryController;
 import frontend.controller.employee.EmployeeOverviewController;
 import frontend.controller.department.DepartmentOverviewController;
 import frontend.controller.department.DisplayDepartmentController;
+import frontend.controller.department.EditDepartmentController;
 import frontend.controller.employee.CreateEmployeeController;
 import frontend.controller.employee.DisplayEmployeeController;
 import frontend.controller.employee.DisplayEmployeeSalaryController;
@@ -92,6 +93,17 @@ public class MainViewController {
 		DisplayDepartmentController controller = new DisplayDepartmentController(this);
 		this.mainView.getContentPane().removeAll();
 		this.mainView.getContentPane().add(controller.getDisplayDepartmentView());
+		this.mainView.revalidate();
+	}
+	
+	
+	/**
+	 * Switches the currently displayed content area to the edit department view.
+	 */
+	public void switchToEditDepartmentView() {
+		EditDepartmentController controller = new EditDepartmentController(this);
+		this.mainView.getContentPane().removeAll();
+		this.mainView.getContentPane().add(controller.getEditDepartmentView());
 		this.mainView.revalidate();
 	}
 	
