@@ -1,5 +1,7 @@
 package frontend.controller.department;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ItemEvent;
 import java.util.List;
 
 import javax.swing.JOptionPane;
@@ -76,6 +78,49 @@ public class DisplayDepartmentController extends DepartmentController {
 		}
 		
 		this.displayDepartmentView.getCbDepartment().setSelectedIndex(0);
+	}
+	
+	
+	/**
+	 * Handles selections performed at the department selection combo box.
+	 * 
+	 * @param itemEvent Indicates ComboBox item changed.
+	 */
+	public void cbDepartmentItemStateChanged(ItemEvent itemEvent) {
+		if (itemEvent.getStateChange() != ItemEvent.SELECTED)
+			return;
+		
+    	ComboBoxItem selectedItem = (ComboBoxItem) itemEvent.getItem();
+        
+    	//Selection of empty department: Clear input fields
+    	if(selectedItem.getId() == "") {
+    		this.selectedDepartment = null;
+    		this.displayDepartmentView.getLblCodeContent().setText("");
+    		this.displayDepartmentView.getLblNameContent().setText("");
+    		this.displayDepartmentView.getLblDescriptionConent().setText("");
+    		this.displayDepartmentView.getLblHeadContent().setText("");
+    	}
+    	else {
+    		//Department selected: Fill input fields accordingly.
+    		this.selectedDepartment = this.departments.getDepartmentByCode(selectedItem.getId());
+    		
+    		if(this.selectedDepartment != null) {
+    			this.displayDepartmentView.getLblCodeContent().setText(this.selectedDepartment.getCode());
+        		this.displayDepartmentView.getLblNameContent().setText(this.selectedDepartment.getName());
+        		this.displayDepartmentView.getLblDescriptionConent().setText(this.selectedDepartment.getDescription());
+        		this.displayDepartmentView.getLblHeadContent().setText(this.selectedDepartment.getHead().getFullName());
+    		}
+    	}
+	}
+	
+	
+	/**
+	 * Handles a click at the "cancel"-button.
+	 * 
+	 * @param cancelEvent The action event of the button click.
+	 */
+	public void cancelHandler(ActionEvent cancelEvent) {
+		this.mainViewController.switchToStartpage();
 	}
 
 

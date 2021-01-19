@@ -12,6 +12,9 @@ import javax.swing.JLabel;
 import java.awt.GridBagConstraints;
 import java.awt.Font;
 import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
 import javax.swing.JComboBox;
 import javax.swing.JSeparator;
 import javax.swing.JButton;
@@ -35,6 +38,7 @@ public class DisplayDepartmentView extends JPanel {
 	/**
 	 * The controller of this view.
 	 */
+	@SuppressWarnings("unused")
 	private DisplayDepartmentController displayDepartmentController;
 	
 	/**
@@ -92,6 +96,7 @@ public class DisplayDepartmentView extends JPanel {
 		add(lblDepartment, gbc_lblDepartment);
 		
 		cbDepartment = new JComboBox<ComboBoxItem>();
+		cbDepartment.addItemListener(displayDepartmentController::cbDepartmentItemStateChanged);
 		GridBagConstraints gbc_cbDepartment = new GridBagConstraints();
 		gbc_cbDepartment.insets = new Insets(0, 0, 5, 0);
 		gbc_cbDepartment.fill = GridBagConstraints.HORIZONTAL;
@@ -169,6 +174,11 @@ public class DisplayDepartmentView extends JPanel {
 		add(lblHeadContent, gbc_lblHeadContent);
 		
 		JButton btnCancel = new JButton(this.resources.getString("gui.general.cancel"));
+		btnCancel.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				displayDepartmentController.cancelHandler(e);
+			}
+		});
 		GridBagConstraints gbc_btnCancel = new GridBagConstraints();
 		gbc_btnCancel.insets = new Insets(0, 0, 0, 5);
 		gbc_btnCancel.gridx = 0;
