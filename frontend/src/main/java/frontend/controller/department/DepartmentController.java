@@ -6,6 +6,7 @@ import java.util.ResourceBundle;
 
 import frontend.controller.MainViewController;
 import frontend.dao.DepartmentWebServiceDao;
+import frontend.dao.EmployeeWebServiceDao;
 import frontend.model.ComboBoxItem;
 import frontend.model.Department;
 import frontend.model.DepartmentList;
@@ -31,6 +32,11 @@ public class DepartmentController {
 	 */
 	protected DepartmentWebServiceDao departmentWebServiceDao;
 	
+	/**
+	 * Access to employee data using a WebService.
+	 */
+	protected EmployeeWebServiceDao employeeWebServiceDao;
+	
 	
 	/**
 	 * Initializes the controller.
@@ -41,6 +47,7 @@ public class DepartmentController {
 		this.mainViewController = mainViewController;
 		this.resources = ResourceBundle.getBundle("frontend");
 		this.departmentWebServiceDao = new DepartmentWebServiceDao();
+		this.employeeWebServiceDao = new EmployeeWebServiceDao();
 	}
 	
 	

@@ -9,9 +9,12 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import frontend.controller.MainViewController;
+import frontend.controller.employee.EmployeeController;
 import frontend.model.ComboBoxItem;
 import frontend.model.Department;
 import frontend.model.DepartmentList;
+import frontend.model.Employee;
+import frontend.model.EmployeeList;
 import frontend.view.department.EditDepartmentView;
 
 /**
@@ -29,6 +32,11 @@ public class EditDepartmentController extends DepartmentController {
 	 * The departments of the application. Those are candidates for the "edit"-function.
 	 */
 	private DepartmentList departments;
+	
+	/**
+	 * The employees that are managed by the employee view. Those are candidates for the "head of department" ComboBox.
+	 */
+	private EmployeeList employees;
 	
 	/**
 	 * The currently selected department for editing.
@@ -50,6 +58,7 @@ public class EditDepartmentController extends DepartmentController {
 		super(mainViewController);
 		this.editDepartmentView = new EditDepartmentView(this);
 		this.departments = new DepartmentList();
+		this.employees = new EmployeeList();
 		this.selectedDepartment = null;
 		
 		//Initialize the departments for the selection.
@@ -61,6 +70,17 @@ public class EditDepartmentController extends DepartmentController {
 			JOptionPane.showMessageDialog(this.editDepartmentView, e.getMessage(), 
 					this.resources.getString("gui.error"), JOptionPane.ERROR_MESSAGE);
 			logger.info("Error while trying to read departments from WebService: " +e.getMessage());
+		}
+		
+		//Initialization of employee data for head selection combo box.
+		try {
+			this.employees.setEmployees(this.employeeWebServiceDao.getEmployees());
+			this.initializeHeadComboBox();
+		} 
+		catch (Exception e) {
+			JOptionPane.showMessageDialog(this.editDepartmentView, e.getMessage(), 
+					this.resources.getString("gui.error"), JOptionPane.ERROR_MESSAGE);
+			logger.info("Error while trying to read employees from WebService: " +e.getMessage());
 		}
 	}
 	
@@ -81,6 +101,21 @@ public class EditDepartmentController extends DepartmentController {
 	
 	
 	/**
+	 * Initializes the ComboBox for head of department selection.
+	 * All employees are being displayed by id, first name and second name.
+	 */
+	private void initializeHeadComboBox() {
+		List<ComboBoxItem> items = EmployeeController.getEmployeeItemsForComboBox(this.employees);
+		
+		for(ComboBoxItem item:items) {
+			this.editDepartmentView.getCbHead().addItem(item);
+		}
+		
+		this.editDepartmentView.getCbHead().setSelectedIndex(0);
+	}
+	
+	
+	/**
 	 * Handles selections performed at the department selection combo box.
 	 * 
 	 * @param itemEvent Indicates ComboBox item changed.
@@ -97,7 +132,9 @@ public class EditDepartmentController extends DepartmentController {
     		this.editDepartmentView.getLblCodeContent().setText("");
     		this.editDepartmentView.getTextFieldName().setText("");
     		this.editDepartmentView.getTextFieldDescription().setText("");
-    		//TODO Set Head ComboBox
+    		
+    		if(this.editDepartmentView.getCbHead().getItemCount() > 0)
+    			this.editDepartmentView.getCbHead().setSelectedIndex(0);
     	}
     	else {
     		//Department selected: Fill input fields accordingly.
@@ -107,9 +144,34 @@ public class EditDepartmentController extends DepartmentController {
     			this.editDepartmentView.getLblCodeContent().setText(this.selectedDepartment.getCode());
     			this.editDepartmentView.getTextFieldName().setText(this.selectedDepartment.getName());
     			this.editDepartmentView.getTextFieldDescription().setText(this.selectedDepartment.getDescription());
-    			//TODO Set Head ComboBox
+    			this.setCbHead(this.selectedDepartment.getHead());
     		}
     	}
+	}
+	
+	
+	/**
+	 * Sets the head combo box to the given employee.
+	 * 
+	 * @param selectedEmployee The employee to be set.
+	 */
+	private void setCbHead(final Employee selectedEmployee) {
+		int numberOfItems = this.editDepartmentView.getCbHead().getItemCount();
+		int currentIndex = 0;
+		ComboBoxItem currentItem;
+		
+		while(currentIndex < numberOfItems) {
+			currentItem = this.editDepartmentView.getCbHead().getItemAt(currentIndex);
+			
+			if(currentItem.getId().equals(String.valueOf(selectedEmployee.getId()))) {
+				this.editDepartmentView.getCbHead().setSelectedIndex(currentIndex);
+				return;
+			}
+			
+			currentIndex++;
+		}
+
+		this.editDepartmentView.getCbHead().setSelectedIndex(0);
 	}
 
 

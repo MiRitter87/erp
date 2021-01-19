@@ -79,7 +79,7 @@ public class EditEmployeeController extends EmployeeController {
 	 * All employees are being displayed by ID, first name and last name.
 	 */
 	private void initializeEmployeeComboBox() {
-		List<ComboBoxItem> items = this.getEmployeeItemsForComboBox(this.employees);
+		List<ComboBoxItem> items = EmployeeController.getEmployeeItemsForComboBox(this.employees);
 		
 		for(ComboBoxItem item:items) {
 			this.editEmployeeView.getCbEmployee().addItem(item);

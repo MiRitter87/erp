@@ -134,7 +134,7 @@ public class EmployeeController {
 	 * @param employees The employees for which the ComboBoxItems are being created.
 	 * @return A list with ComboBoxItems for all employees.
 	 */
-	protected List<ComboBoxItem> getEmployeeItemsForComboBox(final EmployeeList employees) {
+	public static List<ComboBoxItem> getEmployeeItemsForComboBox(final EmployeeList employees) {
 		List<ComboBoxItem> items = new ArrayList<ComboBoxItem>();
 		StringBuilder builder;
 		
