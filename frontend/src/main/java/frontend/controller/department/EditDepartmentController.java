@@ -25,7 +25,7 @@ public class EditDepartmentController extends DepartmentController {
 	private DepartmentList departments;
 	
 	/**
-	 * The current
+	 * The currently selected department for editing.
 	 */
 	private Department selectedDepartment;
 	
