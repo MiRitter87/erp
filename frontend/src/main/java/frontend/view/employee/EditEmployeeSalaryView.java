@@ -71,7 +71,9 @@ public class EditEmployeeSalaryView extends JPanel {
 				this.editEmployeeSalaryController.getSelectedEmployee().getLastName()));
 		textLabel.setFont(new Font("Tahoma", Font.BOLD, 13));
 		GridBagConstraints gbc_textLabel = new GridBagConstraints();
-		gbc_textLabel.insets = new Insets(0, 0, 5, 5);
+		gbc_textLabel.gridwidth = 2;
+		gbc_textLabel.anchor = GridBagConstraints.WEST;
+		gbc_textLabel.insets = new Insets(5, 5, 5, 5);
 		gbc_textLabel.gridx = 0;
 		gbc_textLabel.gridy = 0;
 		add(textLabel, gbc_textLabel);
@@ -85,7 +87,8 @@ public class EditEmployeeSalaryView extends JPanel {
 		
 		JLabel lblMonthlySalary = new JLabel(this.resources.getString("gui.employee.salary.monthlySalary"));
 		GridBagConstraints gbc_lblMonthlySalary = new GridBagConstraints();
-		gbc_lblMonthlySalary.insets = new Insets(0, 0, 5, 5);
+		gbc_lblMonthlySalary.anchor = GridBagConstraints.WEST;
+		gbc_lblMonthlySalary.insets = new Insets(0, 5, 5, 5);
 		gbc_lblMonthlySalary.gridx = 0;
 		gbc_lblMonthlySalary.gridy = 1;
 		add(lblMonthlySalary, gbc_lblMonthlySalary);
@@ -93,7 +96,7 @@ public class EditEmployeeSalaryView extends JPanel {
 		textFieldSalary = new JTextField();
 		((AbstractDocument)textFieldSalary.getDocument()).setDocumentFilter(new ExtendedDocumentFilter(6, true));
 		GridBagConstraints gbc_textFieldSalary = new GridBagConstraints();
-		gbc_textFieldSalary.insets = new Insets(0, 0, 5, 0);
+		gbc_textFieldSalary.insets = new Insets(0, 50, 5, 0);
 		gbc_textFieldSalary.fill = GridBagConstraints.HORIZONTAL;
 		gbc_textFieldSalary.gridx = 1;
 		gbc_textFieldSalary.gridy = 1;
@@ -102,14 +105,16 @@ public class EditEmployeeSalaryView extends JPanel {
 		
 		JLabel lblLastChange = new JLabel(this.resources.getString("gui.employee.salary.lastChange"));
 		GridBagConstraints gbc_lblLastChange = new GridBagConstraints();
-		gbc_lblLastChange.insets = new Insets(0, 0, 5, 5);
+		gbc_lblLastChange.anchor = GridBagConstraints.WEST;
+		gbc_lblLastChange.insets = new Insets(0, 5, 5, 5);
 		gbc_lblLastChange.gridx = 0;
 		gbc_lblLastChange.gridy = 2;
 		add(lblLastChange, gbc_lblLastChange);
 		
 		lblLastChangeValue = new JLabel("");
 		GridBagConstraints gbc_lblLastChangeValue = new GridBagConstraints();
-		gbc_lblLastChangeValue.insets = new Insets(0, 0, 5, 0);
+		gbc_lblLastChangeValue.anchor = GridBagConstraints.WEST;
+		gbc_lblLastChangeValue.insets = new Insets(0, 50, 5, 0);
 		gbc_lblLastChangeValue.gridx = 1;
 		gbc_lblLastChangeValue.gridy = 2;
 		add(lblLastChangeValue, gbc_lblLastChangeValue);
@@ -121,7 +126,8 @@ public class EditEmployeeSalaryView extends JPanel {
 		gbc_lblCurrency.gridy = 1;
 		add(lblCurrency, gbc_lblCurrency);
 		GridBagConstraints gbc_btnzurck = new GridBagConstraints();
-		gbc_btnzurck.insets = new Insets(0, 0, 0, 5);
+		gbc_btnzurck.anchor = GridBagConstraints.WEST;
+		gbc_btnzurck.insets = new Insets(0, 5, 0, 5);
 		gbc_btnzurck.gridx = 0;
 		gbc_btnzurck.gridy = 9;
 		add(btnBack, gbc_btnzurck);
@@ -133,6 +139,8 @@ public class EditEmployeeSalaryView extends JPanel {
 			}
 		});
 		GridBagConstraints gbc_btnSave = new GridBagConstraints();
+		gbc_btnSave.anchor = GridBagConstraints.WEST;
+		gbc_btnSave.insets = new Insets(0, 50, 0, 5);
 		gbc_btnSave.gridx = 1;
 		gbc_btnSave.gridy = 9;
 		add(btnSave, gbc_btnSave);

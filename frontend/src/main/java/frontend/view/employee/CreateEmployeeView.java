@@ -77,14 +77,17 @@ public class CreateEmployeeView extends JPanel {
 		JLabel lblHeader = new JLabel(this.resources.getString("gui.employee.header.create"));
 		lblHeader.setFont(new Font("Tahoma", Font.BOLD, 13));
 		GridBagConstraints gbc_lblHeader = new GridBagConstraints();
-		gbc_lblHeader.insets = new Insets(0, 0, 5, 5);
+		gbc_lblHeader.gridwidth = 2;
+		gbc_lblHeader.anchor = GridBagConstraints.WEST;
+		gbc_lblHeader.insets = new Insets(5, 5, 5, 5);
 		gbc_lblHeader.gridx = 0;
 		gbc_lblHeader.gridy = 0;
 		add(lblHeader, gbc_lblHeader);
 		
 		JLabel lblFirstName = new JLabel(this.resources.getString("gui.employee.firstName"));
 		GridBagConstraints gbc_lblFirstName = new GridBagConstraints();
-		gbc_lblFirstName.insets = new Insets(0, 0, 5, 5);
+		gbc_lblFirstName.anchor = GridBagConstraints.WEST;
+		gbc_lblFirstName.insets = new Insets(0, 5, 5, 5);
 		gbc_lblFirstName.gridx = 0;
 		gbc_lblFirstName.gridy = 1;
 		add(lblFirstName, gbc_lblFirstName);
@@ -92,7 +95,7 @@ public class CreateEmployeeView extends JPanel {
 		textFieldFirstName = new JTextField();
 		((AbstractDocument)textFieldFirstName.getDocument()).setDocumentFilter(new ExtendedDocumentFilter(50, false));
 		GridBagConstraints gbc_textFieldFirstName = new GridBagConstraints();
-		gbc_textFieldFirstName.insets = new Insets(0, 0, 5, 0);
+		gbc_textFieldFirstName.insets = new Insets(0, 50, 5, 5);
 		gbc_textFieldFirstName.fill = GridBagConstraints.HORIZONTAL;
 		gbc_textFieldFirstName.gridx = 1;
 		gbc_textFieldFirstName.gridy = 1;
@@ -101,7 +104,8 @@ public class CreateEmployeeView extends JPanel {
 		
 		JLabel lblLastName = new JLabel(this.resources.getString("gui.employee.lastName"));
 		GridBagConstraints gbc_lblLastName = new GridBagConstraints();
-		gbc_lblLastName.insets = new Insets(0, 0, 5, 5);
+		gbc_lblLastName.anchor = GridBagConstraints.WEST;
+		gbc_lblLastName.insets = new Insets(0, 5, 5, 5);
 		gbc_lblLastName.gridx = 0;
 		gbc_lblLastName.gridy = 2;
 		add(lblLastName, gbc_lblLastName);
@@ -109,7 +113,7 @@ public class CreateEmployeeView extends JPanel {
 		textFieldLastName = new JTextField();
 		((AbstractDocument)textFieldLastName.getDocument()).setDocumentFilter(new ExtendedDocumentFilter(50, false));
 		GridBagConstraints gbc_textFieldLastName = new GridBagConstraints();
-		gbc_textFieldLastName.insets = new Insets(0, 0, 5, 0);
+		gbc_textFieldLastName.insets = new Insets(0, 50, 5, 5);
 		gbc_textFieldLastName.fill = GridBagConstraints.HORIZONTAL;
 		gbc_textFieldLastName.gridx = 1;
 		gbc_textFieldLastName.gridy = 2;
@@ -118,14 +122,15 @@ public class CreateEmployeeView extends JPanel {
 		
 		JLabel lblGender = new JLabel(this.resources.getString("gui.employee.gender"));
 		GridBagConstraints gbc_lblGender = new GridBagConstraints();
-		gbc_lblGender.insets = new Insets(0, 0, 5, 5);
+		gbc_lblGender.anchor = GridBagConstraints.WEST;
+		gbc_lblGender.insets = new Insets(0, 5, 5, 5);
 		gbc_lblGender.gridx = 0;
 		gbc_lblGender.gridy = 3;
 		add(lblGender, gbc_lblGender);
 		
 		cbGender = new JComboBox<ComboBoxItem>();
 		GridBagConstraints gbc_cbGender = new GridBagConstraints();
-		gbc_cbGender.insets = new Insets(0, 0, 5, 0);
+		gbc_cbGender.insets = new Insets(0, 50, 5, 5);
 		gbc_cbGender.fill = GridBagConstraints.HORIZONTAL;
 		gbc_cbGender.gridx = 1;
 		gbc_cbGender.gridy = 3;
@@ -138,7 +143,8 @@ public class CreateEmployeeView extends JPanel {
 			}
 		});
 		GridBagConstraints gbc_btnSave = new GridBagConstraints();
-		gbc_btnSave.insets = new Insets(0, 0, 0, 5);
+		gbc_btnSave.anchor = GridBagConstraints.WEST;
+		gbc_btnSave.insets = new Insets(0, 5, 0, 5);
 		gbc_btnSave.gridx = 0;
 		gbc_btnSave.gridy = 4;
 		add(btnSave, gbc_btnSave);
@@ -150,6 +156,8 @@ public class CreateEmployeeView extends JPanel {
 			}
 		});
 		GridBagConstraints gbc_btnCancel = new GridBagConstraints();
+		gbc_btnCancel.anchor = GridBagConstraints.WEST;
+		gbc_btnCancel.insets = new Insets(0, 50, 0, 5);
 		gbc_btnCancel.gridx = 1;
 		gbc_btnCancel.gridy = 4;
 		add(btnCancel, gbc_btnCancel);

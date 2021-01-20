@@ -83,14 +83,17 @@ public class EditEmployeeView extends JPanel {
 		JLabel lblHeader = new JLabel(this.resources.getString("gui.employee.header.edit"));
 		lblHeader.setFont(new Font("Tahoma", Font.BOLD, 13));
 		GridBagConstraints gbc_lblHeader = new GridBagConstraints();
-		gbc_lblHeader.insets = new Insets(0, 0, 5, 5);
+		gbc_lblHeader.gridwidth = 2;
+		gbc_lblHeader.anchor = GridBagConstraints.WEST;
+		gbc_lblHeader.insets = new Insets(5, 5, 5, 5);
 		gbc_lblHeader.gridx = 0;
 		gbc_lblHeader.gridy = 0;
 		add(lblHeader, gbc_lblHeader);
 		
 		JLabel lblEmployee = new JLabel(this.resources.getString("gui.employee"));
 		GridBagConstraints gbc_lblEmployee = new GridBagConstraints();
-		gbc_lblEmployee.insets = new Insets(0, 0, 5, 5);
+		gbc_lblEmployee.anchor = GridBagConstraints.WEST;
+		gbc_lblEmployee.insets = new Insets(0, 5, 5, 5);
 		gbc_lblEmployee.gridx = 0;
 		gbc_lblEmployee.gridy = 1;
 		add(lblEmployee, gbc_lblEmployee);
@@ -98,7 +101,7 @@ public class EditEmployeeView extends JPanel {
 		cbEmployee = new JComboBox<ComboBoxItem>();
 		cbEmployee.addItemListener(editEmployeeController::cbEmployeeItemStateChanged);
 		GridBagConstraints gbc_cbEmployee = new GridBagConstraints();
-		gbc_cbEmployee.insets = new Insets(0, 0, 5, 0);
+		gbc_cbEmployee.insets = new Insets(0, 50, 5, 5);
 		gbc_cbEmployee.fill = GridBagConstraints.HORIZONTAL;
 		gbc_cbEmployee.gridx = 1;
 		gbc_cbEmployee.gridy = 1;
@@ -116,7 +119,8 @@ public class EditEmployeeView extends JPanel {
 		
 		JLabel lblFirstName = new JLabel(this.resources.getString("gui.employee.firstName"));
 		GridBagConstraints gbc_lblFirstName = new GridBagConstraints();
-		gbc_lblFirstName.insets = new Insets(0, 0, 5, 5);
+		gbc_lblFirstName.anchor = GridBagConstraints.WEST;
+		gbc_lblFirstName.insets = new Insets(0, 5, 5, 5);
 		gbc_lblFirstName.gridx = 0;
 		gbc_lblFirstName.gridy = 3;
 		add(lblFirstName, gbc_lblFirstName);
@@ -124,7 +128,7 @@ public class EditEmployeeView extends JPanel {
 		textFieldFirstName = new JTextField();
 		((AbstractDocument)textFieldFirstName.getDocument()).setDocumentFilter(new ExtendedDocumentFilter(50, false));
 		GridBagConstraints gbc_textFieldFirstName = new GridBagConstraints();
-		gbc_textFieldFirstName.insets = new Insets(0, 0, 5, 0);
+		gbc_textFieldFirstName.insets = new Insets(0, 50, 5, 5);
 		gbc_textFieldFirstName.fill = GridBagConstraints.HORIZONTAL;
 		gbc_textFieldFirstName.gridx = 1;
 		gbc_textFieldFirstName.gridy = 3;
@@ -134,7 +138,8 @@ public class EditEmployeeView extends JPanel {
 		
 		JLabel lblLastName = new JLabel(this.resources.getString("gui.employee.lastName"));
 		GridBagConstraints gbc_lblLastName = new GridBagConstraints();
-		gbc_lblLastName.insets = new Insets(0, 0, 5, 5);
+		gbc_lblLastName.anchor = GridBagConstraints.WEST;
+		gbc_lblLastName.insets = new Insets(0, 5, 5, 5);
 		gbc_lblLastName.gridx = 0;
 		gbc_lblLastName.gridy = 4;
 		add(lblLastName, gbc_lblLastName);
@@ -143,7 +148,7 @@ public class EditEmployeeView extends JPanel {
 		((AbstractDocument)textFieldLastName.getDocument()).setDocumentFilter(new ExtendedDocumentFilter(50, false));
 		GridBagConstraints gbc_textFieldLastName = new GridBagConstraints();
 		gbc_textFieldLastName.gridwidth = 2;
-		gbc_textFieldLastName.insets = new Insets(0, 0, 5, 0);
+		gbc_textFieldLastName.insets = new Insets(0, 50, 5, 5);
 		gbc_textFieldLastName.fill = GridBagConstraints.HORIZONTAL;
 		gbc_textFieldLastName.gridx = 1;
 		gbc_textFieldLastName.gridy = 4;
@@ -152,7 +157,8 @@ public class EditEmployeeView extends JPanel {
 		
 		JLabel lblGender = new JLabel(this.resources.getString("gui.employee.gender"));
 		GridBagConstraints gbc_lblGender = new GridBagConstraints();
-		gbc_lblGender.insets = new Insets(0, 0, 5, 5);
+		gbc_lblGender.anchor = GridBagConstraints.WEST;
+		gbc_lblGender.insets = new Insets(0, 5, 5, 5);
 		gbc_lblGender.gridx = 0;
 		gbc_lblGender.gridy = 5;
 		add(lblGender, gbc_lblGender);
@@ -160,7 +166,7 @@ public class EditEmployeeView extends JPanel {
 		cbGender = new JComboBox<ComboBoxItem>();
 		GridBagConstraints gbc_cbGender = new GridBagConstraints();
 		gbc_cbGender.gridwidth = 2;
-		gbc_cbGender.insets = new Insets(0, 0, 5, 0);
+		gbc_cbGender.insets = new Insets(0, 50, 5, 5);
 		gbc_cbGender.fill = GridBagConstraints.HORIZONTAL;
 		gbc_cbGender.gridx = 1;
 		gbc_cbGender.gridy = 5;
@@ -173,7 +179,8 @@ public class EditEmployeeView extends JPanel {
 			}
 		});
 		GridBagConstraints gbc_btnSave = new GridBagConstraints();
-		gbc_btnSave.insets = new Insets(0, 0, 5, 5);
+		gbc_btnSave.anchor = GridBagConstraints.WEST;
+		gbc_btnSave.insets = new Insets(0, 5, 5, 5);
 		gbc_btnSave.gridx = 0;
 		gbc_btnSave.gridy = 6;
 		add(btnSave, gbc_btnSave);
@@ -185,7 +192,8 @@ public class EditEmployeeView extends JPanel {
 			}
 		});
 		GridBagConstraints gbc_btnCancel = new GridBagConstraints();
-		gbc_btnCancel.insets = new Insets(0, 0, 5, 0);
+		gbc_btnCancel.anchor = GridBagConstraints.WEST;
+		gbc_btnCancel.insets = new Insets(0, 50, 5, 0);
 		gbc_btnCancel.gridx = 1;
 		gbc_btnCancel.gridy = 6;
 		add(btnCancel, gbc_btnCancel);
@@ -197,6 +205,8 @@ public class EditEmployeeView extends JPanel {
 			}
 		});
 		GridBagConstraints gbc_btnSalary = new GridBagConstraints();
+		gbc_btnSalary.anchor = GridBagConstraints.WEST;
+		gbc_btnSalary.insets = new Insets(0, 0, 5, 5);
 		gbc_btnSalary.gridx = 2;
 		gbc_btnSalary.gridy = 6;
 		add(btnSalary, gbc_btnSalary);
