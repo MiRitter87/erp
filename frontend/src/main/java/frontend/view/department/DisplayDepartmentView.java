@@ -83,14 +83,17 @@ public class DisplayDepartmentView extends JPanel {
 		JLabel lblHeader = new JLabel(this.resources.getString("gui.dept.header.display"));
 		lblHeader.setFont(new Font("Tahoma", Font.BOLD, 13));
 		GridBagConstraints gbc_lblHeader = new GridBagConstraints();
-		gbc_lblHeader.insets = new Insets(0, 0, 5, 5);
+		gbc_lblHeader.gridwidth = 2;
+		gbc_lblHeader.anchor = GridBagConstraints.WEST;
+		gbc_lblHeader.insets = new Insets(5, 5, 5, 5);
 		gbc_lblHeader.gridx = 0;
 		gbc_lblHeader.gridy = 0;
 		add(lblHeader, gbc_lblHeader);
 		
 		JLabel lblDepartment = new JLabel(this.resources.getString("gui.dept.department"));
 		GridBagConstraints gbc_lblDepartment = new GridBagConstraints();
-		gbc_lblDepartment.insets = new Insets(0, 0, 5, 5);
+		gbc_lblDepartment.anchor = GridBagConstraints.WEST;
+		gbc_lblDepartment.insets = new Insets(0, 5, 5, 5);
 		gbc_lblDepartment.gridx = 0;
 		gbc_lblDepartment.gridy = 1;
 		add(lblDepartment, gbc_lblDepartment);
@@ -98,7 +101,7 @@ public class DisplayDepartmentView extends JPanel {
 		cbDepartment = new JComboBox<ComboBoxItem>();
 		cbDepartment.addItemListener(displayDepartmentController::cbDepartmentItemStateChanged);
 		GridBagConstraints gbc_cbDepartment = new GridBagConstraints();
-		gbc_cbDepartment.insets = new Insets(0, 0, 5, 0);
+		gbc_cbDepartment.insets = new Insets(0, 50, 5, 5);
 		gbc_cbDepartment.fill = GridBagConstraints.HORIZONTAL;
 		gbc_cbDepartment.gridx = 1;
 		gbc_cbDepartment.gridy = 1;
@@ -115,7 +118,8 @@ public class DisplayDepartmentView extends JPanel {
 		
 		JLabel lblCode = new JLabel(this.resources.getString("gui.dept.code"));
 		GridBagConstraints gbc_lblCode = new GridBagConstraints();
-		gbc_lblCode.insets = new Insets(0, 0, 5, 5);
+		gbc_lblCode.anchor = GridBagConstraints.WEST;
+		gbc_lblCode.insets = new Insets(0, 5, 5, 5);
 		gbc_lblCode.gridx = 0;
 		gbc_lblCode.gridy = 3;
 		add(lblCode, gbc_lblCode);
@@ -123,14 +127,15 @@ public class DisplayDepartmentView extends JPanel {
 		lblCodeContent = new JLabel("");
 		GridBagConstraints gbc_lblCodeContent = new GridBagConstraints();
 		gbc_lblCodeContent.fill = GridBagConstraints.HORIZONTAL;
-		gbc_lblCodeContent.insets = new Insets(0, 0, 5, 0);
+		gbc_lblCodeContent.insets = new Insets(0, 50, 5, 0);
 		gbc_lblCodeContent.gridx = 1;
 		gbc_lblCodeContent.gridy = 3;
 		add(lblCodeContent, gbc_lblCodeContent);
 		
 		JLabel lblName = new JLabel(this.resources.getString("gui.dept.name"));
 		GridBagConstraints gbc_lblName = new GridBagConstraints();
-		gbc_lblName.insets = new Insets(0, 0, 5, 5);
+		gbc_lblName.anchor = GridBagConstraints.WEST;
+		gbc_lblName.insets = new Insets(0, 5, 5, 5);
 		gbc_lblName.gridx = 0;
 		gbc_lblName.gridy = 4;
 		add(lblName, gbc_lblName);
@@ -138,14 +143,15 @@ public class DisplayDepartmentView extends JPanel {
 		lblNameContent = new JLabel("");
 		GridBagConstraints gbc_lblNameContent = new GridBagConstraints();
 		gbc_lblNameContent.fill = GridBagConstraints.HORIZONTAL;
-		gbc_lblNameContent.insets = new Insets(0, 0, 5, 0);
+		gbc_lblNameContent.insets = new Insets(0, 50, 5, 0);
 		gbc_lblNameContent.gridx = 1;
 		gbc_lblNameContent.gridy = 4;
 		add(lblNameContent, gbc_lblNameContent);
 		
 		JLabel lblDescription = new JLabel(this.resources.getString("gui.dept.description"));
 		GridBagConstraints gbc_lblDescription = new GridBagConstraints();
-		gbc_lblDescription.insets = new Insets(0, 0, 5, 5);
+		gbc_lblDescription.anchor = GridBagConstraints.WEST;
+		gbc_lblDescription.insets = new Insets(0, 5, 5, 5);
 		gbc_lblDescription.gridx = 0;
 		gbc_lblDescription.gridy = 5;
 		add(lblDescription, gbc_lblDescription);
@@ -153,14 +159,15 @@ public class DisplayDepartmentView extends JPanel {
 		lblDescriptionConent = new JLabel("");
 		GridBagConstraints gbc_lblDescriptionValue = new GridBagConstraints();
 		gbc_lblDescriptionValue.fill = GridBagConstraints.HORIZONTAL;
-		gbc_lblDescriptionValue.insets = new Insets(0, 0, 5, 0);
+		gbc_lblDescriptionValue.insets = new Insets(0, 50, 5, 0);
 		gbc_lblDescriptionValue.gridx = 1;
 		gbc_lblDescriptionValue.gridy = 5;
 		add(lblDescriptionConent, gbc_lblDescriptionValue);
 		
 		JLabel lblHead = new JLabel(this.resources.getString("gui.dept.head"));
 		GridBagConstraints gbc_lblHead = new GridBagConstraints();
-		gbc_lblHead.insets = new Insets(0, 0, 5, 5);
+		gbc_lblHead.anchor = GridBagConstraints.WEST;
+		gbc_lblHead.insets = new Insets(0, 5, 5, 5);
 		gbc_lblHead.gridx = 0;
 		gbc_lblHead.gridy = 6;
 		add(lblHead, gbc_lblHead);
@@ -168,7 +175,7 @@ public class DisplayDepartmentView extends JPanel {
 		lblHeadContent = new JLabel("");
 		GridBagConstraints gbc_lblHeadContent = new GridBagConstraints();
 		gbc_lblHeadContent.fill = GridBagConstraints.HORIZONTAL;
-		gbc_lblHeadContent.insets = new Insets(0, 0, 5, 0);
+		gbc_lblHeadContent.insets = new Insets(0, 50, 5, 0);
 		gbc_lblHeadContent.gridx = 1;
 		gbc_lblHeadContent.gridy = 6;
 		add(lblHeadContent, gbc_lblHeadContent);
@@ -180,7 +187,8 @@ public class DisplayDepartmentView extends JPanel {
 			}
 		});
 		GridBagConstraints gbc_btnCancel = new GridBagConstraints();
-		gbc_btnCancel.insets = new Insets(0, 0, 0, 5);
+		gbc_btnCancel.anchor = GridBagConstraints.WEST;
+		gbc_btnCancel.insets = new Insets(0, 5, 0, 5);
 		gbc_btnCancel.gridx = 0;
 		gbc_btnCancel.gridy = 7;
 		add(btnCancel, gbc_btnCancel);
