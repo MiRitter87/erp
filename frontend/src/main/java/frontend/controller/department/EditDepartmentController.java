@@ -131,7 +131,7 @@ public class EditDepartmentController extends DepartmentController {
     		this.selectedDepartment = null;
     		this.editDepartmentView.getLblCodeContent().setText("");
     		this.editDepartmentView.getTextFieldName().setText("");
-    		this.editDepartmentView.getTextFieldDescription().setText("");
+    		this.editDepartmentView.getTextAreaDescription().setText("");
     		
     		if(this.editDepartmentView.getCbHead().getItemCount() > 0)
     			this.editDepartmentView.getCbHead().setSelectedIndex(0);
@@ -143,7 +143,7 @@ public class EditDepartmentController extends DepartmentController {
     		if(this.selectedDepartment != null) {
     			this.editDepartmentView.getLblCodeContent().setText(this.selectedDepartment.getCode());
     			this.editDepartmentView.getTextFieldName().setText(this.selectedDepartment.getName());
-    			this.editDepartmentView.getTextFieldDescription().setText(this.selectedDepartment.getDescription());
+    			this.editDepartmentView.getTextAreaDescription().setText(this.selectedDepartment.getDescription());
     			this.setCbHead(this.selectedDepartment.getHead());
     		}
     	}

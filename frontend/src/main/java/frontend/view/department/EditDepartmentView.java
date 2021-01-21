@@ -6,6 +6,7 @@ import javax.swing.JPanel;
 
 import frontend.controller.department.EditDepartmentController;
 import frontend.model.ComboBoxItem;
+import frontend.view.components.ExtendedDocumentFilter;
 
 import java.awt.GridBagLayout;
 import javax.swing.JLabel;
@@ -15,7 +16,10 @@ import java.awt.Insets;
 import javax.swing.JComboBox;
 import javax.swing.JSeparator;
 import javax.swing.JTextField;
+import javax.swing.text.AbstractDocument;
 import javax.swing.JButton;
+import javax.swing.JTextArea;
+import javax.swing.JScrollPane;
 
 /**
  * View to edit department data.
@@ -60,9 +64,9 @@ public class EditDepartmentView extends JPanel {
 	private JTextField textFieldName;
 	
 	/**
-	 * Input field for department description
+	 * Input for description.
 	 */
-	private JTextField textFieldDescription;
+	JTextArea textAreaDescription;
 
 	
 	/**
@@ -75,7 +79,7 @@ public class EditDepartmentView extends JPanel {
 		this.editDepartmentController = editDepartmentController;
 		GridBagLayout gridBagLayout = new GridBagLayout();
 		gridBagLayout.columnWidths = new int[]{0, 0, 0};
-		gridBagLayout.rowHeights = new int[]{0, 0, 0, 0, 0, 0, 0, 0, 0};
+		gridBagLayout.rowHeights = new int[]{0, 0, 0, 0, 0, 80, 0, 0, 0};
 		gridBagLayout.columnWeights = new double[]{0.0, 1.0, Double.MIN_VALUE};
 		gridBagLayout.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
 		setLayout(gridBagLayout);
@@ -85,7 +89,7 @@ public class EditDepartmentView extends JPanel {
 		GridBagConstraints gbc_lblHeader = new GridBagConstraints();
 		gbc_lblHeader.gridwidth = 2;
 		gbc_lblHeader.anchor = GridBagConstraints.WEST;
-		gbc_lblHeader.insets = new Insets(5, 5, 5, 5);
+		gbc_lblHeader.insets = new Insets(5, 5, 5, 0);
 		gbc_lblHeader.gridx = 0;
 		gbc_lblHeader.gridy = 0;
 		add(lblHeader, gbc_lblHeader);
@@ -141,6 +145,7 @@ public class EditDepartmentView extends JPanel {
 		add(lblName, gbc_lblName);
 		
 		textFieldName = new JTextField();
+		((AbstractDocument)textFieldName.getDocument()).setDocumentFilter(new ExtendedDocumentFilter(50, false));
 		GridBagConstraints gbc_textFieldName = new GridBagConstraints();
 		gbc_textFieldName.insets = new Insets(0, 50, 5, 5);
 		gbc_textFieldName.fill = GridBagConstraints.HORIZONTAL;
@@ -157,14 +162,18 @@ public class EditDepartmentView extends JPanel {
 		gbc_lblDescription.gridy = 5;
 		add(lblDescription, gbc_lblDescription);
 		
-		textFieldDescription = new JTextField();
-		GridBagConstraints gbc_textFieldDescription = new GridBagConstraints();
-		gbc_textFieldDescription.insets = new Insets(0, 50, 5, 5);
-		gbc_textFieldDescription.fill = GridBagConstraints.HORIZONTAL;
-		gbc_textFieldDescription.gridx = 1;
-		gbc_textFieldDescription.gridy = 5;
-		add(textFieldDescription, gbc_textFieldDescription);
-		textFieldDescription.setColumns(10);
+		JScrollPane scrollPane = new JScrollPane();
+		GridBagConstraints gbc_scrollPane = new GridBagConstraints();
+		gbc_scrollPane.fill = GridBagConstraints.BOTH;
+		gbc_scrollPane.insets = new Insets(0, 50, 5, 5);
+		gbc_scrollPane.gridx = 1;
+		gbc_scrollPane.gridy = 5;
+		add(scrollPane, gbc_scrollPane);
+		
+		textAreaDescription = new JTextArea();
+		((AbstractDocument)textAreaDescription.getDocument()).setDocumentFilter(new ExtendedDocumentFilter(250, false));
+		textAreaDescription.setLineWrap(true);
+		scrollPane.setViewportView(textAreaDescription);
 		
 		JLabel lblHead = new JLabel(this.resources.getString("gui.dept.head"));
 		GridBagConstraints gbc_lblHead = new GridBagConstraints();
@@ -193,7 +202,7 @@ public class EditDepartmentView extends JPanel {
 		JButton btnCancel = new JButton(this.resources.getString("gui.general.cancel"));
 		GridBagConstraints gbc_btnCancel = new GridBagConstraints();
 		gbc_btnCancel.anchor = GridBagConstraints.WEST;
-		gbc_btnCancel.insets = new Insets(0, 50, 0, 5);
+		gbc_btnCancel.insets = new Insets(0, 50, 0, 0);
 		gbc_btnCancel.gridx = 1;
 		gbc_btnCancel.gridy = 7;
 		add(btnCancel, gbc_btnCancel);
@@ -231,11 +240,11 @@ public class EditDepartmentView extends JPanel {
 		return textFieldName;
 	}
 
-	
+
 	/**
-	 * @return the textFieldDescription
+	 * @return the textAreaDescription
 	 */
-	public JTextField getTextFieldDescription() {
-		return textFieldDescription;
+	public JTextArea getTextAreaDescription() {
+		return textAreaDescription;
 	}
 }
