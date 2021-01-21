@@ -79,7 +79,7 @@ public class DepartmentController {
 	
 	
 	/**
-	 * Validates the user input.
+	 * Validates the user input of common fields that are shared between both the creation and editing view.
 	 * 
 	 * @param name The department name.
 	 * @param selectedHead The selected head of department.

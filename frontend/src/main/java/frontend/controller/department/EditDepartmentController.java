@@ -261,7 +261,7 @@ public class EditDepartmentController extends DepartmentController {
 	
 	
 	/**
-	 * Clears the input fields of the employee form.
+	 * Clears the input fields of the department form.
 	 */
 	private void clearInputFields() {
 		this.editDepartmentView.getCbDepartment().setSelectedIndex(0);
