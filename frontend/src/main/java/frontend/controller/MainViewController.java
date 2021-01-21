@@ -7,6 +7,7 @@ import javax.swing.SwingUtilities;
 import frontend.controller.employee.EditEmployeeController;
 import frontend.controller.employee.EditEmployeeSalaryController;
 import frontend.controller.employee.EmployeeOverviewController;
+import frontend.controller.department.CreateDepartmentController;
 import frontend.controller.department.DepartmentOverviewController;
 import frontend.controller.department.DisplayDepartmentController;
 import frontend.controller.department.EditDepartmentController;
@@ -104,6 +105,17 @@ public class MainViewController {
 		EditDepartmentController controller = new EditDepartmentController(this);
 		this.mainView.getContentPane().removeAll();
 		this.mainView.getContentPane().add(controller.getEditDepartmentView());
+		this.mainView.revalidate();
+	}
+	
+	
+	/**
+	 * Switches the currently displayed content area to the create department view.
+	 */
+	public void switchToCreateDepartmentView() {
+		CreateDepartmentController controller = new CreateDepartmentController(this);
+		this.mainView.getContentPane().removeAll();
+		this.mainView.getContentPane().add(controller.getCreateDepartmentView());
 		this.mainView.revalidate();
 	}
 	
