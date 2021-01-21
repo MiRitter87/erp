@@ -130,7 +130,7 @@ public class EditEmployeeController extends EmployeeController {
 		//Changes exist - Try to persist those changes
 		try {
 			this.employeeWebServiceDao.updateEmployee(this.selectedEmployee);
-			this.selectedEmployee.reHash();
+			this.selectedEmployee.reHash();	//The hash of the employee in the local list of all employees is updated.
 			this.clearInputFields();
 			this.selectedEmployee = null;
 			

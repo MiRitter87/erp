@@ -1,5 +1,6 @@
 package frontend.controller.department;
 
+import java.awt.event.ActionEvent;
 import java.awt.event.ItemEvent;
 import java.util.List;
 
@@ -171,6 +172,102 @@ public class EditDepartmentController extends DepartmentController {
 			currentIndex++;
 		}
 
+		this.editDepartmentView.getCbHead().setSelectedIndex(0);
+	}
+	
+	
+	/**
+	 * Handles a click at the "cancel"-button.
+	 * 
+	 * @param cancelEvent The action event of the button click.
+	 */
+	public void cancelHandler(ActionEvent cancelEvent) {
+		this.mainViewController.switchToStartpage();
+	}
+	
+	
+	/**
+	 * Handles a click at the "save department"-button.
+	 * 
+	 * @param saveEvent The action event of the button click.
+	 */
+	public void saveDepartmentHandler(ActionEvent saveEvent) {
+		//Validation of user input
+		try {					
+			this.validateInput();
+		}
+		catch(Exception exception) {
+			JOptionPane.showMessageDialog(this.editDepartmentView, exception.getMessage(), 
+					this.resources.getString("gui.error"), JOptionPane.ERROR_MESSAGE);
+			logger.info("User failed to edit department due to a validation error: " +exception.getMessage());
+			return;
+		}	
+		
+		//Validation successful - Update model with new data from input fields and check if anything has changed
+		this.updateDepartmentFromViewInput();
+		if(!this.selectedDepartment.isEdited()) {
+			JOptionPane.showMessageDialog(this.editDepartmentView, this.resources.getString("gui.dept.error.notEdited"), 
+					this.resources.getString("gui.information"), JOptionPane.INFORMATION_MESSAGE);
+			logger.info("User tried to save a department without any changes made.");
+			return;
+		}
+		
+		//Changes exist - Try to persist those changes
+		try {
+			this.departmentWebServiceDao.updateDepartment(this.selectedDepartment);
+			this.selectedDepartment.reHash();		//The hash of the department in the local list of all departments is updated.
+			this.clearInputFields();
+			this.selectedDepartment = null;
+		}
+		catch(Exception exception) {
+			JOptionPane.showMessageDialog(this.editDepartmentView, exception.getMessage(), this.resources.getString("gui.error"), JOptionPane.ERROR_MESSAGE);
+			logger.info("Updating department failed: " +exception.getMessage());
+		}
+		
+		//The combo box for department selection needs to be re-initialized in order to show the changes.
+		this.editDepartmentView.getCbDepartment().removeAllItems();
+		this.initializeDepartmentComboBox();
+	}
+	
+	
+	/**
+	 * Validates the user input.
+	 * 
+	 * @exception Exception Indicating failed validation.
+	 */
+	private void validateInput() throws Exception {
+		ComboBoxItem selectedHead = (ComboBoxItem) this.editDepartmentView.getCbHead().getSelectedItem();
+		
+		//Assure that the department to be edited is selected in the ComboBox.		
+		if(this.selectedDepartment == null) {
+			throw new Exception(this.resources.getString("gui.dept.error.noDepartmentSelected"));
+		}
+		
+		//Validation of input fields.
+		this.validateInput(this.getEditDepartmentView().getTextFieldName().getText(), selectedHead);
+	}
+	
+	
+	/**
+	 * Updates the data of the currently selected department with the data from the input fields.
+	 */
+	private void updateDepartmentFromViewInput() {
+		ComboBoxItem selectedHead = (ComboBoxItem) this.editDepartmentView.getCbHead().getSelectedItem();
+		
+		this.selectedDepartment.setName(this.editDepartmentView.getTextFieldName().getText());
+		this.selectedDepartment.setDescription(this.editDepartmentView.getTextAreaDescription().getText());
+		this.selectedDepartment.setHead(this.employees.getEmployeeById(Integer.valueOf(selectedHead.getId())));
+	}
+	
+	
+	/**
+	 * Clears the input fields of the employee form.
+	 */
+	private void clearInputFields() {
+		this.editDepartmentView.getCbDepartment().setSelectedIndex(0);
+		this.editDepartmentView.getLblCodeContent().setText("");
+		this.editDepartmentView.getTextFieldName().setText("");
+		this.editDepartmentView.getTextAreaDescription().setText("");
 		this.editDepartmentView.getCbHead().setSelectedIndex(0);
 	}
 

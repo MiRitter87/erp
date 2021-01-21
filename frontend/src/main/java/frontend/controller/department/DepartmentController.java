@@ -76,4 +76,22 @@ public class DepartmentController {
 		
 		return items;
 	}
+	
+	
+	/**
+	 * Validates the user input.
+	 * 
+	 * @param name The department name.
+	 * @param selectedHead The selected head of department.
+	 * @exception Exception Indicating failed validation.
+	 */
+	protected void validateInput(final String name, final ComboBoxItem selectedHead) throws Exception {
+		//A department name has to be given
+		if(name.length() == 0)
+			throw new Exception(this.resources.getString("gui.dept.error.nameValidation"));
+		
+		//A head of department has to be selected
+		if(selectedHead.getId().equals(""))
+			throw new Exception(this.resources.getString("gui.dept.error.noHeadSelected"));
+	}
 }

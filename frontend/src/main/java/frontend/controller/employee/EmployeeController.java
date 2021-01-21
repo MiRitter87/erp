@@ -47,6 +47,9 @@ public class EmployeeController {
 	/**
 	 * Validates the user input.
 	 * 
+	 * @param firstName The first name of the employee.
+	 * @param lastName The last name of the employee.
+	 * @param selectedGender The selected gender of the employee.
 	 * @exception Exception Indicating failed validation.
 	 */
 	protected void validateInput(final String firstName, final String lastName, final ComboBoxItem selectedGender) throws Exception {

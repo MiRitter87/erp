@@ -28,6 +28,11 @@ public class Department {
 	 */
 	private Employee head;
 	
+	/**
+	 * The HashCode of the department state that has been persisted to the backend database.
+	 */
+	private int persistedHash;
+	
 	
 	/**
 	 * Default cosntructor.
@@ -49,6 +54,97 @@ public class Department {
 		
 		if(webServiceDepartment.getHead() != null)
 			this.head = new Employee(webServiceDepartment.getHead());
+		
+		this.persistedHash = this.hashCode();
+	}
+	
+	
+	/**
+	 * Converts the current department into a type that is used by the department WebService.
+	 * 
+	 * @return A representation of this department that can be processed by the department WebService.
+	 * @throws DatatypeConfigurationException In case the conversion of the last change date of employee salary failed.
+	 */
+	public frontend.generated.ws.soap.department.Department getWebServiceDepartment() throws DatatypeConfigurationException {
+		frontend.generated.ws.soap.department.Department webServiceDepartment = new frontend.generated.ws.soap.department.Department();
+		
+		webServiceDepartment.setCode(this.code);
+		webServiceDepartment.setName(this.name);
+		webServiceDepartment.setDescription(this.description);
+		
+		if(this.head != null)
+			webServiceDepartment.setHead(this.head.getWebServiceEmployeeForDepartmentService());
+		
+		return webServiceDepartment;
+	}
+	
+	
+	/**
+	 * Checks if the object has been edited after initialization.
+	 * 
+	 * @return true, if object has been edited.
+	 */
+	public boolean isEdited() {
+		int currentHash = this.hashCode();
+		
+		if(this.persistedHash != currentHash)
+			return true;
+		else		
+			return false;
+	}
+	
+	
+	/**
+	 * Calculates the hash code of the current object state.
+	 * The hashCode is then stored as reference for further checks if object has changed.
+	 */
+	public void reHash() {
+		this.persistedHash = this.hashCode();
+	}
+	
+	
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((code == null) ? 0 : code.hashCode());
+		result = prime * result + ((description == null) ? 0 : description.hashCode());
+		result = prime * result + ((head == null) ? 0 : head.hashCode());
+		result = prime * result + ((name == null) ? 0 : name.hashCode());
+		return result;
+	}
+	
+	
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Department other = (Department) obj;
+		if (code == null) {
+			if (other.code != null)
+				return false;
+		} else if (!code.equals(other.code))
+			return false;
+		if (description == null) {
+			if (other.description != null)
+				return false;
+		} else if (!description.equals(other.description))
+			return false;
+		if (head == null) {
+			if (other.head != null)
+				return false;
+		} else if (!head.equals(other.head))
+			return false;
+		if (name == null) {
+			if (other.name != null)
+				return false;
+		} else if (!name.equals(other.name))
+			return false;
+		return true;
 	}
 
 
@@ -113,25 +209,5 @@ public class Department {
 	 */
 	public void setHead(Employee head) {
 		this.head = head;
-	}
-	
-	
-	/**
-	 * Converts the current department into a type that is used by the department WebService.
-	 * 
-	 * @return A representation of this department that can be processed by the department WebService.
-	 * @throws DatatypeConfigurationException In case the conversion of the last change date of employee salary failed.
-	 */
-	public frontend.generated.ws.soap.department.Department getWebServiceDepartment() throws DatatypeConfigurationException {
-		frontend.generated.ws.soap.department.Department webServiceDepartment = new frontend.generated.ws.soap.department.Department();
-		
-		webServiceDepartment.setCode(this.code);
-		webServiceDepartment.setName(this.name);
-		webServiceDepartment.setDescription(this.description);
-		
-		if(this.head != null)
-			webServiceDepartment.setHead(this.head.getWebServiceEmployeeForDepartmentService());
-		
-		return webServiceDepartment;
 	}
 }

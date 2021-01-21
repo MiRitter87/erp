@@ -13,6 +13,9 @@ import javax.swing.JLabel;
 import java.awt.GridBagConstraints;
 import java.awt.Font;
 import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
 import javax.swing.JComboBox;
 import javax.swing.JSeparator;
 import javax.swing.JTextField;
@@ -192,6 +195,11 @@ public class EditDepartmentView extends JPanel {
 		add(cbHead, gbc_cbHead);
 		
 		JButton btnSave = new JButton(this.resources.getString("gui.general.save"));
+		btnSave.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent saveEvent) {
+				editDepartmentController.saveDepartmentHandler(saveEvent);
+			}
+		});
 		GridBagConstraints gbc_btnSave = new GridBagConstraints();
 		gbc_btnSave.anchor = GridBagConstraints.WEST;
 		gbc_btnSave.insets = new Insets(0, 5, 0, 5);
@@ -200,6 +208,11 @@ public class EditDepartmentView extends JPanel {
 		add(btnSave, gbc_btnSave);
 		
 		JButton btnCancel = new JButton(this.resources.getString("gui.general.cancel"));
+		btnCancel.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent cancelEvent) {
+				editDepartmentController.cancelHandler(cancelEvent);
+			}
+		});
 		GridBagConstraints gbc_btnCancel = new GridBagConstraints();
 		gbc_btnCancel.anchor = GridBagConstraints.WEST;
 		gbc_btnCancel.insets = new Insets(0, 50, 0, 0);
