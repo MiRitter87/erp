@@ -12,7 +12,6 @@ import frontend.controller.MainViewController;
 import frontend.controller.employee.EmployeeController;
 import frontend.model.ComboBoxItem;
 import frontend.model.Department;
-import frontend.model.Employee;
 import frontend.model.EmployeeList;
 import frontend.view.department.CreateDepartmentView;
 
@@ -101,7 +100,7 @@ public class CreateDepartmentController extends DepartmentController {
 			return;
 		}
 		
-		//Validating succeeded - Try to persist new employee
+		//Validating succeeded - Try to persist new department
 		try {
 			Department newDepartment = this.getDepartmentFromViewInput();
 			this.departmentWebServiceDao.insertDepartment(newDepartment);
