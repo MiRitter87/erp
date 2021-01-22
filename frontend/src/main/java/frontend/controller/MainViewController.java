@@ -124,9 +124,9 @@ public class MainViewController {
 	 * Switches the currently displayed content area to the department view.
 	 */
 	public void switchToDepartmentView() {
-		DepartmentOverviewController controller = new DepartmentOverviewController();
+		DepartmentOverviewController controller = new DepartmentOverviewController(this);
 		this.mainView.getContentPane().removeAll();
-		this.mainView.getContentPane().add(controller.getDepartmentView());
+		this.mainView.getContentPane().add(controller.getDepartmentOverview());
 		this.mainView.revalidate();
 	}
 	
