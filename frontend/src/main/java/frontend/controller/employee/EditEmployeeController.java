@@ -72,7 +72,7 @@ public class EditEmployeeController extends EmployeeController {
 		catch (Exception e) {
 			JOptionPane.showMessageDialog(this.editEmployeeView, e.getMessage(), 
 					this.resources.getString("gui.error"), JOptionPane.ERROR_MESSAGE);
-			logger.info("Error while trying to read employees from WebService: " +e.getMessage());
+			logger.error("Error while trying to read employees from WebService: " +e.getMessage());
 		}
 	}
 	
@@ -117,7 +117,7 @@ public class EditEmployeeController extends EmployeeController {
 		catch(Exception exception) {
 			JOptionPane.showMessageDialog(this.editEmployeeView, exception.getMessage(), 
 					this.resources.getString("gui.error"), JOptionPane.ERROR_MESSAGE);
-			logger.info("User failed to edit employee due to a validation error: " +exception.getMessage());
+			logger.debug("User failed to edit employee due to a validation error: " +exception.getMessage());
 			return;
 		}
 		
@@ -126,7 +126,7 @@ public class EditEmployeeController extends EmployeeController {
 		if(!this.selectedEmployee.isEdited()) {
 			JOptionPane.showMessageDialog(this.editEmployeeView, this.resources.getString("gui.employee.error.notEdited"), 
 					this.resources.getString("gui.information"), JOptionPane.INFORMATION_MESSAGE);
-			logger.info("User tried to save an employee without any changes made.");
+			logger.debug("User tried to save an employee without any changes made.");
 			return;
 		}
 		
@@ -144,7 +144,7 @@ public class EditEmployeeController extends EmployeeController {
 		}
 		catch(Exception exception) {
 			JOptionPane.showMessageDialog(this.editEmployeeView, exception.getMessage(), this.resources.getString("gui.error"), JOptionPane.ERROR_MESSAGE);
-			logger.info("Updating employee failed: " +exception.getMessage());
+			logger.debug("Updating employee failed: " +exception.getMessage());
 		}
 	}
 	

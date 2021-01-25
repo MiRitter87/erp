@@ -71,7 +71,7 @@ public class DisplayEmployeeController extends EmployeeController {
 		catch (Exception e) {
 			JOptionPane.showMessageDialog(this.displayEmployeeView, e.getMessage(), 
 					this.resources.getString("gui.error"), JOptionPane.ERROR_MESSAGE);
-			logger.info("Error while trying to read employees from WebService: " +e.getMessage());
+			logger.error("Error while trying to read employees from WebService: " +e.getMessage());
 		}
 	}
 	

@@ -63,7 +63,7 @@ public class DisplayDepartmentController extends DepartmentController {
 		catch (Exception e) {
 			JOptionPane.showMessageDialog(this.displayDepartmentView, e.getMessage(), 
 					this.resources.getString("gui.error"), JOptionPane.ERROR_MESSAGE);
-			logger.info("Error while trying to read departments from WebService: " +e.getMessage());
+			logger.error("Error while trying to read departments from WebService: " +e.getMessage());
 		}
 	}
 	

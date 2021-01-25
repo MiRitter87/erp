@@ -57,7 +57,7 @@ public class DepartmentOverviewController extends DepartmentController {
 		catch (Exception e) {
 			JOptionPane.showMessageDialog(this.departmentOverview, e.getMessage(), 
 					this.resources.getString("gui.error"), JOptionPane.ERROR_MESSAGE);
-			logger.info("Error while trying to read departments from WebService: " +e.getMessage());
+			logger.error("Error while trying to read departments from WebService: " +e.getMessage());
 		}
 	}
 	
@@ -84,7 +84,7 @@ public class DepartmentOverviewController extends DepartmentController {
 		catch(Exception exception) {
 			JOptionPane.showMessageDialog(this.departmentOverview, exception.getMessage(), 
 					this.resources.getString("gui.error"), JOptionPane.ERROR_MESSAGE);
-			logger.info("User failed to delete department: " +exception.getMessage());
+			logger.debug("User failed to delete department: " +exception.getMessage());
 			return;
 		}
 		
@@ -97,7 +97,7 @@ public class DepartmentOverviewController extends DepartmentController {
 		catch(Exception exception) {
 			JOptionPane.showMessageDialog(this.departmentOverview, exception.getMessage(), 
 					this.resources.getString("gui.error"), JOptionPane.ERROR_MESSAGE);
-			logger.info("Deleting department from database failed: " +exception.getMessage());
+			logger.debug("Deleting department from database failed: " +exception.getMessage());
 		}
 	}
 	

@@ -73,7 +73,7 @@ public class EditDepartmentController extends DepartmentController {
 		catch (Exception e) {
 			JOptionPane.showMessageDialog(this.editDepartmentView, e.getMessage(), 
 					this.resources.getString("gui.error"), JOptionPane.ERROR_MESSAGE);
-			logger.info("Error while trying to read departments from WebService: " +e.getMessage());
+			logger.error("Error while trying to read departments from WebService: " +e.getMessage());
 		}
 		
 		//Initialization of employee data for head selection combo box.
@@ -84,7 +84,7 @@ public class EditDepartmentController extends DepartmentController {
 		catch (Exception e) {
 			JOptionPane.showMessageDialog(this.editDepartmentView, e.getMessage(), 
 					this.resources.getString("gui.error"), JOptionPane.ERROR_MESSAGE);
-			logger.info("Error while trying to read employees from WebService: " +e.getMessage());
+			logger.error("Error while trying to read employees from WebService: " +e.getMessage());
 		}
 	}
 	
@@ -202,7 +202,7 @@ public class EditDepartmentController extends DepartmentController {
 		catch(Exception exception) {
 			JOptionPane.showMessageDialog(this.editDepartmentView, exception.getMessage(), 
 					this.resources.getString("gui.error"), JOptionPane.ERROR_MESSAGE);
-			logger.info("User failed to edit department due to a validation error: " +exception.getMessage());
+			logger.debug("User failed to edit department due to a validation error: " +exception.getMessage());
 			return;
 		}	
 		
@@ -211,7 +211,7 @@ public class EditDepartmentController extends DepartmentController {
 		if(!this.selectedDepartment.isEdited()) {
 			JOptionPane.showMessageDialog(this.editDepartmentView, this.resources.getString("gui.dept.error.notEdited"), 
 					this.resources.getString("gui.information"), JOptionPane.INFORMATION_MESSAGE);
-			logger.info("User tried to save a department without any changes made.");
+			logger.debug("User tried to save a department without any changes made.");
 			return;
 		}
 		
@@ -225,7 +225,7 @@ public class EditDepartmentController extends DepartmentController {
 		}
 		catch(Exception exception) {
 			JOptionPane.showMessageDialog(this.editDepartmentView, exception.getMessage(), this.resources.getString("gui.error"), JOptionPane.ERROR_MESSAGE);
-			logger.info("Updating department failed: " +exception.getMessage());
+			logger.debug("Updating department failed: " +exception.getMessage());
 		}
 		
 		//The combo box for department selection needs to be re-initialized in order to show the changes.

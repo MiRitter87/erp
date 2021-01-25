@@ -147,10 +147,10 @@ public class EditEmployeeSalaryController {
 		try {
 			this.employeeWebServiceDao.updateEmployee(this.selectedEmployee);
 			this.initializeViewData();		//Update view to show the new change date
-		} catch (Exception e1) {
+		} catch (Exception exception) {
 			JOptionPane.showMessageDialog(this.editEmployeeSalaryView, this.resources.getString("gui.employee.error.updateSalary"), 
 					this.resources.getString("gui.error"), JOptionPane.ERROR_MESSAGE);
-			logger.error("Updating salary data of employee failed: " +e1.getMessage());
+			logger.debug("Updating salary data of employee failed: " +exception.getMessage());
 		}
 
 	}

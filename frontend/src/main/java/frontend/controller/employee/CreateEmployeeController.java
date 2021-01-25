@@ -70,7 +70,7 @@ public class CreateEmployeeController extends EmployeeController {
 		catch(Exception exception) {
 			JOptionPane.showMessageDialog(this.createEmployeeView, exception.getMessage(), 
 					this.resources.getString("gui.error"), JOptionPane.ERROR_MESSAGE);
-			logger.info("User failed to add employee due to a validation error: " +exception.getMessage());
+			logger.debug("User failed to add employee due to a validation error: " +exception.getMessage());
 			return;
 		}
 		
@@ -83,7 +83,7 @@ public class CreateEmployeeController extends EmployeeController {
 		}
 		catch(Exception exception) {
 			JOptionPane.showMessageDialog(this.createEmployeeView, exception.getMessage(), this.resources.getString("gui.error"), JOptionPane.ERROR_MESSAGE);
-			logger.info("Saving employee failed: " +exception.getMessage());
+			logger.debug("Saving employee failed: " +exception.getMessage());
 		}
 	}
 	

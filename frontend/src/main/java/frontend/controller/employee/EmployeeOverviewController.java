@@ -61,7 +61,7 @@ public class EmployeeOverviewController extends EmployeeController {
 		catch(Exception exception) {
 			JOptionPane.showMessageDialog(this.employeeOverview, exception.getMessage(), 
 					this.resources.getString("gui.error"), JOptionPane.ERROR_MESSAGE);
-			logger.info("Error while trying to read employees from WebService: " +exception.getMessage());
+			logger.error("Error while trying to read employees from WebService: " +exception.getMessage());
 		}
 	}
 	
@@ -124,7 +124,7 @@ public class EmployeeOverviewController extends EmployeeController {
 		catch(Exception exception) {
 			JOptionPane.showMessageDialog(this.employeeOverview, exception.getMessage(), 
 					this.resources.getString("gui.error"), JOptionPane.ERROR_MESSAGE);
-			logger.info("User failed to delete employee: " +exception.getMessage());
+			logger.debug("User failed to delete employee: " +exception.getMessage());
 			return;
 		}
 		
@@ -137,7 +137,7 @@ public class EmployeeOverviewController extends EmployeeController {
 		catch(Exception exception) {
 			JOptionPane.showMessageDialog(this.employeeOverview, exception.getMessage(), 
 					this.resources.getString("gui.error"), JOptionPane.ERROR_MESSAGE);
-			logger.info("Deleting employee from database failed: " +exception.getMessage());
+			logger.debug("Deleting employee from database failed: " +exception.getMessage());
 		}
 	}
 	

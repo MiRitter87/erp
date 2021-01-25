@@ -58,7 +58,7 @@ public class CreateDepartmentController extends DepartmentController {
 		catch (Exception e) {
 			JOptionPane.showMessageDialog(this.createDepartmentView, e.getMessage(), 
 					this.resources.getString("gui.error"), JOptionPane.ERROR_MESSAGE);
-			logger.error("Error while trying to read employees from WebService: " +e.getMessage());
+			logger.debug("Error while trying to read employees from WebService: " +e.getMessage());
 		}
 	}
 	
@@ -99,7 +99,7 @@ public class CreateDepartmentController extends DepartmentController {
 		catch(Exception exception) {
 			JOptionPane.showMessageDialog(this.createDepartmentView, exception.getMessage(), 
 					this.resources.getString("gui.error"), JOptionPane.ERROR_MESSAGE);
-			logger.info("User failed to add employee due to a validation error: " +exception.getMessage());
+			logger.debug("User failed to add employee due to a validation error: " +exception.getMessage());
 			return;
 		}
 		
@@ -112,7 +112,7 @@ public class CreateDepartmentController extends DepartmentController {
 		}
 		catch(Exception exception) {
 			JOptionPane.showMessageDialog(this.createDepartmentView, exception.getMessage(), this.resources.getString("gui.error"), JOptionPane.ERROR_MESSAGE);
-			logger.info("Saving department failed: " +exception.getMessage());
+			logger.debug("Saving department failed: " +exception.getMessage());
 		}
 	}
 	
