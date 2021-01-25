@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 
+import javax.xml.ws.WebServiceException;
+
 import frontend.controller.MainViewController;
 import frontend.dao.EmployeeWebServiceDao;
 import frontend.model.ComboBoxItem;
@@ -37,11 +39,12 @@ public class EmployeeController {
 	 * Initializes the controller.
 	 * 
 	 * @param mainViewController The controller of the main view.
+	 * @throws WebServiceException In case the WebService is unavailable.
 	 */
-	public EmployeeController(final MainViewController mainViewController) {
+	public EmployeeController(final MainViewController mainViewController) throws WebServiceException {
 		this.mainViewController = mainViewController;
 		this.resources = ResourceBundle.getBundle("frontend");
-		this.employeeWebServiceDao = new EmployeeWebServiceDao();
+		this.employeeWebServiceDao = new EmployeeWebServiceDao();			
 	}
 	
 	/**

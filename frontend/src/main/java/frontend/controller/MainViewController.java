@@ -1,8 +1,12 @@
 package frontend.controller;
 
 
+import java.util.ResourceBundle;
+
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
+import javax.xml.ws.WebServiceException;
 
 import frontend.controller.employee.EditEmployeeController;
 import frontend.controller.employee.EditEmployeeSalaryController;
@@ -27,12 +31,18 @@ public class MainViewController {
 	 */
 	private MainView mainView;
 	
+	/**
+	 * Access to localized application resources.
+	 */
+	protected ResourceBundle resources;
+	
 		
 	/**
 	 * Creates the main view.
 	 */
 	public MainViewController() {
 		this.mainView = new MainView(this);
+		this.resources = ResourceBundle.getBundle("frontend");
 	}
 		
 	
@@ -52,14 +62,20 @@ public class MainViewController {
 	public void switchToEmployeeOverview(final EmployeeOverviewController employeeOverviewController) {
 		EmployeeOverviewController controller;
 		
-		if(employeeOverviewController != null)
-			controller = employeeOverviewController;
-		else
-			controller = new EmployeeOverviewController(this);
+		try {
+			if(employeeOverviewController != null)
+				controller = employeeOverviewController;
+			else
+				controller = new EmployeeOverviewController(this);
 			
-		this.mainView.getContentPane().removeAll();
-		this.mainView.getContentPane().add(controller.getEmployeeOverview());
-		SwingUtilities.updateComponentTreeUI(this.mainView);
+			this.mainView.getContentPane().removeAll();
+			this.mainView.getContentPane().add(controller.getEmployeeOverview());
+			SwingUtilities.updateComponentTreeUI(this.mainView);			
+		}
+		catch(WebServiceException webServiceException) {
+			JOptionPane.showMessageDialog(this.mainView, this.resources.getString("gui.employee.error.serverUnavailable"), 
+					this.resources.getString("gui.error"), JOptionPane.ERROR_MESSAGE);
+		}
 	}
 	
 	
@@ -145,10 +161,16 @@ public class MainViewController {
 	 * Switches the currently displayed content area to the employee creation view.
 	 */
 	public void switchToCreateEmployeeView() {
-		CreateEmployeeController controller = new CreateEmployeeController(this);
-		this.mainView.getContentPane().removeAll();
-		this.mainView.getContentPane().add(controller.getCreateEmployeeView());
-		this.mainView.revalidate();
+		try {
+			CreateEmployeeController controller = new CreateEmployeeController(this);
+			this.mainView.getContentPane().removeAll();
+			this.mainView.getContentPane().add(controller.getCreateEmployeeView());
+			this.mainView.revalidate();			
+		}
+		catch(WebServiceException webServiceException) {
+			JOptionPane.showMessageDialog(this.mainView, this.resources.getString("gui.employee.error.serverUnavailable"), 
+					this.resources.getString("gui.error"), JOptionPane.ERROR_MESSAGE);
+		}
 	}
 	
 	
@@ -160,14 +182,20 @@ public class MainViewController {
 	public void switchToEditEmployeeView(final EditEmployeeController editEmployeeController) {
 		EditEmployeeController controller;
 		
-		if(editEmployeeController != null)
-			controller = editEmployeeController;
-		else
-			controller = new EditEmployeeController(this);
-		
-		this.mainView.getContentPane().removeAll();
-		this.mainView.getContentPane().add(controller.getEditEmployeeView());
-		SwingUtilities.updateComponentTreeUI(this.mainView);
+		try {
+			if(editEmployeeController != null)
+				controller = editEmployeeController;
+			else
+				controller = new EditEmployeeController(this);
+			
+			this.mainView.getContentPane().removeAll();
+			this.mainView.getContentPane().add(controller.getEditEmployeeView());
+			SwingUtilities.updateComponentTreeUI(this.mainView);			
+		}
+		catch(WebServiceException webServiceException) {
+			JOptionPane.showMessageDialog(this.mainView, this.resources.getString("gui.employee.error.serverUnavailable"), 
+					this.resources.getString("gui.error"), JOptionPane.ERROR_MESSAGE);
+		}
 	}
 	
 	
@@ -179,14 +207,20 @@ public class MainViewController {
 	public void switchToDisplayEmployeeView(final DisplayEmployeeController displayEmployeeController) {
 		DisplayEmployeeController controller;
 		
-		if(displayEmployeeController != null)
-			controller = displayEmployeeController;
-		else
-			controller = new DisplayEmployeeController(this);
-		
-		this.mainView.getContentPane().removeAll();
-		this.mainView.getContentPane().add(controller.getDisplayEmployeeView());
-		SwingUtilities.updateComponentTreeUI(this.mainView);
+		try {
+			if(displayEmployeeController != null)
+				controller = displayEmployeeController;
+			else
+				controller = new DisplayEmployeeController(this);
+			
+			this.mainView.getContentPane().removeAll();
+			this.mainView.getContentPane().add(controller.getDisplayEmployeeView());
+			SwingUtilities.updateComponentTreeUI(this.mainView);			
+		}
+		catch(WebServiceException webServiceException) {
+			JOptionPane.showMessageDialog(this.mainView, this.resources.getString("gui.employee.error.serverUnavailable"), 
+					this.resources.getString("gui.error"), JOptionPane.ERROR_MESSAGE);
+		}
 	}
 	
 	

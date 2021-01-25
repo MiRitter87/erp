@@ -3,6 +3,8 @@ package frontend.dao;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.xml.ws.WebServiceException;
+
 import frontend.generated.ws.soap.employee.EmployeeArray;
 import frontend.generated.ws.soap.employee.EmployeeService;
 import frontend.generated.ws.soap.employee.EmployeeService_Service;
@@ -24,8 +26,10 @@ public class EmployeeWebServiceDao extends WebServiceDao implements EmployeeDao 
 	
 	/**
 	 * Initializes the DAO.
+	 * 
+	 * @throws WebServiceException In case the WebService is unavailable.
 	 */
-	public EmployeeWebServiceDao() {
+	public EmployeeWebServiceDao() throws WebServiceException {
 		this.employeeService = new EmployeeService_Service().getEmployeeSoapServiceImplPort();
 	}
 

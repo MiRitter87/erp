@@ -4,6 +4,7 @@ import java.awt.event.ActionEvent;
 import java.text.MessageFormat;
 
 import javax.swing.JOptionPane;
+import javax.xml.ws.WebServiceException;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -45,8 +46,9 @@ public class EmployeeOverviewController extends EmployeeController {
 	 * Initializes the controller.
 	 * 
 	 * @param mainViewController The controller of the main view.
+	 * @throws WebServiceException In case the WebService is unavailable.
 	 */
-	public EmployeeOverviewController(final MainViewController mainViewController) {
+	public EmployeeOverviewController(final MainViewController mainViewController) throws WebServiceException {
 		super(mainViewController);
 		this.employeeOverview = new EmployeeOverview(this);
 		this.employees = new EmployeeList();
