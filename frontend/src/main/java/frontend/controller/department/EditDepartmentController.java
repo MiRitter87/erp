@@ -2,6 +2,7 @@ package frontend.controller.department;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ItemEvent;
+import java.text.MessageFormat;
 import java.util.List;
 
 import javax.swing.JOptionPane;
@@ -217,6 +218,7 @@ public class EditDepartmentController extends DepartmentController {
 		//Changes exist - Try to persist those changes
 		try {
 			this.departmentWebServiceDao.updateDepartment(this.selectedDepartment);
+			this.displaySaveSuccessPopUp(this.selectedDepartment.getName());
 			this.selectedDepartment.reHash();		//The hash of the department in the local list of all departments is updated.
 			this.clearInputFields();
 			this.selectedDepartment = null;
@@ -271,6 +273,19 @@ public class EditDepartmentController extends DepartmentController {
 		this.editDepartmentView.getTextFieldName().setText("");
 		this.editDepartmentView.getTextAreaDescription().setText("");
 		this.editDepartmentView.getCbHead().setSelectedIndex(0);
+	}
+	
+	
+	/**
+	 * Displays a PopUp informing the user that the save operation has been performed successfully.
+	 * 
+	 * @param departmentName The name of the department that has been saved.
+	 */
+	private void displaySaveSuccessPopUp(final String departmentName) {
+		JOptionPane.showMessageDialog(this.editDepartmentView, 
+				MessageFormat.format(this.resources.getString("gui.dept.information.saveSuccess"), departmentName),
+				this.resources.getString("gui.information"), 
+				JOptionPane.INFORMATION_MESSAGE);
 	}
 
 

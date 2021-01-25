@@ -1,6 +1,7 @@
 package frontend.controller.department;
 
 import java.awt.event.ActionEvent;
+import java.text.MessageFormat;
 import java.util.List;
 
 import javax.swing.JOptionPane;
@@ -107,6 +108,7 @@ public class CreateDepartmentController extends DepartmentController {
 			Department newDepartment = this.getDepartmentFromViewInput();
 			this.departmentWebServiceDao.insertDepartment(newDepartment);
 			this.clearInputFields();
+			this.displaySaveSuccessPopUp(newDepartment.getName());
 		}
 		catch(Exception exception) {
 			JOptionPane.showMessageDialog(this.createDepartmentView, exception.getMessage(), this.resources.getString("gui.error"), JOptionPane.ERROR_MESSAGE);
@@ -168,6 +170,19 @@ public class CreateDepartmentController extends DepartmentController {
 		this.createDepartmentView.getTextFieldName().setText("");
 		this.createDepartmentView.getTextAreaDescription().setText("");
 		this.createDepartmentView.getCbHead().setSelectedIndex(0);
+	}
+	
+	
+	/**
+	 * Displays a PopUp informing the user that the create operation has been performed successfully.
+	 * 
+	 * @param departmentName The name of the department that has been created.
+	 */
+	private void displaySaveSuccessPopUp(final String departmentName) {
+		JOptionPane.showMessageDialog(this.createDepartmentView, 
+				MessageFormat.format(this.resources.getString("gui.dept.information.createSuccess"), departmentName),
+				this.resources.getString("gui.information"), 
+				JOptionPane.INFORMATION_MESSAGE);
 	}
 
 
