@@ -4,6 +4,7 @@ import java.awt.event.ActionEvent;
 import java.text.MessageFormat;
 
 import javax.swing.JOptionPane;
+import javax.xml.ws.WebServiceException;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -41,8 +42,9 @@ public class DepartmentOverviewController extends DepartmentController {
 	 * Initializes the DepartmentController.
 	 * 
 	 * @param mainViewController The controller of the main view.
+	 * @throws WebServiceException In case the WebService is unavailable.
 	 */
-	public DepartmentOverviewController(final MainViewController mainViewController) {
+	public DepartmentOverviewController(final MainViewController mainViewController) throws WebServiceException {
 		super(mainViewController);
 		this.departmentOverview = new DepartmentOverview(this);
 		this.departments = new DepartmentList();

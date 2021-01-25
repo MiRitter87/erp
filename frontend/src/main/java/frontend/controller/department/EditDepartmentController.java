@@ -5,6 +5,7 @@ import java.awt.event.ItemEvent;
 import java.util.List;
 
 import javax.swing.JOptionPane;
+import javax.xml.ws.WebServiceException;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -54,8 +55,9 @@ public class EditDepartmentController extends DepartmentController {
 	 * Initializes the controller
 	 * 
 	 * @param mainViewController The controller of the main view.
+	 * @throws WebServiceException In case the WebService is unavailable.
 	 */
-	public EditDepartmentController(MainViewController mainViewController) {
+	public EditDepartmentController(MainViewController mainViewController) throws WebServiceException {
 		super(mainViewController);
 		this.editDepartmentView = new EditDepartmentView(this);
 		this.departments = new DepartmentList();

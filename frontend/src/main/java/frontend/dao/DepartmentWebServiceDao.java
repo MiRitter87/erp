@@ -3,6 +3,8 @@ package frontend.dao;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.xml.ws.WebServiceException;
+
 import frontend.generated.ws.soap.department.DepartmentArray;
 import frontend.generated.ws.soap.department.DepartmentService;
 import frontend.generated.ws.soap.department.DepartmentService_Service;
@@ -23,8 +25,10 @@ public class DepartmentWebServiceDao extends WebServiceDao implements Department
 	
 	/**
 	 * Initializes the DAO.
+	 * 
+	 * @throws WebServiceException In case the WebService is unavailable.
 	 */
-	public DepartmentWebServiceDao() {
+	public DepartmentWebServiceDao() throws WebServiceException {
 		this.departmentService = new DepartmentService_Service().getDepartmentSoapServiceImplPort();
 	}
 	

@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 
+import javax.xml.ws.WebServiceException;
+
 import frontend.controller.MainViewController;
 import frontend.dao.DepartmentWebServiceDao;
 import frontend.dao.EmployeeWebServiceDao;
@@ -42,8 +44,9 @@ public class DepartmentController {
 	 * Initializes the controller.
 	 * 
 	 * @param mainViewController The controller of the main view.
+	 * @throws WebServiceException In case the WebService is unavailable.
 	 */
-	public DepartmentController(final MainViewController mainViewController) {
+	public DepartmentController(final MainViewController mainViewController) throws WebServiceException {
 		this.mainViewController = mainViewController;
 		this.resources = ResourceBundle.getBundle("frontend");
 		this.departmentWebServiceDao = new DepartmentWebServiceDao();

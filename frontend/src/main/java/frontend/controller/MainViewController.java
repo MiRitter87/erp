@@ -107,10 +107,16 @@ public class MainViewController {
 	 * Switches the currently displayed content area to the display department view.
 	 */
 	public void switchToDisplayDepartmentView() {
-		DisplayDepartmentController controller = new DisplayDepartmentController(this);
-		this.mainView.getContentPane().removeAll();
-		this.mainView.getContentPane().add(controller.getDisplayDepartmentView());
-		this.mainView.revalidate();
+		try {
+			DisplayDepartmentController controller = new DisplayDepartmentController(this);
+			this.mainView.getContentPane().removeAll();
+			this.mainView.getContentPane().add(controller.getDisplayDepartmentView());
+			this.mainView.revalidate();			
+		}
+		catch(WebServiceException webServiceException) {
+			JOptionPane.showMessageDialog(this.mainView, this.resources.getString("gui.dept.error.serverUnavailable"), 
+					this.resources.getString("gui.error"), JOptionPane.ERROR_MESSAGE);
+		}
 	}
 	
 	
@@ -118,10 +124,16 @@ public class MainViewController {
 	 * Switches the currently displayed content area to the edit department view.
 	 */
 	public void switchToEditDepartmentView() {
-		EditDepartmentController controller = new EditDepartmentController(this);
-		this.mainView.getContentPane().removeAll();
-		this.mainView.getContentPane().add(controller.getEditDepartmentView());
-		this.mainView.revalidate();
+		try {
+			EditDepartmentController controller = new EditDepartmentController(this);
+			this.mainView.getContentPane().removeAll();
+			this.mainView.getContentPane().add(controller.getEditDepartmentView());
+			this.mainView.revalidate();			
+		}
+		catch(WebServiceException webServiceException) {
+			JOptionPane.showMessageDialog(this.mainView, this.resources.getString("gui.dept.error.serverUnavailable"), 
+					this.resources.getString("gui.error"), JOptionPane.ERROR_MESSAGE);
+		}
 	}
 	
 	
@@ -129,21 +141,33 @@ public class MainViewController {
 	 * Switches the currently displayed content area to the create department view.
 	 */
 	public void switchToCreateDepartmentView() {
-		CreateDepartmentController controller = new CreateDepartmentController(this);
-		this.mainView.getContentPane().removeAll();
-		this.mainView.getContentPane().add(controller.getCreateDepartmentView());
-		this.mainView.revalidate();
+		try {
+			CreateDepartmentController controller = new CreateDepartmentController(this);
+			this.mainView.getContentPane().removeAll();
+			this.mainView.getContentPane().add(controller.getCreateDepartmentView());
+			this.mainView.revalidate();
+		}
+		catch(WebServiceException webServiceException) {
+			JOptionPane.showMessageDialog(this.mainView, this.resources.getString("gui.dept.error.serverUnavailable"), 
+					this.resources.getString("gui.error"), JOptionPane.ERROR_MESSAGE);
+		}
 	}
 	
 	
 	/**
 	 * Switches the currently displayed content area to the department view.
 	 */
-	public void switchToDepartmentView() {
-		DepartmentOverviewController controller = new DepartmentOverviewController(this);
-		this.mainView.getContentPane().removeAll();
-		this.mainView.getContentPane().add(controller.getDepartmentOverview());
-		this.mainView.revalidate();
+	public void switchToDepartmentOverview() {
+		try {
+			DepartmentOverviewController controller = new DepartmentOverviewController(this);
+			this.mainView.getContentPane().removeAll();
+			this.mainView.getContentPane().add(controller.getDepartmentOverview());
+			this.mainView.revalidate();
+		}
+		catch(WebServiceException webServiceException) {
+			JOptionPane.showMessageDialog(this.mainView, this.resources.getString("gui.dept.error.serverUnavailable"), 
+					this.resources.getString("gui.error"), JOptionPane.ERROR_MESSAGE);
+		}
 	}
 	
 	
