@@ -1,6 +1,7 @@
 package frontend.controller.employee;
 
 import java.awt.event.ActionEvent;
+import java.text.MessageFormat;
 import java.util.List;
 
 import javax.swing.JOptionPane;
@@ -78,6 +79,7 @@ public class CreateEmployeeController extends EmployeeController {
 			Employee newEmployee = this.getEmployeeFromViewInput();
 			this.employeeWebServiceDao.insertEmpoyee(newEmployee);
 			this.clearInputFields();
+			this.displaySaveSuccessPopUp(newEmployee.getFullName());
 		}
 		catch(Exception exception) {
 			JOptionPane.showMessageDialog(this.createEmployeeView, exception.getMessage(), this.resources.getString("gui.error"), JOptionPane.ERROR_MESSAGE);
@@ -121,6 +123,19 @@ public class CreateEmployeeController extends EmployeeController {
 		this.createEmployeeView.getTextFieldFirstName().setText("");
 		this.createEmployeeView.getTextFieldLastName().setText("");
 		this.createEmployeeView.getCbGender().setSelectedIndex(0);
+	}
+	
+	
+	/**
+	 * Displays a PopUp informing the user that the save operation has been performed successfully.
+	 * 
+	 * @param fullName The full name of the employee.
+	 */
+	private void displaySaveSuccessPopUp(final String fullName) {
+		JOptionPane.showMessageDialog(this.createEmployeeView, 
+				MessageFormat.format(this.resources.getString("gui.employee.information.createSuccess"), fullName),
+				this.resources.getString("gui.information"), 
+				JOptionPane.INFORMATION_MESSAGE);
 	}
 	
 	

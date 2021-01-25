@@ -140,6 +140,7 @@ public class DisplayEmployeeController extends EmployeeController {
 		if(this.selectedEmployee == null) {
 			JOptionPane.showMessageDialog(this.displayEmployeeView, this.resources.getString("gui.employee.error.noEmployeeSelected"), 
 					this.resources.getString("gui.error"), JOptionPane.ERROR_MESSAGE);
+			return;
 		}
 		
 		this.displayEmployeeSalaryController = new DisplayEmployeeSalaryController(this.mainViewController, this.selectedEmployee);

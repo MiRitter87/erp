@@ -2,6 +2,7 @@ package frontend.controller.employee;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ItemEvent;
+import java.text.MessageFormat;
 import java.util.List;
 
 import javax.swing.JOptionPane;
@@ -132,13 +133,14 @@ public class EditEmployeeController extends EmployeeController {
 		//Changes exist - Try to persist those changes
 		try {
 			this.employeeWebServiceDao.updateEmployee(this.selectedEmployee);
+			this.displaySaveSuccessPopUp(this.selectedEmployee.getFullName());
 			this.selectedEmployee.reHash();	//The hash of the employee in the local list of all employees is updated.
 			this.clearInputFields();
 			this.selectedEmployee = null;
 			
 			//The combo box for employee selection needs to be re-initialized in order to show the changes.
 			this.editEmployeeView.getCbEmployee().removeAllItems();
-			this.initializeEmployeeComboBox();
+			this.initializeEmployeeComboBox();			
 		}
 		catch(Exception exception) {
 			JOptionPane.showMessageDialog(this.editEmployeeView, exception.getMessage(), this.resources.getString("gui.error"), JOptionPane.ERROR_MESSAGE);
@@ -186,6 +188,19 @@ public class EditEmployeeController extends EmployeeController {
 		this.editEmployeeView.getTextFieldFirstName().setText("");
 		this.editEmployeeView.getTextFieldLastName().setText("");
 		this.editEmployeeView.getCbGender().setSelectedIndex(0);
+	}
+	
+	
+	/**
+	 * Displays a PopUp informing the user that the save operation has been performed successfully.
+	 * 
+	 * @param fullName The full name of the employee.
+	 */
+	private void displaySaveSuccessPopUp(final String fullName) {
+		JOptionPane.showMessageDialog(this.editEmployeeView, 
+				MessageFormat.format(this.resources.getString("gui.employee.information.saveSuccess"), fullName),
+				this.resources.getString("gui.information"), 
+				JOptionPane.INFORMATION_MESSAGE);
 	}
 	
 	
