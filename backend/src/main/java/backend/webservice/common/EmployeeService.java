@@ -8,6 +8,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import backend.dao.EmployeeHibernateDao;
+import backend.exception.ObjectUnchangedException;
 import backend.model.Employee;
 import backend.model.EmployeeArray;
 import backend.model.WebServiceMessage;
@@ -162,7 +163,12 @@ public class EmployeeService {
 			this.employeeDAO.updateEmployee(employee);
 			updateEmployeeResult.addMessage(new WebServiceMessage(
 					WebServiceMessageType.S, this.resources.getString("employee.updateSuccess")));
-		} catch (Exception e) {
+		} 
+		catch(ObjectUnchangedException objectUnchangedException) {
+			updateEmployeeResult.addMessage(new WebServiceMessage(
+					WebServiceMessageType.I, this.resources.getString("employee.updateUnchanged")));
+		}
+		catch (Exception e) {
 			updateEmployeeResult.addMessage(new WebServiceMessage(
 					WebServiceMessageType.E, this.resources.getString("employee.updateError")));
 			

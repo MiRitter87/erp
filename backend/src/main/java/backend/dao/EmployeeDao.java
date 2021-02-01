@@ -2,6 +2,7 @@ package backend.dao;
 
 import java.util.List;
 
+import backend.exception.ObjectUnchangedException;
 import backend.model.Employee;
 
 /**
@@ -14,7 +15,7 @@ public interface EmployeeDao {
 	 * Inserts an employee.
 	 * 
 	 * @param employee The employee to be inserted.
-	 * @exception Exception Insertion failed.
+	 * @throws Exception Insertion failed.
 	 */
 	void insertEmpoyee(final Employee employee) throws Exception;
 	
@@ -22,7 +23,7 @@ public interface EmployeeDao {
 	 * Deletes an employee.
 	 * 
 	 * @param employee The employee to be deleted.
-	 * @exception Exception Deletion failed.
+	 * @throws Exception Deletion failed.
 	 */
 	void deleteEmployee(final Employee employee) throws Exception;
 	
@@ -30,7 +31,7 @@ public interface EmployeeDao {
 	 * Gets all employees.
 	 * 
 	 * @return All employees.
-	 * @exception Exception Employee retrieval failed.
+	 * @throws Exception Employee retrieval failed.
 	 */
 	List<Employee> getEmployees() throws Exception;
 	
@@ -43,11 +44,14 @@ public interface EmployeeDao {
 	 */
 	Employee getEmployee(final Integer id) throws Exception;
 	
+	
 	/**
+	 *
 	 * Updates the given employee
 	 * 
 	 * @param employee The employee to be updated.
+	 * @throws ObjectUnchangedException The employee has not been changed.
 	 * @throws Exception Employee update failed.
 	 */
-	void updateEmployee(final Employee employee) throws Exception;
+	void updateEmployee(final Employee employee) throws ObjectUnchangedException, Exception;
 }

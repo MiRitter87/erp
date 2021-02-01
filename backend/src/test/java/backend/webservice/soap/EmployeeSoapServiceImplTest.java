@@ -97,6 +97,7 @@ public class EmployeeSoapServiceImplTest {
 	protected void setUp() {
 		this.createDummyEmployees();
 		this.createDummyDepartment();
+		this.updateObjectReferences();
 	}
 	
 	
@@ -205,6 +206,14 @@ public class EmployeeSoapServiceImplTest {
 	}
 	
 	
+	/**
+	 * Updates references between objects after the objects have been created.
+	 */
+	protected void updateObjectReferences() {
+		this.jim.setHeadOfDepartment(this.departmentSd);
+	}
+	
+	
 	@Test
 	/**
 	 * Tests the retrieval of all employees.
@@ -266,7 +275,8 @@ public class EmployeeSoapServiceImplTest {
 		assertEquals(employee.getFirstName(), this.jim.getFirstName());
 		assertEquals(employee.getLastName(), this.jim.getLastName());
 		assertEquals(employee.getGender(), this.jim.getGender());
-		assertEquals(employee.getSalaryData().getMonthlySalary(), this.jim.getSalaryData().getMonthlySalary());
+		assertTrue(employee.getSalaryData().equals(this.jim.getSalaryData()));
+		assertEquals(employee.getHeadOfDepartment().getCode(), this.jim.getHeadOfDepartment().getCode());
 	}
 	
 	
@@ -376,6 +386,34 @@ public class EmployeeSoapServiceImplTest {
 			assertNotEquals(oldSalaryDate, updatedEmployee.getSalaryData().getSalaryLastChange());
 			assertEquals(newSalary.getSalaryLastChange(), updatedEmployee.getSalaryData().getSalaryLastChange());
 		} 
+		catch (Exception e) {
+			fail(e.getMessage());
+		}
+	}
+	
+	
+	@Test
+	/**
+	 * Tests saving of an employee whose data have not changed. The backend should not save and provide an information message instead.
+	 */
+	public void testUpdateUnchangedEmployee() {
+		EmployeeSoapServiceImpl service = new EmployeeSoapServiceImpl();
+		WebServiceResult updateEmployeeResult;
+		String expectedInfoMessage = this.resources.getString("employee.updateUnchanged");
+		String actualInfoMessage;
+		
+		try {
+			//Update the unchanged employee using the WebService.
+			updateEmployeeResult = service.updateEmployee(this.jim);
+			
+			//Assure that a proper return message is provided.
+			assertTrue(updateEmployeeResult.getMessages().size() == 1);
+			assertTrue(updateEmployeeResult.getMessages().get(0).getType() == WebServiceMessageType.I);
+
+			actualInfoMessage = updateEmployeeResult.getMessages().get(0).getText();
+			assertEquals(expectedInfoMessage, actualInfoMessage);
+			
+		}
 		catch (Exception e) {
 			fail(e.getMessage());
 		}

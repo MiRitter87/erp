@@ -8,6 +8,7 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 
+import backend.exception.ObjectUnchangedException;
 import backend.model.Employee;
 
 /**
@@ -117,12 +118,30 @@ public class EmployeeHibernateDao extends HibernateDao implements EmployeeDao {
 	
 	
 	@Override
-	public void updateEmployee(Employee employee) throws Exception {
-		EntityManager entityManager = this.sessionFactory.createEntityManager();
+	public void updateEmployee(Employee employee) throws ObjectUnchangedException, Exception {
+		EntityManager entityManager;
 		
+		this.checkEmployeeDataChanged(employee);
+		
+		entityManager = this.sessionFactory.createEntityManager();
 		entityManager.getTransaction().begin();
 		entityManager.merge(employee);
 		entityManager.getTransaction().commit();
 		entityManager.close();		
+	}
+	
+	
+	/**
+	 * Checks if the data of the given employee differ from the employee that is persisted at database level.
+	 * 
+	 * @param employee The employee to be checked.
+	 * @throws ObjectUnchangedException In case the employee has not been changed.
+	 * @throws Exception In case an error occurred during determination of the employee stored at the database.
+	 */
+	private void checkEmployeeDataChanged(final Employee employee) throws ObjectUnchangedException, Exception {
+		Employee databaseEmployee = this.getEmployee(employee.getId());
+		
+		if(databaseEmployee.equals(employee))
+			throw new ObjectUnchangedException();
 	}
 }
