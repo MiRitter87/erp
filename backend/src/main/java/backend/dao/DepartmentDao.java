@@ -4,6 +4,7 @@ import java.util.List;
 
 import javax.persistence.EntityExistsException;
 
+import backend.exception.ObjectUnchangedException;
 import backend.model.Department;
 
 /**
@@ -63,7 +64,8 @@ public interface DepartmentDao {
 	 * Updates the given department.
 	 * 
 	 * @param department The department to be updated.
+	 * @throws ObjectUnchangedException The department has not been changed.
 	 * @throws Exception Department update failed.
 	 */
-	void updateDepartment(final Department department) throws Exception;
+	void updateDepartment(final Department department) throws ObjectUnchangedException, Exception;
 }

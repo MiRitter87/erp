@@ -11,6 +11,7 @@ import javax.persistence.criteria.ParameterExpression;
 import javax.persistence.criteria.Path;
 import javax.persistence.criteria.Root;
 
+import backend.exception.ObjectUnchangedException;
 import backend.model.Department;
 
 /**
@@ -123,8 +124,10 @@ public class DepartmentHibernateDao extends HibernateDao implements DepartmentDa
 
 	
 	@Override
-	public void updateDepartment(Department department) throws Exception {
+	public void updateDepartment(Department department) throws ObjectUnchangedException, Exception {
 		EntityManager entityManager = this.sessionFactory.createEntityManager();
+		
+		this.checkDepartmentDataChanged(department);
 		
 		entityManager.getTransaction().begin();
 		entityManager.merge(department);
@@ -158,5 +161,20 @@ public class DepartmentHibernateDao extends HibernateDao implements DepartmentDa
 			return results.get(0);
 		else
 			return null;
+	}
+	
+	
+	/**
+	 * Checks if the data of the given department differ from the department that is persisted at database level.
+	 * 
+	 * @param department The department to be checked.
+	 * @throws ObjectUnchangedException In case the department has not been changed.
+	 * @throws Exception In case an error occurred during determination of the department stored at the database.
+	 */
+	private void checkDepartmentDataChanged(final Department department) throws ObjectUnchangedException, Exception {
+		Department databaseDepartment = this.getDepartmentByCode(department.getCode());
+		
+		if(databaseDepartment.equals(department))
+			throw new ObjectUnchangedException();
 	}
 }

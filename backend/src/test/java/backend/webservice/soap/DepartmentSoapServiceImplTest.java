@@ -571,4 +571,25 @@ public class DepartmentSoapServiceImplTest {
 		assertTrue(updateDepartmentResult.getMessages().size() == 1);
 		assertTrue(updateDepartmentResult.getMessages().get(0).getType() == WebServiceMessageType.E);
 	}
+	
+	
+	@Test
+	/**
+	 * Tests saving of a department whose data have not changed. The backend should not save and provide an information message instead.
+	 */
+	public void testUpdateUnchangedDepartment() {
+		DepartmentSoapServiceImpl service = new DepartmentSoapServiceImpl();
+		WebServiceResult updateDepartmentResult;
+		String expectedInfoMessage = this.resources.getString("department.updateUnchanged");
+		String actualInfoMessage;
+		
+		updateDepartmentResult = service.updateDepartment(this.departmentHr);
+		
+		//Assure that a proper return message is provided.
+		assertTrue(updateDepartmentResult.getMessages().size() == 1);
+		assertTrue(updateDepartmentResult.getMessages().get(0).getType() == WebServiceMessageType.I);
+		
+		actualInfoMessage = updateDepartmentResult.getMessages().get(0).getText();
+		assertEquals(expectedInfoMessage, actualInfoMessage);
+	}
 }

@@ -10,6 +10,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import backend.dao.DepartmentHibernateDao;
+import backend.exception.ObjectUnchangedException;
 import backend.model.Department;
 import backend.model.DepartmentArray;
 import backend.model.WebServiceMessage;
@@ -211,7 +212,12 @@ public class DepartmentService {
 			this.departmentDAO.updateDepartment(department);
 			updateDepartmentResult.addMessage(new WebServiceMessage(WebServiceMessageType.S, 
 					MessageFormat.format(this.resources.getString("department.updateSuccess"), department.getCode())));
-		} catch (Exception e) {
+		} 
+		catch(ObjectUnchangedException objectUnchangedException) {
+			updateDepartmentResult.addMessage(new WebServiceMessage(WebServiceMessageType.I, 
+					this.resources.getString("department.updateUnchanged")));
+		}
+		catch (Exception e) {
 			updateDepartmentResult.addMessage(new WebServiceMessage(WebServiceMessageType.E, 
 					MessageFormat.format(this.resources.getString("department.updateError"), department.getCode())));
 			
