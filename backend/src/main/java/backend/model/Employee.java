@@ -196,7 +196,6 @@ public class Employee {
 		int result = 1;
 		result = prime * result + ((firstName == null) ? 0 : firstName.hashCode());
 		result = prime * result + ((gender == null) ? 0 : gender.hashCode());
-		result = prime * result + ((headOfDepartment == null) ? 0 : headOfDepartment.hashCode());
 		result = prime * result + ((id == null) ? 0 : id.hashCode());
 		result = prime * result + ((lastName == null) ? 0 : lastName.hashCode());
 		result = prime * result + ((salaryData == null) ? 0 : salaryData.hashCode());
@@ -224,13 +223,6 @@ public class Employee {
 			return false;
 		}
 		if (gender != other.gender) {
-			return false;
-		}
-		if (headOfDepartment == null) {
-			if (other.headOfDepartment != null) {
-				return false;
-			}
-		} else if (!headOfDepartment.getCode().equals(other.headOfDepartment.getCode())) {
 			return false;
 		}
 		if (id == null) {
