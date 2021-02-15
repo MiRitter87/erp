@@ -1,4 +1,4 @@
-package backend.model;
+package backend.model.webservice;
 
 /**
  * Return types of WebService messages.

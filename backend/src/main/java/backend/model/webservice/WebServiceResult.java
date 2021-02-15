@@ -1,4 +1,4 @@
-package backend.model;
+package backend.model.webservice;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -6,6 +6,9 @@ import java.util.List;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlSeeAlso;
+
+import backend.model.DepartmentArray;
+import backend.model.EmployeeArray;
 
 /**
  * The result of a WebService call.

@@ -28,8 +28,8 @@ import backend.model.Employee;
 import backend.model.EmployeeArray;
 import backend.model.EmployeeSalary;
 import backend.model.Gender;
-import backend.model.WebServiceMessageType;
-import backend.model.WebServiceResult;
+import backend.model.webservice.WebServiceMessageType;
+import backend.model.webservice.WebServiceResult;
 import backend.tools.test.SoapTestTools;
 import backend.webservice.soap.EmployeeSoapServiceImpl;
 

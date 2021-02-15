@@ -3,7 +3,7 @@ package backend.webservice.soap;
 import javax.jws.WebService;
 
 import backend.model.Employee;
-import backend.model.WebServiceResult;
+import backend.model.webservice.WebServiceResult;
 import backend.webservice.common.EmployeeService;
 
 /**

@@ -11,9 +11,9 @@ import backend.dao.EmployeeHibernateDao;
 import backend.exception.ObjectUnchangedException;
 import backend.model.Employee;
 import backend.model.EmployeeArray;
-import backend.model.WebServiceMessage;
-import backend.model.WebServiceMessageType;
-import backend.model.WebServiceResult;
+import backend.model.webservice.WebServiceMessage;
+import backend.model.webservice.WebServiceMessageType;
+import backend.model.webservice.WebServiceResult;
 
 /**
  * Common implementation of the Employee WebService that is used by the SOAP as well as the REST service.

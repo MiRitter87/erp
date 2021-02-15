@@ -24,8 +24,8 @@ import backend.model.Department;
 import backend.model.DepartmentArray;
 import backend.model.Employee;
 import backend.model.Gender;
-import backend.model.WebServiceMessageType;
-import backend.model.WebServiceResult;
+import backend.model.webservice.WebServiceMessageType;
+import backend.model.webservice.WebServiceResult;
 import backend.tools.test.SoapTestTools;
 
 public class DepartmentSoapServiceImplTest {

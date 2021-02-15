@@ -13,9 +13,9 @@ import backend.dao.DepartmentHibernateDao;
 import backend.exception.ObjectUnchangedException;
 import backend.model.Department;
 import backend.model.DepartmentArray;
-import backend.model.WebServiceMessage;
-import backend.model.WebServiceMessageType;
-import backend.model.WebServiceResult;
+import backend.model.webservice.WebServiceMessage;
+import backend.model.webservice.WebServiceMessageType;
+import backend.model.webservice.WebServiceResult;
 
 /**
  * Common implementation of the Department WebService that is used by the SOAP as well as the REST service.

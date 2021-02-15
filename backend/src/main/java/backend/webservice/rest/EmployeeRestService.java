@@ -11,7 +11,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
 import backend.model.Employee;
-import backend.model.WebServiceResult;
+import backend.model.webservice.WebServiceResult;
 import backend.webservice.common.EmployeeService;
 
 /**

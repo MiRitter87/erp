@@ -4,7 +4,7 @@ import javax.jws.WebParam;
 import javax.jws.WebService;
 
 import backend.model.Department;
-import backend.model.WebServiceResult;
+import backend.model.webservice.WebServiceResult;
 
 /**
  * WebService interface for department access using SOAP.

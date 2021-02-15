@@ -1,4 +1,4 @@
-package backend.model;
+package backend.model.webservice;
 
 /**
  * A message as part of a WebService result.

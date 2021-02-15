@@ -1,8 +1,8 @@
 package backend.tools.test;
 
-import backend.model.WebServiceMessage;
-import backend.model.WebServiceMessageType;
-import backend.model.WebServiceResult;
+import backend.model.webservice.WebServiceMessage;
+import backend.model.webservice.WebServiceMessageType;
+import backend.model.webservice.WebServiceResult;
 
 /**
  * Provides convenience methods for testing of SOAP WebServices.
