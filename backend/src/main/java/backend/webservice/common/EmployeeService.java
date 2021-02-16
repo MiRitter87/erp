@@ -11,6 +11,7 @@ import backend.dao.EmployeeHibernateDao;
 import backend.exception.ObjectUnchangedException;
 import backend.model.Employee;
 import backend.model.EmployeeArray;
+import backend.model.webservice.EmployeeHeadQueryParameter;
 import backend.model.webservice.WebServiceMessage;
 import backend.model.webservice.WebServiceMessageType;
 import backend.model.webservice.WebServiceResult;
@@ -75,18 +76,18 @@ public class EmployeeService {
 	
 	
 	/**
-	 * Provides a list of all employees.
+	 * Provides a list of all employees that match the given query parameters.
 	 * 
-	 * @return All employees
-	 * @return A list of all employees.
+	 * @param employeeHeadQuery Specifies the employees to be selected based on the head attribute.
+	 * @return A list of all employees that match the given query parameters.
 	 */
-	public WebServiceResult getEmployees() {
+	public WebServiceResult getEmployees(final EmployeeHeadQueryParameter employeeHeadQuery) {
 		EmployeeArray employees = new EmployeeArray();
 		WebServiceResult getEmployeesResult = new WebServiceResult(null);
 		
 		try {
 			this.employeeDAO = new EmployeeHibernateDao();
-			employees.setEmployees(this.employeeDAO.getEmployees());
+			employees.setEmployees(this.employeeDAO.getEmployees(employeeHeadQuery));
 			getEmployeesResult.setData(employees);
 		} catch (Exception e) {
 			getEmployeesResult.addMessage(new WebServiceMessage(

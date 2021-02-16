@@ -4,6 +4,7 @@ import java.util.List;
 
 import backend.exception.ObjectUnchangedException;
 import backend.model.Employee;
+import backend.model.webservice.EmployeeHeadQueryParameter;
 
 /**
  * Interface for employee persistence.
@@ -28,12 +29,13 @@ public interface EmployeeDao {
 	void deleteEmployee(final Employee employee) throws Exception;
 	
 	/**
-	 * Gets all employees.
+	 * Gets all employees that match the given query parameters..
 	 * 
-	 * @return All employees.
+	 * @param employeeHeadQuery Specifies the employees to be selected based on the head attribute.
+	 * @return A list of all employees that match the given query parameters.
 	 * @throws Exception Employee retrieval failed.
 	 */
-	List<Employee> getEmployees() throws Exception;
+	List<Employee> getEmployees(final EmployeeHeadQueryParameter employeeHeadQuery) throws Exception;
 	
 	/**
 	 * Gets the employee with the given id.

@@ -3,6 +3,7 @@ package backend.webservice.soap;
 import javax.jws.*;
 
 import backend.model.Employee;
+import backend.model.webservice.EmployeeHeadQueryParameter;
 import backend.model.webservice.WebServiceResult;
 
 /**
@@ -31,9 +32,10 @@ public interface EmployeeSoapService {
 	/**
 	 * Provides a list of all employees.
 	 * 
-	 * @return A list of all employees.
+	 * @param employeeHeadQuery Specifies the employees to be selected based on the head attribute.
+	 * @return A list of all employees that match the given query parameters.
 	 */
-	WebServiceResult getEmployees();
+	WebServiceResult getEmployees(@WebParam(name="employeeHeadQuery") final EmployeeHeadQueryParameter employeeHeadQuery);
 	
 	/**
 	 * Adds an employee.

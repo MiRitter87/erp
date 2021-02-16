@@ -8,9 +8,11 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
 import backend.model.Employee;
+import backend.model.webservice.EmployeeHeadQueryParameter;
 import backend.model.webservice.WebServiceResult;
 import backend.webservice.common.EmployeeService;
 
@@ -45,9 +47,9 @@ public class EmployeeRestService {
 	@GET
 	@Path("/")
 	@Produces(MediaType.APPLICATION_JSON)
-	public WebServiceResult getEmployees() {
+	public WebServiceResult getEmployees(@QueryParam("employeeHeadQuery") final EmployeeHeadQueryParameter employeeHeadQuery) {
 		EmployeeService employeeService = new EmployeeService();
-		return employeeService.getEmployees();
+		return employeeService.getEmployees(employeeHeadQuery);
 	}
 	
 	

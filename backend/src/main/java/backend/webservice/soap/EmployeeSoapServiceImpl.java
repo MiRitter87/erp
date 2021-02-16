@@ -3,6 +3,7 @@ package backend.webservice.soap;
 import javax.jws.WebService;
 
 import backend.model.Employee;
+import backend.model.webservice.EmployeeHeadQueryParameter;
 import backend.model.webservice.WebServiceResult;
 import backend.webservice.common.EmployeeService;
 
@@ -29,8 +30,8 @@ public class EmployeeSoapServiceImpl implements EmployeeSoapService {
 	
 	
 	@Override
-	public WebServiceResult getEmployees() {
-		return this.employeeService.getEmployees();
+	public WebServiceResult getEmployees(EmployeeHeadQueryParameter employeeHeadQuery) {
+		return this.employeeService.getEmployees(employeeHeadQuery);
 	}
 
 	@Override

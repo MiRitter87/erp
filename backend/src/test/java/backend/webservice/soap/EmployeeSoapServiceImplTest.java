@@ -28,6 +28,7 @@ import backend.model.Employee;
 import backend.model.EmployeeArray;
 import backend.model.EmployeeSalary;
 import backend.model.Gender;
+import backend.model.webservice.EmployeeHeadQueryParameter;
 import backend.model.webservice.WebServiceMessageType;
 import backend.model.webservice.WebServiceResult;
 import backend.tools.test.SoapTestTools;
@@ -218,14 +219,14 @@ public class EmployeeSoapServiceImplTest {
 	/**
 	 * Tests the retrieval of all employees.
 	 */
-	public void testGetEmployees() {
+	public void testGetAllEmployees() {
 		WebServiceResult getEmployeesResult;
 		EmployeeArray employees;
 		Employee employee;
 
 		//Get all employees
 		EmployeeSoapServiceImpl service = new EmployeeSoapServiceImpl();
-		getEmployeesResult = service.getEmployees();
+		getEmployeesResult = service.getEmployees(EmployeeHeadQueryParameter.ALL);
 		employees = (EmployeeArray) getEmployeesResult.getData();
 		
 		//Assure no error message exists
@@ -247,6 +248,66 @@ public class EmployeeSoapServiceImplTest {
 		assertEquals(employee.getLastName(), this.jim.getLastName());
 		assertEquals(employee.getGender(), this.jim.getGender());
 		assertEquals(employee.getSalaryData().getMonthlySalary(), this.jim.getSalaryData().getMonthlySalary());
+	}
+	
+	
+	@Test
+	/**
+	 * Tests the retrieval of all employees that are not head of any department.
+	 */
+	public void testGetAllEmployeesNotHead() {
+		WebServiceResult getEmployeesResult;
+		EmployeeArray employees;
+		Employee employee;
+		
+		//Get all employees
+		EmployeeSoapServiceImpl service = new EmployeeSoapServiceImpl();
+		getEmployeesResult = service.getEmployees(EmployeeHeadQueryParameter.NO_HEAD_ONLY);
+		employees = (EmployeeArray) getEmployeesResult.getData();
+		
+		//Assure no error message exists
+		assertTrue(SoapTestTools.resultContainsErrorMessage(getEmployeesResult) == false);
+		
+		//Check if one employee is returned
+		assertTrue(employees.getEmployees().size() == 1);
+		
+		employee = employees.getEmployees().get(0);
+		
+		//Check that the employee is not head of a department.
+		assertNull(employee.getHeadOfDepartment());
+		
+		//Check that Olaf has been retrieved. Olaf is not head of any department.
+		assertEquals(employee.getId(), this.olaf.getId());
+	}
+	
+	
+	@Test
+	/**
+	 * Tests the retrieval of all employees that are head of any department.
+	 */
+	public void testGetAllEmployeestHead() {
+		WebServiceResult getEmployeesResult;
+		EmployeeArray employees;
+		Employee employee;
+		
+		//Get all employees
+		EmployeeSoapServiceImpl service = new EmployeeSoapServiceImpl();
+		getEmployeesResult = service.getEmployees(EmployeeHeadQueryParameter.HEAD_ONLY);
+		employees = (EmployeeArray) getEmployeesResult.getData();
+		
+		//Assure no error message exists
+		assertTrue(SoapTestTools.resultContainsErrorMessage(getEmployeesResult) == false);
+		
+		//Check if one employee is returned
+		assertTrue(employees.getEmployees().size() == 1);
+		
+		employee = employees.getEmployees().get(0);
+		
+		//Check that the employee is head of a department.
+		assertNotNull(employee.getHeadOfDepartment());
+		
+		//Check that Olaf has been retrieved. Olaf is not head of any department.
+		assertEquals(employee.getId(), this.jim.getId());
 	}
 
 	
