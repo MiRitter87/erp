@@ -285,7 +285,7 @@ public class EmployeeSoapServiceImplTest {
 	/**
 	 * Tests the retrieval of all employees that are head of any department.
 	 */
-	public void testGetAllEmployeestHead() {
+	public void testGetAllEmployeesHead() {
 		WebServiceResult getEmployeesResult;
 		EmployeeArray employees;
 		Employee employee;
@@ -306,7 +306,7 @@ public class EmployeeSoapServiceImplTest {
 		//Check that the employee is head of a department.
 		assertNotNull(employee.getHeadOfDepartment());
 		
-		//Check that Olaf has been retrieved. Olaf is not head of any department.
+		//Check that Jim has been retrieved. Jim is head of a department.
 		assertEquals(employee.getId(), this.jim.getId());
 	}
 
