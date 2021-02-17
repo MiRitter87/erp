@@ -164,7 +164,7 @@ public class EmployeeHibernateDao extends HibernateDao implements EmployeeDao {
 		Subquery<Department> subQuery;
 		Root<Department> subRoot;
 		
-		if(employeeHeadQuery == EmployeeHeadQueryParameter.ALL)
+		if(employeeHeadQuery == EmployeeHeadQueryParameter.ALL || employeeHeadQuery == null)
 			return;	//No further query restrictions needed.
 		
 		if(employeeHeadQuery == EmployeeHeadQueryParameter.NO_HEAD_ONLY) {
