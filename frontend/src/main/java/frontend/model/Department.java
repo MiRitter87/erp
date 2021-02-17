@@ -43,6 +43,20 @@ public class Department {
 	
 	
 	/**
+	 * Initializes the department based on the data of the given department. A copy is created.
+	 * 
+	 * @param department The department which data are copied.
+	 */
+	public Department(final Department department) {
+		this.code = department.code;
+		this.name = department.name;
+		this.description = department.description;
+		this.head = department.head;
+		this.persistedHash = department.persistedHash;
+	}
+	
+	
+	/**
 	 * Initialize the model using data provided by the WebService model.
 	 * 
 	 * @param webServiceDepartment The department data as provided by the WebService

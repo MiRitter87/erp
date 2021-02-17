@@ -196,6 +196,8 @@ public class EditDepartmentController extends DepartmentController {
 	 * @param saveEvent The action event of the button click.
 	 */
 	public void saveDepartmentHandler(ActionEvent saveEvent) {
+		Department originalDepartment = new Department(this.selectedDepartment);
+		
 		//Validation of user input
 		try {					
 			this.validateInput();
@@ -223,15 +225,17 @@ public class EditDepartmentController extends DepartmentController {
 			this.selectedDepartment.reHash();		//The hash of the department in the local list of all departments is updated.
 			this.clearInputFields();
 			this.selectedDepartment = null;
+			
+			//The combo box for department selection needs to be re-initialized in order to show the changes.
+			this.editDepartmentView.getCbDepartment().removeAllItems();
+			this.initializeDepartmentComboBox();
 		}
 		catch(Exception exception) {
+			//Restore the old state of the selected department because the saving failed.
+			this.setSelectedDeparmentData(originalDepartment);
 			JOptionPane.showMessageDialog(this.editDepartmentView, exception.getMessage(), this.resources.getString("gui.error"), JOptionPane.ERROR_MESSAGE);
 			logger.debug("Updating department failed: " +exception.getMessage());
 		}
-		
-		//The combo box for department selection needs to be re-initialized in order to show the changes.
-		this.editDepartmentView.getCbDepartment().removeAllItems();
-		this.initializeDepartmentComboBox();
 	}
 	
 	
@@ -287,6 +291,18 @@ public class EditDepartmentController extends DepartmentController {
 				MessageFormat.format(this.resources.getString("gui.dept.information.saveSuccess"), departmentName),
 				this.resources.getString("gui.information"), 
 				JOptionPane.INFORMATION_MESSAGE);
+	}
+	
+	
+	/**
+	 * Sets the editable data of the selected department with the data of the given department.
+	 * 
+	 * @param department The department which data are used.
+	 */
+	private void setSelectedDeparmentData(final Department department) {
+		this.selectedDepartment.setName(department.getName());
+		this.selectedDepartment.setDescription(department.getDescription());
+		this.selectedDepartment.setHead(department.getHead());
 	}
 
 
