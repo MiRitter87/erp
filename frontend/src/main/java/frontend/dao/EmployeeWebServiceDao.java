@@ -6,6 +6,7 @@ import java.util.List;
 import javax.xml.ws.WebServiceException;
 
 import frontend.generated.ws.soap.employee.EmployeeArray;
+import frontend.generated.ws.soap.employee.EmployeeHeadQueryParameter;
 import frontend.generated.ws.soap.employee.EmployeeService;
 import frontend.generated.ws.soap.employee.EmployeeService_Service;
 import frontend.generated.ws.soap.employee.WebServiceResult;
@@ -50,12 +51,12 @@ public class EmployeeWebServiceDao extends WebServiceDao implements EmployeeDao 
 	}
 
 	@Override
-	public List<Employee> getEmployees() throws Exception {
+	public List<Employee> getEmployees(EmployeeHeadQueryParameter employeeHeadQueryParameter) throws Exception {
 		WebServiceResult webServiceResult;
 		EmployeeArray employeeArray;
 		List<Employee> employees = new ArrayList<Employee>();
 		
-		webServiceResult = this.employeeService.getEmployees();
+		webServiceResult = this.employeeService.getEmployees(employeeHeadQueryParameter);
 		this.raiseExceptionForErrors(webServiceResult.getMessages());
 		
 		//Check WebService result data

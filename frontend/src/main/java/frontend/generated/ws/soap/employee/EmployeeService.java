@@ -25,6 +25,7 @@ public interface EmployeeService {
 
     /**
      * 
+     * @param employeeHeadQuery
      * @return
      *     returns frontend.generated.ws.soap.employee.WebServiceResult
      */
@@ -32,7 +33,9 @@ public interface EmployeeService {
     @WebResult(targetNamespace = "")
     @RequestWrapper(localName = "getEmployees", targetNamespace = "http://soap.webservice.backend/", className = "frontend.generated.ws.soap.employee.GetEmployees")
     @ResponseWrapper(localName = "getEmployeesResponse", targetNamespace = "http://soap.webservice.backend/", className = "frontend.generated.ws.soap.employee.GetEmployeesResponse")
-    public WebServiceResult getEmployees();
+    public WebServiceResult getEmployees(
+        @WebParam(name = "employeeHeadQuery", targetNamespace = "")
+        EmployeeHeadQueryParameter employeeHeadQuery);
 
     /**
      * 

@@ -2,6 +2,7 @@ package frontend.dao;
 
 import java.util.List;
 
+import frontend.generated.ws.soap.employee.EmployeeHeadQueryParameter;
 import frontend.model.Employee;
 
 /**
@@ -14,7 +15,7 @@ public interface EmployeeDao {
 	 * Inserts an employee.
 	 * 
 	 * @param employee The employee to be inserted.
-	 * @exception Exception Insertion failed.
+	 * @throws Exception Insertion failed.
 	 */
 	void insertEmpoyee(final Employee employee) throws Exception;
 	
@@ -22,17 +23,18 @@ public interface EmployeeDao {
 	 * Deletes an employee.
 	 * 
 	 * @param employee The employee to be deleted.
-	 * @exception Exception Deletion failed.
+	 * @throws Exception Deletion failed.
 	 */
 	void deleteEmployee(final Employee employee) throws Exception;
 	
 	/**
-	 * Gets all employees.
+	 * Gets all employees that match the given query parameters.
 	 * 
-	 * @return All employees.
-	 * @exception Exception Employee retrieval failed.
+	 * @param employeeHeadQueryParameter Specifies the employees to be selected based on the head attribute.
+	 * @return All employees that match the given query parameters.
+	 * @throws Exception Employee retrieval failed.
 	 */
-	List<Employee> getEmployees() throws Exception;
+	List<Employee> getEmployees(final EmployeeHeadQueryParameter employeeHeadQueryParameter) throws Exception;
 	
 	/**
 	 * Updates an existing employee.

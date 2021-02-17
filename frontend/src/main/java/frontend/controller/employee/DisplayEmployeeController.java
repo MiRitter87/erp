@@ -12,6 +12,7 @@ import org.apache.logging.log4j.Logger;
 
 import frontend.controller.MainViewController;
 import frontend.dao.EmployeeWebServiceDao;
+import frontend.generated.ws.soap.employee.EmployeeHeadQueryParameter;
 import frontend.model.ComboBoxItem;
 import frontend.model.Employee;
 import frontend.model.EmployeeList;
@@ -64,7 +65,7 @@ public class DisplayEmployeeController extends EmployeeController {
 		//Initialize the employees for the selection.
 		try {
 			this.employeeWebServiceDao = new EmployeeWebServiceDao();
-			this.employees.setEmployees(this.employeeWebServiceDao.getEmployees());
+			this.employees.setEmployees(this.employeeWebServiceDao.getEmployees(EmployeeHeadQueryParameter.ALL));
 			
 			this.initializeEmployeeComboBox();
 		} 

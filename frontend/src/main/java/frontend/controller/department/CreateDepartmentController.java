@@ -12,6 +12,7 @@ import org.apache.logging.log4j.Logger;
 
 import frontend.controller.MainViewController;
 import frontend.controller.employee.EmployeeController;
+import frontend.generated.ws.soap.employee.EmployeeHeadQueryParameter;
 import frontend.model.ComboBoxItem;
 import frontend.model.Department;
 import frontend.model.EmployeeList;
@@ -52,7 +53,7 @@ public class CreateDepartmentController extends DepartmentController {
 		
 		//Initialization of employee data for head selection combo box.
 		try {
-			this.employees.setEmployees(this.employeeWebServiceDao.getEmployees());
+			this.employees.setEmployees(this.employeeWebServiceDao.getEmployees(EmployeeHeadQueryParameter.NO_HEAD_ONLY));
 			this.initializeHeadComboBox();
 		} 
 		catch (Exception e) {
