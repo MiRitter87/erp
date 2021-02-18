@@ -7,6 +7,7 @@
     	<class>backend.model.EmployeeSalary</class>
         <class>backend.model.Employee</class>
         <class>backend.model.Department</class>
+        <class>backend.model.Material</class>
         
         <!-- Several configuration properties -->
         <properties>

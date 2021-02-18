@@ -2,45 +2,69 @@ package backend.model;
 
 import java.math.BigDecimal;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
+
 /**
  * A material.
  * 
  * @author Michael
  */
+@Table(name="MATERIAL")
+@Entity
+@SequenceGenerator(name = "materialSequence", initialValue = 1, allocationSize = 1)
 public class Material {
 	/**
 	 * The distinct identification number.
 	 */
+	@Id
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "materialSequence")
+	@Column(name="MATERIAL_ID")
 	private Integer id;
 	
 	/**
 	 * The name.
 	 */
+	@Column(name="NAME", length = 50)
 	private String name;
 	
 	/**
 	 * The description.
 	 */
+	@Column(name="DESCRIPTION", length = 250)
 	private String description;
 	
 	/**
 	 * The unit of measurement.
 	 */
+	@Column(name="UNIT", length = 3)
+	@Enumerated(EnumType.STRING)
 	private UnitOfMeasurement unit;
 	
 	/**
 	 * The price per unit.
 	 */
+	@Column(name="PRICE_PER_UNIT")
 	private BigDecimal pricePerUnit;
 	
 	/**
 	 * The currency of the price.
 	 */
+	@Column(name="CURRENCY", length = 3)
+	@Enumerated(EnumType.STRING)
 	private Currency currency;
 	
 	/**
 	 * The inventory measured in the unit of measurement.
 	 */
+	@Column(name="INVENTORY")
 	private Long inventory;
 	
 	
