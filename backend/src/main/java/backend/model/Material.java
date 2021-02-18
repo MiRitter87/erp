@@ -186,4 +186,76 @@ public class Material {
 	public void setInventory(Long inventory) {
 		this.inventory = inventory;
 	}
+
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((currency == null) ? 0 : currency.hashCode());
+		result = prime * result + ((description == null) ? 0 : description.hashCode());
+		result = prime * result + ((id == null) ? 0 : id.hashCode());
+		result = prime * result + ((inventory == null) ? 0 : inventory.hashCode());
+		result = prime * result + ((name == null) ? 0 : name.hashCode());
+		result = prime * result + ((pricePerUnit == null) ? 0 : pricePerUnit.hashCode());
+		result = prime * result + ((unit == null) ? 0 : unit.hashCode());
+		return result;
+	}
+
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (obj == null) {
+			return false;
+		}
+		if (getClass() != obj.getClass()) {
+			return false;
+		}
+		Material other = (Material) obj;
+		if (currency != other.currency) {
+			return false;
+		}
+		if (description == null) {
+			if (other.description != null) {
+				return false;
+			}
+		} else if (!description.equals(other.description)) {
+			return false;
+		}
+		if (id == null) {
+			if (other.id != null) {
+				return false;
+			}
+		} else if (!id.equals(other.id)) {
+			return false;
+		}
+		if (inventory == null) {
+			if (other.inventory != null) {
+				return false;
+			}
+		} else if (!inventory.equals(other.inventory)) {
+			return false;
+		}
+		if (name == null) {
+			if (other.name != null) {
+				return false;
+			}
+		} else if (!name.equals(other.name)) {
+			return false;
+		}
+		if (pricePerUnit == null) {
+			if (other.pricePerUnit != null) {
+				return false;
+			}
+		} else if (!pricePerUnit.equals(other.pricePerUnit)) {
+			return false;
+		}
+		if (unit != other.unit) {
+			return false;
+		}
+		return true;
+	}
 }
