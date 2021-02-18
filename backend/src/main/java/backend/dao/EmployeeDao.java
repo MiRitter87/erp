@@ -29,7 +29,7 @@ public interface EmployeeDao {
 	void deleteEmployee(final Employee employee) throws Exception;
 	
 	/**
-	 * Gets all employees that match the given query parameters..
+	 * Gets all employees that match the given query parameters.
 	 * 
 	 * @param employeeHeadQuery Specifies the employees to be selected based on the head attribute.
 	 * @return A list of all employees that match the given query parameters.
