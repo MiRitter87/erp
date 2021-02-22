@@ -15,16 +15,12 @@ import org.junit.jupiter.api.Test;
 
 import backend.dao.MaterialHibernateDao;
 import backend.model.Currency;
-import backend.model.Employee;
-import backend.model.EmployeeArray;
 import backend.model.Material;
 import backend.model.MaterialArray;
 import backend.model.UnitOfMeasurement;
-import backend.model.webservice.EmployeeHeadQueryParameter;
 import backend.model.webservice.WebServiceMessageType;
 import backend.model.webservice.WebServiceResult;
 import backend.tools.test.SoapTestTools;
-import backend.webservice.soap.EmployeeSoapServiceImpl;
 
 /**
  * Tests the MaterialService.

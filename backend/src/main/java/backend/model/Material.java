@@ -1,6 +1,7 @@
 package backend.model;
 
 import java.math.BigDecimal;
+import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -11,6 +12,13 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.validation.ConstraintViolation;
+import javax.validation.Validation;
+import javax.validation.Validator;
+import javax.validation.ValidatorFactory;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 /**
  * A material.
@@ -27,18 +35,21 @@ public class Material {
 	@Id
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "materialSequence")
 	@Column(name="MATERIAL_ID")
+	@Min(value = 1, message = "{material.id.min.message}")
 	private Integer id;
 	
 	/**
 	 * The name.
 	 */
 	@Column(name="NAME", length = 50)
+	@Size(min = 1, max = 50, message = "{material.name.size.message}")
 	private String name;
 	
 	/**
 	 * The description.
 	 */
 	@Column(name="DESCRIPTION", length = 250)
+	@Size(min = 0, max = 250, message = "{material.description.size.message}")
 	private String description;
 	
 	/**
@@ -46,12 +57,14 @@ public class Material {
 	 */
 	@Column(name="UNIT", length = 3)
 	@Enumerated(EnumType.STRING)
+	@NotNull(message = "{material.unit.notNull.message}")
 	private UnitOfMeasurement unit;
 	
 	/**
 	 * The price per unit.
 	 */
 	@Column(name="PRICE_PER_UNIT")
+	@NotNull(message = "{material.pricePerUnit.notNull.message}")
 	private BigDecimal pricePerUnit;
 	
 	/**
@@ -59,12 +72,14 @@ public class Material {
 	 */
 	@Column(name="CURRENCY", length = 3)
 	@Enumerated(EnumType.STRING)
+	@NotNull(message = "{material.currency.notNull.message}")
 	private Currency currency;
 	
 	/**
 	 * The inventory measured in the unit of measurement.
 	 */
 	@Column(name="INVENTORY")
+	@Min(value = 0, message = "{material.inventory.min.message}")
 	private Long inventory;
 	
 	
@@ -73,6 +88,32 @@ public class Material {
 	 */
 	public Material() {
 		
+	}
+	
+	
+	/**
+	 * Validates the material.
+	 * 
+	 * @throws Exception In case a general validation error occurred.
+	 */
+	public void validate() throws Exception {
+		this.validateAnnotations();
+	}
+	
+	
+	/**
+	 * Validates the material according to the annotations of the Validation Framework.
+	 * 
+	 * @exception Exception In case the validation failed.
+	 */
+	public void validateAnnotations() throws Exception {
+		ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
+		Validator validator = factory.getValidator();
+		Set<ConstraintViolation<Material>> violations = validator.validate(this);
+		
+		for(ConstraintViolation<Material> violation:violations) {
+			throw new Exception(violation.getMessage());
+		}
 	}
 
 
