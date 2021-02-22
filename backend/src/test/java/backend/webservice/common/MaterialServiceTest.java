@@ -1,11 +1,14 @@
 package backend.webservice.common;
 
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.text.MessageFormat;
+import java.util.ResourceBundle;
 
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
@@ -21,6 +24,7 @@ import backend.model.UnitOfMeasurement;
 import backend.model.webservice.WebServiceMessageType;
 import backend.model.webservice.WebServiceResult;
 import backend.tools.test.SoapTestTools;
+import backend.tools.test.ValidationMessageProvider;
 
 /**
  * Tests the MaterialService.
@@ -28,6 +32,11 @@ import backend.tools.test.SoapTestTools;
  * @author Michael
  */
 public class MaterialServiceTest {
+	/**
+	 * Access to localized application resources.
+	 */
+	private ResourceBundle resources = ResourceBundle.getBundle("backend");	
+	
 	/**
 	 * DAO to access material data.
 	 */
@@ -321,12 +330,83 @@ public class MaterialServiceTest {
 	}
 	
 	
-	/* TODO Add further test cases
-	 * 
-	 * add material where obligatory attributes are not set
-	 * add material where attributes exceed the maximum length
-	 * update material where obligatory attributes are not set
-	 * update material where attributes exceed the maximum length
-	 * update unchanged material
+	@Test
+	/**
+	 * Tests adding a material which is invalid.
 	 */
+	public void testAddInvalidMaterial() {
+		Material newMaterial = new Material();
+		WebServiceResult addMaterialResult;
+		
+		//Define the new material
+		newMaterial.setName("New Material");
+		newMaterial.setDescription("A new material that is used in this test. The length of the description exceeds the maximum length. "
+				+ "Therefore adding the material should not be allowed and an exception has to be thrown during the validation of the material. "
+				+ "The WebService should prov");
+		newMaterial.setUnit(UnitOfMeasurement.KG);
+		newMaterial.setPricePerUnit(BigDecimal.valueOf(Double.valueOf(0.29)));
+		newMaterial.setCurrency(Currency.EUR);
+		newMaterial.setInventory(Long.valueOf(2000));
+		
+		//Add a new material to the database via WebService
+		MaterialService materialService = new MaterialService();
+		addMaterialResult = materialService.addMaterial(newMaterial);
+		
+		//There should be a return message of type E
+		assertTrue(addMaterialResult.getMessages().size() == 1);
+		assertTrue(addMaterialResult.getMessages().get(0).getType() == WebServiceMessageType.E);
+		
+		//The new Material should not have been persisted
+		assertNull(newMaterial.getId());
+	}
+	
+	
+	@Test
+	/**
+	 * Tests updating of a material whose data have not been changed.
+	 */
+	public void testUpdateUnchangedMaterial() {
+		WebServiceResult updateMaterialResult;
+		String expectedInfoMessage = MessageFormat.format(this.resources.getString("material.updateUnchanged"), this.g4560.getId());
+		String actualInfoMessage;
+		
+		//Update the unchanged material.
+		MaterialService materialService = new MaterialService();
+		updateMaterialResult = materialService.updateMaterial(this.g4560);
+		
+		//There should be a return message of type I
+		assertTrue(updateMaterialResult.getMessages().size() == 1);
+		assertTrue(updateMaterialResult.getMessages().get(0).getType() == WebServiceMessageType.I);
+		
+		//A proper message should be provided.
+		actualInfoMessage = updateMaterialResult.getMessages().get(0).getText();
+		assertEquals(expectedInfoMessage, actualInfoMessage);
+	}
+	
+	
+	@Test
+	/**
+	 * Tests updating an existing material with invalid data.
+	 */
+	public void testUpdateMaterialWithInvalidData() {
+		WebServiceResult updateMaterialResult;
+		MaterialService materialService = new MaterialService();
+		ValidationMessageProvider messageProvider = new ValidationMessageProvider();
+		String actualErrorMessage, expectedErrorMessage;
+		
+		//Update the material
+		this.g4560.setDescription("A new material that is used in this test. The length of the description exceeds the maximum length. "
+				+ "Therefore adding the material should not be allowed and an exception has to be thrown during the validation of the material. "
+				+ "The WebService should prov");
+		expectedErrorMessage = messageProvider.getSizeValidationMessage("material", "description", String.valueOf(this.g4560.getDescription().length()), "0", "250");
+		updateMaterialResult = materialService.updateMaterial(this.g4560);
+		
+		//There should be a return message of type E.
+		assertTrue(updateMaterialResult.getMessages().size() == 1);
+		assertTrue(updateMaterialResult.getMessages().get(0).getType() == WebServiceMessageType.E);
+		
+		//A proper message should be provided.
+		actualErrorMessage = updateMaterialResult.getMessages().get(0).getText();
+		assertEquals(expectedErrorMessage, actualErrorMessage);
+	}
 }

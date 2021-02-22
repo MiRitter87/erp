@@ -112,8 +112,16 @@ public class MaterialService {
 		WebServiceResult addMaterialResult = new WebServiceResult();
 		this.materialDAO = new MaterialHibernateDao();
 		
-		//TODO Validate given material using Bean Validation API
+		//Validate the given material.
+		try {
+			material.validate();
+		} catch (Exception validationException) {
+			addMaterialResult.addMessage(new WebServiceMessage(WebServiceMessageType.E, validationException.getMessage()));
+			this.closeMaterialDAO();
+			return addMaterialResult;
+		}
 		
+		//Insert material if validation is successful.
 		try {
 			this.materialDAO.insertMaterial(material);
 			addMaterialResult.addMessage(new WebServiceMessage(
@@ -183,8 +191,16 @@ public class MaterialService {
 		WebServiceResult updateMaterialResult = new WebServiceResult(null);
 		this.materialDAO = new MaterialHibernateDao();
 		
-		//TODO Validation of the given material
-				
+		//Validation of the given material
+		try {
+			material.validate();
+		} catch (Exception validationException) {
+			updateMaterialResult.addMessage(new WebServiceMessage(WebServiceMessageType.E, validationException.getMessage()));
+			this.closeMaterialDAO();
+			return updateMaterialResult;
+		}
+		
+		//Update material if validation is successful.
 		try {
 			this.materialDAO.updateMaterial(material);
 			updateMaterialResult.addMessage(new WebServiceMessage(WebServiceMessageType.S, 
@@ -198,7 +214,7 @@ public class MaterialService {
 			updateMaterialResult.addMessage(new WebServiceMessage(WebServiceMessageType.E, 
 					MessageFormat.format(this.resources.getString("material.updateError"), material.getId())));
 			
-			logger.error(MessageFormat.format(this.resources.getString("dmaterial.updateError"), material.getId()), e);
+			logger.error(MessageFormat.format(this.resources.getString("material.updateError"), material.getId()), e);
 		}
 		finally {
 			this.closeMaterialDAO();

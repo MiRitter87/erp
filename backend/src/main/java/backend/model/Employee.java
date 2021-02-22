@@ -168,7 +168,7 @@ public class Employee {
 	 * 
 	 * @exception Exception In case the validation failed.
 	 */
-	public void validateAnnotations() throws Exception {
+	private void validateAnnotations() throws Exception {
 		ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
 		Validator validator = factory.getValidator();
 		Set<ConstraintViolation<Employee>> violations = validator.validate(this);
@@ -184,7 +184,7 @@ public class Employee {
 	 * 
 	 * @throws IdentifierMismatchException In case the ID of the employee and its salary data differ.
 	 */
-	public void validateAdditionalCharacteristics() throws IdentifierMismatchException {
+	private void validateAdditionalCharacteristics() throws IdentifierMismatchException {
 		if(this.getSalaryData() != null && this.id != this.getSalaryData().getId())
 			throw new IdentifierMismatchException();
 	}

@@ -106,7 +106,7 @@ public class Material {
 	 * 
 	 * @exception Exception In case the validation failed.
 	 */
-	public void validateAnnotations() throws Exception {
+	private void validateAnnotations() throws Exception {
 		ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
 		Validator validator = factory.getValidator();
 		Set<ConstraintViolation<Material>> violations = validator.validate(this);
