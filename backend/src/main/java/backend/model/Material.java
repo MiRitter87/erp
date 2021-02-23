@@ -43,6 +43,7 @@ public class Material {
 	 */
 	@Column(name="NAME", length = 50)
 	@Size(min = 1, max = 50, message = "{material.name.size.message}")
+	@NotNull(message = "{material.name.notNull.message}")
 	private String name;
 	
 	/**
@@ -80,6 +81,7 @@ public class Material {
 	 */
 	@Column(name="INVENTORY")
 	@Min(value = 0, message = "{material.inventory.min.message}")
+	@NotNull(message = "{material.inventory.notNull.message}")
 	private Long inventory;
 	
 	

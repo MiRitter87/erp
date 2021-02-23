@@ -63,7 +63,7 @@ public class MaterialTest {
 	
 	@Test
 	/**
-	 * Tests validation of a material whose  name is not given.
+	 * Tests validation of a material whose name is not given.
 	 */
 	public void testNameNotGiven() {
 		ValidationMessageProvider messageProvider = new ValidationMessageProvider();		
@@ -111,6 +111,29 @@ public class MaterialTest {
 	
 	@Test
 	/**
+	 * Tests validation of a material whose name is null.
+	 */
+	public void testNameIsNull() {
+		ValidationMessageProvider messageProvider = new ValidationMessageProvider();		
+		this.rx570.setName(null);
+		
+		String expectedErrorMessage = messageProvider.getNotNullValidationMessage("material", "name");
+		String errorMessage = "";
+		
+		try {
+			this.rx570.validate();
+			fail("Validation should have failed because name is null.");
+		} 
+		catch (Exception expected) {
+			errorMessage = expected.getMessage();
+		}
+		
+		assertEquals(expectedErrorMessage, errorMessage);
+	}
+	
+	
+	@Test
+	/**
 	 * Tests validation of the material whose description is not given.
 	 */
 	public void testDescriptionNotGiven() {
@@ -126,7 +149,22 @@ public class MaterialTest {
 	
 	@Test
 	/**
-	 * Tests validation of the material whose description istoo long.
+	 * Tests validation of a material whose description is null.
+	 */
+	public void testDescriptionIsNull() {
+		this.rx570.setDescription(null);
+		
+		try {
+			this.rx570.validate();
+		} catch (Exception e) {
+			fail(e.getMessage());
+		}
+	}
+	
+	
+	@Test
+	/**
+	 * Tests validation of the material whose description is too long.
 	 */
 	public void testDescriptionTooLong() {
 		ValidationMessageProvider messageProvider = new ValidationMessageProvider();
@@ -258,6 +296,28 @@ public class MaterialTest {
 			fail("Validation should have failed because inventory is negative.");
 		} 
 		catch (Exception expected) {
+			errorMessage = expected.getMessage();
+		}
+		
+		assertEquals(expectedErrorMessage, errorMessage);
+	}
+	
+	
+	@Test
+	/**
+	 * Tests validation of the material if the inventory is null.
+	 */
+	public void testInventoryIsNull( ) {
+		ValidationMessageProvider messageProvider = new ValidationMessageProvider();	
+		this.rx570.setInventory(null);
+		
+		String expectedErrorMessage = messageProvider.getNotNullValidationMessage("material", "inventory");
+		String errorMessage = "";
+		
+		try {
+			this.rx570.validate();
+			fail("Validation should have failed because inventory is null.");
+		} catch (Exception expected) {
 			errorMessage = expected.getMessage();
 		}
 		
