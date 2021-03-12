@@ -55,7 +55,7 @@ public class ValidationMessageProvider {
 		//Get the validation message.
 		message = resources.getString(builder.toString());
 		
-		//Substitute parameters of the validation message bei concrete values.
+		//Substitute parameters of the validation message with concrete values.
 		message = message.replace("${validatedValue.length()}", actualValue);
 		message = message.replace("{min}", minValue);
 		message = message.replace("{max}", maxValue);

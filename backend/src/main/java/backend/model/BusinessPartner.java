@@ -1,5 +1,7 @@
 package backend.model;
 
+import java.util.Set;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -7,6 +9,13 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.validation.ConstraintViolation;
+import javax.validation.Validation;
+import javax.validation.Validator;
+import javax.validation.ValidatorFactory;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 /**
  * A business partner.
@@ -23,54 +32,69 @@ public class BusinessPartner {
 	@Id
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "bpSequence")
 	@Column(name="BUSINESS_PARTNER_ID")
-	private String id;
+	@Min(value = 1, message = "{businessPartner.id.min.message}")
+	private Integer id;
 	
 	/**
 	 * The name of the company.
 	 */
 	@Column(name="COMPANY_NAME", length = 100)
+	@Size(min = 1, max = 100, message = "{businessPartner.companyName.size.message}")
+	@NotNull(message = "{businessPartner.companyName.notNull.message}")
 	private String companyName;
 	
 	/**
 	 * The first name of the contact person.
 	 */
 	@Column(name="FIRST_NAME", length = 50)
+	@Size(min = 0, max = 50, message = "{businessPartner.firstName.size.message}")
 	private String firstName;
 	
 	/**
 	 * The last name of the contact person.
 	 */
 	@Column(name="LAST_NAME", length = 50)
+	@Size(min = 0, max = 50, message = "{businessPartner.lastName.size.message}")
 	private String lastName;
 	
 	/**
 	 * The name of the street where the company is located.
 	 */
 	@Column(name="STREET_NAME", length = 100)
+	@Size(min = 1, max = 100, message = "{businessPartner.streetName.size.message}")
+	@NotNull(message = "{businessPartner.streetName.notNull.message}")
 	private String streetName;
 	
 	/**
 	 * The number of the building where the company is located.
 	 */
 	@Column(name="HOUSE_NUMBER", length = 6)
+	@Size(min = 1, max = 6, message = "{businessPartner.houseNumber.size.message}")
+	@NotNull(message = "{businessPartner.houseNumber.notNull.message}")
 	private String houseNumber;
 	
 	/**
 	 * The ZIP code of the company.
 	 */
 	@Column(name="ZIP_CODE", length = 5)
+	@Size(min = 1, max = 5, message = "{businessPartner.zipCode.size.message}")
+	@NotNull(message = "{businessPartner.zipCode.notNull.message}")
 	private String zipCode;
 	
 	/**
 	 * The name of the city where the company is located.
 	 */
 	@Column(name="CITY_NAME", length = 100)
+	@Size(min = 1, max = 100, message = "{businessPartner.cityName.size.message}")
+	@NotNull(message = "{businessPartner.cityName.notNull.message}")
 	private String cityName;
 	
 	/**
 	 * The phone number of the company.
 	 */
 	@Column(name="PHONE_NUMBER", length = 40)
+	@Size(min = 1, max = 40, message = "{businessPartner.phoneNumber.size.message}")
+	@NotNull(message = "{businessPartner.phoneNumber.notNull.message}")
 	private String phoneNumber;
 	
 	
@@ -80,12 +104,38 @@ public class BusinessPartner {
 	public BusinessPartner() {
 		
 	}
+	
+	
+	/**
+	 * Validates the material.
+	 * 
+	 * @throws Exception In case a general validation error occurred.
+	 */
+	public void validate() throws Exception {
+		this.validateAnnotations();
+	}
+	
+	
+	/**
+	 * Validates the material according to the annotations of the Validation Framework.
+	 * 
+	 * @exception Exception In case the validation failed.
+	 */
+	private void validateAnnotations() throws Exception {
+		ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
+		Validator validator = factory.getValidator();
+		Set<ConstraintViolation<BusinessPartner>> violations = validator.validate(this);
+		
+		for(ConstraintViolation<BusinessPartner> violation:violations) {
+			throw new Exception(violation.getMessage());
+		}
+	}
 
 
 	/**
 	 * @return the id
 	 */
-	public String getId() {
+	public Integer getId() {
 		return id;
 	}
 
@@ -93,7 +143,7 @@ public class BusinessPartner {
 	/**
 	 * @param id the id to set
 	 */
-	public void setId(String id) {
+	public void setId(Integer id) {
 		this.id = id;
 	}
 
