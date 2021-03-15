@@ -10,7 +10,7 @@ import backend.model.BusinessPartner;
  * 
  * @author Michael
  */
-public class BusinessPartnerHibernateDao implements BusinessPartnerDao {
+public class BusinessPartnerHibernateDao extends HibernateDao implements BusinessPartnerDao {
 	/**
 	 * Default constructor.
 	 */
