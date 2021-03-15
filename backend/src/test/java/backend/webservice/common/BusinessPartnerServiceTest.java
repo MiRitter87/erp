@@ -221,4 +221,42 @@ public class BusinessPartnerServiceTest {
 		//The new Material should not have been persisted
 		assertNull(newBusinessPartner.getId());
 	}
+	
+	
+	@Test
+	/**
+	 * Tests deletion of a business partner.
+	 */
+	public void testDeleteBusinessPartner() {
+		WebServiceResult deleteBusinessPartnerResult;
+		BusinessPartner deletedBusinessPartner;
+		
+		//Delete business partner 'acme' using the WebService
+		BusinessPartnerService businessPartnerService = new BusinessPartnerService();
+		deleteBusinessPartnerResult = businessPartnerService.deleteBusinessPartner(this.acme.getId());
+		
+		//There should be no error messages
+		assertTrue(SoapTestTools.resultContainsErrorMessage(deleteBusinessPartnerResult) == false);
+		
+		//There should be a success message
+		assertTrue(deleteBusinessPartnerResult.getMessages().size() == 1);
+		assertTrue(deleteBusinessPartnerResult.getMessages().get(0).getType() == WebServiceMessageType.S);
+		
+		//Check if business partner 'acme' is missing using the DAO.
+		try {
+			deletedBusinessPartner = businessPartnerDAO.getBusinessPartner(this.acme.getId());
+			
+			if(deletedBusinessPartner != null) {
+				fail("Business partner 'acme' is still persisted but should have been deleted by the WebService operation 'deleteBusinessPartner'.");				
+			}
+			else {
+				//If the business partner has been successfully deleted then add it again for subsequent test cases.
+				this.acme.setId(null);
+				businessPartnerDAO.insertBusinessPartner(this.acme);
+			}
+				
+		} catch (Exception e) {
+			fail(e.getMessage());
+		}
+	}
 }

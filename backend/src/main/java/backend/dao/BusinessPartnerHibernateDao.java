@@ -45,8 +45,26 @@ public class BusinessPartnerHibernateDao extends HibernateDao implements Busines
 	
 	@Override
 	public void deleteBusinessPartner(BusinessPartner businessPartner) throws Exception {
-		// TODO Auto-generated method stub
-
+		EntityManager entityManager = this.sessionFactory.createEntityManager();
+		
+		//In order to successfully delete an entity, it first has to be fetched from the database.
+		BusinessPartner deleteBusinessPartner = entityManager.find(BusinessPartner.class, businessPartner.getId());
+		
+		entityManager.getTransaction().begin();
+		
+		try {
+			entityManager.remove(deleteBusinessPartner);
+			entityManager.getTransaction().commit();			
+		}
+		catch(Exception exception) {
+			//If something breaks a rollback is necessary.
+			if(entityManager.getTransaction().isActive())
+				entityManager.getTransaction().rollback();
+			throw exception;
+		}
+		finally {
+			entityManager.close();			
+		}
 	}
 
 	

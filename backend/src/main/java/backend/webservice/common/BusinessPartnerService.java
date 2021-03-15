@@ -1,6 +1,7 @@
 package backend.webservice.common;
 
 import java.io.IOException;
+import java.text.MessageFormat;
 import java.util.ResourceBundle;
 
 import org.apache.logging.log4j.LogManager;
@@ -100,7 +101,37 @@ public class BusinessPartnerService {
 	 * @return The result of the delete function.
 	 */
 	public WebServiceResult deleteBusinessPartner(final Integer id) {
-		return null;
+		BusinessPartner businessPartner = null;
+		WebServiceResult deleteBusinessPartnerResult = new WebServiceResult(null);
+		
+		//Check if a business partner with the given id exists.
+		try {
+			this.businessPartnerDAO = new BusinessPartnerHibernateDao();
+			businessPartner = this.businessPartnerDAO.getBusinessPartner(id);
+			
+			if(businessPartner != null) {
+				//Delete business partner if exists.
+				this.businessPartnerDAO.deleteBusinessPartner(businessPartner);
+				deleteBusinessPartnerResult.addMessage(new WebServiceMessage(WebServiceMessageType.S, 
+						MessageFormat.format(this.resources.getString("businessPartner.deleteSuccess"), id)));
+			}
+			else {
+				//Business partner not found.
+				deleteBusinessPartnerResult.addMessage(new WebServiceMessage(WebServiceMessageType.E, 
+						MessageFormat.format(this.resources.getString("businessPartner.notFound"), id)));
+			}
+		}
+		catch (Exception e) {
+			deleteBusinessPartnerResult.addMessage(new WebServiceMessage(WebServiceMessageType.E,
+					MessageFormat.format(this.resources.getString("businessPartner.deleteError"), id)));
+			
+			logger.error(MessageFormat.format(this.resources.getString("businessPartner.deleteError"), id), e);
+		}
+		finally {
+			this.closeBusinessPartnerDAO();
+		}
+		
+		return deleteBusinessPartnerResult;
 	}
 	
 	
