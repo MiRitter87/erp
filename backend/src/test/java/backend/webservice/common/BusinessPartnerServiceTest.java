@@ -18,7 +18,7 @@ import backend.dao.BusinessPartnerHibernateDao;
 import backend.model.BusinessPartner;
 import backend.model.webservice.WebServiceMessageType;
 import backend.model.webservice.WebServiceResult;
-import backend.tools.test.SoapTestTools;
+import backend.tools.test.WebServiceTestTools;
 
 /**
  * Tests the BusinessPartnerService.
@@ -157,7 +157,7 @@ public class BusinessPartnerServiceTest {
 		addBusinessPartnerResult = businessPartnerService.addBusinessPartner(newBusinessPartner);
 		
 		//Assure no error message exists
-		assertTrue(SoapTestTools.resultContainsErrorMessage(addBusinessPartnerResult) == false);
+		assertTrue(WebServiceTestTools.resultContainsErrorMessage(addBusinessPartnerResult) == false);
 		
 		//There should be a success message
 		assertTrue(addBusinessPartnerResult.getMessages().size() == 1);
@@ -236,7 +236,7 @@ public class BusinessPartnerServiceTest {
 		deleteBusinessPartnerResult = businessPartnerService.deleteBusinessPartner(this.acme.getId());
 		
 		//There should be no error messages
-		assertTrue(SoapTestTools.resultContainsErrorMessage(deleteBusinessPartnerResult) == false);
+		assertTrue(WebServiceTestTools.resultContainsErrorMessage(deleteBusinessPartnerResult) == false);
 		
 		//There should be a success message
 		assertTrue(deleteBusinessPartnerResult.getMessages().size() == 1);
@@ -274,7 +274,7 @@ public class BusinessPartnerServiceTest {
 		getBusinessPartnerResult = businessPartnerService.getBusinessPartner(this.moose.getId());
 		
 		//Assure no error message exists
-		assertTrue(SoapTestTools.resultContainsErrorMessage(getBusinessPartnerResult) == false);
+		assertTrue(WebServiceTestTools.resultContainsErrorMessage(getBusinessPartnerResult) == false);
 		
 		//Assure that a business partner is returned
 		assertTrue(getBusinessPartnerResult.getData() instanceof BusinessPartner);

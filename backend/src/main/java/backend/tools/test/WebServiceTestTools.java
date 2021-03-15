@@ -9,7 +9,7 @@ import backend.model.webservice.WebServiceResult;
  * 
  * @author Michael
  */
-public class SoapTestTools {
+public class WebServiceTestTools {
 	/**
 	 * Checks if a WebServiceResult contains an error message.
 	 * 
