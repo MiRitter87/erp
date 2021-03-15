@@ -1,5 +1,8 @@
 package backend.webservice.common;
 
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.IOException;
@@ -9,9 +12,13 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import backend.dao.BusinessPartnerHibernateDao;
 import backend.model.BusinessPartner;
+import backend.model.webservice.WebServiceMessageType;
+import backend.model.webservice.WebServiceResult;
+import backend.tools.test.SoapTestTools;
 
 /**
  * Tests the BusinessPartnerService.
@@ -123,5 +130,95 @@ public class BusinessPartnerServiceTest {
 		} catch (Exception e) {
 			fail(e.getMessage());
 		}
+	}
+	
+	
+	@Test
+	/**
+	 * Tests adding of a new business partner.
+	 */
+	public void testAddValidBusinessPartner() {
+		BusinessPartner newBusinessPartner = new BusinessPartner();
+		BusinessPartner addedBusinessPartner;
+		WebServiceResult addBusinessPartnerResult;
+		
+		//Define the new business partner
+		newBusinessPartner.setCompanyName("New BP");
+		newBusinessPartner.setFirstName("Max");
+		newBusinessPartner.setLastName("Mustermann");
+		newBusinessPartner.setStreetName("Musterstraße");
+		newBusinessPartner.setHouseNumber("1");
+		newBusinessPartner.setZipCode("02345");
+		newBusinessPartner.setCityName("Musterstadt");
+		newBusinessPartner.setPhoneNumber("04567 1263-0");
+		
+		//Add a new business partner to the database via WebService
+		BusinessPartnerService businessPartnerService = new BusinessPartnerService();
+		addBusinessPartnerResult = businessPartnerService.addBusinessPartner(newBusinessPartner);
+		
+		//Assure no error message exists
+		assertTrue(SoapTestTools.resultContainsErrorMessage(addBusinessPartnerResult) == false);
+		
+		//There should be a success message
+		assertTrue(addBusinessPartnerResult.getMessages().size() == 1);
+		assertTrue(addBusinessPartnerResult.getMessages().get(0).getType() == WebServiceMessageType.S);
+		
+		//Read the persisted business partner via DAO
+		try {
+			addedBusinessPartner = businessPartnerDAO.getBusinessPartner(newBusinessPartner.getId());
+			
+			//Check if the business partner read by the DAO equals the business partner inserted using the WebService in each attribute.
+			assertEquals(newBusinessPartner.getId(), addedBusinessPartner.getId());
+			assertEquals(newBusinessPartner.getCompanyName(), addedBusinessPartner.getCompanyName());
+			assertEquals(newBusinessPartner.getFirstName(), addedBusinessPartner.getFirstName());
+			assertEquals(newBusinessPartner.getLastName(), addedBusinessPartner.getLastName());
+			assertEquals(newBusinessPartner.getStreetName(), addedBusinessPartner.getStreetName());
+			assertEquals(newBusinessPartner.getHouseNumber(), addedBusinessPartner.getHouseNumber());
+			assertEquals(newBusinessPartner.getZipCode(), addedBusinessPartner.getZipCode());
+			assertEquals(newBusinessPartner.getCityName(), addedBusinessPartner.getCityName());
+			assertEquals(newBusinessPartner.getPhoneNumber(), addedBusinessPartner.getPhoneNumber());
+		} catch (Exception e) {
+			fail(e.getMessage());
+		}
+		finally {
+			//Delete the newly added business partner
+			try {
+				businessPartnerDAO.deleteBusinessPartner(newBusinessPartner);
+			} 
+			catch (Exception e) {
+				fail(e.getMessage());
+			}
+		}
+	}
+	
+	
+	@Test
+	/**
+	 * Tests adding a business partner who is invalid.
+	 */
+	public void testAddInvalidBusinessPartner() {
+		BusinessPartner newBusinessPartner = new BusinessPartner();
+		WebServiceResult addBusinesPartnerResult;
+		
+		//Define the new business partner
+		newBusinessPartner.setCompanyName("");
+		newBusinessPartner.setFirstName("Max");
+		newBusinessPartner.setLastName("Mustermann");
+		newBusinessPartner.setStreetName("Musterstraße");
+		newBusinessPartner.setHouseNumber("1");
+		newBusinessPartner.setZipCode("02345");
+		newBusinessPartner.setCityName("Musterstadt");
+		newBusinessPartner.setPhoneNumber("04567 1263-0");
+		
+		//Add the new business partner to the database via WebService
+		BusinessPartnerService businessPartnerService = new BusinessPartnerService();
+		addBusinesPartnerResult = businessPartnerService.addBusinessPartner(newBusinessPartner);
+		
+		//There should be a return message of type E
+		assertTrue(addBusinesPartnerResult.getMessages().size() == 1);
+		assertTrue(addBusinesPartnerResult.getMessages().get(0).getType() == WebServiceMessageType.E);
+		
+		//The new Material should not have been persisted
+		assertNull(newBusinessPartner.getId());
 	}
 }

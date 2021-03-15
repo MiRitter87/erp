@@ -1,5 +1,6 @@
 package backend.webservice.common;
 
+import java.io.IOException;
 import java.util.ResourceBundle;
 
 import org.apache.logging.log4j.LogManager;
@@ -7,6 +8,8 @@ import org.apache.logging.log4j.Logger;
 
 import backend.dao.BusinessPartnerHibernateDao;
 import backend.model.BusinessPartner;
+import backend.model.webservice.WebServiceMessage;
+import backend.model.webservice.WebServiceMessageType;
 import backend.model.webservice.WebServiceResult;
 
 /**
@@ -59,7 +62,34 @@ public class BusinessPartnerService {
 	 * @return The result of the add function.
 	 */
 	public WebServiceResult addBusinessPartner(final BusinessPartner businessPartner) {
-		return null;
+		WebServiceResult addBusinessPartnerResult = new WebServiceResult();
+		this.businessPartnerDAO = new BusinessPartnerHibernateDao();
+		
+		//Validate the given business partner.
+		try {
+			businessPartner.validate();
+		} catch (Exception validationException) {
+			addBusinessPartnerResult.addMessage(new WebServiceMessage(WebServiceMessageType.E, validationException.getMessage()));
+			this.closeBusinessPartnerDAO();
+			return addBusinessPartnerResult;
+		}
+		
+		//Insert business partner if validation is successful.
+		try {
+			this.businessPartnerDAO.insertBusinessPartner(businessPartner);
+			addBusinessPartnerResult.addMessage(new WebServiceMessage(
+					WebServiceMessageType.S, this.resources.getString("businessPartner.addSuccess")));
+		} catch (Exception e) {
+			addBusinessPartnerResult.addMessage(new WebServiceMessage(
+					WebServiceMessageType.E, this.resources.getString("businessPartner.addError")));
+			
+			logger.error(this.resources.getString("businessPartner.addError"), e);
+		}
+		finally {
+			this.closeBusinessPartnerDAO();
+		}
+		
+		return addBusinessPartnerResult;
 	}
 	
 	
@@ -82,5 +112,17 @@ public class BusinessPartnerService {
 	 */
 	public WebServiceResult updateBusinessPartner(final BusinessPartner businessPartner) {
 		return null;
+	}
+	
+	
+	/**
+	 * Closes the business partner DAO.
+	 */
+	private void closeBusinessPartnerDAO() {
+		try {
+			this.businessPartnerDAO.close();
+		} catch (IOException e) {
+			logger.error(this.resources.getString("businessPartner.closeFailed"), e);
+		}
 	}
 }

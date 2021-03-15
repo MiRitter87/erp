@@ -2,6 +2,8 @@ package backend.dao;
 
 import java.util.List;
 
+import javax.persistence.EntityManager;
+
 import backend.exception.ObjectUnchangedException;
 import backend.model.BusinessPartner;
 
@@ -21,8 +23,23 @@ public class BusinessPartnerHibernateDao extends HibernateDao implements Busines
 	
 	@Override
 	public void insertBusinessPartner(BusinessPartner businessPartner) throws Exception {
-		// TODO Auto-generated method stub
-
+		EntityManager entityManager = this.sessionFactory.createEntityManager();
+		entityManager.getTransaction().begin();
+		
+		try {
+			entityManager.persist(businessPartner);
+			entityManager.flush();	//Assures, that the generated business partner ID is available.
+			entityManager.getTransaction().commit();
+		}
+		catch(Exception exception) {
+			//If something breaks a rollback is necessary!?
+			if(entityManager.getTransaction().isActive())
+				entityManager.getTransaction().rollback();
+			throw exception;
+		}
+		finally {
+			entityManager.close();			
+		}
 	}
 
 	
@@ -42,8 +59,14 @@ public class BusinessPartnerHibernateDao extends HibernateDao implements Busines
 	
 	@Override
 	public BusinessPartner getBusinessPartner(Integer id) throws Exception {
-		// TODO Auto-generated method stub
-		return null;
+		EntityManager entityManager = this.sessionFactory.createEntityManager();
+		
+		entityManager.getTransaction().begin();
+		BusinessPartner businessPartner = entityManager.find(BusinessPartner.class, id);
+		entityManager.getTransaction().commit();
+		entityManager.close();
+		
+		return businessPartner;
 	}
 
 	
