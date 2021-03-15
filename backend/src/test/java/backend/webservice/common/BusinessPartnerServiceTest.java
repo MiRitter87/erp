@@ -218,7 +218,7 @@ public class BusinessPartnerServiceTest {
 		assertTrue(addBusinesPartnerResult.getMessages().size() == 1);
 		assertTrue(addBusinesPartnerResult.getMessages().get(0).getType() == WebServiceMessageType.E);
 		
-		//The new Material should not have been persisted
+		//The new business partner should not have been persisted
 		assertNull(newBusinessPartner.getId());
 	}
 	
@@ -258,5 +258,38 @@ public class BusinessPartnerServiceTest {
 		} catch (Exception e) {
 			fail(e.getMessage());
 		}
+	}
+	
+	
+	@Test
+	/**
+	 * Tests the retrieval of a business partner by his ID.
+	 */
+	public void testGetBusinessPartner() {
+		WebServiceResult getBusinessPartnerResult;
+		BusinessPartner businessPartner;
+		
+		//Get the business partner 'moose'.
+		BusinessPartnerService businessPartnerService = new BusinessPartnerService();
+		getBusinessPartnerResult = businessPartnerService.getBusinessPartner(this.moose.getId());
+		
+		//Assure no error message exists
+		assertTrue(SoapTestTools.resultContainsErrorMessage(getBusinessPartnerResult) == false);
+		
+		//Assure that a business partner is returned
+		assertTrue(getBusinessPartnerResult.getData() instanceof BusinessPartner);
+		
+		businessPartner = (BusinessPartner) getBusinessPartnerResult.getData();
+		
+		//Check each attribute of the business partner
+		assertEquals(businessPartner.getId(), this.moose.getId());
+		assertEquals(businessPartner.getCompanyName(), this.moose.getCompanyName());
+		assertEquals(businessPartner.getFirstName(), this.moose.getFirstName());
+		assertEquals(businessPartner.getLastName(), this.moose.getLastName());
+		assertEquals(businessPartner.getStreetName(), this.moose.getStreetName());
+		assertEquals(businessPartner.getHouseNumber(), this.moose.getHouseNumber());
+		assertEquals(businessPartner.getZipCode(), this.moose.getZipCode());
+		assertEquals(businessPartner.getCityName(), this.moose.getCityName());
+		assertEquals(businessPartner.getPhoneNumber(), this.moose.getPhoneNumber());
 	}
 }

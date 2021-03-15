@@ -42,7 +42,34 @@ public class BusinessPartnerService {
 	 * @return The business partner with the given id, if found.
 	 */
 	public WebServiceResult getBusinessPartner(final Integer id) {
-		return null;
+		BusinessPartner businessPartner = null;
+		WebServiceResult getBusinessPartnerResult = new WebServiceResult(null);
+		
+		try {
+			this.businessPartnerDAO = new BusinessPartnerHibernateDao();
+			businessPartner = this.businessPartnerDAO.getBusinessPartner(id);
+			
+			if(businessPartner != null) {
+				//Business partner found
+				getBusinessPartnerResult.setData(businessPartner);
+			}
+			else {
+				//Business partner not found
+				getBusinessPartnerResult.addMessage(new WebServiceMessage(WebServiceMessageType.E, 
+						MessageFormat.format(this.resources.getString("businessPartner.notFound"), id)));
+			}
+		}
+		catch (Exception e) {
+			getBusinessPartnerResult.addMessage(new WebServiceMessage(WebServiceMessageType.E,
+					MessageFormat.format(this.resources.getString("businessPartner.getError"), id)));
+			
+			logger.error(MessageFormat.format(this.resources.getString("businessPartner.getError"), id), e);
+		}
+		finally {
+			this.closeBusinessPartnerDAO();
+		}
+		
+		return getBusinessPartnerResult;
 	}
 	
 	
