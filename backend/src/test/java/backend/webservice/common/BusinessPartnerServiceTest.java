@@ -16,6 +16,7 @@ import org.junit.jupiter.api.Test;
 
 import backend.dao.BusinessPartnerHibernateDao;
 import backend.model.BusinessPartner;
+import backend.model.BusinessPartnerArray;
 import backend.model.webservice.WebServiceMessageType;
 import backend.model.webservice.WebServiceResult;
 import backend.tools.test.WebServiceTestTools;
@@ -291,5 +292,50 @@ public class BusinessPartnerServiceTest {
 		assertEquals(businessPartner.getZipCode(), this.moose.getZipCode());
 		assertEquals(businessPartner.getCityName(), this.moose.getCityName());
 		assertEquals(businessPartner.getPhoneNumber(), this.moose.getPhoneNumber());
+	}
+	
+	
+	@Test
+	/**
+	 * Tests the retrieval of all business partners.
+	 */
+	public void testGetBusinessPartners() {
+		WebServiceResult getBusinessPartnersResult;
+		BusinessPartnerArray businessPartners;
+		BusinessPartner businessPartner;
+
+		//Get all business partners.
+		BusinessPartnerService businessPartnerService = new BusinessPartnerService();
+		getBusinessPartnersResult = businessPartnerService.getBusinessPartners();
+		businessPartners = (BusinessPartnerArray) getBusinessPartnersResult.getData();
+		
+		//Assure no error message exists
+		assertTrue(WebServiceTestTools.resultContainsErrorMessage(getBusinessPartnersResult) == false);
+		
+		//Check if two business partners are returned
+		assertTrue(businessPartners.getBusinessPartners().size() == 2);
+		
+		//Check both business partners by each attribute
+		businessPartner = businessPartners.getBusinessPartners().get(0);
+		assertEquals(businessPartner.getId(), this.moose.getId());
+		assertEquals(businessPartner.getCompanyName(), this.moose.getCompanyName());
+		assertEquals(businessPartner.getFirstName(), this.moose.getFirstName());
+		assertEquals(businessPartner.getLastName(), this.moose.getLastName());
+		assertEquals(businessPartner.getStreetName(), this.moose.getStreetName());
+		assertEquals(businessPartner.getHouseNumber(), this.moose.getHouseNumber());
+		assertEquals(businessPartner.getZipCode(), this.moose.getZipCode());
+		assertEquals(businessPartner.getCityName(), this.moose.getCityName());
+		assertEquals(businessPartner.getPhoneNumber(), this.moose.getPhoneNumber());
+		
+		businessPartner = businessPartners.getBusinessPartners().get(1);
+		assertEquals(businessPartner.getId(), this.acme.getId());
+		assertEquals(businessPartner.getCompanyName(), this.acme.getCompanyName());
+		assertEquals(businessPartner.getFirstName(), this.acme.getFirstName());
+		assertEquals(businessPartner.getLastName(), this.acme.getLastName());
+		assertEquals(businessPartner.getStreetName(), this.acme.getStreetName());
+		assertEquals(businessPartner.getHouseNumber(), this.acme.getHouseNumber());
+		assertEquals(businessPartner.getZipCode(), this.acme.getZipCode());
+		assertEquals(businessPartner.getCityName(), this.acme.getCityName());
+		assertEquals(businessPartner.getPhoneNumber(), this.acme.getPhoneNumber());
 	}
 }

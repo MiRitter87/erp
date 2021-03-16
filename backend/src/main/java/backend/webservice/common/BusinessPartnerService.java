@@ -9,6 +9,7 @@ import org.apache.logging.log4j.Logger;
 
 import backend.dao.BusinessPartnerHibernateDao;
 import backend.model.BusinessPartner;
+import backend.model.BusinessPartnerArray;
 import backend.model.webservice.WebServiceMessage;
 import backend.model.webservice.WebServiceMessageType;
 import backend.model.webservice.WebServiceResult;
@@ -79,7 +80,24 @@ public class BusinessPartnerService {
 	 * @return A list of all business partners.
 	 */
 	public WebServiceResult getBusinessPartners() {
-		return null;
+		BusinessPartnerArray businessPartners = new BusinessPartnerArray();
+		WebServiceResult getBusinessPartnersResult = new WebServiceResult(null);
+		
+		try {
+			this.businessPartnerDAO = new BusinessPartnerHibernateDao();
+			businessPartners.setBusinessPartners(this.businessPartnerDAO.getBusinessPartners());
+			getBusinessPartnersResult.setData(businessPartners);
+		} catch (Exception e) {
+			getBusinessPartnersResult.addMessage(new WebServiceMessage(
+					WebServiceMessageType.E, this.resources.getString("businessPartner.getBusinessPartnersError")));
+			
+			logger.error(this.resources.getString("businessPartner.getBusinessPartnersError"), e);
+		}
+		finally {
+			this.closeBusinessPartnerDAO();
+		}
+		
+		return getBusinessPartnersResult;
 	}
 	
 	
