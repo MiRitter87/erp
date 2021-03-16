@@ -8,6 +8,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import backend.dao.BusinessPartnerHibernateDao;
+import backend.exception.ObjectUnchangedException;
 import backend.model.BusinessPartner;
 import backend.model.BusinessPartnerArray;
 import backend.model.webservice.WebServiceMessage;
@@ -187,7 +188,39 @@ public class BusinessPartnerService {
 	 * @return The result of the update function.
 	 */
 	public WebServiceResult updateBusinessPartner(final BusinessPartner businessPartner) {
-		return null;
+		WebServiceResult updateBusinessPartnerResult = new WebServiceResult(null);
+		this.businessPartnerDAO = new BusinessPartnerHibernateDao();
+		
+		//Validation of the given business partner.
+		try {
+			businessPartner.validate();
+		} catch (Exception validationException) {
+			updateBusinessPartnerResult.addMessage(new WebServiceMessage(WebServiceMessageType.E, validationException.getMessage()));
+			this.closeBusinessPartnerDAO();
+			return updateBusinessPartnerResult;
+		}
+		
+		//Update business partner if validation is successful.
+		try {
+			this.businessPartnerDAO.updateBusinessPartner(businessPartner);
+			updateBusinessPartnerResult.addMessage(new WebServiceMessage(WebServiceMessageType.S, 
+					MessageFormat.format(this.resources.getString("businessPartner.updateSuccess"), businessPartner.getId())));
+		} 
+		catch(ObjectUnchangedException objectUnchangedException) {
+			updateBusinessPartnerResult.addMessage(new WebServiceMessage(WebServiceMessageType.I, 
+					MessageFormat.format(this.resources.getString("businessPartner.updateUnchanged"), businessPartner.getId())));
+		}
+		catch (Exception e) {
+			updateBusinessPartnerResult.addMessage(new WebServiceMessage(WebServiceMessageType.E, 
+					MessageFormat.format(this.resources.getString("businessPartner.updateError"), businessPartner.getId())));
+			
+			logger.error(MessageFormat.format(this.resources.getString("businessPartner.updateError"), businessPartner.getId()), e);
+		}
+		finally {
+			this.closeBusinessPartnerDAO();
+		}
+		
+		return updateBusinessPartnerResult;
 	}
 	
 	

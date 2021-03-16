@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.IOException;
+import java.text.MessageFormat;
 import java.util.ResourceBundle;
 
 import org.junit.jupiter.api.AfterAll;
@@ -19,6 +20,7 @@ import backend.model.BusinessPartner;
 import backend.model.BusinessPartnerArray;
 import backend.model.webservice.WebServiceMessageType;
 import backend.model.webservice.WebServiceResult;
+import backend.tools.test.ValidationMessageProvider;
 import backend.tools.test.WebServiceTestTools;
 
 /**
@@ -337,5 +339,84 @@ public class BusinessPartnerServiceTest {
 		assertEquals(businessPartner.getZipCode(), this.acme.getZipCode());
 		assertEquals(businessPartner.getCityName(), this.acme.getCityName());
 		assertEquals(businessPartner.getPhoneNumber(), this.acme.getPhoneNumber());
+	}
+	
+	
+	@Test
+	/**
+	 * Tests updating of an existing business partner.
+	 */
+	public void testUpdateBusinessPartner() {
+		WebServiceResult updateBusinessPartnerResult;
+		BusinessPartner updatedBusinessPartner;
+		BusinessPartnerService businessPartnerService = new BusinessPartnerService();
+		
+		//Update the business partner 'acme'.
+		this.acme.setHouseNumber("3");
+		updateBusinessPartnerResult = businessPartnerService.updateBusinessPartner(this.acme);
+		
+		//Assure no error message exists
+		assertTrue(WebServiceTestTools.resultContainsErrorMessage(updateBusinessPartnerResult) == false);
+		
+		//There should be a success message
+		assertTrue(updateBusinessPartnerResult.getMessages().size() == 1);
+		assertTrue(updateBusinessPartnerResult.getMessages().get(0).getType() == WebServiceMessageType.S);
+		
+		//Retrieve the updated business partner and check if the changes have been persisted.
+		try {
+			updatedBusinessPartner = businessPartnerDAO.getBusinessPartner(this.acme.getId());
+			assertEquals(this.acme.getHouseNumber(), updatedBusinessPartner.getHouseNumber());
+		} catch (Exception e) {
+			fail(e.getMessage());
+		}
+	}
+	
+	
+	@Test
+	/**
+	 * Tests updating an existing business partner with invalid data.
+	 */
+	public void testUpdateBusinessPartnerWithInvalidData() {
+		WebServiceResult updateBusinessPartnerResult;
+		BusinessPartnerService businessPartnerService = new BusinessPartnerService();
+		ValidationMessageProvider messageProvider = new ValidationMessageProvider();
+		String actualErrorMessage, expectedErrorMessage;
+		
+		//Update the business partner with invalid data.
+		this.acme.setCompanyName("");
+		expectedErrorMessage = messageProvider.getSizeValidationMessage("businessPartner", "companyName", 
+				String.valueOf(this.acme.getCompanyName().length()), "1", "100");
+		updateBusinessPartnerResult = businessPartnerService.updateBusinessPartner(this.acme);
+		
+		//There should be a return message of type E.
+		assertTrue(updateBusinessPartnerResult.getMessages().size() == 1);
+		assertTrue(updateBusinessPartnerResult.getMessages().get(0).getType() == WebServiceMessageType.E);
+		
+		//A proper message should be provided.
+		actualErrorMessage = updateBusinessPartnerResult.getMessages().get(0).getText();
+		assertEquals(expectedErrorMessage, actualErrorMessage);
+	}
+	
+	
+	@Test
+	/**
+	 * Tests updating of a business partner whose data have not been changed.
+	 */
+	public void testUpdateUnchangedBusinessPartner() {
+		WebServiceResult updateBusinessPartnerResult;
+		String expectedInfoMessage = MessageFormat.format(this.resources.getString("businessPartner.updateUnchanged"), this.acme.getId());
+		String actualInfoMessage;
+		
+		//Update the unchanged business partner.
+		BusinessPartnerService businessPartnerService = new BusinessPartnerService();
+		updateBusinessPartnerResult = businessPartnerService.updateBusinessPartner(this.acme);
+		
+		//There should be a return message of type I
+		assertTrue(updateBusinessPartnerResult.getMessages().size() == 1);
+		assertTrue(updateBusinessPartnerResult.getMessages().get(0).getType() == WebServiceMessageType.I);
+		
+		//A proper message should be provided.
+		actualInfoMessage = updateBusinessPartnerResult.getMessages().get(0).getText();
+		assertEquals(expectedInfoMessage, actualInfoMessage);
 	}
 }

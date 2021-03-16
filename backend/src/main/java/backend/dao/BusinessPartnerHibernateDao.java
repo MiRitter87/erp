@@ -118,7 +118,29 @@ public class BusinessPartnerHibernateDao extends HibernateDao implements Busines
 	
 	@Override
 	public void updateBusinessPartner(BusinessPartner businessPartner) throws ObjectUnchangedException, Exception {
-		// TODO Auto-generated method stub
-
+		EntityManager entityManager;
+		
+		this.checkBusinessPartnerDataChanged(businessPartner);
+		
+		entityManager = this.sessionFactory.createEntityManager();
+		entityManager.getTransaction().begin();
+		entityManager.merge(businessPartner);
+		entityManager.getTransaction().commit();
+		entityManager.close();
+	}
+	
+	
+	/**
+	 * Checks if the data of the given business partner differ from the business partner that is persisted at database level.
+	 * 
+	 * @param businessPartner The business partner to be checked.
+	 * @throws ObjectUnchangedException In case the business partner has not been changed.
+	 * @throws Exception In case an error occurred during determination of the business partner stored at the database.
+	 */
+	private void checkBusinessPartnerDataChanged(final BusinessPartner businessPartner) throws ObjectUnchangedException, Exception {
+		BusinessPartner databaseBusinessPartner = this.getBusinessPartner(businessPartner.getId());
+		
+		if(databaseBusinessPartner.equals(businessPartner))
+			throw new ObjectUnchangedException();
 	}
 }
