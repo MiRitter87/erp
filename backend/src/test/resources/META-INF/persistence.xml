@@ -9,6 +9,8 @@
         <class>backend.model.Department</class>
         <class>backend.model.Material</class>
         <class>backend.model.BusinessPartner</class>
+        <class>backend.model.SalesOrder</class>
+        <class>backend.model.SalesOrderItem</class>
         
         <!-- Several configuration properties -->
         <properties>

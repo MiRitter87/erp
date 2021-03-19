@@ -1,47 +1,76 @@
 package backend.model;
 
 import java.util.Date;
+import java.util.List;
+
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
 
 /**
  * Represents an order issued by a customer.
  * 
  * @author Michael
  */
+@Table(name="SALES_ORDER")
+@Entity
+@SequenceGenerator(name = "salesOrderSequence", initialValue = 1, allocationSize = 1)
 public class SalesOrder {
 	/**
 	 * The ID.
 	 */
+	@Id
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "salesOrderSequence")
+	@Column(name="SALES_ORDER_ID")
 	private Integer id;
 	
 	/**
 	 * The purchaser.
 	 */
+	@OneToOne
+	@JoinColumn(name="SOLD_TO_ID")
 	private BusinessPartner soldToParty;
 	
 	/**
 	 * The goods recipient.
 	 */
+	@OneToOne
+	@JoinColumn(name="SHIP_TO_ID")
 	private BusinessPartner shipToParty;
 	
 	/**
 	 * The invoice recipient.
 	 */
+	@OneToOne
+	@JoinColumn(name="BILL_TO_ID")
 	private BusinessPartner billToParty;
 	
 	/**
 	 * The order date.
 	 */
+	@Column(name="ORDER_DATE")
 	private Date orderDate;
 	
 	/**
 	 * The requested date for order delivery.
 	 */
+	@Column(name="REQUESTED_DELIVERY_DATE")
 	private Date requestedDeliveryDate;
 	
 	/**
-	 * The items that are ordered.
+	 * The items that are being ordered.
 	 */
-	private SalesOrderItem items;
+	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+	@JoinColumn(name = "SALES_ORDER_ID")
+	private List<SalesOrderItem> items;
 	
 	
 	/**
@@ -151,7 +180,7 @@ public class SalesOrder {
 	/**
 	 * @return the items
 	 */
-	public SalesOrderItem getItems() {
+	public List<SalesOrderItem> getItems() {
 		return items;
 	}
 
@@ -159,7 +188,7 @@ public class SalesOrder {
 	/**
 	 * @param items the items to set
 	 */
-	public void setItems(SalesOrderItem items) {
+	public void setItems(List<SalesOrderItem> items) {
 		this.items = items;
 	}
 }

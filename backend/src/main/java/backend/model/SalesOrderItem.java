@@ -2,30 +2,45 @@ package backend.model;
 
 import java.math.BigDecimal;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
+
 /**
  * An item of a sales order representing a product in a certain quantity.
  * 
  * @author Michael
  */
+@Table(name="SALES_ORDER_ITEM")
+@Entity
 public class SalesOrderItem {
 	/**
 	 * The ID.
 	 */
+	@Id
+	@Column(name="ITEM_ID")
 	private Integer id;
 	
 	/**
 	 * The material that is being ordered.
 	 */
+	@OneToOne
+	@JoinColumn(name="MATERIAL_ID")
 	private Material material;
 	
 	/**
 	 * The quantity that is being ordered.
 	 */
+	@Column(name="QUANTITY")
 	private Long quantity;
 	
 	/**
 	 * The total price of the sales order item at the time of order issuance.
 	 */
+	@Column(name="PRICE_TOTAL")
 	private BigDecimal priceTotal;
 	
 	
