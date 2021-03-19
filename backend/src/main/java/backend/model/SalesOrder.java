@@ -1,5 +1,6 @@
 package backend.model;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -77,7 +78,22 @@ public class SalesOrder {
 	 * Default constructor.
 	 */
 	public SalesOrder() {
+		this.orderDate = new Date();
+		this.items = new ArrayList<SalesOrderItem>();
+	}
+	
+	
+	/**
+	 * Adds a sales order item to the sales order.
+	 * 
+	 * @param item The sales order item.
+	 * @throws Exception In case the item is either null or not of type @SalesOrderItem.
+	 */
+	public void addItem(final SalesOrderItem item) throws Exception {
+		if(item == null || item instanceof SalesOrderItem == false)
+			throw new Exception();
 		
+		this.items.add(item);
 	}
 
 

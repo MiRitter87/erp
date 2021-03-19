@@ -106,12 +106,4 @@ public class SalesOrderItem {
 	public BigDecimal getPriceTotal() {
 		return priceTotal;
 	}
-
-
-	/**
-	 * @param priceTotal the priceTotal to set
-	 */
-	public void setPriceTotal(BigDecimal priceTotal) {
-		this.priceTotal = priceTotal;
-	}
 }
