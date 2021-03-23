@@ -13,6 +13,10 @@ import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
+
+import backend.exception.QuantityExceedsInventoryException;
 
 /**
  * An item of a sales order representing a product in a certain quantity.
@@ -27,6 +31,8 @@ public class SalesOrderItem {
 	 */
 	@Id
 	@Column(name="ITEM_ID")
+	@NotNull(message = "{salesOrderItem.id.notNull.message}")
+	@Min(value = 1, message = "{salesOrderItem.id.min.message}")
 	private Integer id;
 	
 	/**
@@ -34,12 +40,15 @@ public class SalesOrderItem {
 	 */
 	@OneToOne
 	@JoinColumn(name="MATERIAL_ID")
+	@NotNull(message = "{salesOrderItem.material.notNull.message}")
 	private Material material;
 	
 	/**
 	 * The quantity that is being ordered.
 	 */
 	@Column(name="QUANTITY")
+	@NotNull(message = "{salesOrderItem.quantity.notNull.message}")
+	@Min(value = 1, message = "{salesOrderItem.quantity.min.message}")
 	private Long quantity;
 	
 	/**
@@ -86,6 +95,7 @@ public class SalesOrderItem {
 	 */
 	public void setMaterial(Material material) {
 		this.material = material;
+		this.updatePriceTotal();
 	}
 
 
@@ -102,6 +112,7 @@ public class SalesOrderItem {
 	 */
 	public void setQuantity(Long quantity) {
 		this.quantity = quantity;
+		this.updatePriceTotal();
 	}
 
 
@@ -114,12 +125,25 @@ public class SalesOrderItem {
 	
 	
 	/**
+	 * Updates the total price of the sales order item based on quantity and price per unit of the material.
+	 */
+	private void updatePriceTotal() {
+		if(this.material == null || this.material.getPricePerUnit() == null || this.quantity == null)
+			return;
+		
+		this.priceTotal = this.material.getPricePerUnit().multiply(new BigDecimal(this.quantity));
+	}
+	
+	
+	/**
 	 * Validates the sales order item.
 	 * 
+	 * @throws QuantityExceedsInventoryException Indicates that the ordered quantity exceeds the inventory.
 	 * @throws Exception In case a general validation error occurred.
 	 */
-	public void validate() throws Exception {
+	public void validate() throws QuantityExceedsInventoryException, Exception {
 		this.validateAnnotations();
+		this.validateAdditionalCharacteristics();
 	}
 	
 	
@@ -136,5 +160,16 @@ public class SalesOrderItem {
 		for(ConstraintViolation<SalesOrderItem> violation:violations) {
 			throw new Exception(violation.getMessage());
 		}
+	}
+	
+	
+	/**
+	 * Validates additional characteristics of the sales order item besides annotations.
+	 * 
+	 * @throws QuantityExceedsInventoryException Indicates that the ordered quantity exceeds the inventory.
+	 */
+	private void validateAdditionalCharacteristics() throws QuantityExceedsInventoryException {
+		if(this.quantity > this.material.getInventory())
+			throw new QuantityExceedsInventoryException();
 	}
 }

@@ -218,13 +218,4 @@ public class SalesOrderTest {
 		
 		assertEquals(expectedErrorMessage, actualErrorMessage);
 	}
-	
-	
-	/**
-	 * TODO Implement test cases:
-	 * 
-	 * The following tests should be performed at order item level. Move to SalesOrderItemtest.java
-	 * Set quantity of item: priceTotal should be updated automatically if material is set
-	 * Set material of item: priceTotal should be updated automatically if quantity is set
-	 */
 }
