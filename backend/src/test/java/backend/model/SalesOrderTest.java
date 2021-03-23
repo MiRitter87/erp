@@ -1,11 +1,16 @@
 package backend.model;
 
 import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.math.BigDecimal;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import backend.exception.NoItemsException;
+import backend.tools.test.ValidationMessageProvider;
 
 /**
  * Tests the sales order model.
@@ -118,14 +123,105 @@ public class SalesOrderTest {
 	}
 	
 	
+	@Test
+	/**
+	 * Tests validation of a valid sales order.
+	 */
+	public void testValidationSuccess() {
+		try {
+			this.order.validate();
+		} catch (Exception e) {
+			fail(e.getMessage());
+		}
+	}
+	
+	
+	@Test
+	/**
+	 * Tests validation of a sales order that has no items given.
+	 */
+	public void testNoItemsGiven() {
+		this.order.getItems().clear();
+		
+		try {
+			this.order.validate();
+			fail("Validation should have failed because sales order has no items defined.");
+		} catch (NoItemsException expected) {
+			//All is well.
+		} catch (Exception e) {
+			fail("No general exception should have occurred. Just the NoItemsException.");
+		}
+	}
+	
+	
+	@Test
+	/**
+	 * Tests validation of a sales order that has no sold-to party defined.
+	 */
+	public void testNoSoldToPartyDefined() {
+		ValidationMessageProvider messageProvider = new ValidationMessageProvider();	
+		String expectedErrorMessage = messageProvider.getNotNullValidationMessage("salesOrder", "soldToParty");
+		String actualErrorMessage = "";
+
+		this.order.setSoldToParty(null);
+		
+		try {
+			this.order.validate();
+			fail("Validation should have failed because no sold-to party is defined.");
+		} catch (Exception expected) {
+			actualErrorMessage = expected.getMessage();
+		}
+		
+		assertEquals(expectedErrorMessage, actualErrorMessage);
+	}
+	
+	
+	@Test
+	/**
+	 * Tests validation of a sales order that has no ship-to party defined.
+	 */
+	public void testNoShipToPartyDefined() {
+		ValidationMessageProvider messageProvider = new ValidationMessageProvider();	
+		String expectedErrorMessage = messageProvider.getNotNullValidationMessage("salesOrder", "shipToParty");
+		String actualErrorMessage = "";
+		
+		this.order.setShipToParty(null);
+		
+		try {
+			this.order.validate();
+			fail("Validation should have failed because no ship-to party is defined.");
+		} catch (Exception expected) {
+			actualErrorMessage = expected.getMessage();
+		}
+		
+		assertEquals(expectedErrorMessage, actualErrorMessage);
+	}
+	
+	
+	@Test
+	/**
+	 * Tests validation of a sales order that has no bill-to party defined.
+	 */
+	public void testNoBillToPartyDefined() {
+		ValidationMessageProvider messageProvider = new ValidationMessageProvider();	
+		String expectedErrorMessage = messageProvider.getNotNullValidationMessage("salesOrder", "billToParty");
+		String actualErrorMessage = "";
+		
+		this.order.setBillToParty(null);
+		
+		try {
+			this.order.validate();
+			fail("Validation should have failed because no bill-to party is defined.");
+		} catch (Exception expected) {
+			actualErrorMessage = expected.getMessage();
+		}
+		
+		assertEquals(expectedErrorMessage, actualErrorMessage);
+	}
+	
+	
 	/**
 	 * TODO Implement test cases:
-	 * 
-	 * Validate a valid sales order
-	 * Validate a sales order that has no items given
-	 * Validate a sales order that has no sold-to party defined
-	 * Validate a sales order that has no ship-to party defined
-	 * Validate a sales order that has no bill-to party defined
 	 * 
 	 * The following tests should be performed at order item level. Move to SalesOrderItemtest.java
 	 * Set quantity of item: priceTotal should be updated automatically if material is set

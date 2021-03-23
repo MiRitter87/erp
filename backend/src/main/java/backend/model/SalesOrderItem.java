@@ -1,6 +1,7 @@
 package backend.model;
 
 import java.math.BigDecimal;
+import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -8,6 +9,10 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import javax.validation.ConstraintViolation;
+import javax.validation.Validation;
+import javax.validation.Validator;
+import javax.validation.ValidatorFactory;
 
 /**
  * An item of a sales order representing a product in a certain quantity.
@@ -105,5 +110,31 @@ public class SalesOrderItem {
 	 */
 	public BigDecimal getPriceTotal() {
 		return priceTotal;
+	}
+	
+	
+	/**
+	 * Validates the sales order item.
+	 * 
+	 * @throws Exception In case a general validation error occurred.
+	 */
+	public void validate() throws Exception {
+		this.validateAnnotations();
+	}
+	
+	
+	/**
+	 * Validates the sales order item according to the annotations of the Validation Framework.
+	 * 
+	 * @exception Exception In case the validation failed.
+	 */
+	private void validateAnnotations() throws Exception {
+		ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
+		Validator validator = factory.getValidator();
+		Set<ConstraintViolation<SalesOrderItem>> violations = validator.validate(this);
+		
+		for(ConstraintViolation<SalesOrderItem> violation:violations) {
+			throw new Exception(violation.getMessage());
+		}
 	}
 }

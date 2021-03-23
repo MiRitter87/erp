@@ -3,6 +3,7 @@ package backend.model;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -15,6 +16,13 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.validation.ConstraintViolation;
+import javax.validation.Validation;
+import javax.validation.Validator;
+import javax.validation.ValidatorFactory;
+import javax.validation.constraints.NotNull;
+
+import backend.exception.NoItemsException;
 
 /**
  * Represents an order issued by a customer.
@@ -38,6 +46,7 @@ public class SalesOrder {
 	 */
 	@OneToOne
 	@JoinColumn(name="SOLD_TO_ID")
+	@NotNull(message = "{salesOrder.soldToParty.notNull.message}")
 	private BusinessPartner soldToParty;
 	
 	/**
@@ -45,6 +54,7 @@ public class SalesOrder {
 	 */
 	@OneToOne
 	@JoinColumn(name="SHIP_TO_ID")
+	@NotNull(message = "{salesOrder.shipToParty.notNull.message}")
 	private BusinessPartner shipToParty;
 	
 	/**
@@ -52,6 +62,7 @@ public class SalesOrder {
 	 */
 	@OneToOne
 	@JoinColumn(name="BILL_TO_ID")
+	@NotNull(message = "{salesOrder.billToParty.notNull.message}")
 	private BusinessPartner billToParty;
 	
 	/**
@@ -206,5 +217,47 @@ public class SalesOrder {
 	 */
 	public void setItems(List<SalesOrderItem> items) {
 		this.items = items;
+	}
+
+
+	/**
+	 * Validates the sales order.
+	 * 
+	 * @throws NoItemsException Indicates that the sales order has no items defined.
+	 * @throws Exception In case a general validation error occurred.
+	 */
+	public void validate() throws NoItemsException, Exception {
+		this.validateAnnotations();
+		this.validateAdditionalCharacteristics();
+		
+		for(SalesOrderItem item:this.items)
+			item.validate();
+	}
+	
+	
+	/**
+	 * Validates the sales order according to the annotations of the Validation Framework.
+	 * 
+	 * @exception Exception In case the validation failed.
+	 */
+	private void validateAnnotations() throws Exception {
+		ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
+		Validator validator = factory.getValidator();
+		Set<ConstraintViolation<SalesOrder>> violations = validator.validate(this);
+		
+		for(ConstraintViolation<SalesOrder> violation:violations) {
+			throw new Exception(violation.getMessage());
+		}
+	}
+	
+	
+	/**
+	 * Validates additional characteristics of the sales order besides annotations.
+	 * 
+	 * @throws NoItemsException Indicates that the sales order has no items defined.
+	 */
+	private void validateAdditionalCharacteristics() throws NoItemsException {
+		if(this.items == null || this.items.size() == 0)
+			throw new NoItemsException();
 	}
 }
