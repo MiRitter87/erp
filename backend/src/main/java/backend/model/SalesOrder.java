@@ -98,12 +98,8 @@ public class SalesOrder {
 	 * Adds a sales order item to the sales order.
 	 * 
 	 * @param item The sales order item.
-	 * @throws Exception In case the item is either null or not of type @SalesOrderItem.
 	 */
-	public void addItem(final SalesOrderItem item) throws Exception {
-		if(item == null || item instanceof SalesOrderItem == false)
-			throw new Exception();
-		
+	public void addItem(final SalesOrderItem item) {
 		this.items.add(item);
 	}
 
