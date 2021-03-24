@@ -160,6 +160,9 @@ public class Employee {
 	public void validate() throws Exception, IdentifierMismatchException {
 		this.validateAnnotations();
 		this.validateAdditionalCharacteristics();
+		
+		if(this.salaryData != null)
+			this.salaryData.validate();
 	}
 	
 	

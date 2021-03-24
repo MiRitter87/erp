@@ -31,6 +31,7 @@ import backend.model.Gender;
 import backend.model.webservice.EmployeeHeadQueryParameter;
 import backend.model.webservice.WebServiceMessageType;
 import backend.model.webservice.WebServiceResult;
+import backend.tools.test.ValidationMessageProvider;
 import backend.tools.test.WebServiceTestTools;
 import backend.webservice.soap.EmployeeSoapServiceImpl;
 
@@ -621,6 +622,35 @@ public class EmployeeSoapServiceImplTest {
 			//The employee should be still existing.
 			deletedEmployee = employeeDAO.getEmployee(this.jim.getId());
 			assertNotNull(deletedEmployee);
+		}
+		catch (Exception e) {
+			fail(e.getMessage());
+		}
+	}
+	
+	
+	@Test
+	/**
+	 * Tests updating an employee with a salary that is invalid.
+	 */
+	public void testUpdateWithInvalidSalary() {
+		ValidationMessageProvider messageProvider = new ValidationMessageProvider();
+		WebServiceResult updateEmployeeResult;
+		String expectedErrorMessage = messageProvider.getNotNullValidationMessage("employeeSalary", "salaryLastChange");
+		EmployeeSalary invalidSalary = new EmployeeSalary();
+		
+		this.jim.setSalaryData(invalidSalary);
+		
+		try {
+			EmployeeSoapServiceImpl service = new EmployeeSoapServiceImpl();
+			updateEmployeeResult = service.updateEmployee(this.jim);
+			
+			//There should be one error message
+			assertTrue(updateEmployeeResult.getMessages().size() == 1);
+			assertTrue(updateEmployeeResult.getMessages().get(0).getType() == WebServiceMessageType.E);
+			
+			//The error message should give the exact cause.
+			assertEquals(expectedErrorMessage, updateEmployeeResult.getMessages().get(0).getText());
 		}
 		catch (Exception e) {
 			fail(e.getMessage());
