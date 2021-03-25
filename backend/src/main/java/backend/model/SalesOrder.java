@@ -80,8 +80,7 @@ public class SalesOrder {
 	/**
 	 * The items that are being ordered.
 	 */
-	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-	@JoinColumn(name = "SALES_ORDER_ID")
+	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "salesOrder")
 	private List<SalesOrderItem> items;
 	
 	
@@ -100,6 +99,7 @@ public class SalesOrder {
 	 * @param item The sales order item.
 	 */
 	public void addItem(final SalesOrderItem item) {
+		item.salesOrder = this;
 		this.items.add(item);
 	}
 

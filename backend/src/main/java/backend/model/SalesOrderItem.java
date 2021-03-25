@@ -6,7 +6,9 @@ import java.util.Set;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.IdClass;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.validation.ConstraintViolation;
@@ -25,6 +27,7 @@ import backend.exception.QuantityExceedsInventoryException;
  */
 @Table(name="SALES_ORDER_ITEM")
 @Entity
+@IdClass(SalesOrderItemId.class)
 public class SalesOrderItem {
 	/**
 	 * The ID.
@@ -34,6 +37,14 @@ public class SalesOrderItem {
 	@NotNull(message = "{salesOrderItem.id.notNull.message}")
 	@Min(value = 1, message = "{salesOrderItem.id.min.message}")
 	private Integer id;
+	
+	/**
+	 * The SalesOrder to which the item belongs to.
+	 */
+	@Id
+	@JoinColumn(name = "SALES_ORDER_ID")
+	@ManyToOne
+	protected SalesOrder salesOrder;
 	
 	/**
 	 * The material that is being ordered.
@@ -124,6 +135,14 @@ public class SalesOrderItem {
 	}
 	
 	
+	/**
+	 * @return the salesOrder
+	 */
+	public SalesOrder getSalesOrder() {
+		return salesOrder;
+	}
+
+
 	/**
 	 * Updates the total price of the sales order item based on quantity and price per unit of the material.
 	 */
