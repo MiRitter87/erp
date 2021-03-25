@@ -1,5 +1,7 @@
 package backend.webservice.common;
 
+import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.IOException;
@@ -10,6 +12,7 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import backend.dao.BusinessPartnerHibernateDao;
 import backend.dao.MaterialHibernateDao;
@@ -20,6 +23,8 @@ import backend.model.Material;
 import backend.model.SalesOrder;
 import backend.model.SalesOrderItem;
 import backend.model.UnitOfMeasurement;
+import backend.model.webservice.WebServiceResult;
+import backend.tools.test.WebServiceTestTools;
 
 /**
  * Tests the sales order service.
@@ -136,7 +141,6 @@ public class SalesOrderServiceTest {
 	 */
 	private void createDummyPartner() {
 		this.partner = new BusinessPartner();
-		this.partner.setId(Integer.valueOf(1));
 		this.partner.setCompanyName("Amalgamated Moose Pasture");
 		this.partner.setFirstName("John");
 		this.partner.setLastName("Doe");
@@ -212,5 +216,43 @@ public class SalesOrderServiceTest {
 		} catch (Exception e) {
 			fail(e.getMessage());
 		}
+	}
+	
+	
+	@Test
+	/**
+	 * Tests the retrieval of a sales order.
+	 */
+	public void testGetSalesOrder() {
+		WebServiceResult getSalesOrderResult;
+		SalesOrder salesOrder;
+		SalesOrderItem salesOrderItem;
+		
+		//Get the sales order.
+		SalesOrderService service = new SalesOrderService();
+		getSalesOrderResult = service.getSalesOrder(this.order.getId());
+		
+		//Assure no error message exists
+		assertTrue(WebServiceTestTools.resultContainsErrorMessage(getSalesOrderResult) == false);
+		
+		//Assure that an employee is returned
+		assertTrue(getSalesOrderResult.getData() instanceof SalesOrder);
+		
+		salesOrder = (SalesOrder) getSalesOrderResult.getData();
+		
+		//Check each attribute of the sales order
+		assertEquals(salesOrder.getId(), this.order.getId());
+		assertEquals(salesOrder.getSoldToParty(), this.order.getSoldToParty());
+		assertEquals(salesOrder.getShipToParty(), this.order.getShipToParty());
+		assertEquals(salesOrder.getBillToParty(), this.order.getBillToParty());
+		assertEquals(salesOrder.getOrderDate().getTime(), this.order.getOrderDate().getTime());
+		assertEquals(salesOrder.getRequestedDeliveryDate().getTime(), this.order.getRequestedDeliveryDate().getTime());
+		
+		salesOrderItem = salesOrder.getItems().get(0);
+		
+		//Check the attributes of the sales order item
+		assertEquals(salesOrderItem.getId(), this.orderItem.getId());
+		assertEquals(salesOrderItem.getMaterial(), this.orderItem.getMaterial());
+		assertEquals(salesOrderItem.getQuantity(), this.orderItem.getQuantity());
 	}
 }

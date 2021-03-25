@@ -1,6 +1,7 @@
 package backend.webservice.common;
 
 import java.io.IOException;
+import java.text.MessageFormat;
 import java.util.ResourceBundle;
 
 import org.apache.logging.log4j.LogManager;
@@ -8,6 +9,8 @@ import org.apache.logging.log4j.Logger;
 
 import backend.dao.SalesOrderHibernateDao;
 import backend.model.SalesOrder;
+import backend.model.webservice.WebServiceMessage;
+import backend.model.webservice.WebServiceMessageType;
 import backend.model.webservice.WebServiceResult;
 
 /**
@@ -40,7 +43,34 @@ public class SalesOrderService {
 	 * @return The sales order with the given id, if found.
 	 */
 	public WebServiceResult getSalesOrder(final Integer id) {
-		return null;
+		SalesOrder salesOrder = null;
+		WebServiceResult getSalesOrderResult = new WebServiceResult(null);
+		
+		try {
+			this.salesOrderDAO = new SalesOrderHibernateDao();
+			salesOrder = this.salesOrderDAO.getSalesOrder(id);
+			
+			if(salesOrder != null) {
+				//Sales order found
+				getSalesOrderResult.setData(salesOrder);
+			}
+			else {
+				//Sales order not found
+				getSalesOrderResult.addMessage(new WebServiceMessage(WebServiceMessageType.E, 
+						MessageFormat.format(this.resources.getString("salesOrder.notFound"), id)));
+			}
+		}
+		catch (Exception e) {
+			getSalesOrderResult.addMessage(new WebServiceMessage(WebServiceMessageType.E,
+					MessageFormat.format(this.resources.getString("salesOrder.getError"), id)));
+			
+			logger.error(MessageFormat.format(this.resources.getString("salesOrder.getError"), id), e);
+		}
+		finally {
+			this.closeSalesOrderDAO();
+		}
+		
+		return getSalesOrderResult;
 	}
 	
 	
