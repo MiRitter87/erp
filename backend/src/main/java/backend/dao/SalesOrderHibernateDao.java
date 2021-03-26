@@ -133,7 +133,12 @@ public class SalesOrderHibernateDao extends HibernateDao implements SalesOrderDa
 
 	@Override
 	public void updateSalesOrder(SalesOrder salesOrder) throws ObjectUnchangedException, Exception {
-		// TODO Auto-generated method stub
-
+		EntityManager entityManager;
+		
+		entityManager = this.sessionFactory.createEntityManager();
+		entityManager.getTransaction().begin();
+		entityManager.merge(salesOrder);
+		entityManager.getTransaction().commit();
+		entityManager.close();	
 	}
 }

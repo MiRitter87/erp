@@ -421,4 +421,47 @@ public class SalesOrderServiceTest {
 			}
 		}
 	}
+	
+	
+	@Test
+	/**
+	 * Tests updating a sales order with valid data.
+	 */
+	public void testUpdateValidSalesOrder() {
+		WebServiceResult updateSalesOrderResult;
+		SalesOrder updatedSalesOrder;
+		SalesOrderService orderService = new SalesOrderService();
+		
+		//Update the requested delivery date.
+		GregorianCalendar calendar = new GregorianCalendar();
+		calendar.add(GregorianCalendar.DAY_OF_MONTH, 14);
+		this.order1.setRequestedDeliveryDate(calendar.getTime());
+		updateSalesOrderResult = orderService.updateSalesOrder(this.order1);
+		
+		//Assure no error message exists
+		assertTrue(WebServiceTestTools.resultContainsErrorMessage(updateSalesOrderResult) == false);
+		
+		//There should be a success message
+		assertTrue(updateSalesOrderResult.getMessages().size() == 1);
+		assertTrue(updateSalesOrderResult.getMessages().get(0).getType() == WebServiceMessageType.S);
+		
+		//Retrieve the updated material and check if the changes have been persisted.
+		try {
+			updatedSalesOrder = orderDAO.getSalesOrder(this.order1.getId());
+			assertEquals(this.order1.getRequestedDeliveryDate().getTime(), updatedSalesOrder.getRequestedDeliveryDate().getTime());
+		} catch (Exception e) {
+			fail(e.getMessage());
+		}
+	}
+	
+	
+	/*
+	 * TODO: Add further tests:
+	 * 
+	 * testUpdateValidSalesOrderItem
+	 * testUpdateInvalidSalesOrder
+	 * testUpdateInvalidSalesOrderItem
+	 * testUpdateUnchangedSalesOrder
+	 * testUpdateSalesOrderWithoutItems
+	 */
 }

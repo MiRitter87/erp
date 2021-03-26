@@ -8,6 +8,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import backend.dao.SalesOrderHibernateDao;
+import backend.exception.ObjectUnchangedException;
 import backend.model.SalesOrder;
 import backend.model.SalesOrderArray;
 import backend.model.webservice.WebServiceMessage;
@@ -161,7 +162,39 @@ public class SalesOrderService {
 	 * @return The result of the update function.
 	 */
 	public WebServiceResult updateSalesOrder(final SalesOrder salesOrder) {
-		return null;
+		WebServiceResult updateSalesOrderResult = new WebServiceResult(null);
+		this.salesOrderDAO = new SalesOrderHibernateDao();
+		
+		//Validation of the given sales order.
+		try {
+			salesOrder.validate();
+		} catch (Exception validationException) {
+			updateSalesOrderResult.addMessage(new WebServiceMessage(WebServiceMessageType.E, validationException.getMessage()));
+			this.closeSalesOrderDAO();
+			return updateSalesOrderResult;
+		}
+		
+		//Update sales order if validation is successful.
+		try {
+			this.salesOrderDAO.updateSalesOrder(salesOrder);
+			updateSalesOrderResult.addMessage(new WebServiceMessage(WebServiceMessageType.S, 
+					MessageFormat.format(this.resources.getString("salesOrder.updateSuccess"), salesOrder.getId())));
+		} 
+		catch(ObjectUnchangedException objectUnchangedException) {
+			updateSalesOrderResult.addMessage(new WebServiceMessage(WebServiceMessageType.I, 
+					MessageFormat.format(this.resources.getString("salesOrder.updateUnchanged"), salesOrder.getId())));
+		}
+		catch (Exception e) {
+			updateSalesOrderResult.addMessage(new WebServiceMessage(WebServiceMessageType.E, 
+					MessageFormat.format(this.resources.getString("salesOrder.updateError"), salesOrder.getId())));
+			
+			logger.error(MessageFormat.format(this.resources.getString("salesOrder.updateError"), salesOrder.getId()), e);
+		}
+		finally {
+			this.closeSalesOrderDAO();
+		}
+		
+		return updateSalesOrderResult;
 	}
 	
 	
