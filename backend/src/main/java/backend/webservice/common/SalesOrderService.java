@@ -7,9 +7,7 @@ import java.util.ResourceBundle;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import backend.dao.MaterialHibernateDao;
 import backend.dao.SalesOrderHibernateDao;
-import backend.model.MaterialArray;
 import backend.model.SalesOrder;
 import backend.model.SalesOrderArray;
 import backend.model.webservice.WebServiceMessage;
@@ -122,7 +120,37 @@ public class SalesOrderService {
 	 * @return The result of the delete function.
 	 */
 	public WebServiceResult deleteSalesOrder(final Integer id) {
-		return null;
+		SalesOrder salesOrder = null;
+		WebServiceResult deleteSalesOrderResult = new WebServiceResult(null);
+		
+		//Check if a sales order with the given id exists.
+		try {
+			this.salesOrderDAO = new SalesOrderHibernateDao();
+			salesOrder = this.salesOrderDAO.getSalesOrder(id);
+			
+			if(salesOrder != null) {
+				//Delete sales order if exists.
+				this.salesOrderDAO.deleteSalesOrder(salesOrder);
+				deleteSalesOrderResult.addMessage(new WebServiceMessage(WebServiceMessageType.S, 
+						MessageFormat.format(this.resources.getString("salesOrder.deleteSuccess"), id)));
+			}
+			else {
+				//Sales order not found.
+				deleteSalesOrderResult.addMessage(new WebServiceMessage(WebServiceMessageType.E, 
+						MessageFormat.format(this.resources.getString("salesOrder.notFound"), id)));
+			}
+		}
+		catch (Exception e) {
+			deleteSalesOrderResult.addMessage(new WebServiceMessage(WebServiceMessageType.E,
+					MessageFormat.format(this.resources.getString("salesOrder.deleteError"), id)));
+			
+			logger.error(MessageFormat.format(this.resources.getString("salesOrder.deleteError"), id), e);
+		}
+		finally {
+			this.closeSalesOrderDAO();
+		}
+		
+		return deleteSalesOrderResult;
 	}
 	
 	

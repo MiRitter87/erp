@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.GregorianCalendar;
 
@@ -25,6 +26,7 @@ import backend.model.SalesOrder;
 import backend.model.SalesOrderArray;
 import backend.model.SalesOrderItem;
 import backend.model.UnitOfMeasurement;
+import backend.model.webservice.WebServiceMessageType;
 import backend.model.webservice.WebServiceResult;
 import backend.tools.test.WebServiceTestTools;
 
@@ -372,4 +374,51 @@ public class SalesOrderServiceTest {
 		assertEquals(salesOrderItem.getPriceTotal(), this.orderItem22.getPriceTotal());
 	}
 
+	
+	@Test
+	/**
+	 * Tests deletion of a sales order.
+	 */
+	public void testDeleteSalesOrder() {
+		WebServiceResult deleteSalesOrderResult;
+		SalesOrder deletedSalesOrder;
+		
+		try {
+			//Delete sales order 1 using the service.
+			SalesOrderService service = new SalesOrderService();
+			deleteSalesOrderResult = service.deleteSalesOrder(this.order1.getId());
+			
+			//There should be no error messages
+			assertTrue(WebServiceTestTools.resultContainsErrorMessage(deleteSalesOrderResult) == false);
+			
+			//There should be a success message
+			assertTrue(deleteSalesOrderResult.getMessages().size() == 1);
+			assertTrue(deleteSalesOrderResult.getMessages().get(0).getType() == WebServiceMessageType.S);
+			
+			//Check if order 1 is missing using the DAO.
+			deletedSalesOrder = orderDAO.getSalesOrder(this.order1.getId());
+			
+			if(deletedSalesOrder != null)
+				fail("Sales order 1 is still persisted but should have been deleted by the WebService operation 'deleteSalesOrder'.");
+		} 
+		catch (Exception e) {
+			fail(e.getMessage());
+		}
+		finally {
+			//Restore old database state by adding the sales order that has been deleted previously.
+			try {
+				this.order1.setId(null);
+				
+				//The items have to be re-initialized in order to prevent exception regarding orphan-removal.
+				//org.hibernate.HibernateException: Don't change the reference to a collection with delete-orphan enabled : backend.model.SalesOrder.items
+				this.order1.setItems(new ArrayList<SalesOrderItem>());
+				this.order1.addItem(this.orderItem1);
+				
+				orderDAO.insertSalesOrder(this.order1);
+			} 
+			catch (Exception e) {
+				fail(e.getMessage());
+			}
+		}
+	}
 }
