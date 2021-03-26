@@ -11,6 +11,7 @@ import backend.model.BusinessPartnerArray;
 import backend.model.DepartmentArray;
 import backend.model.EmployeeArray;
 import backend.model.MaterialArray;
+import backend.model.SalesOrderArray;
 
 /**
  * The result of a WebService call.
@@ -19,7 +20,7 @@ import backend.model.MaterialArray;
  * @author Michael
  *
  */
-@XmlSeeAlso({EmployeeArray.class, DepartmentArray.class, MaterialArray.class, BusinessPartnerArray.class})
+@XmlSeeAlso({EmployeeArray.class, DepartmentArray.class, MaterialArray.class, BusinessPartnerArray.class, SalesOrderArray.class})
 public class WebServiceResult {
 	/**
 	 * A list of messages.

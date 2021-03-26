@@ -22,6 +22,7 @@ import backend.model.BusinessPartner;
 import backend.model.Currency;
 import backend.model.Material;
 import backend.model.SalesOrder;
+import backend.model.SalesOrderArray;
 import backend.model.SalesOrderItem;
 import backend.model.UnitOfMeasurement;
 import backend.model.webservice.WebServiceResult;
@@ -312,12 +313,63 @@ public class SalesOrderServiceTest {
 	}
 	
 	
-	
+	@Test
 	/**
 	 * Tests the retrieval of all sales orders.
 	 */
 	public void testGetAllSalesOrders() {
-		WebServiceResult getSalesOrderResult;
+		WebServiceResult getSalesOrdersResult;
+		SalesOrderArray salesOrders;
+		SalesOrder salesOrder;
+		SalesOrderItem salesOrderItem;
+		
+		//Get the sales orders.
+		SalesOrderService service = new SalesOrderService();
+		getSalesOrdersResult = service.getSalesOrders();
+		salesOrders = (SalesOrderArray) getSalesOrdersResult.getData();
+		
+		//Assure no error message exists
+		assertTrue(WebServiceTestTools.resultContainsErrorMessage(getSalesOrdersResult) == false);
+		
+		//Check if two sales orders are returned.
+		assertTrue(salesOrders.getSalesOrders().size() == 2);
+		
+		//Check both sales orders by each attribute
+		salesOrder = salesOrders.getSalesOrders().get(0);
+		assertEquals(salesOrder.getId(), this.order1.getId());
+		assertEquals(salesOrder.getSoldToParty(), this.order1.getSoldToParty());
+		assertEquals(salesOrder.getShipToParty(), this.order1.getShipToParty());
+		assertEquals(salesOrder.getBillToParty(), this.order1.getBillToParty());
+		assertEquals(salesOrder.getOrderDate().getTime(), this.order1.getOrderDate().getTime());
+		assertEquals(salesOrder.getRequestedDeliveryDate().getTime(), this.order1.getRequestedDeliveryDate().getTime());
+		
+		assertEquals(salesOrder.getItems().size(), this.order1.getItems().size());
+		salesOrderItem = salesOrder.getItems().get(0);
+		assertEquals(salesOrderItem.getId(), this.orderItem1.getId());
+		assertEquals(salesOrderItem.getMaterial(), this.orderItem1.getMaterial());
+		assertEquals(salesOrderItem.getQuantity(), this.orderItem1.getQuantity());
+		assertEquals(salesOrderItem.getPriceTotal(), this.orderItem1.getPriceTotal());
+		
+		salesOrder = salesOrders.getSalesOrders().get(1);
+		assertEquals(salesOrder.getId(), this.order2.getId());
+		assertEquals(salesOrder.getSoldToParty(), this.order2.getSoldToParty());
+		assertEquals(salesOrder.getShipToParty(), this.order2.getShipToParty());
+		assertEquals(salesOrder.getBillToParty(), this.order2.getBillToParty());
+		assertEquals(salesOrder.getOrderDate().getTime(), this.order2.getOrderDate().getTime());
+		assertEquals(salesOrder.getRequestedDeliveryDate().getTime(), this.order2.getRequestedDeliveryDate().getTime());
+		
+		assertEquals(salesOrder.getItems().size(), this.order2.getItems().size());
+		salesOrderItem = salesOrder.getItems().get(0);
+		assertEquals(salesOrderItem.getId(), this.orderItem21.getId());
+		assertEquals(salesOrderItem.getMaterial(), this.orderItem21.getMaterial());
+		assertEquals(salesOrderItem.getQuantity(), this.orderItem21.getQuantity());
+		assertEquals(salesOrderItem.getPriceTotal(), this.orderItem21.getPriceTotal());
+		
+		salesOrderItem = salesOrder.getItems().get(1);
+		assertEquals(salesOrderItem.getId(), this.orderItem22.getId());
+		assertEquals(salesOrderItem.getMaterial(), this.orderItem22.getMaterial());
+		assertEquals(salesOrderItem.getQuantity(), this.orderItem22.getQuantity());
+		assertEquals(salesOrderItem.getPriceTotal(), this.orderItem22.getPriceTotal());
 	}
 
 }

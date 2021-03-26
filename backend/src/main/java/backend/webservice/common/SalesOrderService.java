@@ -7,8 +7,11 @@ import java.util.ResourceBundle;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import backend.dao.MaterialHibernateDao;
 import backend.dao.SalesOrderHibernateDao;
+import backend.model.MaterialArray;
 import backend.model.SalesOrder;
+import backend.model.SalesOrderArray;
 import backend.model.webservice.WebServiceMessage;
 import backend.model.webservice.WebServiceMessageType;
 import backend.model.webservice.WebServiceResult;
@@ -80,7 +83,24 @@ public class SalesOrderService {
 	 * @return A list of all sales orders.
 	 */
 	public WebServiceResult getSalesOrders() {
-		return null;
+		SalesOrderArray salesOrders = new SalesOrderArray();
+		WebServiceResult getSalesOrdersResult = new WebServiceResult(null);
+		
+		try {
+			this.salesOrderDAO = new SalesOrderHibernateDao();
+			salesOrders.setSalesOrders(this.salesOrderDAO.getSalesOrders());
+			getSalesOrdersResult.setData(salesOrders);
+		} catch (Exception e) {
+			getSalesOrdersResult.addMessage(new WebServiceMessage(
+					WebServiceMessageType.E, this.resources.getString("salesOrder.getSalesOrdersError")));
+			
+			logger.error(this.resources.getString("salesOrder.getSalesOrdersError"), e);
+		}
+		finally {
+			this.closeSalesOrderDAO();
+		}
+		
+		return getSalesOrdersResult;
 	}
 	
 	

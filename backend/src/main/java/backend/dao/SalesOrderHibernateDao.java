@@ -6,8 +6,13 @@ import java.util.Map;
 
 import javax.persistence.EntityGraph;
 import javax.persistence.EntityManager;
+import javax.persistence.TypedQuery;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
 
 import backend.exception.ObjectUnchangedException;
+import backend.model.Material;
 import backend.model.SalesOrder;
 
 /**
@@ -73,8 +78,38 @@ public class SalesOrderHibernateDao extends HibernateDao implements SalesOrderDa
 	
 	@Override
 	public List<SalesOrder> getSalesOrders() throws Exception {
-		// TODO Auto-generated method stub
-		return null;
+		List<SalesOrder> salesOrders = null;
+		EntityManager entityManager = this.sessionFactory.createEntityManager();
+		
+		//Use entity graphs to load data of referenced SalesOrderItem instances.
+		EntityGraph<SalesOrder> graph = entityManager.createEntityGraph(SalesOrder.class);
+		graph.addAttributeNodes("items");
+		
+		entityManager.getTransaction().begin();
+		
+		try {
+			CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+			CriteriaQuery<SalesOrder> criteriaQuery = criteriaBuilder.createQuery(SalesOrder.class);
+			Root<SalesOrder> criteria = criteriaQuery.from(SalesOrder.class);
+			criteriaQuery.select(criteria);
+			criteriaQuery.orderBy(criteriaBuilder.asc(criteria.get("id")));	//Order by id ascending
+			TypedQuery<SalesOrder> typedQuery = entityManager.createQuery(criteriaQuery);
+			typedQuery.setHint("javax.persistence.loadgraph", graph);	//Also fetch all item data.
+			salesOrders = typedQuery.getResultList();
+			
+			entityManager.getTransaction().commit();			
+		}
+		catch(Exception exception) {
+			//If something breaks a rollback is necessary.
+			if(entityManager.getTransaction().isActive())
+				entityManager.getTransaction().rollback();
+			throw exception;
+		}
+		finally {
+			entityManager.close();			
+		}
+		
+		return salesOrders;
 	}
 
 	
