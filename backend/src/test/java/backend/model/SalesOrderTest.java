@@ -218,4 +218,27 @@ public class SalesOrderTest {
 		
 		assertEquals(expectedErrorMessage, actualErrorMessage);
 	}
+	
+	
+	@Test
+	/**
+	 * Tests validation of a sales order which has items with duplicate IDs.
+	 */
+	public void testDuplicateItemId() {
+		SalesOrderItem newItem;
+		
+		//Add another item to the sales order that has the same ID defined.
+		newItem = new SalesOrderItem();
+		newItem.setId(this.orderItem.getId());
+		newItem.setMaterial(this.material);
+		newItem.setQuantity(Long.valueOf(1));
+		this.order.addItem(newItem);
+		
+		try {
+			this.order.validate();
+			fail("Validation should have failed because multiple items have the same id defined.");
+		} catch (Exception expected) {
+			
+		}
+	}
 }

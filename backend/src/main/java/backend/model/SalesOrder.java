@@ -2,6 +2,7 @@ package backend.model;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -22,6 +23,7 @@ import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
 import javax.validation.constraints.NotNull;
 
+import backend.exception.DuplicateIdentifierException;
 import backend.exception.NoItemsException;
 
 /**
@@ -327,9 +329,10 @@ public class SalesOrder {
 	 * Validates the sales order.
 	 * 
 	 * @throws NoItemsException Indicates that the sales order has no items defined.
+	 * @throws DuplicateIdentifierException Indicates that multiple items share the same id.
 	 * @throws Exception In case a general validation error occurred.
 	 */
-	public void validate() throws NoItemsException, Exception {
+	public void validate() throws NoItemsException, DuplicateIdentifierException, Exception {
 		this.validateAnnotations();
 		this.validateAdditionalCharacteristics();
 		
@@ -359,12 +362,40 @@ public class SalesOrder {
 	 * 
 	 * @throws NoItemsException Indicates that the sales order has no items defined.
 	 */
-	private void validateAdditionalCharacteristics() throws NoItemsException {
-		if(this.items == null || this.items.size() == 0)
-			throw new NoItemsException();
+	private void validateAdditionalCharacteristics() throws NoItemsException, DuplicateIdentifierException {
+		this.validateItemsDefined();
+		this.validateDistinctItemIds();
 	}
 	
 	
+	/**
+	 * Checks if any item ID is used multiple times.
+	 * 
+	 * @throws DuplicateIdentifierException Indicates that an item ID is used multiple times.
+	 */
+	private void validateDistinctItemIds() throws DuplicateIdentifierException {
+		Set<Integer> usedIds = new HashSet<Integer>();
+		boolean isDistinctId;
+		
+		for(SalesOrderItem item:this.items) {
+			isDistinctId = usedIds.add(item.getId());
+			
+			if(!isDistinctId) {
+				throw new DuplicateIdentifierException(item.getId().toString());
+			}
+		}
+	}
+	
+	
+	/**
+	 * Checks if items are defined.
+	 * 
+	 * @throws NoItemsException If no items are defined
+	 */
+	private void validateItemsDefined() throws NoItemsException {
+		if(this.items == null || this.items.size() == 0)
+			throw new NoItemsException();
+	}
 	
 	
 	/**

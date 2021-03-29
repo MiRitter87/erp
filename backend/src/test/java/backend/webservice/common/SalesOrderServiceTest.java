@@ -588,4 +588,12 @@ public class SalesOrderServiceTest {
 		actualErrorMessage = updateSalesOrderResult.getMessages().get(0).getText();
 		assertEquals(expectedErrorMessage, actualErrorMessage);
 	}
+	
+	
+	/*
+	 * TODO: Add additional test cases.
+	 * 
+	 *  testUpdateWithDuplicateItemKey		A message should be provided informing the user about the ID that is used multiple times.
+	 *  testUpdateQuantityExceedsInventory	A message should inform the user about the material and the quantity mismatch.
+	 */
 }
