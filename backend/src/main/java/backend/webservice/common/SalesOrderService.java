@@ -8,6 +8,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import backend.dao.SalesOrderHibernateDao;
+import backend.exception.NoItemsException;
 import backend.exception.ObjectUnchangedException;
 import backend.model.SalesOrder;
 import backend.model.SalesOrderArray;
@@ -168,7 +169,13 @@ public class SalesOrderService {
 		//Validation of the given sales order.
 		try {
 			salesOrder.validate();
-		} catch (Exception validationException) {
+		} 
+		catch(NoItemsException noItemsException) {
+			updateSalesOrderResult.addMessage(new WebServiceMessage(WebServiceMessageType.E, this.resources.getString("salesOrder.noItemsGiven")));
+			this.closeSalesOrderDAO();
+			return updateSalesOrderResult;
+		}
+		catch (Exception validationException) {
 			updateSalesOrderResult.addMessage(new WebServiceMessage(WebServiceMessageType.E, validationException.getMessage()));
 			this.closeSalesOrderDAO();
 			return updateSalesOrderResult;

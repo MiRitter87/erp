@@ -6,9 +6,11 @@ import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.ResourceBundle;
 
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
@@ -28,6 +30,7 @@ import backend.model.SalesOrderItem;
 import backend.model.UnitOfMeasurement;
 import backend.model.webservice.WebServiceMessageType;
 import backend.model.webservice.WebServiceResult;
+import backend.tools.test.ValidationMessageProvider;
 import backend.tools.test.WebServiceTestTools;
 
 /**
@@ -36,6 +39,11 @@ import backend.tools.test.WebServiceTestTools;
  * @author Michael
  */
 public class SalesOrderServiceTest {
+	/**
+	 * Access to localized application resources.
+	 */
+	private ResourceBundle resources = ResourceBundle.getBundle("backend");	
+	
 	/**
 	 * DAO to access sales order data.
 	 */
@@ -445,7 +453,7 @@ public class SalesOrderServiceTest {
 		assertTrue(updateSalesOrderResult.getMessages().size() == 1);
 		assertTrue(updateSalesOrderResult.getMessages().get(0).getType() == WebServiceMessageType.S);
 		
-		//Retrieve the updated material and check if the changes have been persisted.
+		//Retrieve the updated sales order and check if the changes have been persisted.
 		try {
 			updatedSalesOrder = orderDAO.getSalesOrder(this.order1.getId());
 			assertEquals(this.order1.getRequestedDeliveryDate().getTime(), updatedSalesOrder.getRequestedDeliveryDate().getTime());
@@ -455,13 +463,129 @@ public class SalesOrderServiceTest {
 	}
 	
 	
-	/*
-	 * TODO: Add further tests:
-	 * 
-	 * testUpdateValidSalesOrderItem
-	 * testUpdateInvalidSalesOrder
-	 * testUpdateInvalidSalesOrderItem
-	 * testUpdateUnchangedSalesOrder
-	 * testUpdateSalesOrderWithoutItems
+	@Test
+	/**
+	 * Tests updating a sales order with valid item data.
 	 */
+	public void testUpdateValidSalesOrderItem() {
+		WebServiceResult updateSalesOrderResult;
+		SalesOrder updatedSalesOrder;
+		SalesOrderService orderService = new SalesOrderService();
+		
+		//Update the ordered quantity of an item.
+		this.order1.getItems().get(0).setQuantity(Long.valueOf(2));
+		updateSalesOrderResult = orderService.updateSalesOrder(this.order1);
+		
+		//Assure no error message exists
+		assertTrue(WebServiceTestTools.resultContainsErrorMessage(updateSalesOrderResult) == false);
+		
+		//There should be a success message
+		assertTrue(updateSalesOrderResult.getMessages().size() == 1);
+		assertTrue(updateSalesOrderResult.getMessages().get(0).getType() == WebServiceMessageType.S);
+		
+		//Retrieve the updated sales order and check if the changes have been persisted.
+		try {
+			updatedSalesOrder = orderDAO.getSalesOrder(this.order1.getId());
+			assertEquals(this.order1.getItems().get(0).getQuantity(), updatedSalesOrder.getItems().get(0).getQuantity());
+		} catch (Exception e) {
+			fail(e.getMessage());
+		}
+	}
+	
+	
+	@Test
+	/**
+	 * Tests updating a sales order without items.
+	 */
+	public void testUpdateSalesOrderWithoutItems() {
+		WebServiceResult updateSalesOrderResult;
+		SalesOrderService orderService = new SalesOrderService();
+		String actualErrorMessage, expectedErrorMessage;
+		
+		//Remove the item and try to update the sales order.
+		this.order1.getItems().clear();
+		updateSalesOrderResult = orderService.updateSalesOrder(this.order1);
+		
+		//There should be a return message of type E.
+		assertTrue(updateSalesOrderResult.getMessages().size() == 1);
+		assertTrue(updateSalesOrderResult.getMessages().get(0).getType() == WebServiceMessageType.E);
+		
+		//A proper message should be provided.
+		expectedErrorMessage = this.resources.getString("salesOrder.noItemsGiven");
+		actualErrorMessage = updateSalesOrderResult.getMessages().get(0).getText();
+		assertEquals(expectedErrorMessage, actualErrorMessage);
+	}
+	
+	
+	@Test
+	/**
+	 * Tests updating a sales order with invalid data.
+	 */
+	public void testUpdateInvalidSalesOrder() {
+		WebServiceResult updateSalesOrderResult;
+		SalesOrderService orderService = new SalesOrderService();
+		ValidationMessageProvider messageProvider = new ValidationMessageProvider();
+		String actualErrorMessage, expectedErrorMessage;
+		
+		//Remove the bill-to party.
+		this.order1.setBillToParty(null);
+		updateSalesOrderResult = orderService.updateSalesOrder(this.order1);
+		
+		//There should be a return message of type E.
+		assertTrue(updateSalesOrderResult.getMessages().size() == 1);
+		assertTrue(updateSalesOrderResult.getMessages().get(0).getType() == WebServiceMessageType.E);
+		
+		//A proper message should be provided.
+		expectedErrorMessage = messageProvider.getNotNullValidationMessage("salesOrder", "billToParty");
+		actualErrorMessage = updateSalesOrderResult.getMessages().get(0).getText();
+		assertEquals(expectedErrorMessage, actualErrorMessage);
+	}
+	
+	
+	@Test
+	/**
+	 * Tests updating a sales order item with invalid data.
+	 */
+	public void testUpdateInvalidSalesOrderItem() {
+		WebServiceResult updateSalesOrderResult;
+		SalesOrderService orderService = new SalesOrderService();
+		ValidationMessageProvider messageProvider = new ValidationMessageProvider();
+		String actualErrorMessage, expectedErrorMessage;
+		
+		//Update order item with quantity of zero.
+		this.order1.getItems().get(0).setQuantity(Long.valueOf(0));
+		updateSalesOrderResult = orderService.updateSalesOrder(this.order1);
+		
+		//There should be a return message of type E.
+		assertTrue(updateSalesOrderResult.getMessages().size() == 1);
+		assertTrue(updateSalesOrderResult.getMessages().get(0).getType() == WebServiceMessageType.E);
+		
+		//A proper message should be provided.
+		expectedErrorMessage = messageProvider.getMinValidationMessage("salesOrderItem", "quantity", "1");
+		actualErrorMessage = updateSalesOrderResult.getMessages().get(0).getText();
+		assertEquals(expectedErrorMessage, actualErrorMessage);
+	}
+	
+	
+	@Test
+	/**
+	 * Tests updating a sales order without changing any data.
+	 */
+	public void testUpdateUnchangedSalesOrder() {
+		WebServiceResult updateSalesOrderResult;
+		SalesOrderService orderService = new SalesOrderService();
+		String actualErrorMessage, expectedErrorMessage;
+		
+		//Update sales order without changing any data.
+		updateSalesOrderResult = orderService.updateSalesOrder(this.order1);
+		
+		//There should be a return message of type I
+		assertTrue(updateSalesOrderResult.getMessages().size() == 1);
+		assertTrue(updateSalesOrderResult.getMessages().get(0).getType() == WebServiceMessageType.I);
+		
+		//A proper message should be provided.
+		expectedErrorMessage = MessageFormat.format(this.resources.getString("salesOrder.updateUnchanged"), this.order1.getId());
+		actualErrorMessage = updateSalesOrderResult.getMessages().get(0).getText();
+		assertEquals(expectedErrorMessage, actualErrorMessage);
+	}
 }

@@ -135,10 +135,27 @@ public class SalesOrderHibernateDao extends HibernateDao implements SalesOrderDa
 	public void updateSalesOrder(SalesOrder salesOrder) throws ObjectUnchangedException, Exception {
 		EntityManager entityManager;
 		
+		this.checkSalesOrderDataChanged(salesOrder);
+		
 		entityManager = this.sessionFactory.createEntityManager();
 		entityManager.getTransaction().begin();
 		entityManager.merge(salesOrder);
 		entityManager.getTransaction().commit();
 		entityManager.close();	
+	}
+	
+	
+	/**
+	 * Checks if the data of the given sales order differ from the sales order that is persisted at database level.
+	 * 
+	 * @param salesOrder The sales order to be checked.
+	 * @throws ObjectUnchangedException In case the sales order has not been changed.
+	 * @throws Exception In case an error occurred during determination of the sales order stored at the database.
+	 */
+	private void checkSalesOrderDataChanged(final SalesOrder salesOrder) throws ObjectUnchangedException, Exception {
+		SalesOrder databaseSalesOrder = this.getSalesOrder(salesOrder.getId());
+		
+		if(databaseSalesOrder.equals(salesOrder))
+			throw new ObjectUnchangedException();
 	}
 }

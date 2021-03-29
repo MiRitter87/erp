@@ -144,6 +144,62 @@ public class SalesOrderItem {
 	}
 
 
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((id == null) ? 0 : id.hashCode());
+		result = prime * result + ((material == null) ? 0 : material.hashCode());
+		result = prime * result + ((priceTotal == null) ? 0 : priceTotal.hashCode());
+		result = prime * result + ((quantity == null) ? 0 : quantity.hashCode());
+		return result;
+	}
+
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (obj == null) {
+			return false;
+		}
+		if (getClass() != obj.getClass()) {
+			return false;
+		}
+		SalesOrderItem other = (SalesOrderItem) obj;
+		if (id == null) {
+			if (other.id != null) {
+				return false;
+			}
+		} else if (!id.equals(other.id)) {
+			return false;
+		}
+		if (material == null) {
+			if (other.material != null) {
+				return false;
+			}
+		} else if (!material.equals(other.material)) {
+			return false;
+		}
+		if (priceTotal == null) {
+			if (other.priceTotal != null) {
+				return false;
+			}
+		} else if (!priceTotal.equals(other.priceTotal)) {
+			return false;
+		}
+		if (quantity == null) {
+			if (other.quantity != null) {
+				return false;
+			}
+		} else if (!quantity.equals(other.quantity)) {
+			return false;
+		}
+		return true;
+	}
+
+
 	/**
 	 * Updates the total price of the sales order item based on quantity and price per unit of the material.
 	 */

@@ -216,6 +216,113 @@ public class SalesOrder {
 	}
 
 
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((billToParty == null) ? 0 : billToParty.hashCode());
+		result = prime * result + ((id == null) ? 0 : id.hashCode());
+		result = prime * result + ((items == null) ? 0 : items.hashCode());
+		result = prime * result + ((orderDate == null) ? 0 : orderDate.hashCode());
+		result = prime * result + ((requestedDeliveryDate == null) ? 0 : requestedDeliveryDate.hashCode());
+		result = prime * result + ((shipToParty == null) ? 0 : shipToParty.hashCode());
+		result = prime * result + ((soldToParty == null) ? 0 : soldToParty.hashCode());
+		return result;
+	}
+
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (obj == null) {
+			return false;
+		}
+		if (getClass() != obj.getClass()) {
+			return false;
+		}
+		SalesOrder other = (SalesOrder) obj;
+		if (billToParty == null) {
+			if (other.billToParty != null) {
+				return false;
+			}
+		} else if (!billToParty.equals(other.billToParty)) {
+			return false;
+		}
+		if (id == null) {
+			if (other.id != null) {
+				return false;
+			}
+		} else if (!id.equals(other.id)) {
+			return false;
+		}
+		if (orderDate == null) {
+			if (other.orderDate != null) {
+				return false;
+			}
+		} else if (orderDate.getTime() != other.orderDate.getTime()) {
+			return false;
+		}
+		if (requestedDeliveryDate == null) {
+			if (other.requestedDeliveryDate != null) {
+				return false;
+			}
+		} else if (requestedDeliveryDate.getTime() != other.requestedDeliveryDate.getTime()) {
+			return false;
+		}
+		if (shipToParty == null) {
+			if (other.shipToParty != null) {
+				return false;
+			}
+		} else if (!shipToParty.equals(other.shipToParty)) {
+			return false;
+		}
+		if (soldToParty == null) {
+			if (other.soldToParty != null) {
+				return false;
+			}
+		} else if (!soldToParty.equals(other.soldToParty)) {
+			return false;
+		}
+		
+		if(this.areItemsEqual(other) == false)
+			return false;
+		
+		return true;
+	}
+	
+	
+	/**
+	 * Checks if the list of items is equal.
+	 * 
+	 * @param other The other sales order for comparison.
+	 * @return true, if items are equal; false otherwise.
+	 */
+	private boolean areItemsEqual(SalesOrder other) {
+		if (this.items == null && other.items != null)
+			return false;
+		
+		if (this.items != null && other.items == null)
+			return false;
+		
+		if(this.items.size() != other.items.size())
+			return false;
+		
+		for(SalesOrderItem tempItem:this.items) {
+			SalesOrderItem otherItem = other.getItemWithId(tempItem.getId());
+			
+			if(otherItem == null)
+				return false;
+			
+			if(!tempItem.equals(otherItem))
+				return false;
+		}
+		
+		return true;
+	}
+
+
 	/**
 	 * Validates the sales order.
 	 * 
@@ -255,5 +362,23 @@ public class SalesOrder {
 	private void validateAdditionalCharacteristics() throws NoItemsException {
 		if(this.items == null || this.items.size() == 0)
 			throw new NoItemsException();
+	}
+	
+	
+	
+	
+	/**
+	 * Gets the item with the given id.
+	 * 
+	 * @param id The id of the item.
+	 * @return The item with the given id, if found.
+	 */
+	public SalesOrderItem getItemWithId(Integer id) {
+		for(SalesOrderItem tempItem:this.items) {
+			if(tempItem.getId() == id)
+				return tempItem;
+		}
+		
+		return null;
 	}
 }
