@@ -1,15 +1,15 @@
-package backend.tools.test;
+package backend.tools;
 
 import backend.model.webservice.WebServiceMessage;
 import backend.model.webservice.WebServiceMessageType;
 import backend.model.webservice.WebServiceResult;
 
 /**
- * Provides convenience methods for testing of SOAP WebServices.
+ * Provides convenience methods for WebServices.
  * 
  * @author Michael
  */
-public class WebServiceTestTools {
+public class WebServiceTools {
 	/**
 	 * Checks if a WebServiceResult contains an error message.
 	 * 

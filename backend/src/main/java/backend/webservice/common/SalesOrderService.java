@@ -17,6 +17,7 @@ import backend.model.SalesOrderArray;
 import backend.model.webservice.WebServiceMessage;
 import backend.model.webservice.WebServiceMessageType;
 import backend.model.webservice.WebServiceResult;
+import backend.tools.WebServiceTools;
 
 /**
  * Common implementation of the sales order WebService that is used by the SOAP as well as the REST service.
@@ -168,7 +169,25 @@ public class SalesOrderService {
 		WebServiceResult updateSalesOrderResult = new WebServiceResult(null);
 		this.salesOrderDAO = new SalesOrderHibernateDao();
 		
-		//Validation of the given sales order.
+		updateSalesOrderResult = this.validateUpdate(salesOrder);
+		if(WebServiceTools.resultContainsErrorMessage(updateSalesOrderResult))
+			return updateSalesOrderResult;
+		
+		updateSalesOrderResult = this.update(salesOrder, updateSalesOrderResult);
+		
+		return updateSalesOrderResult;
+	}
+	
+	
+	/**
+	 * Validates the sales order for the update function.
+	 * 
+	 * @param salesOrder The sales order to be validated.
+	 * @return The result of the validation.
+	 */
+	private WebServiceResult validateUpdate(final SalesOrder salesOrder) {
+		WebServiceResult updateSalesOrderResult = new WebServiceResult(null);
+		
 		try {
 			salesOrder.validate();
 		} 
@@ -199,18 +218,28 @@ public class SalesOrderService {
 			return updateSalesOrderResult;
 		}
 		
-		//Update sales order if validation is successful.
+		return updateSalesOrderResult;
+	}
+	
+	
+	/**
+	 * Updates the given sales order.
+	 * 
+	 * @param salesOrder The sales order to be updated.
+	 * @return The result of the update function.
+	 */
+	private WebServiceResult update(final SalesOrder salesOrder, WebServiceResult webServiceResult) {
 		try {
 			this.salesOrderDAO.updateSalesOrder(salesOrder);
-			updateSalesOrderResult.addMessage(new WebServiceMessage(WebServiceMessageType.S, 
+			webServiceResult.addMessage(new WebServiceMessage(WebServiceMessageType.S, 
 					MessageFormat.format(this.resources.getString("salesOrder.updateSuccess"), salesOrder.getId())));
 		} 
 		catch(ObjectUnchangedException objectUnchangedException) {
-			updateSalesOrderResult.addMessage(new WebServiceMessage(WebServiceMessageType.I, 
+			webServiceResult.addMessage(new WebServiceMessage(WebServiceMessageType.I, 
 					MessageFormat.format(this.resources.getString("salesOrder.updateUnchanged"), salesOrder.getId())));
 		}
 		catch (Exception e) {
-			updateSalesOrderResult.addMessage(new WebServiceMessage(WebServiceMessageType.E, 
+			webServiceResult.addMessage(new WebServiceMessage(WebServiceMessageType.E, 
 					MessageFormat.format(this.resources.getString("salesOrder.updateError"), salesOrder.getId())));
 			
 			logger.error(MessageFormat.format(this.resources.getString("salesOrder.updateError"), salesOrder.getId()), e);
@@ -219,7 +248,7 @@ public class SalesOrderService {
 			this.closeSalesOrderDAO();
 		}
 		
-		return updateSalesOrderResult;
+		return webServiceResult;
 	}
 	
 	

@@ -23,7 +23,7 @@ import backend.model.MaterialArray;
 import backend.model.UnitOfMeasurement;
 import backend.model.webservice.WebServiceMessageType;
 import backend.model.webservice.WebServiceResult;
-import backend.tools.test.WebServiceTestTools;
+import backend.tools.WebServiceTools;
 import backend.tools.test.ValidationMessageProvider;
 
 /**
@@ -157,7 +157,7 @@ public class MaterialServiceTest {
 		addMaterialResult = materialService.addMaterial(newMaterial);
 		
 		//Assure no error message exists
-		assertTrue(WebServiceTestTools.resultContainsErrorMessage(addMaterialResult) == false);
+		assertTrue(WebServiceTools.resultContainsErrorMessage(addMaterialResult) == false);
 		
 		//There should be a success message
 		assertTrue(addMaterialResult.getMessages().size() == 1);
@@ -203,7 +203,7 @@ public class MaterialServiceTest {
 		deleteMaterialResult = materialService.deleteMaterial(this.rx570.getId());
 		
 		//There should be no error messages
-		assertTrue(WebServiceTestTools.resultContainsErrorMessage(deleteMaterialResult) == false);
+		assertTrue(WebServiceTools.resultContainsErrorMessage(deleteMaterialResult) == false);
 		
 		//There should be a success message
 		assertTrue(deleteMaterialResult.getMessages().size() == 1);
@@ -242,7 +242,7 @@ public class MaterialServiceTest {
 		updateMaterialResult = materialService.updateMaterial(this.rx570);
 		
 		//Assure no error message exists
-		assertTrue(WebServiceTestTools.resultContainsErrorMessage(updateMaterialResult) == false);
+		assertTrue(WebServiceTools.resultContainsErrorMessage(updateMaterialResult) == false);
 		
 		//There should be a success message
 		assertTrue(updateMaterialResult.getMessages().size() == 1);
@@ -271,7 +271,7 @@ public class MaterialServiceTest {
 		getMaterialResult = materialService.getMaterial(this.rx570.getId());
 		
 		//Assure no error message exists
-		assertTrue(WebServiceTestTools.resultContainsErrorMessage(getMaterialResult) == false);
+		assertTrue(WebServiceTools.resultContainsErrorMessage(getMaterialResult) == false);
 		
 		//Assure that a material is returned
 		assertTrue(getMaterialResult.getData() instanceof Material);
@@ -304,7 +304,7 @@ public class MaterialServiceTest {
 		materials = (MaterialArray) getMaterialsResult.getData();
 		
 		//Assure no error message exists
-		assertTrue(WebServiceTestTools.resultContainsErrorMessage(getMaterialsResult) == false);
+		assertTrue(WebServiceTools.resultContainsErrorMessage(getMaterialsResult) == false);
 		
 		//Check if two materials are returned
 		assertTrue(materials.getMaterials().size() == 2);

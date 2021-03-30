@@ -20,8 +20,8 @@ import backend.model.BusinessPartner;
 import backend.model.BusinessPartnerArray;
 import backend.model.webservice.WebServiceMessageType;
 import backend.model.webservice.WebServiceResult;
+import backend.tools.WebServiceTools;
 import backend.tools.test.ValidationMessageProvider;
-import backend.tools.test.WebServiceTestTools;
 
 /**
  * Tests the BusinessPartnerService.
@@ -160,7 +160,7 @@ public class BusinessPartnerServiceTest {
 		addBusinessPartnerResult = businessPartnerService.addBusinessPartner(newBusinessPartner);
 		
 		//Assure no error message exists
-		assertTrue(WebServiceTestTools.resultContainsErrorMessage(addBusinessPartnerResult) == false);
+		assertTrue(WebServiceTools.resultContainsErrorMessage(addBusinessPartnerResult) == false);
 		
 		//There should be a success message
 		assertTrue(addBusinessPartnerResult.getMessages().size() == 1);
@@ -239,7 +239,7 @@ public class BusinessPartnerServiceTest {
 		deleteBusinessPartnerResult = businessPartnerService.deleteBusinessPartner(this.acme.getId());
 		
 		//There should be no error messages
-		assertTrue(WebServiceTestTools.resultContainsErrorMessage(deleteBusinessPartnerResult) == false);
+		assertTrue(WebServiceTools.resultContainsErrorMessage(deleteBusinessPartnerResult) == false);
 		
 		//There should be a success message
 		assertTrue(deleteBusinessPartnerResult.getMessages().size() == 1);
@@ -277,7 +277,7 @@ public class BusinessPartnerServiceTest {
 		getBusinessPartnerResult = businessPartnerService.getBusinessPartner(this.moose.getId());
 		
 		//Assure no error message exists
-		assertTrue(WebServiceTestTools.resultContainsErrorMessage(getBusinessPartnerResult) == false);
+		assertTrue(WebServiceTools.resultContainsErrorMessage(getBusinessPartnerResult) == false);
 		
 		//Assure that a business partner is returned
 		assertTrue(getBusinessPartnerResult.getData() instanceof BusinessPartner);
@@ -312,7 +312,7 @@ public class BusinessPartnerServiceTest {
 		businessPartners = (BusinessPartnerArray) getBusinessPartnersResult.getData();
 		
 		//Assure no error message exists
-		assertTrue(WebServiceTestTools.resultContainsErrorMessage(getBusinessPartnersResult) == false);
+		assertTrue(WebServiceTools.resultContainsErrorMessage(getBusinessPartnersResult) == false);
 		
 		//Check if two business partners are returned
 		assertTrue(businessPartners.getBusinessPartners().size() == 2);
@@ -356,7 +356,7 @@ public class BusinessPartnerServiceTest {
 		updateBusinessPartnerResult = businessPartnerService.updateBusinessPartner(this.acme);
 		
 		//Assure no error message exists
-		assertTrue(WebServiceTestTools.resultContainsErrorMessage(updateBusinessPartnerResult) == false);
+		assertTrue(WebServiceTools.resultContainsErrorMessage(updateBusinessPartnerResult) == false);
 		
 		//There should be a success message
 		assertTrue(updateBusinessPartnerResult.getMessages().size() == 1);

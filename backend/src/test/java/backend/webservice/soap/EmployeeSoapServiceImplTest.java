@@ -31,8 +31,8 @@ import backend.model.Gender;
 import backend.model.webservice.EmployeeHeadQueryParameter;
 import backend.model.webservice.WebServiceMessageType;
 import backend.model.webservice.WebServiceResult;
+import backend.tools.WebServiceTools;
 import backend.tools.test.ValidationMessageProvider;
-import backend.tools.test.WebServiceTestTools;
 import backend.webservice.soap.EmployeeSoapServiceImpl;
 
 public class EmployeeSoapServiceImplTest {
@@ -231,7 +231,7 @@ public class EmployeeSoapServiceImplTest {
 		employees = (EmployeeArray) getEmployeesResult.getData();
 		
 		//Assure no error message exists
-		assertTrue(WebServiceTestTools.resultContainsErrorMessage(getEmployeesResult) == false);
+		assertTrue(WebServiceTools.resultContainsErrorMessage(getEmployeesResult) == false);
 		
 		//Check if two employees are returned
 		assertTrue(employees.getEmployees().size() == 2);
@@ -267,7 +267,7 @@ public class EmployeeSoapServiceImplTest {
 		employees = (EmployeeArray) getEmployeesResult.getData();
 		
 		//Assure no error message exists
-		assertTrue(WebServiceTestTools.resultContainsErrorMessage(getEmployeesResult) == false);
+		assertTrue(WebServiceTools.resultContainsErrorMessage(getEmployeesResult) == false);
 		
 		//Check if one employee is returned
 		assertTrue(employees.getEmployees().size() == 1);
@@ -297,7 +297,7 @@ public class EmployeeSoapServiceImplTest {
 		employees = (EmployeeArray) getEmployeesResult.getData();
 		
 		//Assure no error message exists
-		assertTrue(WebServiceTestTools.resultContainsErrorMessage(getEmployeesResult) == false);
+		assertTrue(WebServiceTools.resultContainsErrorMessage(getEmployeesResult) == false);
 		
 		//Check if one employee is returned
 		assertTrue(employees.getEmployees().size() == 1);
@@ -325,7 +325,7 @@ public class EmployeeSoapServiceImplTest {
 		getEmployeeResult = service.getEmployee(this.jim.getId());
 		
 		//Assure no error message exists
-		assertTrue(WebServiceTestTools.resultContainsErrorMessage(getEmployeeResult) == false);
+		assertTrue(WebServiceTools.resultContainsErrorMessage(getEmployeeResult) == false);
 		
 		//Assure that an employee is returned
 		assertTrue(getEmployeeResult.getData() instanceof Employee);
@@ -362,7 +362,7 @@ public class EmployeeSoapServiceImplTest {
 			addEmployeeResult = service.addEmployee(newEmployee);
 			
 			//Assure no error message exists
-			assertTrue(WebServiceTestTools.resultContainsErrorMessage(addEmployeeResult) == false);
+			assertTrue(WebServiceTools.resultContainsErrorMessage(addEmployeeResult) == false);
 						
 			//Read the employee via DAO
 			addedEmployee = employeeDAO.getEmployee(newEmployee.getId());
@@ -406,7 +406,7 @@ public class EmployeeSoapServiceImplTest {
 			updateEmployeeResult = service.updateEmployee(this.olaf);
 			
 			//Assure no error message exists
-			assertTrue(WebServiceTestTools.resultContainsErrorMessage(updateEmployeeResult) == false);
+			assertTrue(WebServiceTools.resultContainsErrorMessage(updateEmployeeResult) == false);
 			
 			//Retrieve the updated employee
 			updatedEmployee = employeeDAO.getEmployee(this.olaf.getId());
@@ -438,7 +438,7 @@ public class EmployeeSoapServiceImplTest {
 			updateEmployeeResult = service.updateEmployee(this.jim);
 			
 			//Assure no error message exists
-			assertTrue(WebServiceTestTools.resultContainsErrorMessage(updateEmployeeResult) == false);
+			assertTrue(WebServiceTools.resultContainsErrorMessage(updateEmployeeResult) == false);
 			
 			//Retrieve the updated employee
 			updatedEmployee = employeeDAO.getEmployee(this.jim.getId());
@@ -567,7 +567,7 @@ public class EmployeeSoapServiceImplTest {
 			deleteEmployeeResult = service.deleteEmployee(this.olaf.getId());
 			
 			//There should be no error messages
-			assertTrue(WebServiceTestTools.resultContainsErrorMessage(deleteEmployeeResult) == false);
+			assertTrue(WebServiceTools.resultContainsErrorMessage(deleteEmployeeResult) == false);
 			
 			//There should be a success message
 			assertTrue(deleteEmployeeResult.getMessages().size() == 1);

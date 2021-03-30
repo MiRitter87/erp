@@ -30,8 +30,8 @@ import backend.model.SalesOrderItem;
 import backend.model.UnitOfMeasurement;
 import backend.model.webservice.WebServiceMessageType;
 import backend.model.webservice.WebServiceResult;
+import backend.tools.WebServiceTools;
 import backend.tools.test.ValidationMessageProvider;
-import backend.tools.test.WebServiceTestTools;
 
 /**
  * Tests the sales order service.
@@ -299,7 +299,7 @@ public class SalesOrderServiceTest {
 		getSalesOrderResult = service.getSalesOrder(this.order1.getId());
 		
 		//Assure no error message exists
-		assertTrue(WebServiceTestTools.resultContainsErrorMessage(getSalesOrderResult) == false);
+		assertTrue(WebServiceTools.resultContainsErrorMessage(getSalesOrderResult) == false);
 		
 		//Assure that an employee is returned
 		assertTrue(getSalesOrderResult.getData() instanceof SalesOrder);
@@ -339,7 +339,7 @@ public class SalesOrderServiceTest {
 		salesOrders = (SalesOrderArray) getSalesOrdersResult.getData();
 		
 		//Assure no error message exists
-		assertTrue(WebServiceTestTools.resultContainsErrorMessage(getSalesOrdersResult) == false);
+		assertTrue(WebServiceTools.resultContainsErrorMessage(getSalesOrdersResult) == false);
 		
 		//Check if two sales orders are returned.
 		assertTrue(salesOrders.getSalesOrders().size() == 2);
@@ -397,7 +397,7 @@ public class SalesOrderServiceTest {
 			deleteSalesOrderResult = service.deleteSalesOrder(this.order1.getId());
 			
 			//There should be no error messages
-			assertTrue(WebServiceTestTools.resultContainsErrorMessage(deleteSalesOrderResult) == false);
+			assertTrue(WebServiceTools.resultContainsErrorMessage(deleteSalesOrderResult) == false);
 			
 			//There should be a success message
 			assertTrue(deleteSalesOrderResult.getMessages().size() == 1);
@@ -447,7 +447,7 @@ public class SalesOrderServiceTest {
 		updateSalesOrderResult = orderService.updateSalesOrder(this.order1);
 		
 		//Assure no error message exists
-		assertTrue(WebServiceTestTools.resultContainsErrorMessage(updateSalesOrderResult) == false);
+		assertTrue(WebServiceTools.resultContainsErrorMessage(updateSalesOrderResult) == false);
 		
 		//There should be a success message
 		assertTrue(updateSalesOrderResult.getMessages().size() == 1);
@@ -477,7 +477,7 @@ public class SalesOrderServiceTest {
 		updateSalesOrderResult = orderService.updateSalesOrder(this.order1);
 		
 		//Assure no error message exists
-		assertTrue(WebServiceTestTools.resultContainsErrorMessage(updateSalesOrderResult) == false);
+		assertTrue(WebServiceTools.resultContainsErrorMessage(updateSalesOrderResult) == false);
 		
 		//There should be a success message
 		assertTrue(updateSalesOrderResult.getMessages().size() == 1);

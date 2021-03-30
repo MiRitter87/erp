@@ -26,7 +26,7 @@ import backend.model.Employee;
 import backend.model.Gender;
 import backend.model.webservice.WebServiceMessageType;
 import backend.model.webservice.WebServiceResult;
-import backend.tools.test.WebServiceTestTools;
+import backend.tools.WebServiceTools;
 
 public class DepartmentSoapServiceImplTest {
 	/**
@@ -221,7 +221,7 @@ public class DepartmentSoapServiceImplTest {
 		departments = (DepartmentArray) getDepartmentsResult.getData();
 		
 		//Assure no error message exists
-		assertTrue(WebServiceTestTools.resultContainsErrorMessage(getDepartmentsResult) == false);
+		assertTrue(WebServiceTools.resultContainsErrorMessage(getDepartmentsResult) == false);
 		
 		//Check if two departments are returned
 		assertTrue(departments.getDepartments().size() == 2);
@@ -254,7 +254,7 @@ public class DepartmentSoapServiceImplTest {
 		getDepartmentResult = service.getDepartment("SD");
 		
 		//Assure no error message exists
-		assertTrue(WebServiceTestTools.resultContainsErrorMessage(getDepartmentResult) == false);
+		assertTrue(WebServiceTools.resultContainsErrorMessage(getDepartmentResult) == false);
 		
 		//Assure that a department is returned
 		assertTrue(getDepartmentResult.getData() instanceof Department);
@@ -289,7 +289,7 @@ public class DepartmentSoapServiceImplTest {
 			addDepartmentResult = departmentService.addDepartment(newDepartment);
 			
 			//Assure no error message exists
-			assertTrue(WebServiceTestTools.resultContainsErrorMessage(addDepartmentResult) == false);
+			assertTrue(WebServiceTools.resultContainsErrorMessage(addDepartmentResult) == false);
 			
 			//Read the department via DAO
 			addedDepartment = departmentDAO.getDepartmentByCode(newDepartment.getCode());
@@ -428,7 +428,7 @@ public class DepartmentSoapServiceImplTest {
 			deleteDepartmentResult = service.deleteDepartment("SD");
 			
 			//There should be no error messages
-			assertTrue(WebServiceTestTools.resultContainsErrorMessage(deleteDepartmentResult) == false);
+			assertTrue(WebServiceTools.resultContainsErrorMessage(deleteDepartmentResult) == false);
 			
 			//There should be a success message
 			assertTrue(deleteDepartmentResult.getMessages().size() == 1);
@@ -474,7 +474,7 @@ public class DepartmentSoapServiceImplTest {
 			updateDepartmentResult = service.updateDepartment(this.departmentSd);
 			
 			//Assure no error message exists
-			assertTrue(WebServiceTestTools.resultContainsErrorMessage(updateDepartmentResult) == false);
+			assertTrue(WebServiceTools.resultContainsErrorMessage(updateDepartmentResult) == false);
 			
 			//Retrieve the updated employee
 			updatedDepartment = departmentDAO.getDepartmentByCode(this.departmentSd.getCode());
