@@ -1,5 +1,6 @@
 package backend.webservice.common;
 
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.fail;
@@ -640,5 +641,97 @@ public class SalesOrderServiceTest {
 				this.orderItem1.getMaterial().getId(), this.orderItem1.getMaterial().getInventory(), this.orderItem1.getMaterial().getUnit());
 		actualErrorMessage = updateSalesOrderResult.getMessages().get(0).getText();
 		assertEquals(expectedErrorMessage, actualErrorMessage);
+	}
+	
+	
+	@Test
+	/**
+	 * Tests adding of a new sales order.
+	 */
+	public void testAddValidSalesOrder() {
+		SalesOrder newSalesOrder = new SalesOrder();
+		SalesOrderItem newSalesOrderItem = new SalesOrderItem();
+		SalesOrder addedSalesOrder;
+		SalesOrderItem addedSalesOrderItem;
+		WebServiceResult addSalesOrderResult;
+		SalesOrderService orderService = new SalesOrderService();
+		
+		//Define the new salesOrder
+		newSalesOrderItem.setId(1);
+		newSalesOrderItem.setMaterial(this.g4560);
+		newSalesOrderItem.setQuantity(Long.valueOf(1));
+		
+		newSalesOrder.setSoldToParty(this.partner);
+		newSalesOrder.setShipToParty(this.partner);
+		newSalesOrder.setBillToParty(this.partner);
+		newSalesOrder.addItem(newSalesOrderItem);
+		
+		//Add a new sales order to the database via WebService
+		addSalesOrderResult = orderService.addSalesOrder(newSalesOrder);
+		
+		//Assure no error message exists
+		assertTrue(WebServiceTools.resultContainsErrorMessage(addSalesOrderResult) == false);
+		
+		//There should be a success message
+		assertTrue(addSalesOrderResult.getMessages().size() == 1);
+		assertTrue(addSalesOrderResult.getMessages().get(0).getType() == WebServiceMessageType.S);
+		
+		//Read the persisted sales order via DAO
+		try {
+			addedSalesOrder = orderDAO.getSalesOrder(newSalesOrder.getId());
+			
+			//Check if the sales order read by the DAO equals the sales order inserted using the WebService in each attribute.
+			assertEquals(newSalesOrder.getId(), addedSalesOrder.getId());
+			assertEquals(newSalesOrder.getOrderDate().getTime(), addedSalesOrder.getOrderDate().getTime());
+			assertEquals(newSalesOrder.getRequestedDeliveryDate(), addedSalesOrder.getRequestedDeliveryDate());
+			assertEquals(newSalesOrder.getSoldToParty(), addedSalesOrder.getSoldToParty());
+			assertEquals(newSalesOrder.getShipToParty(), addedSalesOrder.getShipToParty());
+			assertEquals(newSalesOrder.getBillToParty(), addedSalesOrder.getBillToParty());
+			
+			//Checks at item level.
+			assertEquals(newSalesOrder.getItems().size(), addedSalesOrder.getItems().size());
+			addedSalesOrderItem = addedSalesOrder.getItems().get(0);
+			assertEquals(newSalesOrderItem.getId(), addedSalesOrderItem.getId());
+			assertEquals(newSalesOrderItem.getMaterial(), addedSalesOrderItem.getMaterial());
+			assertEquals(newSalesOrderItem.getQuantity(), addedSalesOrderItem.getQuantity());
+			assertEquals(newSalesOrderItem.getPriceTotal(), addedSalesOrderItem.getPriceTotal());
+		} catch (Exception e) {
+			fail(e.getMessage());
+		}
+		finally {
+			//Delete the newly added sales order.
+			try {
+				orderDAO.deleteSalesOrder(newSalesOrder);
+			} 
+			catch (Exception e) {
+				fail(e.getMessage());
+			}
+		}
+	}
+	
+	
+	@Test
+	/**
+	 * Tests adding of an invalid sales order.
+	 */
+	public void testAddInvalidSalesOrder() {
+		SalesOrder newSalesOrder = new SalesOrder();
+		WebServiceResult addSalesOrderResult;
+		SalesOrderService orderService = new SalesOrderService();
+		
+		//Define the new salesOrder without an item.
+		newSalesOrder.setSoldToParty(this.partner);
+		newSalesOrder.setShipToParty(this.partner);
+		newSalesOrder.setBillToParty(this.partner);
+		
+		//Add a new sales order to the database via WebService
+		addSalesOrderResult = orderService.addSalesOrder(newSalesOrder);
+		
+		//There should be a return message of type E.
+		assertTrue(addSalesOrderResult.getMessages().size() == 1);
+		assertTrue(addSalesOrderResult.getMessages().get(0).getType() == WebServiceMessageType.E);
+		
+		//The new sales order should not have been persisted
+		assertNull(newSalesOrder.getId());
 	}
 }

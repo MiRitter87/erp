@@ -114,7 +114,16 @@ public class SalesOrderService {
 	 * @return The result of the add function.
 	 */
 	public WebServiceResult addSalesOrder(final SalesOrder salesOrder) {
-		return null;
+		WebServiceResult addSalesOrderResult = new WebServiceResult();
+		this.salesOrderDAO = new SalesOrderHibernateDao();
+		
+		addSalesOrderResult = this.validate(salesOrder);
+		if(WebServiceTools.resultContainsErrorMessage(addSalesOrderResult))
+			return addSalesOrderResult;
+	
+		addSalesOrderResult = this.add(salesOrder, addSalesOrderResult);
+		
+		return addSalesOrderResult;
 	}
 	
 	
@@ -169,7 +178,7 @@ public class SalesOrderService {
 		WebServiceResult updateSalesOrderResult = new WebServiceResult(null);
 		this.salesOrderDAO = new SalesOrderHibernateDao();
 		
-		updateSalesOrderResult = this.validateUpdate(salesOrder);
+		updateSalesOrderResult = this.validate(salesOrder);
 		if(WebServiceTools.resultContainsErrorMessage(updateSalesOrderResult))
 			return updateSalesOrderResult;
 		
@@ -180,45 +189,45 @@ public class SalesOrderService {
 	
 	
 	/**
-	 * Validates the sales order for the update function.
+	 * Validates the sales order.
 	 * 
 	 * @param salesOrder The sales order to be validated.
 	 * @return The result of the validation.
 	 */
-	private WebServiceResult validateUpdate(final SalesOrder salesOrder) {
-		WebServiceResult updateSalesOrderResult = new WebServiceResult(null);
+	private WebServiceResult validate(final SalesOrder salesOrder) {
+		WebServiceResult webServiceResult = new WebServiceResult(null);
 		
 		try {
 			salesOrder.validate();
 		} 
 		catch(NoItemsException noItemsException) {
-			updateSalesOrderResult.addMessage(new WebServiceMessage(WebServiceMessageType.E, this.resources.getString("salesOrder.noItemsGiven")));
+			webServiceResult.addMessage(new WebServiceMessage(WebServiceMessageType.E, this.resources.getString("salesOrder.noItemsGiven")));
 			this.closeSalesOrderDAO();
-			return updateSalesOrderResult;
+			return webServiceResult;
 		}
 		catch(DuplicateIdentifierException duplicateIdentifierException) {
-			updateSalesOrderResult.addMessage(new WebServiceMessage(WebServiceMessageType.E, 
+			webServiceResult.addMessage(new WebServiceMessage(WebServiceMessageType.E, 
 					MessageFormat.format(this.resources.getString("salesOrder.duplicateItemKey"), salesOrder.getId(), 
 							duplicateIdentifierException.getDuplicateIdentifier())));
 			this.closeSalesOrderDAO();
-			return updateSalesOrderResult;
+			return webServiceResult;
 		}
 		catch(QuantityExceedsInventoryException quantityException) {
-			updateSalesOrderResult.addMessage(new WebServiceMessage(WebServiceMessageType.E, 
+			webServiceResult.addMessage(new WebServiceMessage(WebServiceMessageType.E, 
 					MessageFormat.format(this.resources.getString("salesOrder.QuantityExceedsInventory"), 
 							quantityException.getSalesOrderItem().getMaterial().getId(),
 							quantityException.getSalesOrderItem().getMaterial().getInventory(),
 							quantityException.getSalesOrderItem().getMaterial().getUnit())));
 			this.closeSalesOrderDAO();
-			return updateSalesOrderResult;
+			return webServiceResult;
 		}
 		catch (Exception validationException) {
-			updateSalesOrderResult.addMessage(new WebServiceMessage(WebServiceMessageType.E, validationException.getMessage()));
+			webServiceResult.addMessage(new WebServiceMessage(WebServiceMessageType.E, validationException.getMessage()));
 			this.closeSalesOrderDAO();
-			return updateSalesOrderResult;
+			return webServiceResult;
 		}
 		
-		return updateSalesOrderResult;
+		return webServiceResult;
 	}
 	
 	
@@ -243,6 +252,31 @@ public class SalesOrderService {
 					MessageFormat.format(this.resources.getString("salesOrder.updateError"), salesOrder.getId())));
 			
 			logger.error(MessageFormat.format(this.resources.getString("salesOrder.updateError"), salesOrder.getId()), e);
+		}
+		finally {
+			this.closeSalesOrderDAO();
+		}
+		
+		return webServiceResult;
+	}
+	
+	
+	/**
+	 * Inserts the given sales order.
+	 * 
+	 * @param salesOrder The sales order to be inserted.
+	 * @return The result of the isnert function.
+	 */
+	private WebServiceResult add(final SalesOrder salesOrder, WebServiceResult webServiceResult) {
+		try {
+			this.salesOrderDAO.insertSalesOrder(salesOrder);
+			webServiceResult.addMessage(new WebServiceMessage(
+					WebServiceMessageType.S, this.resources.getString("salesOrder.addSuccess")));
+		} catch (Exception e) {
+			webServiceResult.addMessage(new WebServiceMessage(
+					WebServiceMessageType.E, this.resources.getString("salesOrder.addError")));
+			
+			logger.error(this.resources.getString("salesOrder.addError"), e);
 		}
 		finally {
 			this.closeSalesOrderDAO();
