@@ -25,6 +25,7 @@ import javax.validation.constraints.NotNull;
 
 import backend.exception.DuplicateIdentifierException;
 import backend.exception.NoItemsException;
+import backend.exception.QuantityExceedsInventoryException;
 
 /**
  * Represents an order issued by a customer.
@@ -330,9 +331,10 @@ public class SalesOrder {
 	 * 
 	 * @throws NoItemsException Indicates that the sales order has no items defined.
 	 * @throws DuplicateIdentifierException Indicates that multiple items share the same id.
+	 * @throws QuantityExceedsInventoryException Indicates that the ordered quantity exceeds the inventory.
 	 * @throws Exception In case a general validation error occurred.
 	 */
-	public void validate() throws NoItemsException, DuplicateIdentifierException, Exception {
+	public void validate() throws NoItemsException, DuplicateIdentifierException, QuantityExceedsInventoryException, Exception {
 		this.validateAnnotations();
 		this.validateAdditionalCharacteristics();
 		

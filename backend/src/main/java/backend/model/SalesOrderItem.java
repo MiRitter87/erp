@@ -246,6 +246,6 @@ public class SalesOrderItem {
 	 */
 	private void validateAdditionalCharacteristics() throws QuantityExceedsInventoryException {
 		if(this.quantity > this.material.getInventory())
-			throw new QuantityExceedsInventoryException();
+			throw new QuantityExceedsInventoryException(this);
 	}
 }

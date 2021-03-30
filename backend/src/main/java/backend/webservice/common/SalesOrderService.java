@@ -8,8 +8,10 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import backend.dao.SalesOrderHibernateDao;
+import backend.exception.DuplicateIdentifierException;
 import backend.exception.NoItemsException;
 import backend.exception.ObjectUnchangedException;
+import backend.exception.QuantityExceedsInventoryException;
 import backend.model.SalesOrder;
 import backend.model.SalesOrderArray;
 import backend.model.webservice.WebServiceMessage;
@@ -172,6 +174,22 @@ public class SalesOrderService {
 		} 
 		catch(NoItemsException noItemsException) {
 			updateSalesOrderResult.addMessage(new WebServiceMessage(WebServiceMessageType.E, this.resources.getString("salesOrder.noItemsGiven")));
+			this.closeSalesOrderDAO();
+			return updateSalesOrderResult;
+		}
+		catch(DuplicateIdentifierException duplicateIdentifierException) {
+			updateSalesOrderResult.addMessage(new WebServiceMessage(WebServiceMessageType.E, 
+					MessageFormat.format(this.resources.getString("salesOrder.duplicateItemKey"), salesOrder.getId(), 
+							duplicateIdentifierException.getDuplicateIdentifier())));
+			this.closeSalesOrderDAO();
+			return updateSalesOrderResult;
+		}
+		catch(QuantityExceedsInventoryException quantityException) {
+			updateSalesOrderResult.addMessage(new WebServiceMessage(WebServiceMessageType.E, 
+					MessageFormat.format(this.resources.getString("salesOrder.QuantityExceedsInventory"), 
+							quantityException.getSalesOrderItem().getMaterial().getId(),
+							quantityException.getSalesOrderItem().getMaterial().getInventory(),
+							quantityException.getSalesOrderItem().getMaterial().getUnit())));
 			this.closeSalesOrderDAO();
 			return updateSalesOrderResult;
 		}

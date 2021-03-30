@@ -589,11 +589,56 @@ public class SalesOrderServiceTest {
 		assertEquals(expectedErrorMessage, actualErrorMessage);
 	}
 	
-	
-	/*
-	 * TODO: Add additional test cases.
-	 * 
-	 *  testUpdateWithDuplicateItemKey		A message should be provided informing the user about the ID that is used multiple times.
-	 *  testUpdateQuantityExceedsInventory	A message should inform the user about the material and the quantity mismatch.
+	@Test
+	/**
+	 * Tests updating a sales order that has multiple items with the same item id.
 	 */
+	public void testUpdateWithDuplicateItemKey() {
+		WebServiceResult updateSalesOrderResult;
+		SalesOrderService orderService = new SalesOrderService();
+		String actualErrorMessage, expectedErrorMessage;
+		SalesOrderItem newItem = new SalesOrderItem();;
+		
+		//Add a new item to the sales order.
+		newItem.setId(this.orderItem1.getId());
+		newItem.setMaterial(this.g4560);
+		newItem.setQuantity(Long.valueOf(1));
+		this.order1.addItem(newItem);
+		updateSalesOrderResult = orderService.updateSalesOrder(this.order1);
+		
+		//There should be a return message of type E.
+		assertTrue(updateSalesOrderResult.getMessages().size() == 1);
+		assertTrue(updateSalesOrderResult.getMessages().get(0).getType() == WebServiceMessageType.E);
+		
+		//A proper message should be provided.
+		expectedErrorMessage =  MessageFormat.format(this.resources.getString("salesOrder.duplicateItemKey"), 
+				this.order1.getId(), this.orderItem1.getId());
+		actualErrorMessage = updateSalesOrderResult.getMessages().get(0).getText();
+		assertEquals(expectedErrorMessage, actualErrorMessage);
+	}
+	
+	
+	@Test
+	/**
+	 * Tests updating a sales order where the ordered quantity exceeds the inventory.
+	 */
+	public void testUpdateQuantityExceedsInventory() {
+		WebServiceResult updateSalesOrderResult;
+		SalesOrderService orderService = new SalesOrderService();
+		String actualErrorMessage, expectedErrorMessage;
+		
+		//Update the quantity of the order.
+		this.order1.getItems().get(0).setQuantity(this.rx570.getInventory()+1);
+		updateSalesOrderResult = orderService.updateSalesOrder(this.order1);
+		
+		//There should be a return message of type E.
+		assertTrue(updateSalesOrderResult.getMessages().size() == 1);
+		assertTrue(updateSalesOrderResult.getMessages().get(0).getType() == WebServiceMessageType.E);
+		
+		//A proper message should be provided.
+		expectedErrorMessage =  MessageFormat.format(this.resources.getString("salesOrder.QuantityExceedsInventory"), 
+				this.orderItem1.getMaterial().getId(), this.orderItem1.getMaterial().getInventory(), this.orderItem1.getMaterial().getUnit());
+		actualErrorMessage = updateSalesOrderResult.getMessages().get(0).getText();
+		assertEquals(expectedErrorMessage, actualErrorMessage);
+	}
 }
