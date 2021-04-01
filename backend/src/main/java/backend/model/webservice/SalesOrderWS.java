@@ -1,5 +1,6 @@
 package backend.model.webservice;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -44,6 +45,24 @@ public class SalesOrderWS {
 	 * The items that are being ordered.
 	 */
 	private List<SalesOrderItemWS> items;
+	
+	
+	/**
+	 * Constructor.
+	 */
+	public SalesOrderWS() {
+		this.items = new ArrayList<SalesOrderItemWS>();
+	}
+	
+	
+	/**
+	 * Adds the given item to the order.
+	 * 
+	 * @param salesOrderItem The item to be added.
+	 */
+	public void addItem(final SalesOrderItemWS salesOrderItem) {
+		this.items.add(salesOrderItem);
+	}
 
 	
 	/**

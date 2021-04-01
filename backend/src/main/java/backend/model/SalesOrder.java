@@ -102,7 +102,7 @@ public class SalesOrder {
 	 * @param item The sales order item.
 	 */
 	public void addItem(final SalesOrderItem item) {
-		item.salesOrder = this;
+		item.setSalesOrder(this);
 		this.items.add(item);
 	}
 

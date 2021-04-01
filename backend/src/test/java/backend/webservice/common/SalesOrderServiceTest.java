@@ -1,5 +1,6 @@
 package backend.webservice.common;
 
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -29,6 +30,8 @@ import backend.model.SalesOrder;
 import backend.model.SalesOrderArray;
 import backend.model.SalesOrderItem;
 import backend.model.UnitOfMeasurement;
+import backend.model.webservice.SalesOrderItemWS;
+import backend.model.webservice.SalesOrderWS;
 import backend.model.webservice.WebServiceMessageType;
 import backend.model.webservice.WebServiceResult;
 import backend.tools.WebServiceTools;
@@ -445,7 +448,7 @@ public class SalesOrderServiceTest {
 		GregorianCalendar calendar = new GregorianCalendar();
 		calendar.add(GregorianCalendar.DAY_OF_MONTH, 14);
 		this.order1.setRequestedDeliveryDate(calendar.getTime());
-		updateSalesOrderResult = orderService.updateSalesOrder(this.order1);
+		updateSalesOrderResult = orderService.updateSalesOrder(this.convertToWsOrder(this.order1));
 		
 		//Assure no error message exists
 		assertTrue(WebServiceTools.resultContainsErrorMessage(updateSalesOrderResult) == false);
@@ -475,7 +478,7 @@ public class SalesOrderServiceTest {
 		
 		//Update the ordered quantity of an item.
 		this.order1.getItems().get(0).setQuantity(Long.valueOf(2));
-		updateSalesOrderResult = orderService.updateSalesOrder(this.order1);
+		updateSalesOrderResult = orderService.updateSalesOrder(this.convertToWsOrder(this.order1));
 		
 		//Assure no error message exists
 		assertTrue(WebServiceTools.resultContainsErrorMessage(updateSalesOrderResult) == false);
@@ -505,7 +508,7 @@ public class SalesOrderServiceTest {
 		
 		//Remove the item and try to update the sales order.
 		this.order1.getItems().clear();
-		updateSalesOrderResult = orderService.updateSalesOrder(this.order1);
+		updateSalesOrderResult = orderService.updateSalesOrder(this.convertToWsOrder(this.order1));
 		
 		//There should be a return message of type E.
 		assertTrue(updateSalesOrderResult.getMessages().size() == 1);
@@ -530,7 +533,7 @@ public class SalesOrderServiceTest {
 		
 		//Remove the bill-to party.
 		this.order1.setBillToParty(null);
-		updateSalesOrderResult = orderService.updateSalesOrder(this.order1);
+		updateSalesOrderResult = orderService.updateSalesOrder(this.convertToWsOrder(this.order1));
 		
 		//There should be a return message of type E.
 		assertTrue(updateSalesOrderResult.getMessages().size() == 1);
@@ -555,7 +558,7 @@ public class SalesOrderServiceTest {
 		
 		//Update order item with quantity of zero.
 		this.order1.getItems().get(0).setQuantity(Long.valueOf(0));
-		updateSalesOrderResult = orderService.updateSalesOrder(this.order1);
+		updateSalesOrderResult = orderService.updateSalesOrder(this.convertToWsOrder(this.order1));
 		
 		//There should be a return message of type E.
 		assertTrue(updateSalesOrderResult.getMessages().size() == 1);
@@ -578,7 +581,7 @@ public class SalesOrderServiceTest {
 		String actualErrorMessage, expectedErrorMessage;
 		
 		//Update sales order without changing any data.
-		updateSalesOrderResult = orderService.updateSalesOrder(this.order1);
+		updateSalesOrderResult = orderService.updateSalesOrder(this.convertToWsOrder(this.order1));
 		
 		//There should be a return message of type I
 		assertTrue(updateSalesOrderResult.getMessages().size() == 1);
@@ -605,7 +608,7 @@ public class SalesOrderServiceTest {
 		newItem.setMaterial(this.g4560);
 		newItem.setQuantity(Long.valueOf(1));
 		this.order1.addItem(newItem);
-		updateSalesOrderResult = orderService.updateSalesOrder(this.order1);
+		updateSalesOrderResult = orderService.updateSalesOrder(this.convertToWsOrder(this.order1));
 		
 		//There should be a return message of type E.
 		assertTrue(updateSalesOrderResult.getMessages().size() == 1);
@@ -630,7 +633,7 @@ public class SalesOrderServiceTest {
 		
 		//Update the quantity of the order.
 		this.order1.getItems().get(0).setQuantity(this.rx570.getInventory()+1);
-		updateSalesOrderResult = orderService.updateSalesOrder(this.order1);
+		updateSalesOrderResult = orderService.updateSalesOrder(this.convertToWsOrder(this.order1));
 		
 		//There should be a return message of type E.
 		assertTrue(updateSalesOrderResult.getMessages().size() == 1);
@@ -667,7 +670,7 @@ public class SalesOrderServiceTest {
 		newSalesOrder.addItem(newSalesOrderItem);
 		
 		//Add a new sales order to the database via WebService
-		addSalesOrderResult = orderService.addSalesOrder(newSalesOrder);
+		addSalesOrderResult = orderService.addSalesOrder(this.convertToWsOrder(newSalesOrder));
 		
 		//Assure no error message exists
 		assertTrue(WebServiceTools.resultContainsErrorMessage(addSalesOrderResult) == false);
@@ -675,6 +678,11 @@ public class SalesOrderServiceTest {
 		//There should be a success message
 		assertTrue(addSalesOrderResult.getMessages().size() == 1);
 		assertTrue(addSalesOrderResult.getMessages().get(0).getType() == WebServiceMessageType.S);
+		
+		//The ID of the newly created sales order should be provided in the data part of the WebService return.
+		assertNotNull(addSalesOrderResult.getData());
+		assertTrue(addSalesOrderResult.getData() instanceof Integer);
+		newSalesOrder.setId((Integer) addSalesOrderResult.getData());
 		
 		//Read the persisted sales order via DAO
 		try {
@@ -725,7 +733,7 @@ public class SalesOrderServiceTest {
 		newSalesOrder.setBillToParty(this.partner);
 		
 		//Add a new sales order to the database via WebService
-		addSalesOrderResult = orderService.addSalesOrder(newSalesOrder);
+		addSalesOrderResult = orderService.addSalesOrder(this.convertToWsOrder(newSalesOrder));
 		
 		//There should be a return message of type E.
 		assertTrue(addSalesOrderResult.getMessages().size() == 1);
@@ -733,5 +741,42 @@ public class SalesOrderServiceTest {
 		
 		//The new sales order should not have been persisted
 		assertNull(newSalesOrder.getId());
+	}
+	
+	
+	/**
+	 * Converts a sales order to the lean WebService representation.
+	 * 
+	 * @param order The sales order to be converted.
+	 * @return The lean WebService representation of the sales order.
+	 */
+	private SalesOrderWS convertToWsOrder(SalesOrder order) {
+		SalesOrderWS wsOrder = new SalesOrderWS();
+		
+		//Head level
+		wsOrder.setSalesOrderId(order.getId());
+		wsOrder.setOrderDate(order.getOrderDate());
+		wsOrder.setRequestedDeliveryDate(order.getRequestedDeliveryDate());
+		
+		if(order.getSoldToParty() != null)
+			wsOrder.setSoldToId(order.getSoldToParty().getId());
+		
+		if(order.getShipToParty() != null)
+			wsOrder.setShipToId(order.getShipToParty().getId());
+		
+		if(order.getBillToParty() != null)
+			wsOrder.setBillToId(order.getBillToParty().getId());
+		
+		//Item level
+		for(SalesOrderItem orderItem:order.getItems()) {
+			SalesOrderItemWS wsOrderItem = new SalesOrderItemWS();
+			wsOrderItem.setItemId(orderItem.getId());
+			wsOrderItem.setMaterialId(orderItem.getMaterial().getId());
+			wsOrderItem.setQuantity(orderItem.getQuantity());
+			wsOrderItem.setPriceTotal(orderItem.getPriceTotal());
+			wsOrder.addItem(wsOrderItem);
+		}
+		
+		return wsOrder;
 	}
 }

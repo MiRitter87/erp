@@ -10,7 +10,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
-import backend.model.SalesOrder;
+import backend.model.webservice.SalesOrderWS;
 import backend.model.webservice.WebServiceResult;
 import backend.webservice.common.SalesOrderService;
 
@@ -60,7 +60,7 @@ public class SalesOrderRestService {
 	@Path("/")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public WebServiceResult addSalesOrder(final SalesOrder salesOrder) {
+	public WebServiceResult addSalesOrder(final SalesOrderWS salesOrder) {
 		SalesOrderService salesOrderService = new SalesOrderService();
 		return salesOrderService.addSalesOrder(salesOrder);
 	}
@@ -76,7 +76,7 @@ public class SalesOrderRestService {
 	@Path("/")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public WebServiceResult updateSalesOrder(final SalesOrder salesOrder) {
+	public WebServiceResult updateSalesOrder(final SalesOrderWS salesOrder) {
 		SalesOrderService salesOrderService = new SalesOrderService();
 		return salesOrderService.updateSalesOrder(salesOrder);
 	}

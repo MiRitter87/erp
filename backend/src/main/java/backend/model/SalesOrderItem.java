@@ -45,7 +45,7 @@ public class SalesOrderItem {
 	@Id
 	@JoinColumn(name = "SALES_ORDER_ID")
 	@ManyToOne(fetch = FetchType.LAZY)
-	protected SalesOrder salesOrder;
+	private SalesOrder salesOrder;
 	
 	/**
 	 * The material that is being ordered.
@@ -141,6 +141,14 @@ public class SalesOrderItem {
 	 */
 	public SalesOrder getSalesOrder() {
 		return salesOrder;
+	}
+
+
+	/**
+	 * @param salesOrder the salesOrder to set
+	 */
+	public void setSalesOrder(SalesOrder salesOrder) {
+		this.salesOrder = salesOrder;
 	}
 
 

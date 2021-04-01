@@ -2,11 +2,15 @@ package backend.webservice.common;
 
 import java.io.IOException;
 import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.ResourceBundle;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import backend.dao.BusinessPartnerHibernateDao;
+import backend.dao.MaterialHibernateDao;
 import backend.dao.SalesOrderHibernateDao;
 import backend.exception.DuplicateIdentifierException;
 import backend.exception.NoItemsException;
@@ -14,6 +18,9 @@ import backend.exception.ObjectUnchangedException;
 import backend.exception.QuantityExceedsInventoryException;
 import backend.model.SalesOrder;
 import backend.model.SalesOrderArray;
+import backend.model.SalesOrderItem;
+import backend.model.webservice.SalesOrderItemWS;
+import backend.model.webservice.SalesOrderWS;
 import backend.model.webservice.WebServiceMessage;
 import backend.model.webservice.WebServiceMessageType;
 import backend.model.webservice.WebServiceResult;
@@ -113,15 +120,26 @@ public class SalesOrderService {
 	 * @param salesOrder The sales order to be added.
 	 * @return The result of the add function.
 	 */
-	public WebServiceResult addSalesOrder(final SalesOrder salesOrder) {
+	public WebServiceResult addSalesOrder(final SalesOrderWS salesOrder) {
+		SalesOrder convertedSalesOrder = new SalesOrder();
 		WebServiceResult addSalesOrderResult = new WebServiceResult();
-		this.salesOrderDAO = new SalesOrderHibernateDao();
 		
-		addSalesOrderResult = this.validate(salesOrder);
+		try {
+			convertedSalesOrder = this.convertSalesOrder(salesOrder);
+		}
+		catch(Exception exception) {
+			addSalesOrderResult.addMessage(new WebServiceMessage(
+					WebServiceMessageType.E, this.resources.getString("salesOrder.addError")));	
+			logger.error(this.resources.getString("salesOrder.addError"), exception);
+			return addSalesOrderResult;
+		}
+			
+		addSalesOrderResult = this.validate(convertedSalesOrder);
 		if(WebServiceTools.resultContainsErrorMessage(addSalesOrderResult))
 			return addSalesOrderResult;
 	
-		addSalesOrderResult = this.add(salesOrder, addSalesOrderResult);
+		addSalesOrderResult = this.add(convertedSalesOrder, addSalesOrderResult);
+		addSalesOrderResult.setData(convertedSalesOrder.getId());
 		
 		return addSalesOrderResult;
 	}
@@ -174,15 +192,25 @@ public class SalesOrderService {
 	 * @param salesOrder The sales order to be updated.
 	 * @return The result of the update function.
 	 */
-	public WebServiceResult updateSalesOrder(final SalesOrder salesOrder) {
+	public WebServiceResult updateSalesOrder(final SalesOrderWS salesOrder) {
+		SalesOrder convertedSalesOrder = new SalesOrder();
 		WebServiceResult updateSalesOrderResult = new WebServiceResult(null);
-		this.salesOrderDAO = new SalesOrderHibernateDao();
 		
-		updateSalesOrderResult = this.validate(salesOrder);
+		try {
+			convertedSalesOrder = this.convertSalesOrder(salesOrder);
+		}
+		catch(Exception exception) {
+			updateSalesOrderResult.addMessage(new WebServiceMessage(
+					WebServiceMessageType.E, this.resources.getString("salesOrder.updateError")));	
+			logger.error(this.resources.getString("salesOrder.updateError"), exception);
+			return updateSalesOrderResult;
+		}
+		
+		updateSalesOrderResult = this.validate(convertedSalesOrder);
 		if(WebServiceTools.resultContainsErrorMessage(updateSalesOrderResult))
 			return updateSalesOrderResult;
 		
-		updateSalesOrderResult = this.update(salesOrder, updateSalesOrderResult);
+		updateSalesOrderResult = this.update(convertedSalesOrder, updateSalesOrderResult);
 		
 		return updateSalesOrderResult;
 	}
@@ -202,14 +230,12 @@ public class SalesOrderService {
 		} 
 		catch(NoItemsException noItemsException) {
 			webServiceResult.addMessage(new WebServiceMessage(WebServiceMessageType.E, this.resources.getString("salesOrder.noItemsGiven")));
-			this.closeSalesOrderDAO();
 			return webServiceResult;
 		}
 		catch(DuplicateIdentifierException duplicateIdentifierException) {
 			webServiceResult.addMessage(new WebServiceMessage(WebServiceMessageType.E, 
 					MessageFormat.format(this.resources.getString("salesOrder.duplicateItemKey"), salesOrder.getId(), 
 							duplicateIdentifierException.getDuplicateIdentifier())));
-			this.closeSalesOrderDAO();
 			return webServiceResult;
 		}
 		catch(QuantityExceedsInventoryException quantityException) {
@@ -218,12 +244,10 @@ public class SalesOrderService {
 							quantityException.getSalesOrderItem().getMaterial().getId(),
 							quantityException.getSalesOrderItem().getMaterial().getInventory(),
 							quantityException.getSalesOrderItem().getMaterial().getUnit())));
-			this.closeSalesOrderDAO();
 			return webServiceResult;
 		}
 		catch (Exception validationException) {
 			webServiceResult.addMessage(new WebServiceMessage(WebServiceMessageType.E, validationException.getMessage()));
-			this.closeSalesOrderDAO();
 			return webServiceResult;
 		}
 		
@@ -237,8 +261,9 @@ public class SalesOrderService {
 	 * @param salesOrder The sales order to be updated.
 	 * @return The result of the update function.
 	 */
-	private WebServiceResult update(final SalesOrder salesOrder, WebServiceResult webServiceResult) {
+	private WebServiceResult update(final SalesOrder salesOrder, WebServiceResult webServiceResult) {		
 		try {
+			this.salesOrderDAO = new SalesOrderHibernateDao();
 			this.salesOrderDAO.updateSalesOrder(salesOrder);
 			webServiceResult.addMessage(new WebServiceMessage(WebServiceMessageType.S, 
 					MessageFormat.format(this.resources.getString("salesOrder.updateSuccess"), salesOrder.getId())));
@@ -267,8 +292,9 @@ public class SalesOrderService {
 	 * @param salesOrder The sales order to be inserted.
 	 * @return The result of the isnert function.
 	 */
-	private WebServiceResult add(final SalesOrder salesOrder, WebServiceResult webServiceResult) {
+	private WebServiceResult add(final SalesOrder salesOrder, WebServiceResult webServiceResult) {		
 		try {
+			this.salesOrderDAO = new SalesOrderHibernateDao();
 			this.salesOrderDAO.insertSalesOrder(salesOrder);
 			webServiceResult.addMessage(new WebServiceMessage(
 					WebServiceMessageType.S, this.resources.getString("salesOrder.addSuccess")));
@@ -283,6 +309,88 @@ public class SalesOrderService {
 		}
 		
 		return webServiceResult;
+	}
+	
+	
+	/**
+	 * Converts the lean SalesOrder representation that is provided by the WebService to the internal data model for further processing.
+	 * 
+	 * @param salesOrderWS The lean sales order representation provided by the WebService.
+	 * @return The SalesOrder model that is used by the backend internally.
+	 * @throws Exception In case the conversion fails.
+	 */
+	private SalesOrder convertSalesOrder(final SalesOrderWS salesOrderWS) throws Exception {
+		SalesOrder convertedSalesOrder;
+		
+		convertedSalesOrder = this.convertSalesOrderHead(salesOrderWS);
+		convertedSalesOrder.setItems(this.convertSalesOrderItems(salesOrderWS, convertedSalesOrder));
+		
+		return convertedSalesOrder;
+	}
+	
+	
+	/**
+	 * Converts the head data of the sales order from the lean WebService representation to the internal data model of the backend.
+	 * 
+	 * @param salesOrderWS The lean sales order representation provided by the WebService.
+	 * @return The SalesOrder model that is used by the backend internally.
+	 * @throws Exception In case the conversion fails.
+	 */
+	private SalesOrder convertSalesOrderHead(final SalesOrderWS salesOrderWS) throws Exception {
+		BusinessPartnerHibernateDao partnerDAO = new BusinessPartnerHibernateDao();
+		SalesOrder salesOrder = new SalesOrder();
+		
+		//Basic object data that are copied as-is.
+		salesOrder.setId(salesOrderWS.getSalesOrderId());
+		salesOrder.setOrderDate(salesOrderWS.getOrderDate());
+		salesOrder.setRequestedDeliveryDate(salesOrderWS.getRequestedDeliveryDate());
+		
+		//Object references. Only the ID is given and the whole backend object has to be loaded and referenced.
+		try {
+			if(salesOrderWS.getSoldToId() != null)
+				salesOrder.setSoldToParty(partnerDAO.getBusinessPartner(salesOrderWS.getSoldToId()));
+			
+			if(salesOrderWS.getShipToId() != null)
+				salesOrder.setShipToParty(partnerDAO.getBusinessPartner(salesOrderWS.getShipToId()));
+			
+			if(salesOrderWS.getBillToId() != null)
+				salesOrder.setBillToParty(partnerDAO.getBusinessPartner(salesOrderWS.getBillToId()));
+		}
+		finally {
+			partnerDAO.close();
+		}
+		
+		return salesOrder;
+	}
+	
+	
+	/**
+	 * Converts the item data of the sales order from the lean WebService representation to the internal data model of the backend.
+	 * 
+	 * @param salesOrderWS The lean sales order representation provided by the WebService.
+	 * @param salesOrder The converted sales order that is build based on the WebService representation.
+	 * @return A list of item models that is used by the backend internally.
+	 * @throws Exception In case the conversion fails.
+	 */
+	private List<SalesOrderItem> convertSalesOrderItems(final SalesOrderWS salesOrderWS, final SalesOrder salesOrder) throws Exception {
+		List<SalesOrderItem> orderItems = new ArrayList<SalesOrderItem>();
+		MaterialHibernateDao materialDAO = new MaterialHibernateDao();
+		
+		try {
+			for(SalesOrderItemWS itemWS:salesOrderWS.getItems()) {
+				SalesOrderItem orderItem = new SalesOrderItem();
+				orderItem.setId(itemWS.getItemId());
+				orderItem.setMaterial(materialDAO.getMaterial(itemWS.getMaterialId()));
+				orderItem.setQuantity(itemWS.getQuantity());
+				orderItem.setSalesOrder(salesOrder);
+				orderItems.add(orderItem);
+			}
+		}
+		finally {
+			materialDAO.close();
+		}
+		
+		return orderItems;
 	}
 	
 	
