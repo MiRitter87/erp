@@ -20,6 +20,9 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import backend.dao.BusinessPartnerHibernateDao;
 import backend.dao.MaterialHibernateDao;
 import backend.dao.SalesOrderHibernateDao;
@@ -741,6 +744,27 @@ public class SalesOrderServiceTest {
 		
 		//The new sales order should not have been persisted
 		assertNull(newSalesOrder.getId());
+	}
+	
+	
+	@Test
+	/**
+	 * Tests the serialization of the WebService result to JSON using the getSalesOrders operation of the REST service.
+	 */
+	public void testJSONSerializationOfGetSalesOrders() {
+		WebServiceResult getSalesOrdersResult;
+		ObjectMapper objectMapper = new ObjectMapper();
+		
+		//Get the sales order.
+		SalesOrderService service = new SalesOrderService();
+		getSalesOrdersResult = service.getSalesOrders();
+		
+		//Serialize the result to JSON.
+		try {
+			objectMapper.writeValueAsString(getSalesOrdersResult);
+		} catch (JsonProcessingException e) {
+			fail(e.getMessage());
+		}
 	}
 	
 	

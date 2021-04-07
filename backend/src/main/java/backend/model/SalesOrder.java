@@ -23,6 +23,8 @@ import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
 import javax.validation.constraints.NotNull;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import backend.exception.DuplicateIdentifierException;
 import backend.exception.NoItemsException;
 import backend.exception.QuantityExceedsInventoryException;
@@ -35,6 +37,7 @@ import backend.exception.QuantityExceedsInventoryException;
 @Table(name="SALES_ORDER")
 @Entity
 @SequenceGenerator(name = "salesOrderSequence", initialValue = 1, allocationSize = 1)
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class SalesOrder {
 	/**
 	 * The ID.
