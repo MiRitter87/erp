@@ -9,6 +9,9 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import backend.exception.NoItemsException;
 import backend.tools.test.ValidationMessageProvider;
 
@@ -239,6 +242,21 @@ public class SalesOrderTest {
 			fail("Validation should have failed because multiple items have the same id defined.");
 		} catch (Exception expected) {
 			
+		}
+	}
+	
+	
+	@Test
+	/**
+	 * Tests the serialization from a Sales order to JSON.
+	 */
+	public void testJSONSerialization() {
+		ObjectMapper objectMapper = new ObjectMapper();
+		
+		try {
+			objectMapper.writeValueAsString(this.order);
+		} catch (JsonProcessingException e) {
+			fail(e.getMessage());
 		}
 	}
 }

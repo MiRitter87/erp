@@ -19,6 +19,8 @@ import javax.validation.ValidatorFactory;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import backend.exception.QuantityExceedsInventoryException;
 
 /**
@@ -45,6 +47,7 @@ public class SalesOrderItem {
 	@Id
 	@JoinColumn(name = "SALES_ORDER_ID")
 	@ManyToOne(fetch = FetchType.LAZY)
+	@JsonIgnore
 	private SalesOrder salesOrder;
 	
 	/**
