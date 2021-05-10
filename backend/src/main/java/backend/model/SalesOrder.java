@@ -9,6 +9,8 @@ import java.util.Set;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -82,6 +84,13 @@ public class SalesOrder {
 	 */
 	@Column(name="REQUESTED_DELIVERY_DATE")
 	private Date requestedDeliveryDate;
+	
+	/**
+	 * The status of the sales order.
+	 */
+	@Column(name="STATUS", length = 10)
+	@Enumerated(EnumType.STRING)
+	private SalesOrderStatus status;
 	
 	/**
 	 * The items that are being ordered.
@@ -219,6 +228,22 @@ public class SalesOrder {
 	 */
 	public void setItems(List<SalesOrderItem> items) {
 		this.items = items;
+	}
+
+
+	/**
+	 * @return the status
+	 */
+	public SalesOrderStatus getStatus() {
+		return status;
+	}
+
+
+	/**
+	 * @param status the status to set
+	 */
+	public void setStatus(SalesOrderStatus status) {
+		this.status = status;
 	}
 
 
