@@ -112,6 +112,7 @@ public class SalesOrderTest {
 		this.order.setSoldToParty(this.businessPartner);
 		this.order.setShipToParty(this.businessPartner);
 		this.order.setBillToParty(this.businessPartner);
+		this.order.setStatus(SalesOrderStatus.OPEN);
 	}
 	
 	
@@ -258,5 +259,28 @@ public class SalesOrderTest {
 		} catch (JsonProcessingException e) {
 			fail(e.getMessage());
 		}
+	}
+	
+	
+	@Test
+	/**
+	 * Tests validation of a sales order that has no status defined.
+	 */
+	public void testNoStatusDefined() {
+		ValidationMessageProvider messageProvider = new ValidationMessageProvider();		
+		this.order.setStatus(null);
+		
+		String expectedErrorMessage = messageProvider.getNotNullValidationMessage("salesOrder", "status");
+		String errorMessage = "";
+		
+		try {
+			this.order.validate();
+			fail("Validation should have failed because unit is not set.");
+		} 
+		catch (Exception expected) {
+			errorMessage = expected.getMessage();
+		}
+		
+		assertEquals(expectedErrorMessage, errorMessage);
 	}
 }

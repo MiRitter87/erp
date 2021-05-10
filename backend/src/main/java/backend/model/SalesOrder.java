@@ -90,6 +90,7 @@ public class SalesOrder {
 	 */
 	@Column(name="STATUS", length = 10)
 	@Enumerated(EnumType.STRING)
+	@NotNull(message = "{salesOrder.status.notNull.message}")
 	private SalesOrderStatus status;
 	
 	/**
@@ -258,6 +259,7 @@ public class SalesOrder {
 		result = prime * result + ((requestedDeliveryDate == null) ? 0 : requestedDeliveryDate.hashCode());
 		result = prime * result + ((shipToParty == null) ? 0 : shipToParty.hashCode());
 		result = prime * result + ((soldToParty == null) ? 0 : soldToParty.hashCode());
+		result = prime * result + ((status == null) ? 0 : status.hashCode());
 		return result;
 	}
 
@@ -314,6 +316,9 @@ public class SalesOrder {
 				return false;
 			}
 		} else if (!soldToParty.equals(other.soldToParty)) {
+			return false;
+		}
+		if (status != other.status) {
 			return false;
 		}
 		

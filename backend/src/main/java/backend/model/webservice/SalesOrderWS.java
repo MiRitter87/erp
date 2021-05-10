@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import backend.model.SalesOrderStatus;
+
 /**
  * A lean version of a sales order that is used by the WebService to transfer object data.
  * The main difference to the regular SalesOrder is that IDs are used instead of object references.
@@ -40,6 +42,11 @@ public class SalesOrderWS {
 	 * The requested date for order delivery.
 	 */
 	private Date requestedDeliveryDate;
+	
+	/**
+	 * The status of the sales order.
+	 */
+	private SalesOrderStatus status;
 	
 	/**
 	 * The items that are being ordered.
@@ -174,5 +181,21 @@ public class SalesOrderWS {
 	 */
 	public void setItems(List<SalesOrderItemWS> items) {
 		this.items = items;
+	}
+
+
+	/**
+	 * @return the status
+	 */
+	public SalesOrderStatus getStatus() {
+		return status;
+	}
+
+
+	/**
+	 * @param status the status to set
+	 */
+	public void setStatus(SalesOrderStatus status) {
+		this.status = status;
 	}
 }

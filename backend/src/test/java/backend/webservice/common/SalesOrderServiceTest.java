@@ -32,6 +32,7 @@ import backend.model.Material;
 import backend.model.SalesOrder;
 import backend.model.SalesOrderArray;
 import backend.model.SalesOrderItem;
+import backend.model.SalesOrderStatus;
 import backend.model.UnitOfMeasurement;
 import backend.model.webservice.SalesOrderItemWS;
 import backend.model.webservice.SalesOrderWS;
@@ -224,6 +225,7 @@ public class SalesOrderServiceTest {
 		this.order1.setBillToParty(this.partner);
 		this.order1.setOrderDate(new Date());
 		this.order1.setRequestedDeliveryDate(new Date());
+		this.order1.setStatus(SalesOrderStatus.OPEN);
 		this.order1.addItem(this.orderItem1);
 		
 		this.orderItem21 = new SalesOrderItem();
@@ -242,6 +244,7 @@ public class SalesOrderServiceTest {
 		this.order2.setBillToParty(this.partner);
 		this.order2.setOrderDate(new Date());
 		this.order2.setRequestedDeliveryDate(tomorrow.getTime());
+		this.order2.setStatus(SalesOrderStatus.OPEN);
 		this.order2.addItem(this.orderItem21);
 		this.order2.addItem(this.orderItem22);
 		
@@ -670,6 +673,7 @@ public class SalesOrderServiceTest {
 		newSalesOrder.setSoldToParty(this.partner);
 		newSalesOrder.setShipToParty(this.partner);
 		newSalesOrder.setBillToParty(this.partner);
+		newSalesOrder.setStatus(SalesOrderStatus.OPEN);
 		newSalesOrder.addItem(newSalesOrderItem);
 		
 		//Add a new sales order to the database via WebService
@@ -781,6 +785,7 @@ public class SalesOrderServiceTest {
 		wsOrder.setSalesOrderId(order.getId());
 		wsOrder.setOrderDate(order.getOrderDate());
 		wsOrder.setRequestedDeliveryDate(order.getRequestedDeliveryDate());
+		wsOrder.setStatus(order.getStatus());
 		
 		if(order.getSoldToParty() != null)
 			wsOrder.setSoldToId(order.getSoldToParty().getId());

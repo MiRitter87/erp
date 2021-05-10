@@ -344,6 +344,7 @@ public class SalesOrderService {
 		salesOrder.setId(salesOrderWS.getSalesOrderId());
 		salesOrder.setOrderDate(salesOrderWS.getOrderDate());
 		salesOrder.setRequestedDeliveryDate(salesOrderWS.getRequestedDeliveryDate());
+		salesOrder.setStatus(salesOrderWS.getStatus());
 		
 		//Object references. Only the ID is given and the whole backend object has to be loaded and referenced.
 		try {
