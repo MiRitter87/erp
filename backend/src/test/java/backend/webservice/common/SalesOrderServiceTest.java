@@ -859,6 +859,56 @@ public class SalesOrderServiceTest {
 	}
 	
 	
+	@Test
+	/**
+	 * Tests if the inventory of the ordered material is added when the order is canceled.
+	 */
+	public void testInventoryAddedOnOrderCancelation() {
+		Material rx570, g4560;
+		Long rx570InventoryBefore = Long.valueOf(0), rx570InventoryAfter = Long.valueOf(0);
+		Long g4560InventoryBefore = Long.valueOf(0), g4560InventoryAfter = Long.valueOf(0);
+		WebServiceResult updateOrderResult;
+		SalesOrderService orderService = new SalesOrderService();
+		
+		//Get the material inventory before order cancellation.
+		try {
+			rx570 = materialDAO.getMaterial(this.rx570.getId());
+			g4560 = materialDAO.getMaterial(this.g4560.getId());
+			
+			rx570InventoryBefore = rx570.getInventory();
+			g4560InventoryBefore = g4560.getInventory();
+		} catch (Exception e) {
+			fail(e.getMessage());
+		}
+		
+		//Update order with status canceled
+		this.order2.setStatus(SalesOrderStatus.CANCELED);
+		updateOrderResult = orderService.updateSalesOrder(this.convertToWsOrder(this.order2));
+		
+		//Assure no error message exists
+		assertTrue(WebServiceTools.resultContainsErrorMessage(updateOrderResult) == false);
+		
+		//There should be a success message
+		assertTrue(updateOrderResult.getMessages().size() == 1);
+		assertTrue(updateOrderResult.getMessages().get(0).getType() == WebServiceMessageType.S);
+		
+		//Get the material inventory after order cancellation.
+		try {
+			rx570 = materialDAO.getMaterial(this.rx570.getId());
+			g4560 = materialDAO.getMaterial(this.g4560.getId());
+			
+			rx570InventoryAfter = rx570.getInventory();
+			g4560InventoryAfter = g4560.getInventory();
+		} catch (Exception e) {
+			fail(e.getMessage());
+		}
+		
+		//Check if the inventory is increased according to the canceled order.
+		assertTrue(rx570InventoryAfter == (rx570InventoryBefore + this.orderItem21.getQuantity()));
+		assertTrue(g4560InventoryAfter == (g4560InventoryBefore + this.orderItem22.getQuantity()));
+	}
+	
+	
 	/**
 	 * Converts a sales order to the lean WebService representation.
 	 * 
@@ -900,8 +950,6 @@ public class SalesOrderServiceTest {
 	/*
 	 * TODO Add further tests
 	 * 
-	 * -Reduce inventory of ordered materials if a new order is created
-	 * -Add inventory to ordered materials if a sales order is set to status canceled
 	 * -Reduce inventory of ordered material if a sales order is changed and an item is added
 	 * -Reduce inventory of ordered material if the quantity of an item is changed
 	 * -Add inventory to ordered materials if a sales order is changed and an item is removed

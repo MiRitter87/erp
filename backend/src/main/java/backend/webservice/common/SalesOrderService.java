@@ -20,6 +20,7 @@ import backend.model.Material;
 import backend.model.SalesOrder;
 import backend.model.SalesOrderArray;
 import backend.model.SalesOrderItem;
+import backend.model.SalesOrderStatus;
 import backend.model.webservice.SalesOrderItemWS;
 import backend.model.webservice.SalesOrderWS;
 import backend.model.webservice.WebServiceMessage;
@@ -262,10 +263,14 @@ public class SalesOrderService {
 	 * @param salesOrder The sales order to be updated.
 	 * @return The result of the update function.
 	 */
-	private WebServiceResult update(final SalesOrder salesOrder, WebServiceResult webServiceResult) {		
+	private WebServiceResult update(final SalesOrder salesOrder, WebServiceResult webServiceResult) {	
+		SalesOrder databaseSalesOrder;
+		
 		try {
 			this.salesOrderDAO = new SalesOrderHibernateDao();
+			databaseSalesOrder = this.salesOrderDAO.getSalesOrder(salesOrder.getId());
 			this.salesOrderDAO.updateSalesOrder(salesOrder);
+			this.updateMaterialInventory(salesOrder, databaseSalesOrder);
 			webServiceResult.addMessage(new WebServiceMessage(WebServiceMessageType.S, 
 					MessageFormat.format(this.resources.getString("salesOrder.updateSuccess"), salesOrder.getId())));
 		} 
@@ -401,7 +406,7 @@ public class SalesOrderService {
 	 * Reduces the inventory of the materials that are ordered.
 	 * 
 	 * @param salesOrder The sales order whose material inventories have to be reduced.
-	 * @throws Exception In case the reduction of the material inventory fails.
+	 * @throws Exception In case the update of the material inventory fails.
 	 */
 	private void reduceMaterialInventory(final SalesOrder salesOrder) throws Exception {
 		MaterialHibernateDao materialDAO = new MaterialHibernateDao();
@@ -410,13 +415,50 @@ public class SalesOrderService {
 		try {
 			for(SalesOrderItem item:salesOrder.getItems()) {
 				currentMaterial = item.getMaterial();
-				currentMaterial.setInventory(currentMaterial.getInventory()-item.getQuantity());
+				currentMaterial.setInventory(currentMaterial.getInventory() - item.getQuantity());
 				materialDAO.updateMaterial(currentMaterial);
 			}			
 		}
 		finally {
 			materialDAO.close();
 		}
+	}
+	
+	
+	/**
+	 * Adds the material quantities of the canceled order to the material inventory.
+	 * 
+	 * @param salesOrder The sales order that is being canceled.
+	 * @throws Exception In case the update of the material inventory fails.
+	 */
+	private void  addMaterialInventoryForCancellation(final SalesOrder salesOrder) throws Exception {
+		MaterialHibernateDao materialDAO = new MaterialHibernateDao();
+		Material currentMaterial;
+		
+		try {
+			for(SalesOrderItem item:salesOrder.getItems()) {
+				currentMaterial = item.getMaterial();
+				currentMaterial.setInventory(currentMaterial.getInventory() + item.getQuantity());
+				materialDAO.updateMaterial(currentMaterial);
+			}			
+		}
+		finally {
+			materialDAO.close();
+		}
+	}
+	
+	
+	/**
+	 * Updates the inventory of the materials when the order is being updated.
+	 * 
+	 * @param salesOrder The sales order being updated.
+	 * @param databaseSalesOrder The database state of the sales order before the update has been performed.
+	 * @throws Exception In case the update of the material inventory fails.
+	 */
+	private void updateMaterialInventory(final SalesOrder salesOrder, final SalesOrder databaseSalesOrder) throws Exception {
+		//If the sales order status changes to "Canceled", the ordered quantities are added back to the inventory.
+		if(databaseSalesOrder.getStatus() != SalesOrderStatus.CANCELED && salesOrder.getStatus() == SalesOrderStatus.CANCELED)
+			this.addMaterialInventoryForCancellation(salesOrder);
 	}
 	
 	
