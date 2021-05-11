@@ -16,6 +16,7 @@ import backend.exception.DuplicateIdentifierException;
 import backend.exception.NoItemsException;
 import backend.exception.ObjectUnchangedException;
 import backend.exception.QuantityExceedsInventoryException;
+import backend.model.Material;
 import backend.model.SalesOrder;
 import backend.model.SalesOrderArray;
 import backend.model.SalesOrderItem;
@@ -296,8 +297,9 @@ public class SalesOrderService {
 		try {
 			this.salesOrderDAO = new SalesOrderHibernateDao();
 			this.salesOrderDAO.insertSalesOrder(salesOrder);
+			this.reduceMaterialInventory(salesOrder);
 			webServiceResult.addMessage(new WebServiceMessage(
-					WebServiceMessageType.S, this.resources.getString("salesOrder.addSuccess")));
+					WebServiceMessageType.S, this.resources.getString("salesOrder.addSuccess")));			
 		} catch (Exception e) {
 			webServiceResult.addMessage(new WebServiceMessage(
 					WebServiceMessageType.E, this.resources.getString("salesOrder.addError")));
@@ -392,6 +394,29 @@ public class SalesOrderService {
 		}
 		
 		return orderItems;
+	}
+	
+	
+	/**
+	 * Reduces the inventory of the materials that are ordered.
+	 * 
+	 * @param salesOrder The sales order whose material inventories have to be reduced.
+	 * @throws Exception In case the reduction of the material inventory fails.
+	 */
+	private void reduceMaterialInventory(final SalesOrder salesOrder) throws Exception {
+		MaterialHibernateDao materialDAO = new MaterialHibernateDao();
+		Material currentMaterial;
+		
+		try {
+			for(SalesOrderItem item:salesOrder.getItems()) {
+				currentMaterial = item.getMaterial();
+				currentMaterial.setInventory(currentMaterial.getInventory()-item.getQuantity());
+				materialDAO.updateMaterial(currentMaterial);
+			}			
+		}
+		finally {
+			materialDAO.close();
+		}
 	}
 	
 	

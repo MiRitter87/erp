@@ -710,7 +710,7 @@ public class SalesOrderServiceTest {
 			assertEquals(newSalesOrder.getItems().size(), addedSalesOrder.getItems().size());
 			addedSalesOrderItem = addedSalesOrder.getItems().get(0);
 			assertEquals(newSalesOrderItem.getId(), addedSalesOrderItem.getId());
-			assertEquals(newSalesOrderItem.getMaterial(), addedSalesOrderItem.getMaterial());
+			assertEquals(newSalesOrderItem.getMaterial().getId(), addedSalesOrderItem.getMaterial().getId());
 			assertEquals(newSalesOrderItem.getQuantity(), addedSalesOrderItem.getQuantity());
 			assertEquals(newSalesOrderItem.getPriceTotal(), addedSalesOrderItem.getPriceTotal());
 		} catch (Exception e) {
@@ -776,6 +776,89 @@ public class SalesOrderServiceTest {
 	}
 	
 	
+	@Test
+	/**
+	 * Tests if the inventory of the ordered material is reduced when the order is created.
+	 */
+	public void testInventoryReducedOnOrderCreation() {
+		Material rx570, g4560;
+		Long rx570InventoryBefore = Long.valueOf(0), rx570InventoryAfter = Long.valueOf(0);
+		Long g4560InventoryBefore = Long.valueOf(0), g4560InventoryAfter = Long.valueOf(0);
+		SalesOrder newOrder;
+		SalesOrderItem itemG4560, itemRX570;
+		WebServiceResult addOrderResult;
+		SalesOrderService orderService = new SalesOrderService();
+		
+		//Get the inventory of the ordered material before placing the order.
+		try {
+			rx570 = materialDAO.getMaterial(this.rx570.getId());
+			g4560 = materialDAO.getMaterial(this.g4560.getId());
+			
+			rx570InventoryBefore = rx570.getInventory();
+			g4560InventoryBefore = g4560.getInventory();
+		} catch (Exception e) {
+			fail(e.getMessage());
+		}		
+		
+		//Place the order
+		itemRX570 = new SalesOrderItem();
+		itemRX570.setId(1);
+		itemRX570.setMaterial(this.rx570);
+		itemRX570.setQuantity(Long.valueOf(1));
+		
+		itemG4560 = new SalesOrderItem();
+		itemG4560.setId(2);
+		itemG4560.setMaterial(this.g4560);
+		itemG4560.setQuantity(Long.valueOf(1));
+		
+		newOrder = new SalesOrder();		
+		newOrder.setSoldToParty(this.partner);
+		newOrder.setShipToParty(this.partner);
+		newOrder.setBillToParty(this.partner);
+		newOrder.setOrderDate(new Date());
+		newOrder.setRequestedDeliveryDate(new Date());
+		newOrder.setStatus(SalesOrderStatus.OPEN);
+		newOrder.addItem(itemRX570);
+		newOrder.addItem(itemG4560);
+		
+		addOrderResult = orderService.addSalesOrder(this.convertToWsOrder(newOrder));
+		
+		//Assure no error message exists
+		assertTrue(WebServiceTools.resultContainsErrorMessage(addOrderResult) == false);
+		
+		//There should be a success message
+		assertTrue(addOrderResult.getMessages().size() == 1);
+		assertTrue(addOrderResult.getMessages().get(0).getType() == WebServiceMessageType.S);
+		
+		newOrder.setId((Integer) addOrderResult.getData());
+		
+		//Check if the material inventory is reduced by the ordered quantity
+		try {
+			rx570 = materialDAO.getMaterial(this.rx570.getId());
+			g4560 = materialDAO.getMaterial(this.g4560.getId());
+			
+			rx570InventoryAfter = rx570.getInventory();
+			g4560InventoryAfter = g4560.getInventory();
+		} catch (Exception e) {
+			fail(e.getMessage());
+		}
+		
+		try {
+			assertTrue(rx570InventoryAfter == (rx570InventoryBefore - itemRX570.getQuantity()));
+			assertTrue(g4560InventoryAfter == (g4560InventoryBefore - itemG4560.getQuantity()));			
+		}
+		finally {
+			//Delete the newly added sales order.
+			try {
+				orderDAO.deleteSalesOrder(newOrder);
+			} 
+			catch (Exception e) {
+				fail(e.getMessage());
+			}
+		}
+	}
+	
+	
 	/**
 	 * Converts a sales order to the lean WebService representation.
 	 * 
@@ -812,4 +895,16 @@ public class SalesOrderServiceTest {
 		
 		return wsOrder;
 	}
+	
+	
+	/*
+	 * TODO Add further tests
+	 * 
+	 * -Reduce inventory of ordered materials if a new order is created
+	 * -Add inventory to ordered materials if a sales order is set to status canceled
+	 * -Reduce inventory of ordered material if a sales order is changed and an item is added
+	 * -Reduce inventory of ordered material if the quantity of an item is changed
+	 * -Add inventory to ordered materials if a sales order is changed and an item is removed
+	 * -Add inventory to ordered materials if the quantity of an item is changed
+	 */
 }
