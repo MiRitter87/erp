@@ -323,6 +323,7 @@ public class SalesOrderServiceTest {
 		assertEquals(salesOrder.getBillToParty(), this.order1.getBillToParty());
 		assertEquals(salesOrder.getOrderDate().getTime(), this.order1.getOrderDate().getTime());
 		assertEquals(salesOrder.getRequestedDeliveryDate().getTime(), this.order1.getRequestedDeliveryDate().getTime());
+		assertEquals(salesOrder.getStatus(), this.order1.getStatus());
 		
 		salesOrderItem = salesOrder.getItems().get(0);
 		
@@ -362,6 +363,7 @@ public class SalesOrderServiceTest {
 		assertEquals(salesOrder.getBillToParty(), this.order1.getBillToParty());
 		assertEquals(salesOrder.getOrderDate().getTime(), this.order1.getOrderDate().getTime());
 		assertEquals(salesOrder.getRequestedDeliveryDate().getTime(), this.order1.getRequestedDeliveryDate().getTime());
+		assertEquals(salesOrder.getStatus(), this.order1.getStatus());
 		
 		assertEquals(salesOrder.getItems().size(), this.order1.getItems().size());
 		salesOrderItem = salesOrder.getItems().get(0);
@@ -377,6 +379,7 @@ public class SalesOrderServiceTest {
 		assertEquals(salesOrder.getBillToParty(), this.order2.getBillToParty());
 		assertEquals(salesOrder.getOrderDate().getTime(), this.order2.getOrderDate().getTime());
 		assertEquals(salesOrder.getRequestedDeliveryDate().getTime(), this.order2.getRequestedDeliveryDate().getTime());
+		assertEquals(salesOrder.getStatus(), this.order2.getStatus());
 		
 		assertEquals(salesOrder.getItems().size(), this.order2.getItems().size());
 		salesOrderItem = salesOrder.getItems().get(0);
@@ -738,6 +741,7 @@ public class SalesOrderServiceTest {
 		newSalesOrder.setSoldToParty(this.partner);
 		newSalesOrder.setShipToParty(this.partner);
 		newSalesOrder.setBillToParty(this.partner);
+		newSalesOrder.setStatus(SalesOrderStatus.OPEN);
 		
 		//Add a new sales order to the database via WebService
 		addSalesOrderResult = orderService.addSalesOrder(this.convertToWsOrder(newSalesOrder));

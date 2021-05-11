@@ -275,7 +275,7 @@ public class SalesOrderTest {
 		
 		try {
 			this.order.validate();
-			fail("Validation should have failed because unit is not set.");
+			fail("Validation should have failed because status is not set.");
 		} 
 		catch (Exception expected) {
 			errorMessage = expected.getMessage();
