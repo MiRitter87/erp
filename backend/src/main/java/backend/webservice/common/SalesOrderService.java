@@ -165,6 +165,7 @@ public class SalesOrderService {
 			if(salesOrder != null) {
 				//Delete sales order if exists.
 				this.salesOrderDAO.deleteSalesOrder(salesOrder);
+				this.addMaterialInventoryForOrder(salesOrder);
 				deleteSalesOrderResult.addMessage(new WebServiceMessage(WebServiceMessageType.S, 
 						MessageFormat.format(this.resources.getString("salesOrder.deleteSuccess"), id)));
 			}
@@ -426,12 +427,12 @@ public class SalesOrderService {
 	
 	
 	/**
-	 * Adds the material quantities of the canceled order to the material inventory.
+	 * Adds the material quantities of the whole order to the material inventory.
 	 * 
-	 * @param salesOrder The sales order that is being canceled.
+	 * @param salesOrder The sales order of which the material quantities are added to the inventory.
 	 * @throws Exception In case the update of the material inventory fails.
 	 */
-	private void  addMaterialInventoryForCancellation(final SalesOrder salesOrder) throws Exception {
+	private void  addMaterialInventoryForOrder(final SalesOrder salesOrder) throws Exception {
 		MaterialHibernateDao materialDAO = new MaterialHibernateDao();
 		Material currentMaterial;
 		
@@ -458,7 +459,7 @@ public class SalesOrderService {
 	private void updateMaterialInventory(final SalesOrder salesOrder, final SalesOrder databaseSalesOrder) throws Exception {
 		//If the sales order status changes to "Canceled", the ordered quantities are added back to the inventory.
 		if(databaseSalesOrder.getStatus() != SalesOrderStatus.CANCELED && salesOrder.getStatus() == SalesOrderStatus.CANCELED)
-			this.addMaterialInventoryForCancellation(salesOrder);
+			this.addMaterialInventoryForOrder(salesOrder);
 	}
 	
 	

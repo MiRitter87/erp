@@ -909,6 +909,66 @@ public class SalesOrderServiceTest {
 	}
 	
 	
+	@Test
+	/**
+	 * Tests if the inventory of the ordered materials is added if a sales order is deleted.
+	 */
+	public void testInventoryAddedOnOrderDeletion() {
+		Material rx570, g4560;
+		Long rx570InventoryBefore = Long.valueOf(0), rx570InventoryAfter = Long.valueOf(0);
+		Long g4560InventoryBefore = Long.valueOf(0), g4560InventoryAfter = Long.valueOf(0);
+		SalesOrderService orderService = new SalesOrderService();
+		
+		//Get the material inventory before order deletion.
+		try {
+			rx570 = materialDAO.getMaterial(this.rx570.getId());
+			g4560 = materialDAO.getMaterial(this.g4560.getId());
+			
+			rx570InventoryBefore = rx570.getInventory();
+			g4560InventoryBefore = g4560.getInventory();
+		} catch (Exception e) {
+			fail(e.getMessage());
+		}
+		
+		//Delete the sales order
+		orderService.deleteSalesOrder(this.order2.getId());
+		
+		//Get the inventory of the items after deletion
+		try {
+			rx570 = materialDAO.getMaterial(this.rx570.getId());
+			g4560 = materialDAO.getMaterial(this.g4560.getId());
+			
+			rx570InventoryAfter = rx570.getInventory();
+			g4560InventoryAfter = g4560.getInventory();
+		} catch (Exception e) {
+			fail(e.getMessage());
+		}
+		
+		try {
+			//Check if ordered quantity has been added to the inventory
+			assertTrue(rx570InventoryAfter == (rx570InventoryBefore + this.orderItem21.getQuantity()));
+			assertTrue(g4560InventoryAfter == (g4560InventoryBefore + this.orderItem22.getQuantity()));		
+		}
+		finally {
+			try {
+				//Restore old database state by adding the sales order that has been deleted previously.
+				this.order2.setId(null);
+				
+				//The items have to be re-initialized in order to prevent exception regarding orphan-removal.
+				//org.hibernate.HibernateException: Don't change the reference to a collection with delete-orphan enabled : backend.model.SalesOrder.items
+				this.order2.setItems(new ArrayList<SalesOrderItem>());
+				this.order2.addItem(this.orderItem21);
+				this.order2.addItem(this.orderItem22);
+				
+				orderDAO.insertSalesOrder(this.order2);
+			}
+			catch (Exception e) {
+				fail(e.getMessage());
+			}
+		}
+	}
+	
+	
 	/**
 	 * Converts a sales order to the lean WebService representation.
 	 * 
@@ -950,6 +1010,7 @@ public class SalesOrderServiceTest {
 	/*
 	 * TODO Add further tests
 	 * 
+	 * -Add inventory to materials if sales order is deleted
 	 * -Reduce inventory of ordered material if a sales order is changed and an item is added
 	 * -Reduce inventory of ordered material if the quantity of an item is changed
 	 * -Add inventory to ordered materials if a sales order is changed and an item is removed
