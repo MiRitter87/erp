@@ -1045,6 +1045,40 @@ public class SalesOrderServiceTest {
 	}
 	
 	
+	@Test
+	/**
+	 * Tests if the material inventory is added if an item is removed from an existing sales order.
+	 */
+	public void testInventoryAddedOnItemRemoved() {
+		Material g4560;
+		Long g4560InventoryBefore = Long.valueOf(0), g4560InventoryAfter = Long.valueOf(0);
+		SalesOrderService orderService = new SalesOrderService();
+		
+		//Get material inventory before an item is removed from an existing sales order.
+		try {
+			g4560 = materialDAO.getMaterial(this.g4560.getId());
+			g4560InventoryBefore = g4560.getInventory();
+		} catch (Exception e) {
+			fail(e.getMessage());
+		}
+		
+		//Remove the item from an existing sales order
+		this.order2.getItems().remove(1);
+		orderService.updateSalesOrder(this.convertToWsOrder(this.order2));
+		
+		//Get material inventory after the item has been removed.
+		try {
+			g4560 = materialDAO.getMaterial(this.g4560.getId());
+			g4560InventoryAfter = g4560.getInventory();
+		} catch (Exception e) {
+			fail(e.getMessage());
+		}
+		
+		//Check if the material inventory has been increased by the quantity of the removed item.
+		assertTrue(g4560InventoryAfter == (g4560InventoryBefore + this.orderItem22.getQuantity()));
+	}
+	
+	
 	/**
 	 * Converts a sales order to the lean WebService representation.
 	 * 
@@ -1086,7 +1120,6 @@ public class SalesOrderServiceTest {
 	/*
 	 * TODO Add further tests
 	 * 
-	 * -Add inventory to ordered materials if a sales order is changed and an item is removed
 	 * -Add inventory to ordered materials if the quantity of an item is changed
 	 */
 }

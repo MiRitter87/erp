@@ -459,6 +459,7 @@ public class SalesOrderService {
 	 */
 	private void updateMaterialInventoryForItems(final SalesOrder salesOrder, final SalesOrder databaseSalesOrder) throws Exception {
 		HashMap<Integer, Long> additions = this.getMaterialAdditions(salesOrder, databaseSalesOrder);
+		HashMap<Integer, Long> reductions = this.getMaterialReductions(salesOrder, databaseSalesOrder);
 		MaterialHibernateDao materialDAO = new MaterialHibernateDao();
 		Material currentMaterial;
 		
@@ -467,6 +468,13 @@ public class SalesOrderService {
 			for (Map.Entry<Integer, Long> entry : additions.entrySet()) {
 				currentMaterial = materialDAO.getMaterial(entry.getKey());
 				currentMaterial.setInventory(currentMaterial.getInventory() - entry.getValue());
+				materialDAO.updateMaterial(currentMaterial);
+			}
+			
+			//Increase the material inventory by the reduced ordered quantities.
+			for (Map.Entry<Integer, Long> entry : reductions.entrySet()) {
+				currentMaterial = materialDAO.getMaterial(entry.getKey());
+				currentMaterial.setInventory(currentMaterial.getInventory() + entry.getValue());
 				materialDAO.updateMaterial(currentMaterial);
 			}
 		}
@@ -481,7 +489,7 @@ public class SalesOrderService {
 	 * 
 	 * @param salesOrder The sales order that is being checked for additions.
 	 * @param databaseSalesOrder The database version of the sales order.
-	 * @return All
+	 * @return The IDs and quantities of all materials that have their quantities increased compared to the database state.
 	 */
 	private HashMap<Integer, Long> getMaterialAdditions(final SalesOrder salesOrder, final SalesOrder databaseSalesOrder) {
 		HashMap<Integer, Long> additions = new HashMap<Integer, Long>();	//<MaterialId, Quantity>
@@ -510,6 +518,44 @@ public class SalesOrderService {
 		}
 		
 		return additions;
+	}
+	
+	
+	/**
+	 * Compares the database state of the sales order with the given sales order. All material reductions of the sales order are returned.
+	 * 
+	 * @param salesOrder The sales order that is being checked for reductions.
+	 * @param databaseSalesOrder The database version of the sales order.
+	 * @return The IDs and quantities of all materials that have their quantities reduced compared to the database state.
+	 */
+	private HashMap<Integer, Long> getMaterialReductions(final SalesOrder salesOrder, final SalesOrder databaseSalesOrder) {
+		HashMap<Integer, Long> reductions = new HashMap<Integer, Long>();	//<MaterialId, Quantity>
+		boolean materialExistsInOrderItem;
+		Long orderItemQuantity = Long.valueOf(0);
+		
+		for(SalesOrderItem tempDatabaseItem:databaseSalesOrder.getItems()) {
+			materialExistsInOrderItem = false;
+			
+			for(SalesOrderItem tempOrderItem:salesOrder.getItems()) {
+				if(tempDatabaseItem.getMaterial().getId().intValue() == tempOrderItem.getMaterial().getId().intValue()) {
+					materialExistsInOrderItem = true;
+					orderItemQuantity = orderItemQuantity + tempOrderItem.getQuantity();
+				}
+				
+			}
+			
+			//Add quantities for a removed material.
+			if(materialExistsInOrderItem == false) {
+				reductions.put(tempDatabaseItem.getMaterial().getId(), tempDatabaseItem.getQuantity());
+			}
+			else {
+				//Determine possible quantity reductions of an existing material.
+				if(tempDatabaseItem.getQuantity() > orderItemQuantity)
+					reductions.put(tempDatabaseItem.getMaterial().getId(), tempDatabaseItem.getQuantity()-orderItemQuantity);
+			}
+		}
+		
+		return reductions;
 	}
 	
 	
