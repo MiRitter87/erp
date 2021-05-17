@@ -3,7 +3,9 @@ package backend.webservice.common;
 import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.ResourceBundle;
 
 import org.apache.logging.log4j.LogManager;
@@ -450,6 +452,68 @@ public class SalesOrderService {
 	
 	
 	/**
+	 * Updates the material inventories according to the changes of the order items.
+	 * To determine the changes, the database state is compared with the order to be updated.
+	 * 
+	 * @throws Exception In case the update of the material inventory fails.
+	 */
+	private void updateMaterialInventoryForItems(final SalesOrder salesOrder, final SalesOrder databaseSalesOrder) throws Exception {
+		HashMap<Integer, Long> additions = this.getMaterialAdditions(salesOrder, databaseSalesOrder);
+		MaterialHibernateDao materialDAO = new MaterialHibernateDao();
+		Material currentMaterial;
+		
+		try {
+			//Reduce the material inventory by the additionally ordered quantities.
+			for (Map.Entry<Integer, Long> entry : additions.entrySet()) {
+				currentMaterial = materialDAO.getMaterial(entry.getKey());
+				currentMaterial.setInventory(currentMaterial.getInventory() - entry.getValue());
+				materialDAO.updateMaterial(currentMaterial);
+			}
+		}
+		finally {
+			materialDAO.close();
+		}
+	}
+	
+	
+	/**
+	 * Compares the database state of the sales order with the given sales order. All material additions of the sales order are returned.
+	 * 
+	 * @param salesOrder The sales order that is being checked for additions.
+	 * @param databaseSalesOrder The database version of the sales order.
+	 * @return All
+	 */
+	private HashMap<Integer, Long> getMaterialAdditions(final SalesOrder salesOrder, final SalesOrder databaseSalesOrder) {
+		HashMap<Integer, Long> additions = new HashMap<Integer, Long>();	//<MaterialId, Quantity>
+		boolean materialExistsInDatabaseItem;
+		Long databaseItemQuantity = Long.valueOf(0);
+		
+		for(SalesOrderItem tempOrderItem:salesOrder.getItems()) {
+			materialExistsInDatabaseItem = false;
+			
+			for(SalesOrderItem tempDatabaseItem:databaseSalesOrder.getItems()) {
+				if(tempDatabaseItem.getMaterial().getId() == tempOrderItem.getMaterial().getId()) {
+					materialExistsInDatabaseItem = true;
+					databaseItemQuantity = databaseItemQuantity + tempDatabaseItem.getQuantity();
+				}
+			}
+			
+			//Add quantities for a new material.
+			if(materialExistsInDatabaseItem == false) {
+				additions.put(tempOrderItem.getMaterial().getId(), tempOrderItem.getQuantity());
+			}
+			else {
+				//Determine possible additional quantities of an existing material.
+				if(tempOrderItem.getQuantity() > databaseItemQuantity)
+					additions.put(tempOrderItem.getMaterial().getId(), tempOrderItem.getQuantity()-databaseItemQuantity);
+			}
+		}
+		
+		return additions;
+	}
+	
+	
+	/**
 	 * Updates the inventory of the materials when the order is being updated.
 	 * 
 	 * @param salesOrder The sales order being updated.
@@ -458,8 +522,12 @@ public class SalesOrderService {
 	 */
 	private void updateMaterialInventory(final SalesOrder salesOrder, final SalesOrder databaseSalesOrder) throws Exception {
 		//If the sales order status changes to "Canceled", the ordered quantities are added back to the inventory.
-		if(databaseSalesOrder.getStatus() != SalesOrderStatus.CANCELED && salesOrder.getStatus() == SalesOrderStatus.CANCELED)
+		if(databaseSalesOrder.getStatus() != SalesOrderStatus.CANCELED && salesOrder.getStatus() == SalesOrderStatus.CANCELED) {
 			this.addMaterialInventoryForOrder(salesOrder);
+			return;
+		}
+		
+		this.updateMaterialInventoryForItems(salesOrder, databaseSalesOrder);
 	}
 	
 	
