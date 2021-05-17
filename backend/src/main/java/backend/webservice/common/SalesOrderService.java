@@ -492,7 +492,7 @@ public class SalesOrderService {
 			materialExistsInDatabaseItem = false;
 			
 			for(SalesOrderItem tempDatabaseItem:databaseSalesOrder.getItems()) {
-				if(tempDatabaseItem.getMaterial().getId() == tempOrderItem.getMaterial().getId()) {
+				if(tempDatabaseItem.getMaterial().getId().intValue() == tempOrderItem.getMaterial().getId().intValue()) {
 					materialExistsInDatabaseItem = true;
 					databaseItemQuantity = databaseItemQuantity + tempDatabaseItem.getQuantity();
 				}

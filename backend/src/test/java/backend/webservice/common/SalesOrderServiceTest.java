@@ -1008,6 +1008,43 @@ public class SalesOrderServiceTest {
 	}
 	
 	
+	@Test
+	/**
+	 * Tests if the material inventory is reduced if the ordered quantity of an existing order item is increased.
+	 */
+	public void testInventoryReducedOnOrderedQuantityIncreased() {
+		Material rx570;
+		SalesOrderItem item;
+		Long rx570InventoryBefore = Long.valueOf(0), rx570InventoryAfter = Long.valueOf(0);
+		Long quantitiyAdded = Long.valueOf(1);
+		SalesOrderService orderService = new SalesOrderService();
+		
+		//Get the material inventory before the ordered quantity is changed.
+		try {
+			rx570 = materialDAO.getMaterial(this.rx570.getId());
+			rx570InventoryBefore = rx570.getInventory();
+		} catch (Exception e) {
+			fail(e.getMessage());
+		}
+		
+		//Change the ordered quantity
+		item = this.order1.getItemWithId(this.orderItem1.getId());
+		item.setQuantity(item.getQuantity() + quantitiyAdded);
+		orderService.updateSalesOrder(this.convertToWsOrder(this.order1));
+		
+		//Get the material inventory after the ordered quantity has been changed.
+		try {
+			rx570 = materialDAO.getMaterial(this.rx570.getId());
+			rx570InventoryAfter = rx570.getInventory();
+		} catch (Exception e) {
+			fail(e.getMessage());
+		}
+		
+		//Check if the material inventory has been reduced by the additionally ordered quantity.
+		assertTrue(rx570InventoryAfter == (rx570InventoryBefore - quantitiyAdded));
+	}
+	
+	
 	/**
 	 * Converts a sales order to the lean WebService representation.
 	 * 
@@ -1049,7 +1086,6 @@ public class SalesOrderServiceTest {
 	/*
 	 * TODO Add further tests
 	 * 
-	 * -Reduce inventory of ordered material if the quantity of an item is changed
 	 * -Add inventory to ordered materials if a sales order is changed and an item is removed
 	 * -Add inventory to ordered materials if the quantity of an item is changed
 	 */
