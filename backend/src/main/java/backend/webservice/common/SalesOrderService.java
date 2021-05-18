@@ -3,9 +3,7 @@ package backend.webservice.common;
 import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.ResourceBundle;
 
 import org.apache.logging.log4j.LogManager;
@@ -18,11 +16,9 @@ import backend.exception.DuplicateIdentifierException;
 import backend.exception.NoItemsException;
 import backend.exception.ObjectUnchangedException;
 import backend.exception.QuantityExceedsInventoryException;
-import backend.model.Material;
 import backend.model.SalesOrder;
 import backend.model.SalesOrderArray;
 import backend.model.SalesOrderItem;
-import backend.model.SalesOrderStatus;
 import backend.model.webservice.SalesOrderItemWS;
 import backend.model.webservice.SalesOrderWS;
 import backend.model.webservice.WebServiceMessage;
@@ -43,6 +39,11 @@ public class SalesOrderService {
 	private SalesOrderHibernateDao salesOrderDAO;
 	
 	/**
+	 * Manager for material inventory.
+	 */
+	private SalesOrderInventoryManager inventoryManager;
+	
+	/**
 	 * Access to localized application resources.
 	 */
 	private ResourceBundle resources = ResourceBundle.getBundle("backend");
@@ -51,6 +52,15 @@ public class SalesOrderService {
 	 * Application logging.
 	 */
 	public static final Logger logger = LogManager.getLogger(SalesOrderService.class);
+	
+	
+	/**
+	 * Initializes the sales order service.
+	 */
+	public SalesOrderService() {
+		//this.salesOrderDAO = new SalesOrderHibernateDao();	//TODO: Initialize DAO centrally - not in every method manually
+		this.inventoryManager = new SalesOrderInventoryManager();
+	}
 	
 	
 	/**
@@ -167,7 +177,7 @@ public class SalesOrderService {
 			if(salesOrder != null) {
 				//Delete sales order if exists.
 				this.salesOrderDAO.deleteSalesOrder(salesOrder);
-				this.addMaterialInventoryForOrder(salesOrder);
+				this.inventoryManager.addMaterialInventoryForOrder(salesOrder);
 				deleteSalesOrderResult.addMessage(new WebServiceMessage(WebServiceMessageType.S, 
 						MessageFormat.format(this.resources.getString("salesOrder.deleteSuccess"), id)));
 			}
@@ -273,7 +283,7 @@ public class SalesOrderService {
 			this.salesOrderDAO = new SalesOrderHibernateDao();
 			databaseSalesOrder = this.salesOrderDAO.getSalesOrder(salesOrder.getId());
 			this.salesOrderDAO.updateSalesOrder(salesOrder);
-			this.updateMaterialInventory(salesOrder, databaseSalesOrder);
+			this.inventoryManager.updateMaterialInventory(salesOrder, databaseSalesOrder);
 			webServiceResult.addMessage(new WebServiceMessage(WebServiceMessageType.S, 
 					MessageFormat.format(this.resources.getString("salesOrder.updateSuccess"), salesOrder.getId())));
 		} 
@@ -305,7 +315,7 @@ public class SalesOrderService {
 		try {
 			this.salesOrderDAO = new SalesOrderHibernateDao();
 			this.salesOrderDAO.insertSalesOrder(salesOrder);
-			this.reduceMaterialInventory(salesOrder);
+			this.inventoryManager.reduceMaterialInventory(salesOrder);
 			webServiceResult.addMessage(new WebServiceMessage(
 					WebServiceMessageType.S, this.resources.getString("salesOrder.addSuccess")));			
 		} catch (Exception e) {
@@ -402,178 +412,6 @@ public class SalesOrderService {
 		}
 		
 		return orderItems;
-	}
-	
-	
-	/**
-	 * Reduces the inventory of the materials that are ordered.
-	 * 
-	 * @param salesOrder The sales order whose material inventories have to be reduced.
-	 * @throws Exception In case the update of the material inventory fails.
-	 */
-	private void reduceMaterialInventory(final SalesOrder salesOrder) throws Exception {
-		MaterialHibernateDao materialDAO = new MaterialHibernateDao();
-		Material currentMaterial;
-		
-		try {
-			for(SalesOrderItem item:salesOrder.getItems()) {
-				currentMaterial = item.getMaterial();
-				currentMaterial.setInventory(currentMaterial.getInventory() - item.getQuantity());
-				materialDAO.updateMaterial(currentMaterial);
-			}			
-		}
-		finally {
-			materialDAO.close();
-		}
-	}
-	
-	
-	/**
-	 * Adds the material quantities of the whole order to the material inventory.
-	 * 
-	 * @param salesOrder The sales order of which the material quantities are added to the inventory.
-	 * @throws Exception In case the update of the material inventory fails.
-	 */
-	private void  addMaterialInventoryForOrder(final SalesOrder salesOrder) throws Exception {
-		MaterialHibernateDao materialDAO = new MaterialHibernateDao();
-		Material currentMaterial;
-		
-		try {
-			for(SalesOrderItem item:salesOrder.getItems()) {
-				currentMaterial = item.getMaterial();
-				currentMaterial.setInventory(currentMaterial.getInventory() + item.getQuantity());
-				materialDAO.updateMaterial(currentMaterial);
-			}			
-		}
-		finally {
-			materialDAO.close();
-		}
-	}
-	
-	
-	/**
-	 * Updates the material inventories according to the changes of the order items.
-	 * To determine the changes, the database state is compared with the order to be updated.
-	 * 
-	 * @throws Exception In case the update of the material inventory fails.
-	 */
-	private void updateMaterialInventoryForItems(final SalesOrder salesOrder, final SalesOrder databaseSalesOrder) throws Exception {
-		HashMap<Integer, Long> additions = this.getMaterialAdditions(salesOrder, databaseSalesOrder);
-		HashMap<Integer, Long> reductions = this.getMaterialReductions(salesOrder, databaseSalesOrder);
-		MaterialHibernateDao materialDAO = new MaterialHibernateDao();
-		Material currentMaterial;
-		
-		try {
-			//Reduce the material inventory by the additionally ordered quantities.
-			for (Map.Entry<Integer, Long> entry : additions.entrySet()) {
-				currentMaterial = materialDAO.getMaterial(entry.getKey());
-				currentMaterial.setInventory(currentMaterial.getInventory() - entry.getValue());
-				materialDAO.updateMaterial(currentMaterial);
-			}
-			
-			//Increase the material inventory by the reduced ordered quantities.
-			for (Map.Entry<Integer, Long> entry : reductions.entrySet()) {
-				currentMaterial = materialDAO.getMaterial(entry.getKey());
-				currentMaterial.setInventory(currentMaterial.getInventory() + entry.getValue());
-				materialDAO.updateMaterial(currentMaterial);
-			}
-		}
-		finally {
-			materialDAO.close();
-		}
-	}
-	
-	
-	/**
-	 * Compares the database state of the sales order with the given sales order. All material additions of the sales order are returned.
-	 * 
-	 * @param salesOrder The sales order that is being checked for additions.
-	 * @param databaseSalesOrder The database version of the sales order.
-	 * @return The IDs and quantities of all materials that have their quantities increased compared to the database state.
-	 */
-	private HashMap<Integer, Long> getMaterialAdditions(final SalesOrder salesOrder, final SalesOrder databaseSalesOrder) {
-		HashMap<Integer, Long> additions = new HashMap<Integer, Long>();	//<MaterialId, Quantity>
-		boolean materialExistsInDatabaseItem;
-		Long databaseItemQuantity = Long.valueOf(0);
-		
-		for(SalesOrderItem tempOrderItem:salesOrder.getItems()) {
-			materialExistsInDatabaseItem = false;
-			
-			for(SalesOrderItem tempDatabaseItem:databaseSalesOrder.getItems()) {
-				if(tempDatabaseItem.getMaterial().getId().intValue() == tempOrderItem.getMaterial().getId().intValue()) {
-					materialExistsInDatabaseItem = true;
-					databaseItemQuantity = databaseItemQuantity + tempDatabaseItem.getQuantity();
-				}
-			}
-			
-			//Add quantities for a new material.
-			if(materialExistsInDatabaseItem == false) {
-				additions.put(tempOrderItem.getMaterial().getId(), tempOrderItem.getQuantity());
-			}
-			else {
-				//Determine possible additional quantities of an existing material.
-				if(tempOrderItem.getQuantity() > databaseItemQuantity)
-					additions.put(tempOrderItem.getMaterial().getId(), tempOrderItem.getQuantity()-databaseItemQuantity);
-			}
-		}
-		
-		return additions;
-	}
-	
-	
-	/**
-	 * Compares the database state of the sales order with the given sales order. All material reductions of the sales order are returned.
-	 * 
-	 * @param salesOrder The sales order that is being checked for reductions.
-	 * @param databaseSalesOrder The database version of the sales order.
-	 * @return The IDs and quantities of all materials that have their quantities reduced compared to the database state.
-	 */
-	private HashMap<Integer, Long> getMaterialReductions(final SalesOrder salesOrder, final SalesOrder databaseSalesOrder) {
-		HashMap<Integer, Long> reductions = new HashMap<Integer, Long>();	//<MaterialId, Quantity>
-		boolean materialExistsInOrderItem;
-		Long orderItemQuantity = Long.valueOf(0);
-		
-		for(SalesOrderItem tempDatabaseItem:databaseSalesOrder.getItems()) {
-			materialExistsInOrderItem = false;
-			
-			for(SalesOrderItem tempOrderItem:salesOrder.getItems()) {
-				if(tempDatabaseItem.getMaterial().getId().intValue() == tempOrderItem.getMaterial().getId().intValue()) {
-					materialExistsInOrderItem = true;
-					orderItemQuantity = orderItemQuantity + tempOrderItem.getQuantity();
-				}
-				
-			}
-			
-			//Add quantities for a removed material.
-			if(materialExistsInOrderItem == false) {
-				reductions.put(tempDatabaseItem.getMaterial().getId(), tempDatabaseItem.getQuantity());
-			}
-			else {
-				//Determine possible quantity reductions of an existing material.
-				if(tempDatabaseItem.getQuantity() > orderItemQuantity)
-					reductions.put(tempDatabaseItem.getMaterial().getId(), tempDatabaseItem.getQuantity()-orderItemQuantity);
-			}
-		}
-		
-		return reductions;
-	}
-	
-	
-	/**
-	 * Updates the inventory of the materials when the order is being updated.
-	 * 
-	 * @param salesOrder The sales order being updated.
-	 * @param databaseSalesOrder The database state of the sales order before the update has been performed.
-	 * @throws Exception In case the update of the material inventory fails.
-	 */
-	private void updateMaterialInventory(final SalesOrder salesOrder, final SalesOrder databaseSalesOrder) throws Exception {
-		//If the sales order status changes to "Canceled", the ordered quantities are added back to the inventory.
-		if(databaseSalesOrder.getStatus() != SalesOrderStatus.CANCELED && salesOrder.getStatus() == SalesOrderStatus.CANCELED) {
-			this.addMaterialInventoryForOrder(salesOrder);
-			return;
-		}
-		
-		this.updateMaterialInventoryForItems(salesOrder, databaseSalesOrder);
 	}
 	
 	
