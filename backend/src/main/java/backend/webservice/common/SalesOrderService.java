@@ -58,7 +58,7 @@ public class SalesOrderService {
 	 * Initializes the sales order service.
 	 */
 	public SalesOrderService() {
-		//this.salesOrderDAO = new SalesOrderHibernateDao();	//TODO: Initialize DAO centrally - not in every method manually
+		this.salesOrderDAO = new SalesOrderHibernateDao();
 		this.inventoryManager = new SalesOrderInventoryManager();
 	}
 	
@@ -74,7 +74,6 @@ public class SalesOrderService {
 		WebServiceResult getSalesOrderResult = new WebServiceResult(null);
 		
 		try {
-			this.salesOrderDAO = new SalesOrderHibernateDao();
 			salesOrder = this.salesOrderDAO.getSalesOrder(id);
 			
 			if(salesOrder != null) {
@@ -111,7 +110,6 @@ public class SalesOrderService {
 		WebServiceResult getSalesOrdersResult = new WebServiceResult(null);
 		
 		try {
-			this.salesOrderDAO = new SalesOrderHibernateDao();
 			salesOrders.setSalesOrders(this.salesOrderDAO.getSalesOrders());
 			getSalesOrdersResult.setData(salesOrders);
 		} catch (Exception e) {
@@ -145,15 +143,19 @@ public class SalesOrderService {
 			addSalesOrderResult.addMessage(new WebServiceMessage(
 					WebServiceMessageType.E, this.resources.getString("salesOrder.addError")));	
 			logger.error(this.resources.getString("salesOrder.addError"), exception);
+			this.closeSalesOrderDAO();
 			return addSalesOrderResult;
 		}
 			
 		addSalesOrderResult = this.validate(convertedSalesOrder);
-		if(WebServiceTools.resultContainsErrorMessage(addSalesOrderResult))
+		if(WebServiceTools.resultContainsErrorMessage(addSalesOrderResult)) {
+			this.closeSalesOrderDAO();
 			return addSalesOrderResult;
+		}
 	
 		addSalesOrderResult = this.add(convertedSalesOrder, addSalesOrderResult);
 		addSalesOrderResult.setData(convertedSalesOrder.getId());
+		this.closeSalesOrderDAO();
 		
 		return addSalesOrderResult;
 	}
@@ -171,7 +173,6 @@ public class SalesOrderService {
 		
 		//Check if a sales order with the given id exists.
 		try {
-			this.salesOrderDAO = new SalesOrderHibernateDao();
 			salesOrder = this.salesOrderDAO.getSalesOrder(id);
 			
 			if(salesOrder != null) {
@@ -218,14 +219,18 @@ public class SalesOrderService {
 			updateSalesOrderResult.addMessage(new WebServiceMessage(
 					WebServiceMessageType.E, this.resources.getString("salesOrder.updateError")));	
 			logger.error(this.resources.getString("salesOrder.updateError"), exception);
+			this.closeSalesOrderDAO();
 			return updateSalesOrderResult;
 		}
 		
 		updateSalesOrderResult = this.validate(convertedSalesOrder);
-		if(WebServiceTools.resultContainsErrorMessage(updateSalesOrderResult))
+		if(WebServiceTools.resultContainsErrorMessage(updateSalesOrderResult)) {
+			this.closeSalesOrderDAO();
 			return updateSalesOrderResult;
+		}
 		
 		updateSalesOrderResult = this.update(convertedSalesOrder, updateSalesOrderResult);
+		this.closeSalesOrderDAO();
 		
 		return updateSalesOrderResult;
 	}
@@ -280,7 +285,6 @@ public class SalesOrderService {
 		SalesOrder databaseSalesOrder;
 		
 		try {
-			this.salesOrderDAO = new SalesOrderHibernateDao();
 			databaseSalesOrder = this.salesOrderDAO.getSalesOrder(salesOrder.getId());
 			this.salesOrderDAO.updateSalesOrder(salesOrder);
 			this.inventoryManager.updateMaterialInventory(salesOrder, databaseSalesOrder);
@@ -297,9 +301,6 @@ public class SalesOrderService {
 			
 			logger.error(MessageFormat.format(this.resources.getString("salesOrder.updateError"), salesOrder.getId()), e);
 		}
-		finally {
-			this.closeSalesOrderDAO();
-		}
 		
 		return webServiceResult;
 	}
@@ -313,7 +314,6 @@ public class SalesOrderService {
 	 */
 	private WebServiceResult add(final SalesOrder salesOrder, WebServiceResult webServiceResult) {		
 		try {
-			this.salesOrderDAO = new SalesOrderHibernateDao();
 			this.salesOrderDAO.insertSalesOrder(salesOrder);
 			this.inventoryManager.reduceMaterialInventory(salesOrder);
 			webServiceResult.addMessage(new WebServiceMessage(
@@ -323,9 +323,6 @@ public class SalesOrderService {
 					WebServiceMessageType.E, this.resources.getString("salesOrder.addError")));
 			
 			logger.error(this.resources.getString("salesOrder.addError"), e);
-		}
-		finally {
-			this.closeSalesOrderDAO();
 		}
 		
 		return webServiceResult;
