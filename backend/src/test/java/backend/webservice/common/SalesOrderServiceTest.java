@@ -394,6 +394,53 @@ public class SalesOrderServiceTest {
 		assertEquals(salesOrderItem.getQuantity(), this.orderItem22.getQuantity());
 		assertEquals(salesOrderItem.getPriceTotal(), this.orderItem22.getPriceTotal());
 	}
+	
+	
+	@Test
+	/**
+	 * Tests getting all sales orders on an empty database.
+	 */
+	public void testGetAllSallesOrdersOnEmptyDB() {
+		WebServiceResult getSalesOrdersResult;
+		SalesOrderArray salesOrders;
+		SalesOrderService service = new SalesOrderService();
+		
+		try {
+			//Delete the existing orders first.
+			orderDAO.deleteSalesOrder(this.order1);
+			orderDAO.deleteSalesOrder(this.order2);
+			
+			getSalesOrdersResult = service.getSalesOrders();
+			
+			//There should be no error message
+			assertTrue(WebServiceTools.resultContainsErrorMessage(getSalesOrdersResult) == false);
+			
+			//No sales order should be returned
+			salesOrders = (SalesOrderArray) getSalesOrdersResult.getData();
+			assertTrue(salesOrders.getSalesOrders().size() == 0);
+		} catch (Exception e) {
+			fail(e.getMessage());
+		}
+		finally {
+			//Add the previously deleted orders to allow proper functioning of following tearDown and setUp methods.
+			try {
+				this.order1.setId(null);
+				//The items have to be re-initialized in order to prevent exception regarding orphan-removal.
+				//org.hibernate.HibernateException: Don't change the reference to a collection with delete-orphan enabled : backend.model.SalesOrder.items
+				this.order1.setItems(new ArrayList<SalesOrderItem>());
+				this.order1.addItem(this.orderItem1);
+				orderDAO.insertSalesOrder(this.order1);
+				
+				this.order2.setId(null);
+				this.order2.setItems(new ArrayList<SalesOrderItem>());
+				this.order2.addItem(this.orderItem21);
+				this.order2.addItem(this.orderItem22);
+				orderDAO.insertSalesOrder(this.order2);
+			} catch (Exception e) {
+				fail(e.getMessage());
+			}
+		}
+	}
 
 	
 	@Test
