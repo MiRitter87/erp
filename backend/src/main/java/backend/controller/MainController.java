@@ -1,9 +1,12 @@
 package backend.controller;
 
+import java.io.IOException;
 import java.util.ResourceBundle;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
+import backend.dao.DAOManager;
 
 
 /**
@@ -52,6 +55,7 @@ public class MainController {
 	 * Performs tasks on application startup.
 	 */
 	public void applicationStartup() {
+		DAOManager.getInstance();
 		logger.info(this.resources.getString("status.started"));
 	}
 
@@ -59,6 +63,12 @@ public class MainController {
 	 * Performs tasks on application shutdown.
 	 */
 	public void applicationShutdown() {
+		try {
+			DAOManager.getInstance().close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
 		//The logger is already disabled here. Workaround: Therefore log to std-out.		
 		System.out.println(this.resources.getString("status.stopped"));
 	}
