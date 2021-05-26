@@ -21,7 +21,6 @@ import org.junit.jupiter.api.Test;
 import backend.dao.DAOManager;
 import backend.dao.DepartmentHibernateDao;
 import backend.dao.EmployeeDao;
-import backend.dao.EmployeeHibernateDao;
 import backend.model.Department;
 import backend.model.DepartmentArray;
 import backend.model.Employee;
@@ -77,7 +76,7 @@ public class DepartmentSoapServiceImplTest {
 	 * Tasks to be performed once at startup of test class.
 	 */
 	public static void setUpClass() {
-		employeeDAO = (EmployeeHibernateDao) DAOManager.getInstance().getEmployeeDAO();
+		employeeDAO = DAOManager.getInstance().getEmployeeDAO();
 		departmentDAO = new DepartmentHibernateDao();
 	}
 	

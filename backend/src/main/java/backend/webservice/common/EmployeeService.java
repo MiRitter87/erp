@@ -7,7 +7,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import backend.dao.DAOManager;
-import backend.dao.EmployeeHibernateDao;
+import backend.dao.EmployeeDao;
 import backend.exception.ObjectUnchangedException;
 import backend.model.Employee;
 import backend.model.EmployeeArray;
@@ -25,7 +25,7 @@ public class EmployeeService {
 	/**
 	 * DAO for employee access
 	 */
-	private EmployeeHibernateDao employeeDAO;
+	private EmployeeDao employeeDAO;
 	
 	/**
 	 * Access to localized application resources.
@@ -49,7 +49,7 @@ public class EmployeeService {
 		WebServiceResult getEmployeeResult = new WebServiceResult(null);
 		
 		try {
-			this.employeeDAO = (EmployeeHibernateDao) DAOManager.getInstance().getEmployeeDAO();
+			this.employeeDAO = DAOManager.getInstance().getEmployeeDAO();
 			employee = this.employeeDAO.getEmployee(id);
 			
 			if(employee != null) {
@@ -83,7 +83,7 @@ public class EmployeeService {
 		WebServiceResult getEmployeesResult = new WebServiceResult(null);
 		
 		try {
-			this.employeeDAO = (EmployeeHibernateDao) DAOManager.getInstance().getEmployeeDAO();
+			this.employeeDAO = DAOManager.getInstance().getEmployeeDAO();
 			employees.setEmployees(this.employeeDAO.getEmployees(employeeHeadQuery));
 			getEmployeesResult.setData(employees);
 		} catch (Exception e) {
@@ -116,7 +116,7 @@ public class EmployeeService {
 		}
 		
 		try {
-			this.employeeDAO = (EmployeeHibernateDao) DAOManager.getInstance().getEmployeeDAO();
+			this.employeeDAO = DAOManager.getInstance().getEmployeeDAO();
 			this.employeeDAO.insertEmpoyee(employee);
 			addEmployeeResult.addMessage(new WebServiceMessage(
 					WebServiceMessageType.S, this.resources.getString("employee.addSuccess")));
@@ -151,7 +151,7 @@ public class EmployeeService {
 		}
 				
 		try {
-			this.employeeDAO = (EmployeeHibernateDao) DAOManager.getInstance().getEmployeeDAO();
+			this.employeeDAO = DAOManager.getInstance().getEmployeeDAO();
 			this.employeeDAO.updateEmployee(employee);
 			updateEmployeeResult.addMessage(new WebServiceMessage(
 					WebServiceMessageType.S, this.resources.getString("employee.updateSuccess")));
@@ -216,7 +216,7 @@ public class EmployeeService {
 	private void validateDeleteEmployee(final Integer id) throws Exception {
 		Employee foundEmployee = null;
 		
-		this.employeeDAO = (EmployeeHibernateDao) DAOManager.getInstance().getEmployeeDAO();
+		this.employeeDAO = DAOManager.getInstance().getEmployeeDAO();
 		
 		//Check if employee exists.
 		foundEmployee = this.employeeDAO.getEmployee(id);
