@@ -3,6 +3,7 @@ package backend.dao;
 import java.util.List;
 
 import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -20,12 +21,19 @@ import backend.model.webservice.EmployeeHeadQueryParameter;
  * @author Michael
  *
  */
-public class EmployeeHibernateDao extends HibernateDao implements EmployeeDao {
+public class EmployeeHibernateDao implements EmployeeDao {
+	/**
+	 * Factory for database session.
+	 */
+	protected EntityManagerFactory sessionFactory;
+	
 	/**
 	 * Default constructor.
+	 * 
+	 * @param sessionFactory The database session factory.
 	 */
-	public EmployeeHibernateDao() {
-
+	public EmployeeHibernateDao(final EntityManagerFactory sessionFactory) {
+		this.sessionFactory = sessionFactory;
 	}
 	
 

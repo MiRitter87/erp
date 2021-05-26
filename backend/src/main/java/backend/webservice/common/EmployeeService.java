@@ -1,12 +1,12 @@
 package backend.webservice.common;
 
-import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.ResourceBundle;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import backend.dao.DAOManager;
 import backend.dao.EmployeeHibernateDao;
 import backend.exception.ObjectUnchangedException;
 import backend.model.Employee;
@@ -49,7 +49,7 @@ public class EmployeeService {
 		WebServiceResult getEmployeeResult = new WebServiceResult(null);
 		
 		try {
-			this.employeeDAO = new EmployeeHibernateDao();
+			this.employeeDAO = (EmployeeHibernateDao) DAOManager.getInstance().getEmployeeDAO();
 			employee = this.employeeDAO.getEmployee(id);
 			
 			if(employee != null) {
@@ -67,9 +67,6 @@ public class EmployeeService {
 			
 			logger.error(MessageFormat.format(this.resources.getString("employee.getError"), id), e);
 		}
-		finally {
-			this.closeEmployeeDAO();
-		}
 		
 		return getEmployeeResult;
 	}
@@ -86,7 +83,7 @@ public class EmployeeService {
 		WebServiceResult getEmployeesResult = new WebServiceResult(null);
 		
 		try {
-			this.employeeDAO = new EmployeeHibernateDao();
+			this.employeeDAO = (EmployeeHibernateDao) DAOManager.getInstance().getEmployeeDAO();
 			employees.setEmployees(this.employeeDAO.getEmployees(employeeHeadQuery));
 			getEmployeesResult.setData(employees);
 		} catch (Exception e) {
@@ -94,9 +91,6 @@ public class EmployeeService {
 					WebServiceMessageType.E, this.resources.getString("employee.getEmployeesError")));
 			
 			logger.error(this.resources.getString("employee.getEmployeesError"), e);
-		}
-		finally {
-			this.closeEmployeeDAO();
 		}
 		
 		return getEmployeesResult;
@@ -122,7 +116,7 @@ public class EmployeeService {
 		}
 		
 		try {
-			this.employeeDAO = new EmployeeHibernateDao();
+			this.employeeDAO = (EmployeeHibernateDao) DAOManager.getInstance().getEmployeeDAO();
 			this.employeeDAO.insertEmpoyee(employee);
 			addEmployeeResult.addMessage(new WebServiceMessage(
 					WebServiceMessageType.S, this.resources.getString("employee.addSuccess")));
@@ -132,9 +126,6 @@ public class EmployeeService {
 					WebServiceMessageType.E, this.resources.getString("employee.addError")));
 			
 			logger.error(this.resources.getString("employee.addError"), e);
-		}
-		finally {
-			this.closeEmployeeDAO();
 		}
 		
 		return addEmployeeResult;
@@ -160,7 +151,7 @@ public class EmployeeService {
 		}
 				
 		try {
-			this.employeeDAO = new EmployeeHibernateDao();
+			this.employeeDAO = (EmployeeHibernateDao) DAOManager.getInstance().getEmployeeDAO();
 			this.employeeDAO.updateEmployee(employee);
 			updateEmployeeResult.addMessage(new WebServiceMessage(
 					WebServiceMessageType.S, this.resources.getString("employee.updateSuccess")));
@@ -174,9 +165,6 @@ public class EmployeeService {
 					WebServiceMessageType.E, this.resources.getString("employee.updateError")));
 			
 			logger.error(this.resources.getString("employee.updateError"), e);
-		}
-		finally {
-			this.closeEmployeeDAO();
 		}
 		
 		return updateEmployeeResult;
@@ -199,7 +187,6 @@ public class EmployeeService {
 		}
 		catch(Exception e) {
 			deleteEmployeeResult.addMessage(new WebServiceMessage(WebServiceMessageType.E, e.getMessage()));
-			this.closeEmployeeDAO();
 			return deleteEmployeeResult;
 		}
 	
@@ -215,23 +202,8 @@ public class EmployeeService {
 			
 			logger.error(MessageFormat.format(this.resources.getString("employee.deleteError"), id), e);
 		}
-		finally {
-			this.closeEmployeeDAO();
-		}
 		
 		return deleteEmployeeResult;
-	}
-	
-	
-	/**
-	 * Closes the employee DAO.
-	 */
-	private void closeEmployeeDAO() {
-		try {
-			this.employeeDAO.close();
-		} catch (IOException e) {
-			logger.error(this.resources.getString("employee.closeFailed"), e);
-		}
 	}
 	
 
@@ -244,7 +216,7 @@ public class EmployeeService {
 	private void validateDeleteEmployee(final Integer id) throws Exception {
 		Employee foundEmployee = null;
 		
-		this.employeeDAO = new EmployeeHibernateDao();
+		this.employeeDAO = (EmployeeHibernateDao) DAOManager.getInstance().getEmployeeDAO();
 		
 		//Check if employee exists.
 		foundEmployee = this.employeeDAO.getEmployee(id);

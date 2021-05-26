@@ -22,6 +22,11 @@ public class DAOManager implements Closeable {
 	 */
 	protected EntityManagerFactory sessionFactory;
 	
+	/**
+	 * DAO to manage employee data.
+	 */
+	protected EmployeeDao employeeDao;
+	
 	
 	/**
 	 * Initializes the DAOManager.
@@ -53,12 +58,26 @@ public class DAOManager implements Closeable {
 		//The given string must match with the persistence unit defined in the persistence.xml file.
 		return Persistence.createEntityManagerFactory("my-persistence-unit");
 	}
+	
+	
+	/**
+	 * Returns a DAO to manage employee data.
+	 * 
+	 * @return
+	 */
+	public EmployeeDao getEmployeeDAO() {
+		if(this.employeeDao == null)
+			this.employeeDao = new EmployeeHibernateDao(this.sessionFactory);
+		
+		return this.employeeDao;
+	}
 
 	
 	@Override
 	public void close() throws IOException {
 		try {
-			this.sessionFactory.close();		
+			this.sessionFactory.close();
+			instance = null;
 		}
 		catch(IllegalStateException exception) {
 			throw new IOException(exception.getMessage());

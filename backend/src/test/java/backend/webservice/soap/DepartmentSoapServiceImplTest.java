@@ -18,7 +18,9 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import backend.dao.DAOManager;
 import backend.dao.DepartmentHibernateDao;
+import backend.dao.EmployeeDao;
 import backend.dao.EmployeeHibernateDao;
 import backend.model.Department;
 import backend.model.DepartmentArray;
@@ -42,7 +44,7 @@ public class DepartmentSoapServiceImplTest {
 	/**
 	 * DAO to access employee data.
 	 */
-	private static EmployeeHibernateDao employeeDAO;
+	private static EmployeeDao employeeDAO;
 	
 	/**
 	 * A department "HR - Human Resources" that is used in tests.
@@ -75,7 +77,7 @@ public class DepartmentSoapServiceImplTest {
 	 * Tasks to be performed once at startup of test class.
 	 */
 	public static void setUpClass() {
-		employeeDAO = new EmployeeHibernateDao();
+		employeeDAO = (EmployeeHibernateDao) DAOManager.getInstance().getEmployeeDAO();
 		departmentDAO = new DepartmentHibernateDao();
 	}
 	
@@ -87,7 +89,7 @@ public class DepartmentSoapServiceImplTest {
 	public static void tearDownClass() {
 		try {
 			departmentDAO.close();
-			employeeDAO.close();			
+			DAOManager.getInstance().close();		
 		}
 		catch (IOException e) {
 			fail(e.getMessage());
