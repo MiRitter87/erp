@@ -24,7 +24,8 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import backend.dao.BusinessPartnerHibernateDao;
-import backend.dao.MaterialHibernateDao;
+import backend.dao.DAOManager;
+import backend.dao.MaterialDao;
 import backend.dao.SalesOrderHibernateDao;
 import backend.model.BusinessPartner;
 import backend.model.Currency;
@@ -60,7 +61,7 @@ public class SalesOrderServiceTest {
 	/**
 	 * DAO to access material data.
 	 */
-	private static MaterialHibernateDao materialDAO;
+	private static MaterialDao materialDAO;
 	
 	/**
 	 * DAO to access business partner data.
@@ -113,7 +114,7 @@ public class SalesOrderServiceTest {
 	 * Tasks to be performed once at startup of test class.
 	 */
 	public static void setUpClass() {
-		materialDAO = new MaterialHibernateDao();
+		materialDAO = DAOManager.getInstance().getMaterialDAO();
 		partnerDAO = new BusinessPartnerHibernateDao();
 		orderDAO = new SalesOrderHibernateDao();
 	}
@@ -127,7 +128,7 @@ public class SalesOrderServiceTest {
 		try {
 			orderDAO.close();
 			partnerDAO.close();
-			materialDAO.close();
+			DAOManager.getInstance().close();
 		} catch (IOException e) {
 			fail(e.getMessage());
 		}

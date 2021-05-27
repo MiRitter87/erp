@@ -10,7 +10,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import backend.dao.BusinessPartnerHibernateDao;
-import backend.dao.MaterialHibernateDao;
+import backend.dao.DAOManager;
+import backend.dao.MaterialDao;
 import backend.dao.SalesOrderHibernateDao;
 import backend.exception.DuplicateIdentifierException;
 import backend.exception.NoItemsException;
@@ -392,20 +393,15 @@ public class SalesOrderService {
 	 */
 	private List<SalesOrderItem> convertSalesOrderItems(final SalesOrderWS salesOrderWS, final SalesOrder salesOrder) throws Exception {
 		List<SalesOrderItem> orderItems = new ArrayList<SalesOrderItem>();
-		MaterialHibernateDao materialDAO = new MaterialHibernateDao();
+		MaterialDao materialDAO = DAOManager.getInstance().getMaterialDAO();
 		
-		try {
-			for(SalesOrderItemWS itemWS:salesOrderWS.getItems()) {
-				SalesOrderItem orderItem = new SalesOrderItem();
-				orderItem.setId(itemWS.getItemId());
-				orderItem.setMaterial(materialDAO.getMaterial(itemWS.getMaterialId()));
-				orderItem.setQuantity(itemWS.getQuantity());
-				orderItem.setSalesOrder(salesOrder);
-				orderItems.add(orderItem);
-			}
-		}
-		finally {
-			materialDAO.close();
+		for(SalesOrderItemWS itemWS:salesOrderWS.getItems()) {
+			SalesOrderItem orderItem = new SalesOrderItem();
+			orderItem.setId(itemWS.getItemId());
+			orderItem.setMaterial(materialDAO.getMaterial(itemWS.getMaterialId()));
+			orderItem.setQuantity(itemWS.getQuantity());
+			orderItem.setSalesOrder(salesOrder);
+			orderItems.add(orderItem);
 		}
 		
 		return orderItems;

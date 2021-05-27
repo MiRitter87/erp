@@ -32,6 +32,11 @@ public class DAOManager implements Closeable {
 	 */
 	private DepartmentDao departmentDao;
 	
+	/**
+	 * DAO to manage material data.
+	 */
+	private MaterialDao materialDao;
+	
 	
 	/**
 	 * Initializes the DAOManager.
@@ -88,6 +93,19 @@ public class DAOManager implements Closeable {
 			this.departmentDao = new DepartmentHibernateDao(this.sessionFactory);
 		
 		return this.departmentDao;
+	}
+	
+	
+	/**
+	 * Returns a DAO to manage material data.
+	 * 
+	 * @return The MaterialDAO.
+	 */
+	public MaterialDao getMaterialDAO() {
+		if(this.materialDao == null)
+			this.materialDao = new MaterialHibernateDao(this.sessionFactory);
+		
+		return this.materialDao;
 	}
 
 	

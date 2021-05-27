@@ -3,6 +3,7 @@ package backend.dao;
 import java.util.List;
 
 import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -16,12 +17,20 @@ import backend.model.Material;
  * 
  * @author Michael
  */
-public class MaterialHibernateDao extends HibernateDao implements MaterialDao {
+public class MaterialHibernateDao implements MaterialDao {
+	/**
+	 * Factory for database session.
+	 */
+	protected EntityManagerFactory sessionFactory;
+	
+	
 	/**
 	 * Default constructor.
+	 * 
+	 * @param sessionFactory The database session factory.
 	 */
-	public MaterialHibernateDao() {
-		
+	public MaterialHibernateDao(final EntityManagerFactory sessionFactory) {
+		this.sessionFactory = sessionFactory;
 	}
 	
 	

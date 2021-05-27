@@ -27,6 +27,7 @@ public class EmployeeHibernateDao implements EmployeeDao {
 	 */
 	protected EntityManagerFactory sessionFactory;
 	
+	
 	/**
 	 * Default constructor.
 	 * 

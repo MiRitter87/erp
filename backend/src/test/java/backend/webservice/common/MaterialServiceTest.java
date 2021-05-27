@@ -16,7 +16,8 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import backend.dao.MaterialHibernateDao;
+import backend.dao.DAOManager;
+import backend.dao.MaterialDao;
 import backend.model.Currency;
 import backend.model.Material;
 import backend.model.MaterialArray;
@@ -40,7 +41,7 @@ public class MaterialServiceTest {
 	/**
 	 * DAO to access material data.
 	 */
-	private static MaterialHibernateDao materialDAO;
+	private static MaterialDao materialDAO;
 	
 	/**
 	 * Test material: AMD RX570 GPU.
@@ -58,7 +59,7 @@ public class MaterialServiceTest {
 	 * Tasks to be performed once at startup of test class.
 	 */
 	public static void setUpClass() {
-		materialDAO = new MaterialHibernateDao();
+		materialDAO = DAOManager.getInstance().getMaterialDAO();
 	}
 	
 	
@@ -68,7 +69,7 @@ public class MaterialServiceTest {
 	 */
 	public static void tearDownClass() {
 		try {
-			materialDAO.close();
+			DAOManager.getInstance().close();
 		} catch (IOException e) {
 			fail(e.getMessage());
 		}

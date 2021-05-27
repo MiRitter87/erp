@@ -1,13 +1,13 @@
 package backend.webservice.common;
 
-import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.ResourceBundle;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import backend.dao.MaterialHibernateDao;
+import backend.dao.DAOManager;
+import backend.dao.MaterialDao;
 import backend.exception.ObjectUnchangedException;
 import backend.model.Material;
 import backend.model.MaterialArray;
@@ -24,7 +24,7 @@ public class MaterialService {
 	/**
 	 * DAO for material access.
 	 */
-	private MaterialHibernateDao materialDAO;
+	private MaterialDao materialDAO;
 	
 	/**
 	 * Access to localized application resources.
@@ -48,7 +48,7 @@ public class MaterialService {
 		WebServiceResult getMaterialResult = new WebServiceResult(null);
 		
 		try {
-			this.materialDAO = new MaterialHibernateDao();
+			this.materialDAO = DAOManager.getInstance().getMaterialDAO();
 			material = this.materialDAO.getMaterial(id);
 			
 			if(material != null) {
@@ -67,9 +67,6 @@ public class MaterialService {
 			
 			logger.error(MessageFormat.format(this.resources.getString("material.getError"), id), e);
 		}
-		finally {
-			this.closeMaterialDAO();
-		}
 		
 		return getMaterialResult;
 	}
@@ -85,7 +82,7 @@ public class MaterialService {
 		WebServiceResult getMaterialsResult = new WebServiceResult(null);
 		
 		try {
-			this.materialDAO = new MaterialHibernateDao();
+			this.materialDAO = DAOManager.getInstance().getMaterialDAO();
 			materials.setMaterials(this.materialDAO.getMaterials());
 			getMaterialsResult.setData(materials);
 		} catch (Exception e) {
@@ -93,9 +90,6 @@ public class MaterialService {
 					WebServiceMessageType.E, this.resources.getString("material.getMaterialsError")));
 			
 			logger.error(this.resources.getString("material.getMaterialsError"), e);
-		}
-		finally {
-			this.closeMaterialDAO();
 		}
 		
 		return getMaterialsResult;
@@ -110,14 +104,13 @@ public class MaterialService {
 	 */
 	public WebServiceResult addMaterial(final Material material) {
 		WebServiceResult addMaterialResult = new WebServiceResult();
-		this.materialDAO = new MaterialHibernateDao();
+		this.materialDAO = DAOManager.getInstance().getMaterialDAO();
 		
 		//Validate the given material.
 		try {
 			material.validate();
 		} catch (Exception validationException) {
 			addMaterialResult.addMessage(new WebServiceMessage(WebServiceMessageType.E, validationException.getMessage()));
-			this.closeMaterialDAO();
 			return addMaterialResult;
 		}
 		
@@ -131,9 +124,6 @@ public class MaterialService {
 					WebServiceMessageType.E, this.resources.getString("material.addError")));
 			
 			logger.error(this.resources.getString("material.addError"), e);
-		}
-		finally {
-			this.closeMaterialDAO();
 		}
 		
 		return addMaterialResult;
@@ -152,7 +142,7 @@ public class MaterialService {
 		
 		//Check if a material with the given code exists.
 		try {
-			this.materialDAO = new MaterialHibernateDao();
+			this.materialDAO = DAOManager.getInstance().getMaterialDAO();
 			material = this.materialDAO.getMaterial(id);
 			
 			if(material != null) {
@@ -173,9 +163,6 @@ public class MaterialService {
 			
 			logger.error(MessageFormat.format(this.resources.getString("material.deleteError"), id), e);
 		}
-		finally {
-			this.closeMaterialDAO();
-		}
 		
 		return deleteMaterialResult;
 	}
@@ -189,14 +176,13 @@ public class MaterialService {
 	 */
 	public WebServiceResult updateMaterial(final Material material) {
 		WebServiceResult updateMaterialResult = new WebServiceResult(null);
-		this.materialDAO = new MaterialHibernateDao();
+		this.materialDAO = DAOManager.getInstance().getMaterialDAO();
 		
 		//Validation of the given material
 		try {
 			material.validate();
 		} catch (Exception validationException) {
 			updateMaterialResult.addMessage(new WebServiceMessage(WebServiceMessageType.E, validationException.getMessage()));
-			this.closeMaterialDAO();
 			return updateMaterialResult;
 		}
 		
@@ -216,22 +202,7 @@ public class MaterialService {
 			
 			logger.error(MessageFormat.format(this.resources.getString("material.updateError"), material.getId()), e);
 		}
-		finally {
-			this.closeMaterialDAO();
-		}
 		
 		return updateMaterialResult;
-	}
-	
-	
-	/**
-	 * Closes the material DAO.
-	 */
-	private void closeMaterialDAO() {
-		try {
-			this.materialDAO.close();
-		} catch (IOException e) {
-			logger.error(this.resources.getString("material.closeFailed"), e);
-		}
 	}
 }

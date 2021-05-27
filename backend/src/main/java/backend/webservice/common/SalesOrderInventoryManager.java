@@ -3,7 +3,8 @@ package backend.webservice.common;
 import java.util.HashMap;
 import java.util.Map;
 
-import backend.dao.MaterialHibernateDao;
+import backend.dao.DAOManager;
+import backend.dao.MaterialDao;
 import backend.model.Material;
 import backend.model.SalesOrder;
 import backend.model.SalesOrderItem;
@@ -25,19 +26,14 @@ public class SalesOrderInventoryManager {
 	 * @throws Exception In case the update of the material inventory fails.
 	 */
 	public void reduceMaterialInventory(final SalesOrder salesOrder) throws Exception {
-		MaterialHibernateDao materialDAO = new MaterialHibernateDao();
+		MaterialDao materialDAO = DAOManager.getInstance().getMaterialDAO();
 		Material currentMaterial;
 		
-		try {
-			for(SalesOrderItem item:salesOrder.getItems()) {
-				currentMaterial = item.getMaterial();
-				currentMaterial.setInventory(currentMaterial.getInventory() - item.getQuantity());
-				materialDAO.updateMaterial(currentMaterial);
-			}			
-		}
-		finally {
-			materialDAO.close();
-		}
+		for(SalesOrderItem item:salesOrder.getItems()) {
+			currentMaterial = item.getMaterial();
+			currentMaterial.setInventory(currentMaterial.getInventory() - item.getQuantity());
+			materialDAO.updateMaterial(currentMaterial);
+		}			
 	}
 	
 	
@@ -48,19 +44,14 @@ public class SalesOrderInventoryManager {
 	 * @throws Exception In case the update of the material inventory fails.
 	 */
 	public void  addMaterialInventoryForOrder(final SalesOrder salesOrder) throws Exception {
-		MaterialHibernateDao materialDAO = new MaterialHibernateDao();
+		MaterialDao materialDAO = DAOManager.getInstance().getMaterialDAO();
 		Material currentMaterial;
 		
-		try {
-			for(SalesOrderItem item:salesOrder.getItems()) {
-				currentMaterial = item.getMaterial();
-				currentMaterial.setInventory(currentMaterial.getInventory() + item.getQuantity());
-				materialDAO.updateMaterial(currentMaterial);
-			}			
-		}
-		finally {
-			materialDAO.close();
-		}
+		for(SalesOrderItem item:salesOrder.getItems()) {
+			currentMaterial = item.getMaterial();
+			currentMaterial.setInventory(currentMaterial.getInventory() + item.getQuantity());
+			materialDAO.updateMaterial(currentMaterial);
+		}			
 	}
 	
 	
@@ -91,26 +82,21 @@ public class SalesOrderInventoryManager {
 	private void updateMaterialInventoryForItems(final SalesOrder salesOrder, final SalesOrder databaseSalesOrder) throws Exception {
 		HashMap<Integer, Long> additions = this.getMaterialAdditions(salesOrder, databaseSalesOrder);
 		HashMap<Integer, Long> reductions = this.getMaterialReductions(salesOrder, databaseSalesOrder);
-		MaterialHibernateDao materialDAO = new MaterialHibernateDao();
+		MaterialDao materialDAO = DAOManager.getInstance().getMaterialDAO();
 		Material currentMaterial;
 		
-		try {
-			//Reduce the material inventory by the additionally ordered quantities.
-			for (Map.Entry<Integer, Long> entry : additions.entrySet()) {
-				currentMaterial = materialDAO.getMaterial(entry.getKey());
-				currentMaterial.setInventory(currentMaterial.getInventory() - entry.getValue());
-				materialDAO.updateMaterial(currentMaterial);
-			}
-			
-			//Increase the material inventory by the reduced ordered quantities.
-			for (Map.Entry<Integer, Long> entry : reductions.entrySet()) {
-				currentMaterial = materialDAO.getMaterial(entry.getKey());
-				currentMaterial.setInventory(currentMaterial.getInventory() + entry.getValue());
-				materialDAO.updateMaterial(currentMaterial);
-			}
+		//Reduce the material inventory by the additionally ordered quantities.
+		for (Map.Entry<Integer, Long> entry : additions.entrySet()) {
+			currentMaterial = materialDAO.getMaterial(entry.getKey());
+			currentMaterial.setInventory(currentMaterial.getInventory() - entry.getValue());
+			materialDAO.updateMaterial(currentMaterial);
 		}
-		finally {
-			materialDAO.close();
+		
+		//Increase the material inventory by the reduced ordered quantities.
+		for (Map.Entry<Integer, Long> entry : reductions.entrySet()) {
+			currentMaterial = materialDAO.getMaterial(entry.getKey());
+			currentMaterial.setInventory(currentMaterial.getInventory() + entry.getValue());
+			materialDAO.updateMaterial(currentMaterial);
 		}
 	}
 	
