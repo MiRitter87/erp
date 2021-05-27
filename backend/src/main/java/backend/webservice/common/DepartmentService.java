@@ -1,6 +1,5 @@
 package backend.webservice.common;
 
-import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.ResourceBundle;
 
@@ -9,7 +8,8 @@ import javax.persistence.EntityExistsException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import backend.dao.DepartmentHibernateDao;
+import backend.dao.DAOManager;
+import backend.dao.DepartmentDao;
 import backend.exception.ObjectUnchangedException;
 import backend.model.Department;
 import backend.model.DepartmentArray;
@@ -26,7 +26,7 @@ public class DepartmentService {
 	/**
 	 * DAO for department access.
 	 */
-	private DepartmentHibernateDao departmentDAO;
+	private DepartmentDao departmentDAO;
 	
 	/**
 	 * Access to localized application resources.
@@ -50,7 +50,7 @@ public class DepartmentService {
 		WebServiceResult getDepartmentResult = new WebServiceResult(null);
 		
 		try {
-			this.departmentDAO = new DepartmentHibernateDao();
+			this.departmentDAO = DAOManager.getInstance().getDepartmentDAO();
 			department = this.departmentDAO.getDepartmentByCode(code);
 			
 			if(department != null) {
@@ -69,9 +69,6 @@ public class DepartmentService {
 			
 			logger.error(MessageFormat.format(this.resources.getString("department.getError"), code), e);
 		}
-		finally {
-			this.closeDepartmentDAO();
-		}
 		
 		return getDepartmentResult;
 	}
@@ -87,7 +84,7 @@ public class DepartmentService {
 		WebServiceResult getDepartmentsResult = new WebServiceResult(null);
 		
 		try {
-			this.departmentDAO = new DepartmentHibernateDao();
+			this.departmentDAO = DAOManager.getInstance().getDepartmentDAO();
 			departments.setDepartments(this.departmentDAO.getDepartments());
 			getDepartmentsResult.setData(departments);
 		} catch (Exception e) {
@@ -95,9 +92,6 @@ public class DepartmentService {
 					WebServiceMessageType.E, this.resources.getString("department.getDepartmentsError")));
 			
 			logger.error(this.resources.getString("department.getDepartmentsError"), e);
-		}
-		finally {
-			this.closeDepartmentDAO();
 		}
 		
 		return getDepartmentsResult;
@@ -112,7 +106,7 @@ public class DepartmentService {
 	 */
 	public WebServiceResult addDepartment(final Department department) {
 		WebServiceResult addDepartmentResult = new WebServiceResult(null);
-		this.departmentDAO = new DepartmentHibernateDao();
+		this.departmentDAO = DAOManager.getInstance().getDepartmentDAO();
 		
 		//At first validate the given department
 		try {
@@ -120,7 +114,6 @@ public class DepartmentService {
 		}
 		catch(Exception e) {
 			addDepartmentResult.addMessage(new WebServiceMessage(WebServiceMessageType.E, e.getMessage()));
-			this.closeDepartmentDAO();
 			return addDepartmentResult;
 		}
 		
@@ -139,9 +132,6 @@ public class DepartmentService {
 			
 			logger.error(this.resources.getString("department.addError"), e);
 		}
-		finally {
-			this.closeDepartmentDAO();
-		}
 		
 		return addDepartmentResult;
 	}
@@ -159,7 +149,7 @@ public class DepartmentService {
 		
 		//Check if department with the given code exists.
 		try {
-			this.departmentDAO = new DepartmentHibernateDao();
+			this.departmentDAO = DAOManager.getInstance().getDepartmentDAO();
 			department = this.departmentDAO.getDepartmentByCode(code);
 			
 			if(department != null) {
@@ -180,9 +170,6 @@ public class DepartmentService {
 			
 			logger.error(MessageFormat.format(this.resources.getString("department.deleteError"), code), e);
 		}
-		finally {
-			this.closeDepartmentDAO();
-		}
 		
 		return deleteDepartmentResult;
 	}
@@ -196,7 +183,7 @@ public class DepartmentService {
 	 */
 	public WebServiceResult updateDepartment(final Department department) {
 		WebServiceResult updateDepartmentResult = new WebServiceResult(null);
-		this.departmentDAO = new DepartmentHibernateDao();
+		this.departmentDAO = DAOManager.getInstance().getDepartmentDAO();
 		
 		//At first validate the given department.
 		try {
@@ -204,7 +191,6 @@ public class DepartmentService {
 		}
 		catch(Exception e) {
 			updateDepartmentResult.addMessage(new WebServiceMessage(WebServiceMessageType.E, e.getMessage()));
-			this.closeDepartmentDAO();
 			return updateDepartmentResult;
 		}
 				
@@ -222,9 +208,6 @@ public class DepartmentService {
 					MessageFormat.format(this.resources.getString("department.updateError"), department.getCode())));
 			
 			logger.error(MessageFormat.format(this.resources.getString("department.updateError"), department.getCode()), e);
-		}
-		finally {
-			this.closeDepartmentDAO();
 		}
 		
 		return updateDepartmentResult;
@@ -309,18 +292,6 @@ public class DepartmentService {
 			//There is already another department which has the given employee set as head of department.
 			throw new Exception(MessageFormat.format(this.resources.getString("department.validation.employeeAlreadyHead"), 
 					department.getHead().getId(), department.getCode()));
-		}
-	}
-	
-	
-	/**
-	 * Closes the department DAO.
-	 */
-	private void closeDepartmentDAO() {
-		try {
-			this.departmentDAO.close();
-		} catch (IOException e) {
-			logger.error(this.resources.getString("department.closeFailed"), e);
 		}
 	}
 }

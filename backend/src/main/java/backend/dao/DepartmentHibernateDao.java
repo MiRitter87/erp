@@ -4,6 +4,7 @@ import java.util.List;
 
 import javax.persistence.EntityExistsException;
 import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -20,12 +21,19 @@ import backend.model.Department;
  * @author Michael
  *
  */
-public class DepartmentHibernateDao extends HibernateDao implements DepartmentDao {
+public class DepartmentHibernateDao implements DepartmentDao {
+	/**
+	 * Factory for database session.
+	 */
+	protected EntityManagerFactory sessionFactory;
+	
 	/**
 	 * Default constructor.
+	 * 
+	 * @param sessionFactory The database session factory.
 	 */
-	public DepartmentHibernateDao() {
-
+	public DepartmentHibernateDao(final EntityManagerFactory sessionFactory) {
+		this.sessionFactory = sessionFactory;
 	}
 	
 

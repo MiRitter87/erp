@@ -25,7 +25,12 @@ public class DAOManager implements Closeable {
 	/**
 	 * DAO to manage employee data.
 	 */
-	protected EmployeeDao employeeDao;
+	private EmployeeDao employeeDao;
+	
+	/**
+	 * DAO to manage department data.
+	 */
+	private DepartmentDao departmentDao;
 	
 	
 	/**
@@ -63,13 +68,26 @@ public class DAOManager implements Closeable {
 	/**
 	 * Returns a DAO to manage employee data.
 	 * 
-	 * @return
+	 * @return The EmployeeDAO.
 	 */
 	public EmployeeDao getEmployeeDAO() {
 		if(this.employeeDao == null)
 			this.employeeDao = new EmployeeHibernateDao(this.sessionFactory);
 		
 		return this.employeeDao;
+	}
+	
+	
+	/**
+	 * Returns a DAO to manage department data.
+	 * 
+	 * @return The DepartmentDAO.
+	 */
+	public DepartmentDao getDepartmentDAO() {
+		if(this.departmentDao == null)
+			this.departmentDao = new DepartmentHibernateDao(this.sessionFactory);
+		
+		return this.departmentDao;
 	}
 
 	

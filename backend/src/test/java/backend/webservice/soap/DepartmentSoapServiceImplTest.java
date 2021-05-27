@@ -19,7 +19,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import backend.dao.DAOManager;
-import backend.dao.DepartmentHibernateDao;
+import backend.dao.DepartmentDao;
 import backend.dao.EmployeeDao;
 import backend.model.Department;
 import backend.model.DepartmentArray;
@@ -38,7 +38,7 @@ public class DepartmentSoapServiceImplTest {
 	/**
 	 * DAO to access department data.
 	 */
-	private static DepartmentHibernateDao departmentDAO;
+	private static DepartmentDao departmentDAO;
 	
 	/**
 	 * DAO to access employee data.
@@ -77,7 +77,7 @@ public class DepartmentSoapServiceImplTest {
 	 */
 	public static void setUpClass() {
 		employeeDAO = DAOManager.getInstance().getEmployeeDAO();
-		departmentDAO = new DepartmentHibernateDao();
+		departmentDAO = DAOManager.getInstance().getDepartmentDAO();
 	}
 	
 	
@@ -87,7 +87,6 @@ public class DepartmentSoapServiceImplTest {
 	 */
 	public static void tearDownClass() {
 		try {
-			departmentDAO.close();
 			DAOManager.getInstance().close();		
 		}
 		catch (IOException e) {
