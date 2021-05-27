@@ -9,7 +9,7 @@ import java.util.ResourceBundle;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import backend.dao.BusinessPartnerHibernateDao;
+import backend.dao.BusinessPartnerDao;
 import backend.dao.DAOManager;
 import backend.dao.MaterialDao;
 import backend.dao.SalesOrderHibernateDao;
@@ -355,7 +355,7 @@ public class SalesOrderService {
 	 * @throws Exception In case the conversion fails.
 	 */
 	private SalesOrder convertSalesOrderHead(final SalesOrderWS salesOrderWS) throws Exception {
-		BusinessPartnerHibernateDao partnerDAO = new BusinessPartnerHibernateDao();
+		BusinessPartnerDao partnerDAO = DAOManager.getInstance().getBusinessPartnerDAO();
 		SalesOrder salesOrder = new SalesOrder();
 		
 		//Basic object data that are copied as-is.
@@ -365,19 +365,14 @@ public class SalesOrderService {
 		salesOrder.setStatus(salesOrderWS.getStatus());
 		
 		//Object references. Only the ID is given and the whole backend object has to be loaded and referenced.
-		try {
-			if(salesOrderWS.getSoldToId() != null)
-				salesOrder.setSoldToParty(partnerDAO.getBusinessPartner(salesOrderWS.getSoldToId()));
-			
-			if(salesOrderWS.getShipToId() != null)
-				salesOrder.setShipToParty(partnerDAO.getBusinessPartner(salesOrderWS.getShipToId()));
-			
-			if(salesOrderWS.getBillToId() != null)
-				salesOrder.setBillToParty(partnerDAO.getBusinessPartner(salesOrderWS.getBillToId()));
-		}
-		finally {
-			partnerDAO.close();
-		}
+		if(salesOrderWS.getSoldToId() != null)
+			salesOrder.setSoldToParty(partnerDAO.getBusinessPartner(salesOrderWS.getSoldToId()));
+		
+		if(salesOrderWS.getShipToId() != null)
+			salesOrder.setShipToParty(partnerDAO.getBusinessPartner(salesOrderWS.getShipToId()));
+		
+		if(salesOrderWS.getBillToId() != null)
+			salesOrder.setBillToParty(partnerDAO.getBusinessPartner(salesOrderWS.getBillToId()));
 		
 		return salesOrder;
 	}

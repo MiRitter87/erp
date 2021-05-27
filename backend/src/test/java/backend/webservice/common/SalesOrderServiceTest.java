@@ -23,7 +23,7 @@ import org.junit.jupiter.api.Test;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import backend.dao.BusinessPartnerHibernateDao;
+import backend.dao.BusinessPartnerDao;
 import backend.dao.DAOManager;
 import backend.dao.MaterialDao;
 import backend.dao.SalesOrderHibernateDao;
@@ -66,7 +66,7 @@ public class SalesOrderServiceTest {
 	/**
 	 * DAO to access business partner data.
 	 */
-	private static BusinessPartnerHibernateDao partnerDAO;
+	private static BusinessPartnerDao partnerDAO;
 	
 	/**
 	 * The sales order under test.
@@ -115,7 +115,7 @@ public class SalesOrderServiceTest {
 	 */
 	public static void setUpClass() {
 		materialDAO = DAOManager.getInstance().getMaterialDAO();
-		partnerDAO = new BusinessPartnerHibernateDao();
+		partnerDAO = DAOManager.getInstance().getBusinessPartnerDAO();
 		orderDAO = new SalesOrderHibernateDao();
 	}
 	
@@ -127,7 +127,6 @@ public class SalesOrderServiceTest {
 	public static void tearDownClass() {
 		try {
 			orderDAO.close();
-			partnerDAO.close();
 			DAOManager.getInstance().close();
 		} catch (IOException e) {
 			fail(e.getMessage());

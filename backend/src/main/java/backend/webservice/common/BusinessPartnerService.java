@@ -1,13 +1,13 @@
 package backend.webservice.common;
 
-import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.ResourceBundle;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import backend.dao.BusinessPartnerHibernateDao;
+import backend.dao.BusinessPartnerDao;
+import backend.dao.DAOManager;
 import backend.exception.ObjectUnchangedException;
 import backend.model.BusinessPartner;
 import backend.model.BusinessPartnerArray;
@@ -24,7 +24,7 @@ public class BusinessPartnerService {
 	/**
 	 * DAO for business partner access.
 	 */
-	private BusinessPartnerHibernateDao businessPartnerDAO;
+	private BusinessPartnerDao businessPartnerDAO;
 	
 	/**
 	 * Access to localized application resources.
@@ -48,7 +48,7 @@ public class BusinessPartnerService {
 		WebServiceResult getBusinessPartnerResult = new WebServiceResult(null);
 		
 		try {
-			this.businessPartnerDAO = new BusinessPartnerHibernateDao();
+			this.businessPartnerDAO = DAOManager.getInstance().getBusinessPartnerDAO();
 			businessPartner = this.businessPartnerDAO.getBusinessPartner(id);
 			
 			if(businessPartner != null) {
@@ -67,9 +67,6 @@ public class BusinessPartnerService {
 			
 			logger.error(MessageFormat.format(this.resources.getString("businessPartner.getError"), id), e);
 		}
-		finally {
-			this.closeBusinessPartnerDAO();
-		}
 		
 		return getBusinessPartnerResult;
 	}
@@ -85,7 +82,7 @@ public class BusinessPartnerService {
 		WebServiceResult getBusinessPartnersResult = new WebServiceResult(null);
 		
 		try {
-			this.businessPartnerDAO = new BusinessPartnerHibernateDao();
+			this.businessPartnerDAO = DAOManager.getInstance().getBusinessPartnerDAO();
 			businessPartners.setBusinessPartners(this.businessPartnerDAO.getBusinessPartners());
 			getBusinessPartnersResult.setData(businessPartners);
 		} catch (Exception e) {
@@ -93,9 +90,6 @@ public class BusinessPartnerService {
 					WebServiceMessageType.E, this.resources.getString("businessPartner.getBusinessPartnersError")));
 			
 			logger.error(this.resources.getString("businessPartner.getBusinessPartnersError"), e);
-		}
-		finally {
-			this.closeBusinessPartnerDAO();
 		}
 		
 		return getBusinessPartnersResult;
@@ -110,14 +104,13 @@ public class BusinessPartnerService {
 	 */
 	public WebServiceResult addBusinessPartner(final BusinessPartner businessPartner) {
 		WebServiceResult addBusinessPartnerResult = new WebServiceResult();
-		this.businessPartnerDAO = new BusinessPartnerHibernateDao();
+		this.businessPartnerDAO = DAOManager.getInstance().getBusinessPartnerDAO();
 		
 		//Validate the given business partner.
 		try {
 			businessPartner.validate();
 		} catch (Exception validationException) {
 			addBusinessPartnerResult.addMessage(new WebServiceMessage(WebServiceMessageType.E, validationException.getMessage()));
-			this.closeBusinessPartnerDAO();
 			return addBusinessPartnerResult;
 		}
 		
@@ -131,9 +124,6 @@ public class BusinessPartnerService {
 					WebServiceMessageType.E, this.resources.getString("businessPartner.addError")));
 			
 			logger.error(this.resources.getString("businessPartner.addError"), e);
-		}
-		finally {
-			this.closeBusinessPartnerDAO();
 		}
 		
 		return addBusinessPartnerResult;
@@ -152,7 +142,7 @@ public class BusinessPartnerService {
 		
 		//Check if a business partner with the given id exists.
 		try {
-			this.businessPartnerDAO = new BusinessPartnerHibernateDao();
+			this.businessPartnerDAO = DAOManager.getInstance().getBusinessPartnerDAO();
 			businessPartner = this.businessPartnerDAO.getBusinessPartner(id);
 			
 			if(businessPartner != null) {
@@ -173,9 +163,6 @@ public class BusinessPartnerService {
 			
 			logger.error(MessageFormat.format(this.resources.getString("businessPartner.deleteError"), id), e);
 		}
-		finally {
-			this.closeBusinessPartnerDAO();
-		}
 		
 		return deleteBusinessPartnerResult;
 	}
@@ -189,14 +176,13 @@ public class BusinessPartnerService {
 	 */
 	public WebServiceResult updateBusinessPartner(final BusinessPartner businessPartner) {
 		WebServiceResult updateBusinessPartnerResult = new WebServiceResult(null);
-		this.businessPartnerDAO = new BusinessPartnerHibernateDao();
+		this.businessPartnerDAO = DAOManager.getInstance().getBusinessPartnerDAO();
 		
 		//Validation of the given business partner.
 		try {
 			businessPartner.validate();
 		} catch (Exception validationException) {
 			updateBusinessPartnerResult.addMessage(new WebServiceMessage(WebServiceMessageType.E, validationException.getMessage()));
-			this.closeBusinessPartnerDAO();
 			return updateBusinessPartnerResult;
 		}
 		
@@ -216,22 +202,7 @@ public class BusinessPartnerService {
 			
 			logger.error(MessageFormat.format(this.resources.getString("businessPartner.updateError"), businessPartner.getId()), e);
 		}
-		finally {
-			this.closeBusinessPartnerDAO();
-		}
 		
 		return updateBusinessPartnerResult;
-	}
-	
-	
-	/**
-	 * Closes the business partner DAO.
-	 */
-	private void closeBusinessPartnerDAO() {
-		try {
-			this.businessPartnerDAO.close();
-		} catch (IOException e) {
-			logger.error(this.resources.getString("businessPartner.closeFailed"), e);
-		}
 	}
 }

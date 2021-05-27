@@ -15,7 +15,8 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import backend.dao.BusinessPartnerHibernateDao;
+import backend.dao.BusinessPartnerDao;
+import backend.dao.DAOManager;
 import backend.model.BusinessPartner;
 import backend.model.BusinessPartnerArray;
 import backend.model.webservice.WebServiceMessageType;
@@ -37,7 +38,7 @@ public class BusinessPartnerServiceTest {
 	/**
 	 * DAO to access business partner data.
 	 */
-	private static BusinessPartnerHibernateDao businessPartnerDAO;
+	private static BusinessPartnerDao businessPartnerDAO;
 	
 	/**
 	 * Test business partner: Amalgamated Moose Pasture.
@@ -55,7 +56,7 @@ public class BusinessPartnerServiceTest {
 	 * Tasks to be performed once at startup of test class.
 	 */
 	public static void setUpClass() {
-		businessPartnerDAO = new BusinessPartnerHibernateDao();
+		businessPartnerDAO = DAOManager.getInstance().getBusinessPartnerDAO();
 	}
 	
 	
@@ -65,7 +66,7 @@ public class BusinessPartnerServiceTest {
 	 */
 	public static void tearDownClass() {
 		try {
-			businessPartnerDAO.close();
+			DAOManager.getInstance().close();
 		} catch (IOException e) {
 			fail(e.getMessage());
 		}

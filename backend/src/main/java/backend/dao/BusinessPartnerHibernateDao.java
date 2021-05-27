@@ -3,6 +3,7 @@ package backend.dao;
 import java.util.List;
 
 import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -18,10 +19,18 @@ import backend.model.BusinessPartner;
  */
 public class BusinessPartnerHibernateDao extends HibernateDao implements BusinessPartnerDao {
 	/**
-	 * Default constructor.
+	 * Factory for database session.
 	 */
-	public BusinessPartnerHibernateDao() {
-		
+	protected EntityManagerFactory sessionFactory;
+	
+	
+	/**
+	 * Default constructor.
+	 * 
+	 * @param sessionFactory The database session factory.
+	 */
+	public BusinessPartnerHibernateDao(final EntityManagerFactory sessionFactory) {
+		this.sessionFactory = sessionFactory;
 	}
 
 	

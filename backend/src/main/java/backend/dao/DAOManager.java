@@ -37,6 +37,11 @@ public class DAOManager implements Closeable {
 	 */
 	private MaterialDao materialDao;
 	
+	/**
+	 * DAO to manage business partner data.
+	 */
+	private BusinessPartnerDao businessPartnerDao;
+	
 	
 	/**
 	 * Initializes the DAOManager.
@@ -106,6 +111,19 @@ public class DAOManager implements Closeable {
 			this.materialDao = new MaterialHibernateDao(this.sessionFactory);
 		
 		return this.materialDao;
+	}
+	
+	
+	/**
+	 * Returns a DAO to manage business partner data.
+	 * 
+	 * @return The BusinessPartnerDAO.
+	 */
+	public BusinessPartnerDao getBusinessPartnerDAO() {
+		if(this.businessPartnerDao == null)
+			this.businessPartnerDao = new BusinessPartnerHibernateDao(this.sessionFactory);
+		
+		return this.businessPartnerDao;
 	}
 
 	
