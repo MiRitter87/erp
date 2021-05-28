@@ -6,6 +6,7 @@ import java.util.Map;
 
 import javax.persistence.EntityGraph;
 import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -21,10 +22,18 @@ import backend.model.SalesOrder;
  */
 public class SalesOrderHibernateDao extends HibernateDao implements SalesOrderDao {
 	/**
-	 * Default constructor.
+	 * Factory for database session.
 	 */
-	public SalesOrderHibernateDao() {
-		
+	protected EntityManagerFactory sessionFactory;
+	
+	
+	/**
+	 * Default constructor.
+	 * 
+	 * @param sessionFactory The database session factory.
+	 */
+	public SalesOrderHibernateDao(final EntityManagerFactory sessionFactory) {
+		this.sessionFactory = sessionFactory;
 	}
 	
 	

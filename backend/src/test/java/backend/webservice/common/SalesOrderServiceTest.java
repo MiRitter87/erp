@@ -26,7 +26,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import backend.dao.BusinessPartnerDao;
 import backend.dao.DAOManager;
 import backend.dao.MaterialDao;
-import backend.dao.SalesOrderHibernateDao;
+import backend.dao.SalesOrderDao;
 import backend.model.BusinessPartner;
 import backend.model.Currency;
 import backend.model.Material;
@@ -56,7 +56,7 @@ public class SalesOrderServiceTest {
 	/**
 	 * DAO to access sales order data.
 	 */
-	private static SalesOrderHibernateDao orderDAO;
+	private static SalesOrderDao orderDAO;
 	
 	/**
 	 * DAO to access material data.
@@ -116,7 +116,7 @@ public class SalesOrderServiceTest {
 	public static void setUpClass() {
 		materialDAO = DAOManager.getInstance().getMaterialDAO();
 		partnerDAO = DAOManager.getInstance().getBusinessPartnerDAO();
-		orderDAO = new SalesOrderHibernateDao();
+		orderDAO = DAOManager.getInstance().getSalesOrderDAO();
 	}
 	
 	
@@ -126,7 +126,6 @@ public class SalesOrderServiceTest {
 	 */
 	public static void tearDownClass() {
 		try {
-			orderDAO.close();
 			DAOManager.getInstance().close();
 		} catch (IOException e) {
 			fail(e.getMessage());

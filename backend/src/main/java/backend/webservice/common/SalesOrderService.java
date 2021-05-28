@@ -1,6 +1,6 @@
 package backend.webservice.common;
 
-import java.io.IOException;
+
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -12,7 +12,7 @@ import org.apache.logging.log4j.Logger;
 import backend.dao.BusinessPartnerDao;
 import backend.dao.DAOManager;
 import backend.dao.MaterialDao;
-import backend.dao.SalesOrderHibernateDao;
+import backend.dao.SalesOrderDao;
 import backend.exception.DuplicateIdentifierException;
 import backend.exception.NoItemsException;
 import backend.exception.ObjectUnchangedException;
@@ -37,7 +37,7 @@ public class SalesOrderService {
 	/**
 	 * DAO for sales order access.
 	 */
-	private SalesOrderHibernateDao salesOrderDAO;
+	private SalesOrderDao salesOrderDAO;
 	
 	/**
 	 * Manager for material inventory.
@@ -59,7 +59,7 @@ public class SalesOrderService {
 	 * Initializes the sales order service.
 	 */
 	public SalesOrderService() {
-		this.salesOrderDAO = new SalesOrderHibernateDao();
+		this.salesOrderDAO = DAOManager.getInstance().getSalesOrderDAO();
 		this.inventoryManager = new SalesOrderInventoryManager();
 	}
 	
@@ -93,9 +93,6 @@ public class SalesOrderService {
 			
 			logger.error(MessageFormat.format(this.resources.getString("salesOrder.getError"), id), e);
 		}
-		finally {
-			this.closeSalesOrderDAO();
-		}
 		
 		return getSalesOrderResult;
 	}
@@ -119,9 +116,6 @@ public class SalesOrderService {
 			
 			logger.error(this.resources.getString("salesOrder.getSalesOrdersError"), e);
 		}
-		finally {
-			this.closeSalesOrderDAO();
-		}
 		
 		return getSalesOrdersResult;
 	}
@@ -144,19 +138,16 @@ public class SalesOrderService {
 			addSalesOrderResult.addMessage(new WebServiceMessage(
 					WebServiceMessageType.E, this.resources.getString("salesOrder.addError")));	
 			logger.error(this.resources.getString("salesOrder.addError"), exception);
-			this.closeSalesOrderDAO();
 			return addSalesOrderResult;
 		}
 			
 		addSalesOrderResult = this.validate(convertedSalesOrder);
 		if(WebServiceTools.resultContainsErrorMessage(addSalesOrderResult)) {
-			this.closeSalesOrderDAO();
 			return addSalesOrderResult;
 		}
 	
 		addSalesOrderResult = this.add(convertedSalesOrder, addSalesOrderResult);
 		addSalesOrderResult.setData(convertedSalesOrder.getId());
-		this.closeSalesOrderDAO();
 		
 		return addSalesOrderResult;
 	}
@@ -195,9 +186,6 @@ public class SalesOrderService {
 			
 			logger.error(MessageFormat.format(this.resources.getString("salesOrder.deleteError"), id), e);
 		}
-		finally {
-			this.closeSalesOrderDAO();
-		}
 		
 		return deleteSalesOrderResult;
 	}
@@ -220,19 +208,16 @@ public class SalesOrderService {
 			updateSalesOrderResult.addMessage(new WebServiceMessage(
 					WebServiceMessageType.E, this.resources.getString("salesOrder.updateError")));	
 			logger.error(this.resources.getString("salesOrder.updateError"), exception);
-			this.closeSalesOrderDAO();
 			return updateSalesOrderResult;
 		}
 		
 		updateSalesOrderResult = this.validate(convertedSalesOrder);
 		if(WebServiceTools.resultContainsErrorMessage(updateSalesOrderResult)) {
-			this.closeSalesOrderDAO();
 			return updateSalesOrderResult;
 		}
 		
 		updateSalesOrderResult = this.update(convertedSalesOrder, updateSalesOrderResult);
-		this.closeSalesOrderDAO();
-		
+
 		return updateSalesOrderResult;
 	}
 	
@@ -400,17 +385,5 @@ public class SalesOrderService {
 		}
 		
 		return orderItems;
-	}
-	
-	
-	/**
-	 * Closes the sales order DAO.
-	 */
-	private void closeSalesOrderDAO() {
-		try {
-			this.salesOrderDAO.close();
-		} catch (IOException e) {
-			logger.error(this.resources.getString("salesOrder.closeFailed"), e);
-		}
 	}
 }
