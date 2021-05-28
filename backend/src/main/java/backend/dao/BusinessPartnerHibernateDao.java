@@ -17,7 +17,7 @@ import backend.model.BusinessPartner;
  * 
  * @author Michael
  */
-public class BusinessPartnerHibernateDao extends HibernateDao implements BusinessPartnerDao {
+public class BusinessPartnerHibernateDao implements BusinessPartnerDao {
 	/**
 	 * Factory for database session.
 	 */

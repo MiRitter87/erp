@@ -20,7 +20,7 @@ import backend.model.SalesOrder;
  * 
  * @author Michael
  */
-public class SalesOrderHibernateDao extends HibernateDao implements SalesOrderDao {
+public class SalesOrderHibernateDao implements SalesOrderDao {
 	/**
 	 * Factory for database session.
 	 */
