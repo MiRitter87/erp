@@ -42,7 +42,6 @@ public class SalesOrderRestService {
 	 * @return A list of all sales orders.
 	 */
 	@GET
-	@Path("/")
 	@Produces(MediaType.APPLICATION_JSON)
 	public WebServiceResult getSalesOrders() {
 		SalesOrderService salesOrderService = new SalesOrderService();
@@ -57,7 +56,6 @@ public class SalesOrderRestService {
 	 * @return The result of the add function.
 	 */
 	@POST
-	@Path("/")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public WebServiceResult addSalesOrder(final SalesOrderWS salesOrder) {
@@ -73,7 +71,6 @@ public class SalesOrderRestService {
 	 * @return The result of the update function.
 	 */
 	@PUT
-	@Path("/")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public WebServiceResult updateSalesOrder(final SalesOrderWS salesOrder) {

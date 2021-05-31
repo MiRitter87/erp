@@ -45,7 +45,6 @@ public class EmployeeRestService {
 	 * @return A list of all employees.
 	 */
 	@GET
-	@Path("/")
 	@Produces(MediaType.APPLICATION_JSON)
 	public WebServiceResult getEmployees(@QueryParam("employeeHeadQuery") final EmployeeHeadQueryParameter employeeHeadQuery) {
 		EmployeeService employeeService = new EmployeeService();
@@ -60,7 +59,6 @@ public class EmployeeRestService {
 	 * @return The result of the add function.
 	 */
 	@POST
-	@Path("/")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public WebServiceResult addEmployee(final Employee employee) {
@@ -76,7 +74,6 @@ public class EmployeeRestService {
 	 * @return The result of the update function.
 	 */
 	@PUT
-	@Path("/")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public WebServiceResult updateEmployee(final Employee employee) {

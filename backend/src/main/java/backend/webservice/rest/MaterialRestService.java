@@ -42,7 +42,6 @@ public class MaterialRestService {
 	 * @return A list of all materials.
 	 */
 	@GET
-	@Path("/")
 	@Produces(MediaType.APPLICATION_JSON)
 	public WebServiceResult getMaterials() {
 		MaterialService materialService = new MaterialService();
@@ -57,7 +56,6 @@ public class MaterialRestService {
 	 * @return The result of the add function.
 	 */
 	@POST
-	@Path("/")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public WebServiceResult addMaterial(final Material material) {
@@ -73,7 +71,6 @@ public class MaterialRestService {
 	 * @return The result of the update function.
 	 */
 	@PUT
-	@Path("/")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public WebServiceResult updateMaterial(final Material material) {

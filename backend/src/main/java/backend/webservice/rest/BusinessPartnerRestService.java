@@ -42,7 +42,6 @@ public class BusinessPartnerRestService {
 	 * @return A list of all business partners.
 	 */
 	@GET
-	@Path("/")
 	@Produces(MediaType.APPLICATION_JSON)
 	public WebServiceResult getBusinessPartners() {
 		BusinessPartnerService businessPartnerService = new BusinessPartnerService();
@@ -57,7 +56,6 @@ public class BusinessPartnerRestService {
 	 * @return The result of the add function.
 	 */
 	@POST
-	@Path("/")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public WebServiceResult addBusinessPartner(final BusinessPartner businessPartner) {
@@ -73,7 +71,6 @@ public class BusinessPartnerRestService {
 	 * @return The result of the update function.
 	 */
 	@PUT
-	@Path("/")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public WebServiceResult updateBusinessPartner(final BusinessPartner businessPartner) {

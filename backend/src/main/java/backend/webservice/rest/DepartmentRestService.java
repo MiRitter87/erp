@@ -42,7 +42,6 @@ public class DepartmentRestService {
 	 * @return A list of all departments.
 	 */
 	@GET
-	@Path("/")
 	@Produces(MediaType.APPLICATION_JSON)
 	public WebServiceResult getDepartments() {
 		DepartmentService departmentService = new DepartmentService();
@@ -57,7 +56,6 @@ public class DepartmentRestService {
 	 * @return The result of the add function.
 	 */
 	@POST
-	@Path("/")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public WebServiceResult addDepartment(final Department department) {
@@ -73,7 +71,6 @@ public class DepartmentRestService {
 	 * @return The result of the update function.
 	 */
 	@PUT
-	@Path("/")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public WebServiceResult updateDepartment(final Department department) {
