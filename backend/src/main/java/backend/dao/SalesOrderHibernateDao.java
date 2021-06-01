@@ -14,6 +14,7 @@ import javax.persistence.criteria.Root;
 
 import backend.exception.ObjectUnchangedException;
 import backend.model.SalesOrder;
+import backend.model.SalesOrderStatus;
 
 /**
  * Provides access to sales order database persistence using Hibernate.
@@ -85,7 +86,7 @@ public class SalesOrderHibernateDao implements SalesOrderDao {
 
 	
 	@Override
-	public List<SalesOrder> getSalesOrders() throws Exception {
+	public List<SalesOrder> getSalesOrders(final SalesOrderStatus orderStatusQuery) throws Exception {
 		List<SalesOrder> salesOrders = null;
 		EntityManager entityManager = this.sessionFactory.createEntityManager();
 		

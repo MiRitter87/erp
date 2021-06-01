@@ -4,6 +4,7 @@ import java.util.List;
 
 import backend.exception.ObjectUnchangedException;
 import backend.model.SalesOrder;
+import backend.model.SalesOrderStatus;
 
 /**
  * Interface for sales order persistence.
@@ -32,10 +33,11 @@ public interface SalesOrderDao {
 	/**
 	 * Gets all sales orders.
 	 * 
+	 * @param orderStatusQuery Specifies the sales orders to be selected based on the status.
 	 * @return All sales orders.
 	 * @throws Exception Sales order retrieval failed.
 	 */
-	List<SalesOrder> getSalesOrders() throws Exception;
+	List<SalesOrder> getSalesOrders(final SalesOrderStatus orderStatusQuery) throws Exception;
 	
 	
 	/**

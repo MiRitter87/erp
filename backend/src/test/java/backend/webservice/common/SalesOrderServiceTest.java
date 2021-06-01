@@ -345,7 +345,7 @@ public class SalesOrderServiceTest {
 		
 		//Get the sales orders.
 		SalesOrderService service = new SalesOrderService();
-		getSalesOrdersResult = service.getSalesOrders();
+		getSalesOrdersResult = service.getSalesOrders(null);
 		salesOrders = (SalesOrderArray) getSalesOrdersResult.getData();
 		
 		//Assure no error message exists
@@ -409,7 +409,7 @@ public class SalesOrderServiceTest {
 			orderDAO.deleteSalesOrder(this.order1);
 			orderDAO.deleteSalesOrder(this.order2);
 			
-			getSalesOrdersResult = service.getSalesOrders();
+			getSalesOrdersResult = service.getSalesOrders(null);
 			
 			//There should be no error message
 			assertTrue(WebServiceTools.resultContainsErrorMessage(getSalesOrdersResult) == false);
@@ -811,7 +811,7 @@ public class SalesOrderServiceTest {
 		
 		//Get the sales order.
 		SalesOrderService service = new SalesOrderService();
-		getSalesOrdersResult = service.getSalesOrders();
+		getSalesOrdersResult = service.getSalesOrders(null);
 		
 		//Serialize the result to JSON.
 		try {

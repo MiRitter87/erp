@@ -20,6 +20,7 @@ import backend.exception.QuantityExceedsInventoryException;
 import backend.model.SalesOrder;
 import backend.model.SalesOrderArray;
 import backend.model.SalesOrderItem;
+import backend.model.SalesOrderStatus;
 import backend.model.webservice.SalesOrderItemWS;
 import backend.model.webservice.SalesOrderWS;
 import backend.model.webservice.WebServiceMessage;
@@ -101,14 +102,15 @@ public class SalesOrderService {
 	/**
 	 * Provides a list of all sales orders.
 	 * 
+	 * @param orderStatusQuery Specifies the sales orders to be selected based on the status.
 	 * @return A list of all sales orders.
 	 */
-	public WebServiceResult getSalesOrders() {
+	public WebServiceResult getSalesOrders(final SalesOrderStatus orderStatusQuery) {
 		SalesOrderArray salesOrders = new SalesOrderArray();
 		WebServiceResult getSalesOrdersResult = new WebServiceResult(null);
 		
 		try {
-			salesOrders.setSalesOrders(this.salesOrderDAO.getSalesOrders());
+			salesOrders.setSalesOrders(this.salesOrderDAO.getSalesOrders(orderStatusQuery));
 			getSalesOrdersResult.setData(salesOrders);
 		} catch (Exception e) {
 			getSalesOrdersResult.addMessage(new WebServiceMessage(

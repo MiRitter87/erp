@@ -8,8 +8,10 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
+import backend.model.SalesOrderStatus;
 import backend.model.webservice.SalesOrderWS;
 import backend.model.webservice.WebServiceResult;
 import backend.webservice.common.SalesOrderService;
@@ -43,9 +45,9 @@ public class SalesOrderRestService {
 	 */
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
-	public WebServiceResult getSalesOrders() {
+	public WebServiceResult getSalesOrders(@QueryParam("orderStatusQuery") final SalesOrderStatus orderStatusQuery) {
 		SalesOrderService salesOrderService = new SalesOrderService();
-		return salesOrderService.getSalesOrders();
+		return salesOrderService.getSalesOrders(orderStatusQuery);
 	}
 	
 	
