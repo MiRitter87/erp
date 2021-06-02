@@ -101,6 +101,7 @@ public class SalesOrderHibernateDao implements SalesOrderDao {
 			CriteriaQuery<SalesOrder> criteriaQuery = criteriaBuilder.createQuery(SalesOrder.class);
 			Root<SalesOrder> criteria = criteriaQuery.from(SalesOrder.class);
 			criteriaQuery.select(criteria);
+			this.applyOrderStatusQueryParameter(orderStatusQuery, criteriaQuery, criteriaBuilder, criteria);			
 			criteriaQuery.orderBy(criteriaBuilder.asc(criteria.get("id")));	//Order by id ascending
 			TypedQuery<SalesOrder> typedQuery = entityManager.createQuery(criteriaQuery);
 			typedQuery.setHint("javax.persistence.loadgraph", graph);	//Also fetch all item data.
@@ -167,5 +168,23 @@ public class SalesOrderHibernateDao implements SalesOrderDao {
 		
 		if(databaseSalesOrder.equals(salesOrder))
 			throw new ObjectUnchangedException();
+	}
+	
+	
+	/**
+	 * Applies the order status query parameter to the sales order query.
+	 * 
+	 * @param orderStatusQuery The query parameter for sales order status.
+	 * @param orderCriteriaQuery The sales order criteria query.
+	 * @param criteriaBuilder The builder of criterias.
+	 * @param criteria The root entity of the sales order that is being queried.
+	 */
+	private void applyOrderStatusQueryParameter(final SalesOrderStatus orderStatusQuery, final CriteriaQuery<SalesOrder> orderCriteriaQuery,
+			final CriteriaBuilder criteriaBuilder, final Root<SalesOrder> criteria) {
+		
+		if(orderStatusQuery == null)
+			return;	//No further query restrictions needed.
+		
+		orderCriteriaQuery.where(criteriaBuilder.equal(criteria.get("status"), orderStatusQuery));
 	}
 }

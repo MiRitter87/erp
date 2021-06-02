@@ -243,7 +243,7 @@ public class SalesOrderServiceTest {
 		this.order2.setBillToParty(this.partner);
 		this.order2.setOrderDate(new Date());
 		this.order2.setRequestedDeliveryDate(tomorrow.getTime());
-		this.order2.setStatus(SalesOrderStatus.OPEN);
+		this.order2.setStatus(SalesOrderStatus.IN_PROCESS);
 		this.order2.addItem(this.orderItem21);
 		this.order2.addItem(this.orderItem22);
 		
@@ -392,6 +392,38 @@ public class SalesOrderServiceTest {
 		assertEquals(salesOrderItem.getMaterial(), this.orderItem22.getMaterial());
 		assertEquals(salesOrderItem.getQuantity(), this.orderItem22.getQuantity());
 		assertEquals(salesOrderItem.getPriceTotal(), this.orderItem22.getPriceTotal());
+	}
+	
+	
+	@Test
+	/**
+	 * Tests the retrieval of all sales orders that are in status "In Process".
+	 */
+	public void testGetSalesOrdersInProcess() {
+		WebServiceResult getSalesOrdersResult;
+		SalesOrderArray salesOrders;
+		SalesOrder salesOrder;
+		
+		//Get the sales orders.
+		SalesOrderService service = new SalesOrderService();
+		getSalesOrdersResult = service.getSalesOrders(SalesOrderStatus.IN_PROCESS);
+		salesOrders = (SalesOrderArray) getSalesOrdersResult.getData();
+		
+		//Assure no error message exists
+		assertTrue(WebServiceTools.resultContainsErrorMessage(getSalesOrdersResult) == false);
+		
+		//Check if one sales order is returned.
+		assertTrue(salesOrders.getSalesOrders().size() == 1);
+		
+		//Check the sales order.
+		salesOrder = salesOrders.getSalesOrders().get(0);
+		assertEquals(salesOrder.getId(), this.order2.getId());
+		assertEquals(salesOrder.getSoldToParty(), this.order2.getSoldToParty());
+		assertEquals(salesOrder.getShipToParty(), this.order2.getShipToParty());
+		assertEquals(salesOrder.getBillToParty(), this.order2.getBillToParty());
+		assertEquals(salesOrder.getOrderDate().getTime(), this.order2.getOrderDate().getTime());
+		assertEquals(salesOrder.getRequestedDeliveryDate().getTime(), this.order2.getRequestedDeliveryDate().getTime());
+		assertEquals(salesOrder.getStatus(), this.order2.getStatus());
 	}
 	
 	
