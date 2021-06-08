@@ -3,7 +3,7 @@
         xsi:schemaLocation="http://java.sun.com/xml/ns/persistence http://java.sun.com/xml/ns/persistence/persistence_2_0.xsd"
         version="2.0">
     <persistence-unit name="my-persistence-unit">
-    	<!-- The class that is persisted -->
+    	<!-- The classes that are persisted -->
     	<class>backend.model.EmployeeSalary</class>
         <class>backend.model.Employee</class>
         <class>backend.model.Department</class>
@@ -11,6 +11,7 @@
         <class>backend.model.BusinessPartner</class>
         <class>backend.model.SalesOrder</class>
         <class>backend.model.SalesOrderItem</class>
+        <class>backend.model.Image</class>
         
         <!-- Several configuration properties -->
         <properties>

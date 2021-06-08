@@ -11,6 +11,7 @@
         <class>backend.model.BusinessPartner</class>
         <class>backend.model.SalesOrder</class>
         <class>backend.model.SalesOrderItem</class>
+        <class>backend.model.Image</class>
         
         <!-- Several configuration properties -->
         <properties>
