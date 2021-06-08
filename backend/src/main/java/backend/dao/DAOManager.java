@@ -47,6 +47,11 @@ public class DAOManager implements Closeable {
 	 */
 	private SalesOrderDao salesOrderDao;
 	
+	/**
+	 * DAO to manage image data.
+	 */
+	private ImageDao imageDao;
+	
 	
 	/**
 	 * Initializes the DAOManager.
@@ -143,6 +148,19 @@ public class DAOManager implements Closeable {
 		
 		return this.salesOrderDao;
 		
+	}
+	
+	
+	/**
+	 * Returns a DAO to manage image data.
+	 * 
+	 * @return The ImageDAO.
+	 */
+	public ImageDao getImageDAO() {
+		if(this.imageDao == null)
+			this.imageDao = new ImageHibernateDao(this.sessionFactory);
+		
+		return this.imageDao;
 	}
 
 	
