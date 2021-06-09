@@ -1,12 +1,16 @@
 package backend.webservice.common;
 
+import java.text.MessageFormat;
 import java.util.ResourceBundle;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import backend.dao.DAOManager;
 import backend.dao.ImageDao;
 import backend.model.Image;
+import backend.model.webservice.WebServiceMessage;
+import backend.model.webservice.WebServiceMessageType;
 import backend.model.webservice.WebServiceResult;
 
 /**
@@ -38,7 +42,31 @@ public class ImageService {
 	 * @return The image with the given id, if found.
 	 */
 	public WebServiceResult getImage(final Integer id) {
-		return null;
+		Image image = null;
+		WebServiceResult getImageResult = new WebServiceResult(null);
+		
+		try {
+			this.imageDAO = DAOManager.getInstance().getImageDAO();
+			image = this.imageDAO.getImage(id);
+			
+			if(image != null) {
+				//Image found
+				getImageResult.setData(image);
+			}
+			else {
+				//Image not found
+				getImageResult.addMessage(new WebServiceMessage(WebServiceMessageType.E, 
+						MessageFormat.format(this.resources.getString("image.notFound"), id)));
+			}
+		}
+		catch (Exception e) {
+			getImageResult.addMessage(new WebServiceMessage(WebServiceMessageType.E,
+					MessageFormat.format(this.resources.getString("image.getError"), id)));
+			
+			logger.error(MessageFormat.format(this.resources.getString("image.getError"), id), e);
+		}
+		
+		return getImageResult;
 	}
 	
 	

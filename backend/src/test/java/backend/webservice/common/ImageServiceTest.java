@@ -20,6 +20,9 @@ import org.junit.jupiter.api.Test;
 import backend.dao.DAOManager;
 import backend.dao.ImageDao;
 import backend.model.Image;
+import backend.model.Material;
+import backend.model.webservice.WebServiceResult;
+import backend.tools.WebServiceTools;
 
 /**
  * Tests the ImageService.
@@ -148,14 +151,26 @@ public class ImageServiceTest {
     
     @Test
     /**
-     * Just a dummy test to see if setUp and tearDown are working. Will be substituted by real tests later on.
+     * Tests the retrieval of an image by its ID.
      */
-    public void test() {
-    	try {
-			Image testImage = imageDAO.getImage(this.dummyImage.getId());
-			assertArrayEquals(this.dummyImage.getData(), testImage.getData());		
-		} catch (Exception e) {
-			fail(e.getMessage());
-		}
+    public void testGetImage() {
+    	WebServiceResult getImageResult;
+		Image image;
+		
+		//Get the dummy image using the service.
+		ImageService imageService = new ImageService();
+		getImageResult = imageService.getImage(this.dummyImage.getId());
+		
+		//Assure no error message exists
+		assertTrue(WebServiceTools.resultContainsErrorMessage(getImageResult) == false);
+		
+		//Assure that an image is returned
+		assertTrue(getImageResult.getData() instanceof Image);
+		
+		image = (Image) getImageResult.getData();
+		
+		//Check each attribute of the image
+		assertEquals(this.dummyImage.getId(), image.getId());
+		assertArrayEquals(this.dummyImage.getData(), image.getData());
     }
 }
