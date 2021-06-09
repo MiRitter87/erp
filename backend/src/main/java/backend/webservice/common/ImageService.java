@@ -88,6 +88,33 @@ public class ImageService {
 	 * @return The result of the delete function.
 	 */
 	public WebServiceResult deleteImage(final Integer id) {
-		return null;
+		Image image = null;
+		WebServiceResult deleteImageResult = new WebServiceResult(null);
+		
+		//Check if a material with the given code exists.
+		try {
+			this.imageDAO = DAOManager.getInstance().getImageDAO();
+			image = this.imageDAO.getImage(id);
+			
+			if(image != null) {
+				//Delete image if exists.
+				this.imageDAO.deleteImage(image);
+				deleteImageResult.addMessage(new WebServiceMessage(WebServiceMessageType.S, 
+						MessageFormat.format(this.resources.getString("image.deleteSuccess"), id)));
+			}
+			else {
+				//Image not found.
+				deleteImageResult.addMessage(new WebServiceMessage(WebServiceMessageType.E, 
+						MessageFormat.format(this.resources.getString("image.notFound"), id)));
+			}
+		}
+		catch (Exception e) {
+			deleteImageResult.addMessage(new WebServiceMessage(WebServiceMessageType.E,
+					MessageFormat.format(this.resources.getString("image.deleteError"), id)));
+			
+			logger.error(MessageFormat.format(this.resources.getString("image.deleteError"), id), e);
+		}
+				
+		return deleteImageResult;
 	}
 }

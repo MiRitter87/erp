@@ -20,7 +20,7 @@ import org.junit.jupiter.api.Test;
 import backend.dao.DAOManager;
 import backend.dao.ImageDao;
 import backend.model.Image;
-import backend.model.Material;
+import backend.model.webservice.WebServiceMessageType;
 import backend.model.webservice.WebServiceResult;
 import backend.tools.WebServiceTools;
 
@@ -172,5 +172,43 @@ public class ImageServiceTest {
 		//Check each attribute of the image
 		assertEquals(this.dummyImage.getId(), image.getId());
 		assertArrayEquals(this.dummyImage.getData(), image.getData());
+    }
+    
+    
+    @Test
+    /**
+     * Tests the deletion of an image by its ID.
+     */
+    public void testDeleteImage() {
+    	WebServiceResult deleteImageResult;
+		Image deletedImage;
+		
+		//Delete dummy image using the WebService
+		ImageService imageService = new ImageService();
+		deleteImageResult = imageService.deleteImage(this.dummyImage.getId());
+		
+		//There should be no error messages
+		assertTrue(WebServiceTools.resultContainsErrorMessage(deleteImageResult) == false);
+		
+		//There should be a success message
+		assertTrue(deleteImageResult.getMessages().size() == 1);
+		assertTrue(deleteImageResult.getMessages().get(0).getType() == WebServiceMessageType.S);
+		
+		//Check if dummy image is missing using the DAO.
+		try {
+			deletedImage = imageDAO.getImage(this.dummyImage.getId());
+			
+			if(deletedImage != null) {
+				fail("Dummy image is still persisted but should have been deleted by the WebService operation 'deleteImage'.");				
+			}
+			else {
+				//If the image has been successfully deleted then add it again for subsequent test cases.
+				this.dummyImage.setId(null);
+				imageDAO.insertImage(this.dummyImage);
+			}
+				
+		} catch (Exception e) {
+			fail(e.getMessage());
+		}
     }
 }
