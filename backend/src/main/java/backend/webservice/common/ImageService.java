@@ -88,6 +88,18 @@ public class ImageService {
 			return addImageResult;
 		}
 		
+		//Insert image if validation is successful.
+		try {
+			this.imageDAO.insertImage(image);
+			addImageResult.addMessage(new WebServiceMessage(
+					WebServiceMessageType.S, this.resources.getString("image.addSuccess")));
+		} catch (Exception e) {
+			addImageResult.addMessage(new WebServiceMessage(
+					WebServiceMessageType.E, this.resources.getString("image.addError")));
+			
+			logger.error(this.resources.getString("image.addError"), e);
+		}
+		
 		return addImageResult;
 	}
 	
