@@ -77,7 +77,18 @@ public class ImageService {
 	 * @return The result of the add function.
 	 */
 	public WebServiceResult addImage(final Image image) {
-		return null;
+		WebServiceResult addImageResult = new WebServiceResult(null);
+		this.imageDAO = DAOManager.getInstance().getImageDAO();
+		
+		//Validate the given image.
+		try {
+			image.validate();
+		} catch (Exception validationException) {
+			addImageResult.addMessage(new WebServiceMessage(WebServiceMessageType.E, validationException.getMessage()));
+			return addImageResult;
+		}
+		
+		return addImageResult;
 	}
 	
 	

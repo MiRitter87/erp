@@ -1,5 +1,7 @@
 package backend.model;
 
+import java.util.Set;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -8,6 +10,11 @@ import javax.persistence.Id;
 import javax.persistence.Lob;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.validation.ConstraintViolation;
+import javax.validation.Validation;
+import javax.validation.Validator;
+import javax.validation.ValidatorFactory;
+import javax.validation.constraints.NotNull;
 
 
 /**
@@ -32,6 +39,7 @@ public class Image {
 	 */
 	@Lob
     @Column(name="DATA", nullable=false, columnDefinition="BLOB")
+	@NotNull(message = "{image.data.notNull.message}")
     private byte[] data;
 	
 	
@@ -72,5 +80,31 @@ public class Image {
 	 */
 	public void setData(byte[] data) {
 		this.data = data;
+	}
+	
+	
+	/**
+	 * Validates the image.
+	 * 
+	 * @throws Exception In case a general validation error occurred.
+	 */
+	public void validate() throws Exception {
+		this.validateAnnotations();
+	}
+	
+	
+	/**
+	 * Validates the material according to the annotations of the Validation Framework.
+	 * 
+	 * @exception Exception In case the validation failed.
+	 */
+	private void validateAnnotations() throws Exception {
+		ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
+		Validator validator = factory.getValidator();
+		Set<ConstraintViolation<Image>> violations = validator.validate(this);
+		
+		for(ConstraintViolation<Image> violation:violations) {
+			throw new Exception(violation.getMessage());
+		}
 	}
 }

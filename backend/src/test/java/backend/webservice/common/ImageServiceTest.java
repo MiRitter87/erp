@@ -1,6 +1,7 @@
 package backend.webservice.common;
 
 import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.fail;
@@ -23,6 +24,7 @@ import backend.model.Image;
 import backend.model.webservice.WebServiceMessageType;
 import backend.model.webservice.WebServiceResult;
 import backend.tools.WebServiceTools;
+import backend.tools.test.ValidationMessageProvider;
 
 /**
  * Tests the ImageService.
@@ -210,5 +212,36 @@ public class ImageServiceTest {
 		} catch (Exception e) {
 			fail(e.getMessage());
 		}
+    }
+    
+    
+    @Test
+    /**
+     * Tests adding of an image that is invalid (data part being null).
+     */
+    public void testAddInvalidImage() {
+    	Image newImage = new Image();
+		WebServiceResult addImageResult;
+		ValidationMessageProvider messageProvider = new ValidationMessageProvider();
+		String actualErrorMessage, expectedErrorMessage;
+		
+		//Define the new image
+		newImage.setData(null);
+		
+		//Add a new image to the database via WebService
+		ImageService imageService = new ImageService();
+		addImageResult = imageService.addImage(newImage);
+		
+		//There should be a return message of type E
+		assertTrue(addImageResult.getMessages().size() == 1);
+		assertTrue(addImageResult.getMessages().get(0).getType() == WebServiceMessageType.E);
+		
+		//A proper message should be provided.
+		actualErrorMessage = addImageResult.getMessages().get(0).getText();
+		expectedErrorMessage = messageProvider.getNotNullValidationMessage("image", "data");
+		assertEquals(expectedErrorMessage, actualErrorMessage);
+		
+		//The new image should not have been persisted
+		assertNull(newImage.getId());
     }
 }
