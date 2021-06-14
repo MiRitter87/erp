@@ -6,6 +6,7 @@ import java.util.ResourceBundle;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
+import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -23,7 +24,6 @@ import backend.model.webservice.WebServiceMessage;
 import backend.model.webservice.WebServiceMessageType;
 import backend.model.webservice.WebServiceResult;
 import backend.webservice.common.ImageService;
-import backend.webservice.common.MaterialService;
 
 /**
  * WebService for material access using REST technology.
@@ -43,6 +43,13 @@ public class ImageRestService {
 	private ResourceBundle resources = ResourceBundle.getBundle("backend");
 	
 	
+	/**
+	 * Adds an image.
+	 * 
+	 * @param uploadedInputStream  The image data.
+	 * @param fileDetail Details of the file.
+	 * @return The result of the add function.
+	 */
 	@POST
 	@Consumes(MediaType.MULTIPART_FORM_DATA)
 	@Produces(MediaType.APPLICATION_JSON)
@@ -65,6 +72,12 @@ public class ImageRestService {
 	}
 	
 	
+	/**
+	 * Deletes the image with the given id.
+	 * 
+	 * @param id The id of the image to be deleted.
+	 * @return The result of the delete function.
+	 */
 	@DELETE
 	@Path("/{id}")
 	@Consumes(MediaType.APPLICATION_JSON)
@@ -72,6 +85,21 @@ public class ImageRestService {
 	public WebServiceResult deleteImage(@PathParam("id") final Integer id) {
 		ImageService imageService = new ImageService();
 		return imageService.deleteImage(id);
+	}
+	
+	
+	/**
+	 * Provides the image with the given ID.
+	 * 
+	 * @param id The ID of the image.
+	 * @return The image with the given ID.
+	 */
+	@GET
+	@Path("/{id}")
+	@Produces(MediaType.APPLICATION_JSON)
+	public WebServiceResult getImage(@PathParam("id") final Integer id) {
+		ImageService imageService = new ImageService();
+		return imageService.getImage(id);		
 	}
 	
 	
