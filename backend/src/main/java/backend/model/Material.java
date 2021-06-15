@@ -3,6 +3,7 @@ package backend.model;
 import java.math.BigDecimal;
 import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -10,6 +11,8 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.ConstraintViolation;
@@ -83,6 +86,13 @@ public class Material {
 	@Min(value = 0, message = "{material.inventory.min.message}")
 	@NotNull(message = "{material.inventory.notNull.message}")
 	private Long inventory;
+	
+	/**
+	 * An image of the material.
+	 */
+	@OneToOne(targetEntity = Image.class, cascade = CascadeType.ALL, orphanRemoval = true)
+	@JoinColumn(name="IMAGE_ID")
+	private Image image;
 	
 	
 	/**
@@ -228,6 +238,22 @@ public class Material {
 	 */
 	public void setInventory(Long inventory) {
 		this.inventory = inventory;
+	}
+
+
+	/**
+	 * @return the image
+	 */
+	public Image getImage() {
+		return image;
+	}
+
+
+	/**
+	 * @param image the image to set
+	 */
+	public void setImage(Image image) {
+		this.image = image;
 	}
 
 

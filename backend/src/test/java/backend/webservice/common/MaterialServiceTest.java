@@ -105,6 +105,7 @@ public class MaterialServiceTest {
 		this.rx570.setPricePerUnit(BigDecimal.valueOf(Double.valueOf(189.99)));
 		this.rx570.setCurrency(Currency.EUR);
 		this.rx570.setInventory(Long.valueOf(10));
+		this.rx570.setImage(null);
 		
 		this.g4560 = new Material();
 		this.g4560.setName("Pentium G4560");
@@ -113,6 +114,7 @@ public class MaterialServiceTest {
 		this.g4560.setPricePerUnit(BigDecimal.valueOf(Double.valueOf(54.99)));
 		this.g4560.setCurrency(Currency.EUR);
 		this.g4560.setInventory(Long.valueOf(25));
+		this.g4560.setImage(null);
 		
 		try {
 			materialDAO.insertMaterial(this.rx570);
