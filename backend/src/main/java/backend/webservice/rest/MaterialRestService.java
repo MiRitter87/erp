@@ -10,7 +10,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
-import backend.model.Material;
+import backend.model.webservice.MaterialWS;
 import backend.model.webservice.WebServiceResult;
 import backend.webservice.common.MaterialService;
 
@@ -58,7 +58,7 @@ public class MaterialRestService {
 	@POST
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public WebServiceResult addMaterial(final Material material) {
+	public WebServiceResult addMaterial(final MaterialWS material) {
 		MaterialService materialService = new MaterialService();
 		return materialService.addMaterial(material);
 	}
@@ -73,7 +73,7 @@ public class MaterialRestService {
 	@PUT
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public WebServiceResult updateMaterial(final Material material) {
+	public WebServiceResult updateMaterial(final MaterialWS material) {
 		MaterialService materialService = new MaterialService();
 		return materialService.updateMaterial(material);
 	}

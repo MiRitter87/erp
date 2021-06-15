@@ -7,10 +7,12 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import backend.dao.DAOManager;
+import backend.dao.ImageDao;
 import backend.dao.MaterialDao;
 import backend.exception.ObjectUnchangedException;
 import backend.model.Material;
 import backend.model.MaterialArray;
+import backend.model.webservice.MaterialWS;
 import backend.model.webservice.WebServiceMessage;
 import backend.model.webservice.WebServiceMessageType;
 import backend.model.webservice.WebServiceResult;
@@ -102,13 +104,24 @@ public class MaterialService {
 	 * @param material The material to be added.
 	 * @return The result of the add function.
 	 */
-	public WebServiceResult addMaterial(final Material material) {
+	public WebServiceResult addMaterial(final MaterialWS material) {
+		Material convertedMaterial = new Material();
 		WebServiceResult addMaterialResult = new WebServiceResult();
 		this.materialDAO = DAOManager.getInstance().getMaterialDAO();
 		
+		try {
+			convertedMaterial = this.convertMaterial(material);			
+		}
+		catch(Exception exception) {
+			addMaterialResult.addMessage(new WebServiceMessage(
+					WebServiceMessageType.E, this.resources.getString("material.addError")));	
+			logger.error(this.resources.getString("material.addError"), exception);
+			return addMaterialResult;
+		}
+		
 		//Validate the given material.
 		try {
-			material.validate();
+			convertedMaterial.validate();
 		} catch (Exception validationException) {
 			addMaterialResult.addMessage(new WebServiceMessage(WebServiceMessageType.E, validationException.getMessage()));
 			return addMaterialResult;
@@ -116,9 +129,10 @@ public class MaterialService {
 		
 		//Insert material if validation is successful.
 		try {
-			this.materialDAO.insertMaterial(material);
+			this.materialDAO.insertMaterial(convertedMaterial);
 			addMaterialResult.addMessage(new WebServiceMessage(
 					WebServiceMessageType.S, this.resources.getString("material.addSuccess")));
+			addMaterialResult.setData(convertedMaterial.getId());
 		} catch (Exception e) {
 			addMaterialResult.addMessage(new WebServiceMessage(
 					WebServiceMessageType.E, this.resources.getString("material.addError")));
@@ -174,13 +188,24 @@ public class MaterialService {
 	 * @param material The material to be updated.
 	 * @return The result of the update function.
 	 */
-	public WebServiceResult updateMaterial(final Material material) {
+	public WebServiceResult updateMaterial(final MaterialWS material) {
+		Material convertedMaterial = new Material();
 		WebServiceResult updateMaterialResult = new WebServiceResult(null);
 		this.materialDAO = DAOManager.getInstance().getMaterialDAO();
 		
+		try {
+			convertedMaterial = this.convertMaterial(material);			
+		}
+		catch(Exception exception) {
+			updateMaterialResult.addMessage(new WebServiceMessage(
+					WebServiceMessageType.E, this.resources.getString("material.updateError")));	
+			logger.error(this.resources.getString("material.updateError"), exception);
+			return updateMaterialResult;
+		}
+		
 		//Validation of the given material
 		try {
-			material.validate();
+			convertedMaterial.validate();
 		} catch (Exception validationException) {
 			updateMaterialResult.addMessage(new WebServiceMessage(WebServiceMessageType.E, validationException.getMessage()));
 			return updateMaterialResult;
@@ -188,21 +213,52 @@ public class MaterialService {
 		
 		//Update material if validation is successful.
 		try {
-			this.materialDAO.updateMaterial(material);
+			this.materialDAO.updateMaterial(convertedMaterial);
 			updateMaterialResult.addMessage(new WebServiceMessage(WebServiceMessageType.S, 
-					MessageFormat.format(this.resources.getString("material.updateSuccess"), material.getId())));
+					MessageFormat.format(this.resources.getString("material.updateSuccess"), convertedMaterial.getId())));
 		} 
 		catch(ObjectUnchangedException objectUnchangedException) {
 			updateMaterialResult.addMessage(new WebServiceMessage(WebServiceMessageType.I, 
-					MessageFormat.format(this.resources.getString("material.updateUnchanged"), material.getId())));
+					MessageFormat.format(this.resources.getString("material.updateUnchanged"), convertedMaterial.getId())));
 		}
 		catch (Exception e) {
 			updateMaterialResult.addMessage(new WebServiceMessage(WebServiceMessageType.E, 
-					MessageFormat.format(this.resources.getString("material.updateError"), material.getId())));
+					MessageFormat.format(this.resources.getString("material.updateError"), convertedMaterial.getId())));
 			
-			logger.error(MessageFormat.format(this.resources.getString("material.updateError"), material.getId()), e);
+			logger.error(MessageFormat.format(this.resources.getString("material.updateError"), convertedMaterial.getId()), e);
 		}
 		
 		return updateMaterialResult;
+	}
+	
+	
+	/**
+	 * Converts the lean material representation that is provided by the WebService to the internal data model for further processing.
+	 * 
+	 * @param materialWS The lean material representation provided by the WebService.
+	 * @return The Material model that is used by the backend internally.
+	 * @throws Exception In case the conversion fails.
+	 */
+	private Material convertMaterial(final MaterialWS materialWS) throws Exception {
+		Material convertedMaterial = new Material();
+		ImageDao imageDAO;
+		
+		convertedMaterial.setId(materialWS.getMaterialId());
+		convertedMaterial.setName(materialWS.getName());
+		convertedMaterial.setDescription(materialWS.getDescription());
+		convertedMaterial.setUnit(materialWS.getUnit());
+		convertedMaterial.setPricePerUnit(materialWS.getPricePerUnit());
+		convertedMaterial.setCurrency(materialWS.getCurrency());
+		convertedMaterial.setInventory(materialWS.getInventory());
+		
+		if(materialWS.getImageId() != null) {
+			imageDAO = DAOManager.getInstance().getImageDAO();
+			convertedMaterial.setImage(imageDAO.getImage(materialWS.getImageId()));
+		}
+		else {
+			convertedMaterial.setImage(null);			
+		}
+		
+		return convertedMaterial;
 	}
 }
