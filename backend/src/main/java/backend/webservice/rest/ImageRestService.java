@@ -19,7 +19,7 @@ import org.apache.logging.log4j.Logger;
 import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
 import org.glassfish.jersey.media.multipart.FormDataParam;
 
-import backend.model.Image;
+import backend.model.ImageData;
 import backend.model.webservice.WebServiceMessage;
 import backend.model.webservice.WebServiceMessageType;
 import backend.model.webservice.WebServiceResult;
@@ -56,7 +56,7 @@ public class ImageRestService {
 	public WebServiceResult addImage(@FormDataParam("file") InputStream uploadedInputStream, @FormDataParam("file") FormDataContentDisposition fileDetail) {
 		WebServiceResult addImageResult = new WebServiceResult();
 		ImageService imageService = new ImageService();		
-		Image image;
+		ImageData image;
 		
 		try {
 			image = this.getImageObject(uploadedInputStream);
@@ -110,8 +110,8 @@ public class ImageRestService {
 	 * @return An image object with the data of the given input stream.
 	 * @throws IOException If an I/O error occurs.
 	 */
-	private Image getImageObject(final InputStream uploadedInputStream) throws IOException {
-		Image image = new Image();
+	private ImageData getImageObject(final InputStream uploadedInputStream) throws IOException {
+		ImageData image = new ImageData();
 		image.setData(IOUtils.toByteArray(uploadedInputStream));
 		
 		return image;

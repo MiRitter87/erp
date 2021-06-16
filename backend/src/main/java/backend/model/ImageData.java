@@ -4,11 +4,7 @@ import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 import javax.persistence.Lob;
-import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
@@ -18,22 +14,13 @@ import javax.validation.constraints.NotNull;
 
 
 /**
- * A graphical image.
+ * The data part of the image that is actually persisted as entity at database level.
  * 
  * @author Michael
  */
-@Table(name="IMAGE")
 @Entity
-@SequenceGenerator(name = "imageSequence", initialValue = 1, allocationSize = 1)
-public class Image {
-	/**
-	 * The distinct identification number.
-	 */
-	@Id
-	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "imageSequence")
-	@Column(name="IMAGE_ID")
-	private Integer id;
-	
+@Table(name="IMAGE")
+public class ImageData extends BaseImage {
 	/**
 	 * The image data.
 	 */
@@ -43,30 +30,6 @@ public class Image {
     private byte[] data;
 	
 	
-	/**
-	 * Default constructor.
-	 */
-	public Image() {
-		
-	}
-
-
-	/**
-	 * @return the id
-	 */
-	public Integer getId() {
-		return id;
-	}
-
-
-	/**
-	 * @param id the id to set
-	 */
-	public void setId(Integer id) {
-		this.id = id;
-	}
-
-
 	/**
 	 * @return the data
 	 */
@@ -101,9 +64,9 @@ public class Image {
 	private void validateAnnotations() throws Exception {
 		ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
 		Validator validator = factory.getValidator();
-		Set<ConstraintViolation<Image>> violations = validator.validate(this);
+		Set<ConstraintViolation<BaseImage>> violations = validator.validate(this);
 		
-		for(ConstraintViolation<Image> violation:violations) {
+		for(ConstraintViolation<BaseImage> violation:violations) {
 			throw new Exception(violation.getMessage());
 		}
 	}

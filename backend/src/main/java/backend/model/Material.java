@@ -90,9 +90,9 @@ public class Material {
 	/**
 	 * An image of the material.
 	 */
-	@OneToOne(targetEntity = Image.class, cascade = CascadeType.ALL, orphanRemoval = true)
+	@OneToOne(targetEntity = ImageData.class, cascade = CascadeType.ALL, orphanRemoval = true)
 	@JoinColumn(name="IMAGE_ID")
-	private Image image;
+	private ImageData image;
 	
 	
 	/**
@@ -244,7 +244,7 @@ public class Material {
 	/**
 	 * @return the image
 	 */
-	public Image getImage() {
+	public ImageData getImage() {
 		return image;
 	}
 
@@ -252,7 +252,7 @@ public class Material {
 	/**
 	 * @param image the image to set
 	 */
-	public void setImage(Image image) {
+	public void setImage(ImageData image) {
 		this.image = image;
 	}
 

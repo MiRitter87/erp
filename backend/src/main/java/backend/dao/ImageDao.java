@@ -1,6 +1,6 @@
 package backend.dao;
 
-import backend.model.Image;
+import backend.model.ImageData;
 
 /**
  * Interface for image persistence.
@@ -14,7 +14,7 @@ public interface ImageDao {
 	 * @param image The image to be inserted.
 	 * @throws Exception Insertion failed.
 	 */
-	void insertImage(final Image image) throws Exception;
+	void insertImage(final ImageData image) throws Exception;
 	
 	
 	/**
@@ -23,7 +23,7 @@ public interface ImageDao {
 	 * @param image The image to be deleted.
 	 * @throws Exception Deletion failed.
 	 */
-	void deleteImage(final Image image) throws Exception;
+	void deleteImage(final ImageData image) throws Exception;
 	
 	
 	/**
@@ -33,5 +33,5 @@ public interface ImageDao {
 	 * @return The image with the given id.
 	 * @throws Exception Image retrieval failed.
 	 */
-	Image getImage(final Integer id) throws Exception;
+	ImageData getImage(final Integer id) throws Exception;
 }

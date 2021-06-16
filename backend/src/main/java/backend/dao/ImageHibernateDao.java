@@ -3,7 +3,7 @@ package backend.dao;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 
-import backend.model.Image;
+import backend.model.ImageData;
 
 /**
  * Provides access to image database persistence using Hibernate.
@@ -28,7 +28,7 @@ public class ImageHibernateDao implements ImageDao {
 	
 
 	@Override
-	public void insertImage(Image image) throws Exception {
+	public void insertImage(ImageData image) throws Exception {
 		EntityManager entityManager = this.sessionFactory.createEntityManager();
 		entityManager.getTransaction().begin();
 		
@@ -50,11 +50,11 @@ public class ImageHibernateDao implements ImageDao {
 
 	
 	@Override
-	public void deleteImage(Image image) throws Exception {
+	public void deleteImage(ImageData image) throws Exception {
 		EntityManager entityManager = this.sessionFactory.createEntityManager();
 		
 		//In order to successfully delete an entity, it first has to be fetched from the database.
-		Image deleteImage = entityManager.find(Image.class, image.getId());
+		ImageData deleteImage = entityManager.find(ImageData.class, image.getId());
 		
 		entityManager.getTransaction().begin();
 		
@@ -75,11 +75,11 @@ public class ImageHibernateDao implements ImageDao {
 
 	
 	@Override
-	public Image getImage(Integer id) throws Exception {
+	public ImageData getImage(Integer id) throws Exception {
 		EntityManager entityManager = this.sessionFactory.createEntityManager();
 		
 		entityManager.getTransaction().begin();
-		Image image = entityManager.find(Image.class, id);
+		ImageData image = entityManager.find(ImageData.class, id);
 		entityManager.getTransaction().commit();
 		entityManager.close();
 		

@@ -11,7 +11,9 @@
         <class>backend.model.BusinessPartner</class>
         <class>backend.model.SalesOrder</class>
         <class>backend.model.SalesOrderItem</class>
-        <class>backend.model.Image</class>
+        <class>backend.model.BaseImage</class>
+        <class>backend.model.ImageMetaData</class>
+        <class>backend.model.ImageData</class>
         
         <!-- Several configuration properties -->
         <properties>

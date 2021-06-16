@@ -20,7 +20,7 @@ import org.junit.jupiter.api.Test;
 
 import backend.dao.DAOManager;
 import backend.dao.ImageDao;
-import backend.model.Image;
+import backend.model.ImageData;
 import backend.model.webservice.WebServiceMessageType;
 import backend.model.webservice.WebServiceResult;
 import backend.tools.WebServiceTools;
@@ -40,7 +40,7 @@ public class ImageServiceTest {
 	/**
 	 * A dummy image for testing purpose.
 	 */
-	private Image dummyImage;
+	private ImageData dummyImage;
 	
 	/**
 	 * Path to the dummy image file.
@@ -92,7 +92,7 @@ public class ImageServiceTest {
 	 * Initializes the database with a dummy image.
 	 */
 	private void createDummyImage() {
-		this.dummyImage = new Image();
+		this.dummyImage = new ImageData();
 		this.dummyImage.setData(this.readFile(DUMMY_IMAGE_FILE_PATH));
 		
 		try {
@@ -157,7 +157,7 @@ public class ImageServiceTest {
      */
     public void testGetImage() {
     	WebServiceResult getImageResult;
-		Image image;
+		ImageData image;
 		
 		//Get the dummy image using the service.
 		ImageService imageService = new ImageService();
@@ -167,9 +167,9 @@ public class ImageServiceTest {
 		assertTrue(WebServiceTools.resultContainsErrorMessage(getImageResult) == false);
 		
 		//Assure that an image is returned
-		assertTrue(getImageResult.getData() instanceof Image);
+		assertTrue(getImageResult.getData() instanceof ImageData);
 		
-		image = (Image) getImageResult.getData();
+		image = (ImageData) getImageResult.getData();
 		
 		//Check each attribute of the image
 		assertEquals(this.dummyImage.getId(), image.getId());
@@ -183,7 +183,7 @@ public class ImageServiceTest {
      */
     public void testDeleteImage() {
     	WebServiceResult deleteImageResult;
-		Image deletedImage;
+		ImageData deletedImage;
 		
 		//Delete dummy image using the WebService
 		ImageService imageService = new ImageService();
@@ -220,7 +220,7 @@ public class ImageServiceTest {
      * Tests adding of an image that is invalid (data part being null).
      */
     public void testAddInvalidImage() {
-    	Image newImage = new Image();
+    	ImageData newImage = new ImageData();
 		WebServiceResult addImageResult;
 		ValidationMessageProvider messageProvider = new ValidationMessageProvider();
 		String actualErrorMessage, expectedErrorMessage;
@@ -252,8 +252,8 @@ public class ImageServiceTest {
      */
     public void testAddValidImage() {
     	WebServiceResult addImageResult;
-    	Image newImage = new Image();
-    	Image addedImage;
+    	ImageData newImage = new ImageData();
+    	ImageData addedImage;
     	
     	//Define the new image.
     	newImage.setData(this.readFile(DUMMY_IMAGE_FILE_PATH));

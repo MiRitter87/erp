@@ -8,7 +8,7 @@ import org.apache.logging.log4j.Logger;
 
 import backend.dao.DAOManager;
 import backend.dao.ImageDao;
-import backend.model.Image;
+import backend.model.ImageData;
 import backend.model.webservice.WebServiceMessage;
 import backend.model.webservice.WebServiceMessageType;
 import backend.model.webservice.WebServiceResult;
@@ -42,7 +42,7 @@ public class ImageService {
 	 * @return The image with the given id, if found.
 	 */
 	public WebServiceResult getImage(final Integer id) {
-		Image image = null;
+		ImageData image = null;
 		WebServiceResult getImageResult = new WebServiceResult(null);
 		
 		try {
@@ -76,7 +76,7 @@ public class ImageService {
 	 * @param image The image to be added.
 	 * @return The result of the add function.
 	 */
-	public WebServiceResult addImage(final Image image) {
+	public WebServiceResult addImage(final ImageData image) {
 		WebServiceResult addImageResult = new WebServiceResult(null);
 		this.imageDAO = DAOManager.getInstance().getImageDAO();
 		
@@ -111,7 +111,7 @@ public class ImageService {
 	 * @return The result of the delete function.
 	 */
 	public WebServiceResult deleteImage(final Integer id) {
-		Image image = null;
+		ImageData image = null;
 		WebServiceResult deleteImageResult = new WebServiceResult(null);
 		
 		//Check if a material with the given code exists.
