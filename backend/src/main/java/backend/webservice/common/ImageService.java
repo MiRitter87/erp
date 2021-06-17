@@ -47,7 +47,7 @@ public class ImageService {
 		
 		try {
 			this.imageDAO = DAOManager.getInstance().getImageDAO();
-			image = this.imageDAO.getImage(id);
+			image = this.imageDAO.getImageData(id);
 			
 			if(image != null) {
 				//Image found
@@ -117,7 +117,7 @@ public class ImageService {
 		//Check if a material with the given code exists.
 		try {
 			this.imageDAO = DAOManager.getInstance().getImageDAO();
-			image = this.imageDAO.getImage(id);
+			image = this.imageDAO.getImageData(id);
 			
 			if(image != null) {
 				//Delete image if exists.

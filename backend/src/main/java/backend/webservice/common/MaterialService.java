@@ -253,7 +253,7 @@ public class MaterialService {
 		
 		if(materialWS.getImageId() != null) {
 			imageDAO = DAOManager.getInstance().getImageDAO();
-			convertedMaterial.setImage(imageDAO.getImage(materialWS.getImageId()));
+			convertedMaterial.setImage(imageDAO.getImageMetaData(materialWS.getImageId()));
 		}
 		else {
 			convertedMaterial.setImage(null);			

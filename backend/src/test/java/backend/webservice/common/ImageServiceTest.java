@@ -21,6 +21,7 @@ import org.junit.jupiter.api.Test;
 import backend.dao.DAOManager;
 import backend.dao.ImageDao;
 import backend.model.ImageData;
+import backend.model.ImageMetaData;
 import backend.model.webservice.WebServiceMessageType;
 import backend.model.webservice.WebServiceResult;
 import backend.tools.WebServiceTools;
@@ -183,7 +184,8 @@ public class ImageServiceTest {
      */
     public void testDeleteImage() {
     	WebServiceResult deleteImageResult;
-		ImageData deletedImage;
+		ImageData deletedImageData;
+		ImageMetaData deletedImageMetaData;
 		
 		//Delete dummy image using the WebService
 		ImageService imageService = new ImageService();
@@ -198,9 +200,10 @@ public class ImageServiceTest {
 		
 		//Check if dummy image is missing using the DAO.
 		try {
-			deletedImage = imageDAO.getImage(this.dummyImage.getId());
+			deletedImageData = imageDAO.getImageData(this.dummyImage.getId());
+			deletedImageMetaData = imageDAO.getImageMetaData(this.dummyImage.getId());
 			
-			if(deletedImage != null) {
+			if(deletedImageData != null || deletedImageMetaData != null) {
 				fail("Dummy image is still persisted but should have been deleted by the WebService operation 'deleteImage'.");				
 			}
 			else {
@@ -253,7 +256,7 @@ public class ImageServiceTest {
     public void testAddValidImage() {
     	WebServiceResult addImageResult;
     	ImageData newImage = new ImageData();
-    	ImageData addedImage;
+    	ImageData addedImageData;
     	
     	//Define the new image.
     	newImage.setData(this.readFile(DUMMY_IMAGE_FILE_PATH));
@@ -271,11 +274,11 @@ public class ImageServiceTest {
 		
 		//Read the persisted image via DAO
 		try {
-			addedImage = imageDAO.getImage(newImage.getId());
+			addedImageData = imageDAO.getImageData(newImage.getId());
 			
 			//Check if the image read by the DAO equals the image inserted using the WebService in each attribute.
-			assertEquals(newImage.getId(), addedImage.getId());
-			assertArrayEquals(newImage.getData(), addedImage.getData());
+			assertEquals(newImage.getId(), addedImageData.getId());
+			assertArrayEquals(newImage.getData(), addedImageData.getData());
 		} catch (Exception e) {
 			fail(e.getMessage());
 		}

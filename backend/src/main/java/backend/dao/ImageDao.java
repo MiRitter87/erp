@@ -1,6 +1,7 @@
 package backend.dao;
 
 import backend.model.ImageData;
+import backend.model.ImageMetaData;
 
 /**
  * Interface for image persistence.
@@ -27,11 +28,21 @@ public interface ImageDao {
 	
 	
 	/**
-	 * Gets the image with the given id.
+	 * Gets the data of the image with the given id.
 	 * 
 	 * @param id The id of the image.
-	 * @return The image with the given id.
-	 * @throws Exception Image retrieval failed.
+	 * @return The data of the image with the given id.
+	 * @throws Exception Image data retrieval failed.
 	 */
-	ImageData getImage(final Integer id) throws Exception;
+	ImageData getImageData(final Integer id) throws Exception;
+	
+	
+	/**
+	 * Gets the metadata of the image with the given id.
+	 * 
+	 * @param id The id of the image.
+	 * @return The metadata of the image with the given id.
+	 * @throws Exception Image metadata retrieval failed.
+	 */
+	ImageMetaData getImageMetaData(final Integer id) throws Exception;
 }

@@ -4,6 +4,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 
 import backend.model.ImageData;
+import backend.model.ImageMetaData;
 
 /**
  * Provides access to image database persistence using Hibernate.
@@ -75,11 +76,24 @@ public class ImageHibernateDao implements ImageDao {
 
 	
 	@Override
-	public ImageData getImage(Integer id) throws Exception {
+	public ImageData getImageData(Integer id) throws Exception {
 		EntityManager entityManager = this.sessionFactory.createEntityManager();
 		
 		entityManager.getTransaction().begin();
 		ImageData image = entityManager.find(ImageData.class, id);
+		entityManager.getTransaction().commit();
+		entityManager.close();
+		
+		return image;
+	}
+
+
+	@Override
+	public ImageMetaData getImageMetaData(Integer id) throws Exception {
+		EntityManager entityManager = this.sessionFactory.createEntityManager();
+		
+		entityManager.getTransaction().begin();
+		ImageMetaData image = entityManager.find(ImageMetaData.class, id);
 		entityManager.getTransaction().commit();
 		entityManager.close();
 		
