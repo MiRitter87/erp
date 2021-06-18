@@ -93,6 +93,7 @@ public class ImageService {
 			this.imageDAO.insertImage(image);
 			addImageResult.addMessage(new WebServiceMessage(
 					WebServiceMessageType.S, this.resources.getString("image.addSuccess")));
+			addImageResult.setData(image.getId());
 		} catch (Exception e) {
 			addImageResult.addMessage(new WebServiceMessage(
 					WebServiceMessageType.E, this.resources.getString("image.addError")));

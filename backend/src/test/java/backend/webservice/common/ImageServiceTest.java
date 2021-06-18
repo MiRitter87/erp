@@ -1,6 +1,7 @@
 package backend.webservice.common;
 
 import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -271,6 +272,11 @@ public class ImageServiceTest {
 		//There should be a success message
 		assertTrue(addImageResult.getMessages().size() == 1);
 		assertTrue(addImageResult.getMessages().get(0).getType() == WebServiceMessageType.S);
+		
+		//The ID of the newly created image should be provided in the data part of the result message.
+		assertNotNull(addImageResult.getData());
+		assertTrue(addImageResult.getData() instanceof Integer);
+		assertEquals(newImage.getId(), addImageResult.getData());
 		
 		//Read the persisted image via DAO
 		try {
