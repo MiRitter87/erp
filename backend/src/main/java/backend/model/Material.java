@@ -90,7 +90,7 @@ public class Material {
 	/**
 	 * An image of the material.
 	 */
-	@OneToOne(targetEntity = ImageMetaData.class, cascade = CascadeType.ALL, orphanRemoval = true)
+	@OneToOne(targetEntity = ImageMetaData.class, cascade = CascadeType.MERGE, orphanRemoval = true)
 	@JoinColumn(name="IMAGE_ID")
 	private ImageMetaData image;
 	
