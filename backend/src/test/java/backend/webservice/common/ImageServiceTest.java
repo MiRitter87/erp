@@ -298,4 +298,37 @@ public class ImageServiceTest {
 			}
 		}
     }
+    
+    
+    @Test
+    /**
+     * Tests updating of meta data after the image has been created. No meta data exist before; just the BaseImage with the ID and the ImageData.
+     */
+    public void testUpdateMetaDataInitially() {
+    	WebServiceResult updateMetaDataResult;
+    	ImageMetaData imageMetaData;
+    	ImageMetaData updatedImageMetaData;
+    	ImageService imageService = new ImageService();
+    	
+    	//Update the meta data.
+    	imageMetaData = new ImageMetaData();
+    	imageMetaData.setId(this.dummyImage.getId());
+    	imageMetaData.setFileType("png");
+    	updateMetaDataResult = imageService.updateImageMetaData(imageMetaData);
+    	
+    	//Assure no error message exists
+		assertTrue(WebServiceTools.resultContainsErrorMessage(updateMetaDataResult) == false);
+		
+		//There should be a success message
+		assertTrue(updateMetaDataResult.getMessages().size() == 1);
+		assertTrue(updateMetaDataResult.getMessages().get(0).getType() == WebServiceMessageType.S);
+		
+		//Retrieve the updated image meta data and check if the changes have been persisted.
+		try {
+			updatedImageMetaData = imageDAO.getImageMetaData(this.dummyImage.getId());
+			assertEquals(imageMetaData.getFileType(), updatedImageMetaData.getFileType());
+		} catch (Exception e) {
+			fail(e.getMessage());
+		}
+    }
 }

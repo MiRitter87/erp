@@ -1,5 +1,6 @@
 package backend.dao;
 
+import backend.exception.ObjectUnchangedException;
 import backend.model.ImageData;
 import backend.model.ImageMetaData;
 
@@ -25,6 +26,16 @@ public interface ImageDao {
 	 * @throws Exception Deletion failed.
 	 */
 	void deleteImage(final ImageData image) throws Exception;
+	
+	
+	/**
+	 * Updates the meta data of an image.
+	 * 
+	 * @param imageMetaData The meta data of the image.
+	 * @throws ObjectUnchangedException The image meta data have not been changed.
+	 * @throws Exception Update failed.
+	 */
+	void updateImageMetaData(final ImageMetaData imageMetaData) throws ObjectUnchangedException, Exception;
 	
 	
 	/**

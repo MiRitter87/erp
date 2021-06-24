@@ -3,6 +3,7 @@ package backend.dao;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 
+import backend.exception.ObjectUnchangedException;
 import backend.model.ImageData;
 import backend.model.ImageMetaData;
 
@@ -98,5 +99,34 @@ public class ImageHibernateDao implements ImageDao {
 		entityManager.close();
 		
 		return image;
+	}
+
+
+	@Override
+	public void updateImageMetaData(ImageMetaData imageMetaData) throws Exception {
+		EntityManager entityManager;
+		
+		this.checkImageMetaDataChanged(imageMetaData);
+		
+		entityManager = this.sessionFactory.createEntityManager();
+		entityManager.getTransaction().begin();
+		entityManager.merge(imageMetaData);
+		entityManager.getTransaction().commit();
+		entityManager.close();		
+	}
+	
+	
+	/**
+	 * Checks if the given image meta data differ from the image meta data that are persisted at database level.
+	 * 
+	 * @param imageMetaData The image meta data to be checked.
+	 * @throws ObjectUnchangedException In case the image meta data have not been changed.
+	 * @throws Exception In case an error occurred during determination of the image meta data stored at the database.
+	 */
+	private void checkImageMetaDataChanged(final ImageMetaData imageMetaData) throws ObjectUnchangedException, Exception {
+		ImageMetaData databaseImageMetaData = this.getImageMetaData(imageMetaData.getId());
+		
+		if(databaseImageMetaData.equals(imageMetaData))
+			throw new ObjectUnchangedException();
 	}
 }

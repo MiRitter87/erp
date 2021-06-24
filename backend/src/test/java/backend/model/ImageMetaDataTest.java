@@ -57,42 +57,21 @@ public class ImageMetaDataTest {
 	
 	@Test
 	/**
-	 * Tests validation of the image meta data if the file type is null.
+	 * Tests validation of image meta data if the file type is too long.
 	 */
-	public void testFileTypeIsNull() {
-		ValidationMessageProvider messageProvider = new ValidationMessageProvider();	
-		this.imageMetaData.setFileType(null);
-		
-		String expectedErrorMessage = messageProvider.getNotNullValidationMessage("image", "fileType");
-		String errorMessage = "";
-		
-		try {
-			this.imageMetaData.validate();
-			fail("Validation should have failed because file type is null.");
-		} catch (Exception expected) {
-			errorMessage = expected.getMessage();
-		}
-		
-		assertEquals(expectedErrorMessage, errorMessage);
-	}
-	
-	
-	@Test
-	/**
-	 * Tests validation of the image meta data if the file type is not given.
-	 */
-	public void testFileTypeNotGiven() {
-		ValidationMessageProvider messageProvider = new ValidationMessageProvider();	
-		this.imageMetaData.setFileType("");
+	public void testFileTypeTooLong() {
+		ValidationMessageProvider messageProvider = new ValidationMessageProvider();		
+		this.imageMetaData.setFileType("abcd");
 		
 		String expectedErrorMessage = messageProvider.getSizeValidationMessage("image", "fileType", 
-				String.valueOf(this.imageMetaData.getFileType().length()), "1", "3");
+				String.valueOf(this.imageMetaData.getFileType().length()), "0", "3");
 		String errorMessage = "";
 		
 		try {
 			this.imageMetaData.validate();
-			fail("Validation should have failed because file type is not given.");
-		} catch (Exception expected) {
+			fail("Validation should have failed because file type is too long.");
+		} 
+		catch (Exception expected) {
 			errorMessage = expected.getMessage();
 		}
 		

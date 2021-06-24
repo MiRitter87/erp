@@ -8,7 +8,9 @@ import org.apache.logging.log4j.Logger;
 
 import backend.dao.DAOManager;
 import backend.dao.ImageDao;
+import backend.exception.ObjectUnchangedException;
 import backend.model.ImageData;
+import backend.model.ImageMetaData;
 import backend.model.webservice.WebServiceMessage;
 import backend.model.webservice.WebServiceMessageType;
 import backend.model.webservice.WebServiceResult;
@@ -140,5 +142,44 @@ public class ImageService {
 		}
 				
 		return deleteImageResult;
+	}
+	
+	
+	/**
+	 * Updates existing image meta data.
+	 * 
+	 * @param imageMetaData The image meta data to be updated.
+	 * @return The result of the update function.
+	 */
+	public WebServiceResult updateImageMetaData(final ImageMetaData imageMetaData) {
+		WebServiceResult updateImageMetaDataResult = new WebServiceResult(null);
+		this.imageDAO = DAOManager.getInstance().getImageDAO();
+		
+		//At first validate the given image meta data.
+		try {
+			imageMetaData.validate();
+		}
+		catch(Exception e) {
+			updateImageMetaDataResult.addMessage(new WebServiceMessage(WebServiceMessageType.E, e.getMessage()));
+			return updateImageMetaDataResult;
+		}
+		
+		try {
+			this.imageDAO.updateImageMetaData(imageMetaData);
+			updateImageMetaDataResult.addMessage(new WebServiceMessage(WebServiceMessageType.S, 
+					MessageFormat.format(this.resources.getString("image.metaData.updateSuccess"), imageMetaData.getId())));
+		} 
+		catch(ObjectUnchangedException objectUnchangedException) {
+			updateImageMetaDataResult.addMessage(new WebServiceMessage(WebServiceMessageType.I, 
+					MessageFormat.format(this.resources.getString("image.metaData.updateUnchanged"), imageMetaData.getId())));
+		}
+		catch (Exception e) {
+			updateImageMetaDataResult.addMessage(new WebServiceMessage(WebServiceMessageType.E, 
+					MessageFormat.format(this.resources.getString("image.metaData.updateError"), imageMetaData.getId())));
+			
+			logger.error(MessageFormat.format(this.resources.getString("image.metaData.updateError"), imageMetaData.getId()), e);
+		}
+		
+		return updateImageMetaDataResult;
 	}
 }
