@@ -28,7 +28,7 @@ public class ImageMetaDataTest {
 	protected void setUp() {
 		this.imageMetaData = new ImageMetaData();
 		this.imageMetaData.setId(1);
-		this.imageMetaData.setFileType("png");
+		this.imageMetaData.setMimeType("image/png");
 	}
 	
 	
@@ -61,10 +61,10 @@ public class ImageMetaDataTest {
 	 */
 	public void testFileTypeTooLong() {
 		ValidationMessageProvider messageProvider = new ValidationMessageProvider();		
-		this.imageMetaData.setFileType("abcd");
+		this.imageMetaData.setMimeType("abcde/abcd");
 		
-		String expectedErrorMessage = messageProvider.getSizeValidationMessage("image", "fileType", 
-				String.valueOf(this.imageMetaData.getFileType().length()), "0", "3");
+		String expectedErrorMessage = messageProvider.getSizeValidationMessage("image", "mimeType", 
+				String.valueOf(this.imageMetaData.getMimeType().length()), "0", "9");
 		String errorMessage = "";
 		
 		try {

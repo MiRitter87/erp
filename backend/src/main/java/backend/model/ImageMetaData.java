@@ -21,26 +21,26 @@ import javax.validation.constraints.Size;
 @Table(name="IMAGE")
 public class ImageMetaData extends BaseImage {
 	/**
-	 * The file type as defined by the file extension of the file name.
+	 * The MIME type of the file. For example: "image/png".
 	 */
-	@Column(name="FILE_TYPE", length = 3)
-	@Size(min = 0, max = 3, message = "{image.fileType.size.message}")
-	private String fileType;
+	@Column(name="MIME_TYPE", length = 9)
+	@Size(min = 0, max = 9, message = "{image.mimeType.size.message}")
+	private String mimeType;
 
 	
 	/**
-	 * @return the fileType
+	 * @return the mimeType
 	 */
-	public String getFileType() {
-		return fileType;
+	public String getMimeType() {
+		return mimeType;
 	}
 
 	
 	/**
-	 * @param fileType the fileType to set
+	 * @param mimeType the fileType to set
 	 */
-	public void setFileType(String fileType) {
-		this.fileType = fileType;
+	public void setMimeType(String mimeType) {
+		this.mimeType = mimeType;
 	}
 
 
@@ -48,7 +48,7 @@ public class ImageMetaData extends BaseImage {
 	public int hashCode() {
 		final int prime = 31;
 		int result = super.hashCode();
-		result = prime * result + ((fileType == null) ? 0 : fileType.hashCode());
+		result = prime * result + ((mimeType == null) ? 0 : mimeType.hashCode());
 		return result;
 	}
 
@@ -65,11 +65,11 @@ public class ImageMetaData extends BaseImage {
 			return false;
 		}
 		ImageMetaData other = (ImageMetaData) obj;
-		if (fileType == null) {
-			if (other.fileType != null) {
+		if (mimeType == null) {
+			if (other.mimeType != null) {
 				return false;
 			}
-		} else if (!fileType.equals(other.fileType)) {
+		} else if (!mimeType.equals(other.mimeType)) {
 			return false;
 		}
 		return true;

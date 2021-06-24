@@ -313,7 +313,7 @@ public class ImageServiceTest {
     	//Update the meta data.
     	imageMetaData = new ImageMetaData();
     	imageMetaData.setId(this.dummyImage.getId());
-    	imageMetaData.setFileType("png");
+    	imageMetaData.setMimeType("image/png");
     	updateMetaDataResult = imageService.updateImageMetaData(imageMetaData);
     	
     	//Assure no error message exists
@@ -326,7 +326,7 @@ public class ImageServiceTest {
 		//Retrieve the updated image meta data and check if the changes have been persisted.
 		try {
 			updatedImageMetaData = imageDAO.getImageMetaData(this.dummyImage.getId());
-			assertEquals(imageMetaData.getFileType(), updatedImageMetaData.getFileType());
+			assertEquals(imageMetaData.getMimeType(), updatedImageMetaData.getMimeType());
 		} catch (Exception e) {
 			fail(e.getMessage());
 		}
