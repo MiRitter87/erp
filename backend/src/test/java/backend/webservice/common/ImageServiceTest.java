@@ -40,9 +40,14 @@ public class ImageServiceTest {
 	private static ImageDao imageDAO;
 	
 	/**
-	 * A dummy image for testing purpose.
+	 * Data of a dummy image for testing purpose.
 	 */
-	private ImageData dummyImage;
+	private ImageData dummyImageData;
+	
+	/**
+	 * Meta data of a dummy image for testing purpose.
+	 */
+	private ImageMetaData dummyImageMetaData;
 	
 	/**
 	 * Path to the dummy image file.
@@ -94,11 +99,17 @@ public class ImageServiceTest {
 	 * Initializes the database with a dummy image.
 	 */
 	private void createDummyImage() {
-		this.dummyImage = new ImageData();
-		this.dummyImage.setData(this.readFile(DUMMY_IMAGE_FILE_PATH));
+		this.dummyImageData = new ImageData();
+		this.dummyImageData.setData(this.readFile(DUMMY_IMAGE_FILE_PATH));
+		
+		this.dummyImageMetaData = new ImageMetaData();
+		this.dummyImageMetaData.setMimeType("image/png");
 		
 		try {
-			imageDAO.insertImage(this.dummyImage);
+			imageDAO.insertImage(this.dummyImageData);
+			
+			this.dummyImageMetaData.setId(this.dummyImageData.getId());
+			imageDAO.updateImageMetaData(this.dummyImageMetaData);
 		} catch (Exception e) {
 			fail(e.getMessage());
 		}
@@ -110,7 +121,7 @@ public class ImageServiceTest {
 	 */
 	private void deleteDummyImage() {
 		try {
-			imageDAO.deleteImage(this.dummyImage);
+			imageDAO.deleteImage(this.dummyImageData);
 		} catch (Exception e) {
 			fail(e.getMessage());
 		}
@@ -157,13 +168,13 @@ public class ImageServiceTest {
     /**
      * Tests the retrieval of an image by its ID.
      */
-    public void testGetImage() {
+    public void testGetImageData() {
     	WebServiceResult getImageResult;
 		ImageData image;
 		
 		//Get the dummy image using the service.
 		ImageService imageService = new ImageService();
-		getImageResult = imageService.getImage(this.dummyImage.getId());
+		getImageResult = imageService.getImage(this.dummyImageData.getId());
 		
 		//Assure no error message exists
 		assertTrue(WebServiceTools.resultContainsErrorMessage(getImageResult) == false);
@@ -174,8 +185,8 @@ public class ImageServiceTest {
 		image = (ImageData) getImageResult.getData();
 		
 		//Check each attribute of the image
-		assertEquals(this.dummyImage.getId(), image.getId());
-		assertArrayEquals(this.dummyImage.getData(), image.getData());
+		assertEquals(this.dummyImageData.getId(), image.getId());
+		assertArrayEquals(this.dummyImageData.getData(), image.getData());
     }
     
     
@@ -190,7 +201,7 @@ public class ImageServiceTest {
 		
 		//Delete dummy image using the WebService
 		ImageService imageService = new ImageService();
-		deleteImageResult = imageService.deleteImage(this.dummyImage.getId());
+		deleteImageResult = imageService.deleteImage(this.dummyImageData.getId());
 		
 		//There should be no error messages
 		assertTrue(WebServiceTools.resultContainsErrorMessage(deleteImageResult) == false);
@@ -201,16 +212,16 @@ public class ImageServiceTest {
 		
 		//Check if dummy image is missing using the DAO.
 		try {
-			deletedImageData = imageDAO.getImageData(this.dummyImage.getId());
-			deletedImageMetaData = imageDAO.getImageMetaData(this.dummyImage.getId());
+			deletedImageData = imageDAO.getImageData(this.dummyImageData.getId());
+			deletedImageMetaData = imageDAO.getImageMetaData(this.dummyImageData.getId());
 			
 			if(deletedImageData != null || deletedImageMetaData != null) {
 				fail("Dummy image is still persisted but should have been deleted by the WebService operation 'deleteImage'.");				
 			}
 			else {
 				//If the image has been successfully deleted then add it again for subsequent test cases.
-				this.dummyImage.setId(null);
-				imageDAO.insertImage(this.dummyImage);
+				this.dummyImageData.setId(null);
+				imageDAO.insertImage(this.dummyImageData);
 			}
 				
 		} catch (Exception e) {
@@ -302,9 +313,9 @@ public class ImageServiceTest {
     
     @Test
     /**
-     * Tests updating of meta data after the image has been created. No meta data exist before; just the BaseImage with the ID and the ImageData.
+     * Tests updating of image meta data.
      */
-    public void testUpdateMetaDataInitially() {
+    public void testUpdateMetaData() {
     	WebServiceResult updateMetaDataResult;
     	ImageMetaData imageMetaData;
     	ImageMetaData updatedImageMetaData;
@@ -312,8 +323,8 @@ public class ImageServiceTest {
     	
     	//Update the meta data.
     	imageMetaData = new ImageMetaData();
-    	imageMetaData.setId(this.dummyImage.getId());
-    	imageMetaData.setMimeType("image/png");
+    	imageMetaData.setId(this.dummyImageData.getId());
+    	imageMetaData.setMimeType("image/jpg");
     	updateMetaDataResult = imageService.updateImageMetaData(imageMetaData);
     	
     	//Assure no error message exists
@@ -325,10 +336,36 @@ public class ImageServiceTest {
 		
 		//Retrieve the updated image meta data and check if the changes have been persisted.
 		try {
-			updatedImageMetaData = imageDAO.getImageMetaData(this.dummyImage.getId());
+			updatedImageMetaData = imageDAO.getImageMetaData(this.dummyImageData.getId());
 			assertEquals(imageMetaData.getMimeType(), updatedImageMetaData.getMimeType());
 		} catch (Exception e) {
 			fail(e.getMessage());
 		}
+    }
+    
+    
+    @Test
+    /**
+     * Tests the retrieval of image meta data.
+     */
+    public void testGetImageMetaData() {
+    	WebServiceResult getMetaDataResult;
+    	ImageMetaData imageMetaData;
+    	ImageService imageService = new ImageService();
+    	
+    	//Get image meta data via WebService
+    	getMetaDataResult = imageService.getImageMetaData(this.dummyImageData.getId());
+    	
+    	//Assure no error message exists
+    	assertTrue(WebServiceTools.resultContainsErrorMessage(getMetaDataResult) == false);
+    	
+    	//Assure that image meta data are returned.
+    	assertTrue(getMetaDataResult.getData() instanceof ImageMetaData);
+    	
+    	imageMetaData = (ImageMetaData) getMetaDataResult.getData();
+    	
+    	//Check each attribute of the image meta data.
+		assertEquals(this.dummyImageMetaData.getId(), imageMetaData.getId());
+		assertEquals(this.dummyImageMetaData.getMimeType(), imageMetaData.getMimeType());
     }
 }

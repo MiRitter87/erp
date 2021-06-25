@@ -182,4 +182,39 @@ public class ImageService {
 		
 		return updateImageMetaDataResult;
 	}
+	
+	
+	/**
+	 * Provides the meta data of the image with the given ID.
+	 * 
+	 * @param id The ID of the image whose meta data are requested.
+	 * @return The meta data of the image with the given ID.
+	 */
+	public WebServiceResult getImageMetaData(final Integer id) {
+		ImageMetaData imageMetaData = null;
+		WebServiceResult getImageMetaDataResult = new WebServiceResult(null);
+		
+		try {
+			this.imageDAO = DAOManager.getInstance().getImageDAO();
+			imageMetaData = this.imageDAO.getImageMetaData(id);
+			
+			if(imageMetaData != null) {
+				//Image meta data found
+				getImageMetaDataResult.setData(imageMetaData);
+			}
+			else {
+				//Image meta data not found
+				getImageMetaDataResult.addMessage(new WebServiceMessage(WebServiceMessageType.E, 
+						MessageFormat.format(this.resources.getString("image.metaData.notFound"), id)));
+			}
+		}
+		catch (Exception e) {
+			getImageMetaDataResult.addMessage(new WebServiceMessage(WebServiceMessageType.E,
+					MessageFormat.format(this.resources.getString("image.metaData.getError"), id)));
+			
+			logger.error(MessageFormat.format(this.resources.getString("image.metaData.getError"), id), e);
+		}
+		
+		return getImageMetaDataResult;
+	}
 }

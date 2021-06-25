@@ -122,6 +122,21 @@ public class ImageRestService {
 	
 	
 	/**
+	 * Provides the meta data of the image with the given id.
+	 * 
+	 * @param id The ID of the image.
+	 * @return The meta data of the image with the given ID.
+	 */
+	@GET
+	@Path("/metaData/{id}")
+	@Produces(MediaType.APPLICATION_JSON)
+	public WebServiceResult getImageMetaData(@PathParam("id") final Integer id) {
+		ImageService imageService = new ImageService();
+		return imageService.getImageMetaData(id);
+	}
+	
+	
+	/**
 	 * Provides an image object based on the given input stream.
 	 * 
 	 * @param uploadedInputStream The input stream containing the image data.
