@@ -53,6 +53,7 @@ public class ImageRestService {
 	 * @return The result of the add function.
 	 */
 	@POST
+	@Path("/data")
 	@Consumes(MediaType.MULTIPART_FORM_DATA)
 	@Produces(MediaType.APPLICATION_JSON)
 	public WebServiceResult addImage(@FormDataParam("file") InputStream uploadedInputStream, @FormDataParam("file") FormDataContentDisposition fileDetail) {
@@ -97,7 +98,7 @@ public class ImageRestService {
 	 * @return The image with the given ID.
 	 */
 	@GET
-	@Path("/{id}")
+	@Path("/data/{id}")
 	@Produces(MediaType.APPLICATION_JSON)
 	public WebServiceResult getImage(@PathParam("id") final Integer id) {
 		ImageService imageService = new ImageService();
