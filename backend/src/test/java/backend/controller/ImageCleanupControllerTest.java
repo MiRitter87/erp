@@ -1,5 +1,6 @@
 package backend.controller;
 
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.fail;
@@ -173,6 +174,29 @@ public class ImageCleanupControllerTest {
 			} catch (Exception e) {
 				fail(e.getMessage());
 			}
+		}
+    }
+    
+    
+    
+    /**
+     * Tests the cleanup method when an image exists that is not referenced to any master data object.
+     */
+    public void testCleanupWithObsoleteImages() {
+    	ImageCleanupController imageCleanupController = new ImageCleanupController();
+    	ImageMetaData databaseImage = null;
+    	
+    	try {
+    		//Cleanup obsolete images. The dummy image should be deleted because it is not referenced to any master data object.
+			imageCleanupController.cleanup();
+			
+			//Try to get the dummy image from the database.
+			databaseImage = imageDAO.getImageMetaData(this.dummyImageMetaData.getId());
+			
+			//Assure that the dummy image has been deleted.
+			assertNull(databaseImage);
+		} catch (Exception exception) {
+			fail(exception.getMessage());
 		}
     }
 }
