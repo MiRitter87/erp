@@ -293,6 +293,7 @@ public class Material {
 		result = prime * result + ((name == null) ? 0 : name.hashCode());
 		result = prime * result + ((pricePerUnit == null) ? 0 : pricePerUnit.hashCode());
 		result = prime * result + ((unit == null) ? 0 : unit.hashCode());
+		result = prime * result + ((image == null) ? 0 : image.hashCode());
 		return result;
 	}
 
@@ -345,6 +346,13 @@ public class Material {
 				return false;
 			}
 		} else if (!pricePerUnit.equals(other.pricePerUnit)) {
+			return false;
+		}
+		if (image == null) {
+			if (other.image != null) {
+				return false;
+			}
+		} else if (!image.equals(other.image)) {
 			return false;
 		}
 		if (unit != other.unit) {

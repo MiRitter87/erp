@@ -1,6 +1,7 @@
 package backend.dao;
 
 import java.util.List;
+import java.util.Set;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -136,6 +137,13 @@ public class MaterialHibernateDao implements MaterialDao {
 		entityManager.merge(material);
 		entityManager.getTransaction().commit();
 		entityManager.close();	
+	}
+	
+	
+	@Override
+	public Set<Integer> getAllImageIds() throws Exception {
+		// TODO Auto-generated method stub
+		return null;
 	}
 	
 	

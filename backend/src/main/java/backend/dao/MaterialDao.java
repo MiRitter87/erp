@@ -1,6 +1,7 @@
 package backend.dao;
 
 import java.util.List;
+import java.util.Set;
 
 import backend.exception.ObjectUnchangedException;
 import backend.model.Material;
@@ -56,4 +57,13 @@ public interface MaterialDao {
 	 * @throws Exception Material update failed.
 	 */
 	void updateMaterial(final Material material) throws ObjectUnchangedException, Exception;
+	
+	
+	/**
+	 * Gets the IDs of all images that are referenced by the materials.
+	 * 
+	 * @return The IDs of all images that are referenced by the materials.
+	 * @throws Exception ID determination failed.
+	 */
+	Set<Integer> getAllImageIds() throws Exception;
 }
