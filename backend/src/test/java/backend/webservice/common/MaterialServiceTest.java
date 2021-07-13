@@ -23,7 +23,6 @@ import backend.model.Currency;
 import backend.model.Material;
 import backend.model.MaterialArray;
 import backend.model.UnitOfMeasurement;
-import backend.model.webservice.MaterialWS;
 import backend.model.webservice.WebServiceMessageType;
 import backend.model.webservice.WebServiceResult;
 import backend.tools.WebServiceTools;
@@ -140,30 +139,6 @@ public class MaterialServiceTest {
 	}
 	
 	
-	/**
-	 * Converts a material to the lean WebService representation.
-	 * 
-	 * @param material The material to be converted.
-	 * @return The lean WebService representation of the material.
-	 */
-	private MaterialWS convertToWsMaterial(final Material material) {
-		MaterialWS wsMaterial = new MaterialWS();
-		
-		wsMaterial.setMaterialId(material.getId());
-		wsMaterial.setName(material.getName());
-		wsMaterial.setDescription(material.getDescription());
-		wsMaterial.setUnit(material.getUnit());
-		wsMaterial.setPricePerUnit(material.getPricePerUnit());
-		wsMaterial.setCurrency(material.getCurrency());
-		wsMaterial.setInventory(material.getInventory());
-		
-		if(material.getImage() != null && material.getImage().getId() != null)
-			wsMaterial.setImageId(material.getImage().getId());
-		
-		return wsMaterial;
-	}
-	
-	
 	@Test
 	/**
 	 * Tests adding of a new material.
@@ -184,7 +159,7 @@ public class MaterialServiceTest {
 		
 		//Add a new material to the database via WebService
 		MaterialService materialService = new MaterialService();
-		addMaterialResult = materialService.addMaterial(this.convertToWsMaterial(newMaterial));
+		addMaterialResult = materialService.addMaterial(newMaterial.getWsMaterial());
 		
 		//Assure no error message exists
 		assertTrue(WebServiceTools.resultContainsErrorMessage(addMaterialResult) == false);
@@ -274,7 +249,7 @@ public class MaterialServiceTest {
 		
 		//Update the material rx570
 		this.rx570.setInventory(Long.valueOf(15));
-		updateMaterialResult = materialService.updateMaterial(this.convertToWsMaterial(this.rx570));
+		updateMaterialResult = materialService.updateMaterial(this.rx570.getWsMaterial());
 		
 		//Assure no error message exists
 		assertTrue(WebServiceTools.resultContainsErrorMessage(updateMaterialResult) == false);
@@ -385,7 +360,7 @@ public class MaterialServiceTest {
 		
 		//Add a new material to the database via WebService
 		MaterialService materialService = new MaterialService();
-		addMaterialResult = materialService.addMaterial(this.convertToWsMaterial(newMaterial));
+		addMaterialResult = materialService.addMaterial(newMaterial.getWsMaterial());
 		
 		//There should be a return message of type E
 		assertTrue(addMaterialResult.getMessages().size() == 1);
@@ -407,7 +382,7 @@ public class MaterialServiceTest {
 		
 		//Update the unchanged material.
 		MaterialService materialService = new MaterialService();
-		updateMaterialResult = materialService.updateMaterial(this.convertToWsMaterial(this.g4560));
+		updateMaterialResult = materialService.updateMaterial(this.g4560.getWsMaterial());
 		
 		//There should be a return message of type I
 		assertTrue(updateMaterialResult.getMessages().size() == 1);
@@ -434,7 +409,7 @@ public class MaterialServiceTest {
 				+ "Therefore adding the material should not be allowed and an exception has to be thrown during the validation of the material. "
 				+ "The WebService should prov");
 		expectedErrorMessage = messageProvider.getSizeValidationMessage("material", "description", String.valueOf(this.g4560.getDescription().length()), "0", "250");
-		updateMaterialResult = materialService.updateMaterial(this.convertToWsMaterial(this.g4560));
+		updateMaterialResult = materialService.updateMaterial(this.g4560.getWsMaterial());
 		
 		//There should be a return message of type E.
 		assertTrue(updateMaterialResult.getMessages().size() == 1);

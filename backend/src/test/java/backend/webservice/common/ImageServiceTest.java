@@ -7,9 +7,6 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.fail;
 
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
@@ -26,6 +23,7 @@ import backend.model.ImageMetaData;
 import backend.model.webservice.WebServiceMessageType;
 import backend.model.webservice.WebServiceResult;
 import backend.tools.WebServiceTools;
+import backend.tools.test.FileReader;
 import backend.tools.test.ValidationMessageProvider;
 
 /**
@@ -100,7 +98,14 @@ public class ImageServiceTest {
 	 */
 	private void createDummyImage() {
 		this.dummyImageData = new ImageData();
-		this.dummyImageData.setData(this.readFile(DUMMY_IMAGE_FILE_PATH));
+		
+		try {
+			this.dummyImageData.setData(FileReader.readFile(DUMMY_IMAGE_FILE_PATH));
+		} catch (FileNotFoundException fileNotFoundException) {
+			fail(fileNotFoundException.getMessage());
+		} catch (IOException ioException) {
+			fail(ioException.getMessage());
+		}
 		
 		this.dummyImageMetaData = new ImageMetaData();
 		this.dummyImageMetaData.setMimeType("image/png");
@@ -126,42 +131,6 @@ public class ImageServiceTest {
 			fail(e.getMessage());
 		}
 	}
-	
-	
-	/**
-     * Reads the file with the given path and returns the byte array.
-     * 
-     * @param path The path to the file.
-     * @return the bytes of the file.
-     */
-    private byte[] readFile(String path) {
-        ByteArrayOutputStream bos = null;
-        FileInputStream fis = null;
-        
-        try {
-            File file = new File(path);
-            fis = new FileInputStream(file);
-            byte[] buffer = new byte[1024];
-            bos = new ByteArrayOutputStream();
-            for (int len; (len = fis.read(buffer)) != -1;) {
-                bos.write(buffer, 0, len);
-            }
-        } catch (FileNotFoundException fileNotFoundException) {
-            fail(fileNotFoundException.getMessage());
-        } catch (IOException ioException) {
-            fail(ioException.getMessage());
-        } finally {
-        	if(fis != null) {
-        		try {
-        			fis.close();
-        		} catch (IOException e) {
-        			fail(e.getMessage());
-        		}        		
-        	}
-        }
-        
-        return bos != null ? bos.toByteArray() : null;
-    }
     
     
     @Test
@@ -271,7 +240,13 @@ public class ImageServiceTest {
     	ImageData addedImageData;
     	
     	//Define the new image.
-    	newImage.setData(this.readFile(DUMMY_IMAGE_FILE_PATH));
+    	try {
+			newImage.setData(FileReader.readFile(DUMMY_IMAGE_FILE_PATH));
+    	} catch (FileNotFoundException fileNotFoundException) {
+			fail(fileNotFoundException.getMessage());
+		} catch (IOException ioException) {
+			fail(ioException.getMessage());
+		}
     	
     	//Add a new image to the database via WebService
     	ImageService imageService = new ImageService();

@@ -23,6 +23,8 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import backend.model.webservice.MaterialWS;
+
 /**
  * A material.
  * 
@@ -100,6 +102,29 @@ public class Material {
 	 */
 	public Material() {
 		
+	}
+	
+	
+	/**
+	 * Converts the material to the lean WebService representation.
+	 * 
+	 * @return The lean WebService representation of the material.
+	 */
+	public MaterialWS getWsMaterial() {
+		MaterialWS wsMaterial = new MaterialWS();
+		
+		wsMaterial.setMaterialId(this.getId());
+		wsMaterial.setName(this.getName());
+		wsMaterial.setDescription(this.getDescription());
+		wsMaterial.setUnit(this.getUnit());
+		wsMaterial.setPricePerUnit(this.getPricePerUnit());
+		wsMaterial.setCurrency(this.getCurrency());
+		wsMaterial.setInventory(this.getInventory());
+		
+		if(this.getImage() != null && this.getImage().getId() != null)
+			wsMaterial.setImageId(this.getImage().getId());
+		
+		return wsMaterial;
 	}
 	
 	

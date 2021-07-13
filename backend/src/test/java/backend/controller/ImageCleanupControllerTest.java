@@ -1,22 +1,28 @@
 package backend.controller;
 
+import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.fail;
 
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.math.BigDecimal;
 
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import backend.dao.DAOManager;
 import backend.dao.ImageDao;
+import backend.dao.MaterialDao;
+import backend.model.Currency;
 import backend.model.ImageData;
 import backend.model.ImageMetaData;
+import backend.model.Material;
+import backend.model.UnitOfMeasurement;
+import backend.tools.test.FileReader;
 
 public class ImageCleanupControllerTest {
 	/**
@@ -85,7 +91,14 @@ public class ImageCleanupControllerTest {
 	 */
 	private void createDummyImage() {
 		this.dummyImageData = new ImageData();
-		this.dummyImageData.setData(this.readFile(DUMMY_IMAGE_FILE_PATH));
+		
+		try {
+			this.dummyImageData.setData(FileReader.readFile(DUMMY_IMAGE_FILE_PATH));
+		} catch (FileNotFoundException fileNotFoundException) {
+			fail(fileNotFoundException.getMessage());
+		} catch (IOException ioException) {
+			fail(ioException.getMessage());
+		}
 		
 		this.dummyImageMetaData = new ImageMetaData();
 		this.dummyImageMetaData.setMimeType("image/png");
@@ -112,39 +125,54 @@ public class ImageCleanupControllerTest {
 		}
 	}
 	
-	
-	/**
-     * Reads the file with the given path and returns the byte array.
-     * 
-     * @param path The path to the file.
-     * @return the bytes of the file.
+    
+    @Test
+    /**
+     * Tests the cleanup method when every image is referenced to a master data object.
      */
-    private byte[] readFile(String path) {
-        ByteArrayOutputStream bos = null;
-        FileInputStream fis = null;
-        
-        try {
-            File file = new File(path);
-            fis = new FileInputStream(file);
-            byte[] buffer = new byte[1024];
-            bos = new ByteArrayOutputStream();
-            for (int len; (len = fis.read(buffer)) != -1;) {
-                bos.write(buffer, 0, len);
-            }
-        } catch (FileNotFoundException fileNotFoundException) {
-            fail(fileNotFoundException.getMessage());
-        } catch (IOException ioException) {
-            fail(ioException.getMessage());
-        } finally {
-        	if(fis != null) {
-        		try {
-        			fis.close();
-        		} catch (IOException e) {
-        			fail(e.getMessage());
-        		}        		
-        	}
-        }
-        
-        return bos != null ? bos.toByteArray() : null;
+    public void testCleanupWithoutObsoleteImages() {
+    	Material newMaterial = new Material();
+    	ImageCleanupController imageCleanupController = new ImageCleanupController();
+    	ImageMetaData databaseImage = null;
+    	MaterialDao materialDAO = DAOManager.getInstance().getMaterialDAO();
+    	
+    	//Define the new material that has the dummy image referenced.
+		newMaterial.setName("New Material");
+		newMaterial.setDescription("A new material that is used in this test");
+		newMaterial.setUnit(UnitOfMeasurement.KG);
+		newMaterial.setPricePerUnit(BigDecimal.valueOf(Double.valueOf(0.29)));
+		newMaterial.setCurrency(Currency.EUR);
+		newMaterial.setInventory(Long.valueOf(2000));
+		newMaterial.setImage(this.dummyImageMetaData);
+		
+		//Add the new material to the database via DAO.
+		try {
+			materialDAO.insertMaterial(newMaterial);
+		} catch (Exception e) {
+			fail(e.getMessage());
+		}
+		
+		try {
+			//Cleanup obsolete images. There is only one image and it is referenced by a material. Therefore it should not be cleaned up.
+			imageCleanupController.cleanup();
+			
+			//Try to get the dummy image via DAO.
+			databaseImage = imageDAO.getImageMetaData(this.dummyImageMetaData.getId());
+						
+			//Assure that the image is still persisted and has not been deleted by the cleanup method.
+			assertTrue(databaseImage != null);
+			assertEquals(this.dummyImageMetaData.getId(), databaseImage.getId());
+		} catch (Exception exception) {
+			fail(exception.getMessage());
+		}
+		finally {
+			try {
+				materialDAO.deleteMaterial(newMaterial);
+				//Assures tearDown() is executed correctly afterwards because deleting material automatically deletes the referenced image.
+				this.createDummyImage();		
+			} catch (Exception e) {
+				fail(e.getMessage());
+			}
+		}
     }
 }
