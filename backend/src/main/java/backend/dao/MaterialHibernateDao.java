@@ -1,5 +1,6 @@
 package backend.dao;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -142,8 +143,37 @@ public class MaterialHibernateDao implements MaterialDao {
 	
 	@Override
 	public Set<Integer> getAllImageIds() throws Exception {
-		// TODO Auto-generated method stub
-		return null;
+		List<Material> materials = null;
+		Set<Integer> imageIds = new HashSet<Integer>();
+		EntityManager entityManager = this.sessionFactory.createEntityManager();
+		entityManager.getTransaction().begin();
+		
+		try {
+			CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+			CriteriaQuery<Material> criteriaQuery = criteriaBuilder.createQuery(Material.class);
+			Root<Material> criteria = criteriaQuery.from(Material.class);
+			criteriaQuery.select(criteria);
+			criteriaQuery.where(criteria.get("image").isNotNull());
+			TypedQuery<Material> typedQuery = entityManager.createQuery(criteriaQuery);
+			materials = typedQuery.getResultList();
+			
+			entityManager.getTransaction().commit();			
+		}
+		catch(Exception exception) {
+			//If something breaks a rollback is necessary.
+			if(entityManager.getTransaction().isActive())
+				entityManager.getTransaction().rollback();
+			throw exception;
+		}
+		finally {
+			entityManager.close();			
+		}
+		
+		//Get the image IDs of all materials that have an image defined.
+		for(Material tempMaterial:materials)
+			imageIds.add(tempMaterial.getImage().getId());
+		
+		return imageIds;
 	}
 	
 	

@@ -1,10 +1,14 @@
 package backend.dao;
 
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.util.Set;
 
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
@@ -195,6 +199,18 @@ public class MaterialHibernateDaoTest {
 	 * Tests the retrieval of all image IDs that are linked to any material.
 	 */
 	public void testGetAllImageIds() {
+		Set<Integer> imagesInUse = null;
 		
+		try {
+			//Get all referenced image IDs.
+			imagesInUse = materialDAO.getAllImageIds();
+			
+			//Verify the result.
+			assertNotNull(imagesInUse);
+			assertEquals(1, imagesInUse.size());
+			assertTrue(imagesInUse.contains(this.dummyImageMetaData.getId()));
+		} catch (Exception exception) {
+			fail(exception.getMessage());
+		}
 	}
 }
