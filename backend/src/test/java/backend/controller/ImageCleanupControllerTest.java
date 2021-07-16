@@ -120,7 +120,7 @@ public class ImageCleanupControllerTest {
 	 */
 	private void deleteDummyImage() {
 		try {
-			imageDAO.deleteImage(this.dummyImageData);
+			imageDAO.deleteImage(this.dummyImageData.getId());
 		} catch (Exception e) {
 			fail(e.getMessage());
 		}
@@ -178,11 +178,11 @@ public class ImageCleanupControllerTest {
     }
     
     
-    
+    @Test
     /**
      * Tests the cleanup method when an image exists that is not referenced to any master data object.
      */
-    public void testCleanupWithObsoleteImages() {
+    public void testCleanupWithObsoleteImage() {
     	ImageCleanupController imageCleanupController = new ImageCleanupController();
     	ImageMetaData databaseImage = null;
     	
@@ -195,6 +195,9 @@ public class ImageCleanupControllerTest {
 			
 			//Assure that the dummy image has been deleted.
 			assertNull(databaseImage);
+			
+			//Add the previously deleted image back to the database to assure the tearDown method can run correctly.
+    		this.createDummyImage();
 		} catch (Exception exception) {
 			fail(exception.getMessage());
 		}

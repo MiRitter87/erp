@@ -126,7 +126,7 @@ public class ImageServiceTest {
 	 */
 	private void deleteDummyImage() {
 		try {
-			imageDAO.deleteImage(this.dummyImageData);
+			imageDAO.deleteImage(this.dummyImageData.getId());
 		} catch (Exception e) {
 			fail(e.getMessage());
 		}
@@ -277,7 +277,7 @@ public class ImageServiceTest {
 		finally {
 			//Delete the newly added image
 			try {
-				imageDAO.deleteImage(newImage);
+				imageDAO.deleteImage(newImage.getId());
 			} 
 			catch (Exception e) {
 				fail(e.getMessage());

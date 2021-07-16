@@ -135,8 +135,8 @@ public class ImageHibernateDaoTest {
 	 */
 	private void deleteDummyImages() {
 		try {
-			imageDAO.deleteImage(this.dummyImageData1);
-			imageDAO.deleteImage(this.dummyImageData2);
+			imageDAO.deleteImage(this.dummyImageData1.getId());
+			imageDAO.deleteImage(this.dummyImageData2.getId());
 		} catch (Exception e) {
 			fail(e.getMessage());
 		}

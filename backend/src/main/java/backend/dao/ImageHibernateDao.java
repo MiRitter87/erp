@@ -58,11 +58,11 @@ public class ImageHibernateDao implements ImageDao {
 
 	
 	@Override
-	public void deleteImage(ImageData image) throws Exception {
+	public void deleteImage(Integer imageId) throws Exception {
 		EntityManager entityManager = this.sessionFactory.createEntityManager();
 		
 		//In order to successfully delete an entity, it first has to be fetched from the database.
-		ImageData deleteImage = entityManager.find(ImageData.class, image.getId());
+		ImageData deleteImage = entityManager.find(ImageData.class, imageId);
 		
 		entityManager.getTransaction().begin();
 		

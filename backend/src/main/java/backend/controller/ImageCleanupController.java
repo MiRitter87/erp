@@ -1,6 +1,7 @@
 package backend.controller;
 
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -32,6 +33,7 @@ public class ImageCleanupController {
 	 */
 	public ImageCleanupController() {
 		this.materialDAO = DAOManager.getInstance().getMaterialDAO();
+		this.imageDAO = DAOManager.getInstance().getImageDAO();
 	}
 	
 	
@@ -66,7 +68,24 @@ public class ImageCleanupController {
 	 * @throws Exception In case the deletion fails.
 	 */
 	private void deleteImages(final Set<Integer> imagesInUse) throws Exception {
-		//TODO: Get all images. Remove those images from the list, that are referenced by a material. Delete the remaining images without a reference.
 		List<ImageMetaData> allImages = this.imageDAO.getAllImageMetaData();
+		Set<Integer> allImageIds = new HashSet<Integer>();
+		Iterator<Integer> imageIdIterator;
+		Integer imageId;
+		
+		//Build the set with all image IDs.
+		for(ImageMetaData tempImageMetaData:allImages) {
+			allImageIds.add(tempImageMetaData.getId());			
+		}
+		
+		//Remove the IDs of images that are referenced by master data objects.
+		allImageIds.removeAll(imagesInUse);
+		
+		//Delete all images that are not referenced by any master data object.
+		imageIdIterator = allImageIds.iterator();
+		while(imageIdIterator.hasNext()) {
+			imageId = imageIdIterator.next();
+			this.imageDAO.deleteImage(imageId);
+		}
 	}
 }

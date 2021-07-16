@@ -124,7 +124,7 @@ public class ImageService {
 			
 			if(image != null) {
 				//Delete image if exists.
-				this.imageDAO.deleteImage(image);
+				this.imageDAO.deleteImage(id);
 				deleteImageResult.addMessage(new WebServiceMessage(WebServiceMessageType.S, 
 						MessageFormat.format(this.resources.getString("image.deleteSuccess"), id)));
 			}

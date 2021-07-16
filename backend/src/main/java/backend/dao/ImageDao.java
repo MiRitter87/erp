@@ -24,10 +24,10 @@ public interface ImageDao {
 	/**
 	 * Deletes an image.
 	 * 
-	 * @param image The image to be deleted.
+	 * @param imageId The ID of the image to be deleted.
 	 * @throws Exception Deletion failed.
 	 */
-	void deleteImage(final ImageData image) throws Exception;
+	void deleteImage(final Integer imageId) throws Exception;
 	
 	
 	/**
