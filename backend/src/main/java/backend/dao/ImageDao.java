@@ -1,5 +1,7 @@
 package backend.dao;
 
+import java.util.List;
+
 import backend.exception.ObjectUnchangedException;
 import backend.model.ImageData;
 import backend.model.ImageMetaData;
@@ -56,4 +58,13 @@ public interface ImageDao {
 	 * @throws Exception Image metadata retrieval failed.
 	 */
 	ImageMetaData getImageMetaData(final Integer id) throws Exception;
+	
+	
+	/**
+	 * Gets the meta data of all images.
+	 * 
+	 * @return The meta data of all images.
+	 * @throws Exception Image metadata retrieval failed.
+	 */
+	List<ImageMetaData> getAllImageMetaData() throws Exception;
 }

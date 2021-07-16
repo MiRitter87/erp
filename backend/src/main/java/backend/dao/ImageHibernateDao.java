@@ -1,7 +1,13 @@
 package backend.dao;
 
+import java.util.List;
+
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
+import javax.persistence.TypedQuery;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
 
 import backend.exception.ObjectUnchangedException;
 import backend.model.ImageData;
@@ -113,6 +119,37 @@ public class ImageHibernateDao implements ImageDao {
 		entityManager.merge(imageMetaData);
 		entityManager.getTransaction().commit();
 		entityManager.close();		
+	}
+	
+	
+	@Override
+	public List<ImageMetaData> getAllImageMetaData() throws Exception {
+		List<ImageMetaData> allImageMetaData = null;
+		EntityManager entityManager = this.sessionFactory.createEntityManager();
+		entityManager.getTransaction().begin();
+		
+		try {
+			CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+			CriteriaQuery<ImageMetaData> criteriaQuery = criteriaBuilder.createQuery(ImageMetaData.class);
+			Root<ImageMetaData> criteria = criteriaQuery.from(ImageMetaData.class);
+			criteriaQuery.select(criteria);
+			criteriaQuery.orderBy(criteriaBuilder.asc(criteria.get("id")));	//Order by id ascending
+			TypedQuery<ImageMetaData> typedQuery = entityManager.createQuery(criteriaQuery);
+			allImageMetaData = typedQuery.getResultList();
+			
+			entityManager.getTransaction().commit();			
+		}
+		catch(Exception exception) {
+			//If something breaks a rollback is necessary.
+			if(entityManager.getTransaction().isActive())
+				entityManager.getTransaction().rollback();
+			throw exception;
+		}
+		finally {
+			entityManager.close();			
+		}
+		
+		return allImageMetaData;
 	}
 	
 	

@@ -1,10 +1,13 @@
 package backend.controller;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import backend.dao.DAOManager;
+import backend.dao.ImageDao;
 import backend.dao.MaterialDao;
+import backend.model.ImageMetaData;
 
 /**
  * Looks for images in the database that are not referenced by any master data object.
@@ -17,6 +20,11 @@ public class ImageCleanupController {
 	 * The DAO to access material data.
 	 */
 	private MaterialDao materialDAO;
+	
+	/**
+	 * The DAO to access image data.
+	 */
+	private ImageDao imageDAO;
 	
 	
 	/**
@@ -44,10 +52,10 @@ public class ImageCleanupController {
 	 * Returns the IDs of all images that are referenced by a material.
 	 * 
 	 * @return A set containing the IDs of all images that are referenced by a material.
+	 * @throws Exception In case the determination of referenced image IDs failed.
 	 */
-	private Set<Integer> getAllImageIdsReferencedByMaterial() {
-		//TODO Implement ID determination in MaterialDAO
-		return new HashSet<Integer>();
+	private Set<Integer> getAllImageIdsReferencedByMaterial() throws Exception {
+		return this.materialDAO.getAllImageIds();
 	}
 
 	
@@ -58,6 +66,7 @@ public class ImageCleanupController {
 	 * @throws Exception In case the deletion fails.
 	 */
 	private void deleteImages(final Set<Integer> imagesInUse) throws Exception {
-		//TODO Implement deletion in ImageDAO
+		//TODO: Get all images. Remove those images from the list, that are referenced by a material. Delete the remaining images without a reference.
+		List<ImageMetaData> allImages = this.imageDAO.getAllImageMetaData();
 	}
 }
