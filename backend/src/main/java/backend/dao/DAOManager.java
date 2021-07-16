@@ -52,6 +52,11 @@ public class DAOManager implements Closeable {
 	 */
 	private ImageDao imageDao;
 	
+	/**
+	 * DAO for execution of native SQL commands.
+	 */
+	private NativeSqlDao nativeSqlDao;
+	
 	
 	/**
 	 * Initializes the DAOManager.
@@ -161,6 +166,19 @@ public class DAOManager implements Closeable {
 			this.imageDao = new ImageHibernateDao(this.sessionFactory);
 		
 		return this.imageDao;
+	}
+	
+	
+	/**
+	 * Returns a DAO to execute native SQL commands.
+	 * 
+	 * @return The nativeSqlDAO.
+	 */
+	public NativeSqlDao getNativeSqlDAO() {
+		if(this.nativeSqlDao == null)
+			this.nativeSqlDao = new NativeSqlHibernateDao(this.sessionFactory);
+		
+		return this.nativeSqlDao;
 	}
 
 	

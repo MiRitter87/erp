@@ -8,6 +8,7 @@ import java.util.Set;
 import backend.dao.DAOManager;
 import backend.dao.ImageDao;
 import backend.dao.MaterialDao;
+import backend.dao.NativeSqlDao;
 import backend.model.ImageMetaData;
 
 /**
@@ -27,6 +28,11 @@ public class ImageCleanupController {
 	 */
 	private ImageDao imageDAO;
 	
+	/**
+	 * The DAO to execute native SQL commands.
+	 */
+	private NativeSqlDao nativeSqlDAO;
+	
 	
 	/**
 	 * Initializes the controller.
@@ -34,6 +40,7 @@ public class ImageCleanupController {
 	public ImageCleanupController() {
 		this.materialDAO = DAOManager.getInstance().getMaterialDAO();
 		this.imageDAO = DAOManager.getInstance().getImageDAO();
+		this.nativeSqlDAO = DAOManager.getInstance().getNativeSqlDAO();
 	}
 	
 	
@@ -47,6 +54,7 @@ public class ImageCleanupController {
 		
 		imagesInUse = this.getAllImageIdsReferencedByMaterial();
 		this.deleteImages(imagesInUse);
+		this.executeCheckpointCommand();
 	}
 	
 	
@@ -78,7 +86,7 @@ public class ImageCleanupController {
 			allImageIds.add(tempImageMetaData.getId());			
 		}
 		
-		//Remove the IDs of images that are referenced by master data objects.
+		//Remove the IDs of images that are referenced by master data object and therefore are still in use.
 		allImageIds.removeAll(imagesInUse);
 		
 		//Delete all images that are not referenced by any master data object.
@@ -87,5 +95,16 @@ public class ImageCleanupController {
 			imageId = imageIdIterator.next();
 			this.imageDAO.deleteImage(imageId);
 		}
+	}
+	
+	
+	/**
+	 * Executes the HSQL "CHECKPOINT" command to remove obsolete data from the *.lobs file where image data are stored.
+	 * @see http://hsqldb.org/doc/gui+de/management-chapt.html#mtc_large_objects
+	 * 
+	 * @throws Exception In case the SQL checkpoint command execution fails.
+	 */
+	private void executeCheckpointCommand() throws Exception {
+		this.nativeSqlDAO.executeStatement("CHECKPOINT;");
 	}
 }
