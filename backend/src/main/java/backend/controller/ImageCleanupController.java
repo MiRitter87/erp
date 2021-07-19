@@ -1,9 +1,14 @@
 package backend.controller;
 
+import java.text.MessageFormat;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.ResourceBundle;
 import java.util.Set;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import backend.dao.DAOManager;
 import backend.dao.ImageDao;
@@ -33,11 +38,22 @@ public class ImageCleanupController {
 	 */
 	private NativeSqlDao nativeSqlDAO;
 	
+	/**
+	 * Application logging.
+	 */
+	public static final Logger logger = LogManager.getLogger(ImageCleanupController.class);
+	
+	/**
+	 * Access to localized application resources.
+	 */
+	private ResourceBundle resources;
+	
 	
 	/**
 	 * Initializes the controller.
 	 */
 	public ImageCleanupController() {
+		this.resources = ResourceBundle.getBundle("backend");
 		this.materialDAO = DAOManager.getInstance().getMaterialDAO();
 		this.imageDAO = DAOManager.getInstance().getImageDAO();
 		this.nativeSqlDAO = DAOManager.getInstance().getNativeSqlDAO();
@@ -46,15 +62,17 @@ public class ImageCleanupController {
 	
 	/**
 	 * Cleans obsolete images from the database.
-	 * 
-	 * @throws Exception In case the cleanup process fails.
 	 */
-	public void cleanup() throws Exception {
+	public void cleanup() {
 		Set<Integer> imagesInUse = new HashSet<Integer>();
 		
-		imagesInUse = this.getAllImageIdsReferencedByMaterial();
-		this.deleteImages(imagesInUse);
-		this.executeCheckpointCommand();
+		try {
+			imagesInUse = this.getAllImageIdsReferencedByMaterial();
+			this.deleteImages(imagesInUse);
+			this.executeCheckpointCommand();
+		} catch (Exception exception) {
+			logger.error("imageCleanupController.cleanupFailed", exception.getMessage());
+		}
 	}
 	
 	
@@ -95,6 +113,8 @@ public class ImageCleanupController {
 			imageId = imageIdIterator.next();
 			this.imageDAO.deleteImage(imageId);
 		}
+		
+		logger.info(MessageFormat.format(this.resources.getString("imageCleanupController.imagesDeleted"), allImageIds.size()));
 	}
 	
 	

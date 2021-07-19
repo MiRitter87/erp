@@ -58,12 +58,7 @@ public class MainController {
 		DAOManager.getInstance();
 		ImageCleanupController imageCleanupController = new ImageCleanupController();
 		
-		try {
-			imageCleanupController.cleanup();
-		} catch (Exception exception) {
-			logger.error(exception.getMessage());
-		}
-		
+		imageCleanupController.cleanup();
 		logger.info(this.resources.getString("status.started"));
 	}
 
