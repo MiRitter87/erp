@@ -23,6 +23,8 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import backend.model.webservice.MaterialWS;
 
 /**
@@ -110,6 +112,7 @@ public class Material {
 	 * 
 	 * @return The lean WebService representation of the material.
 	 */
+	@JsonIgnore
 	public MaterialWS getWsMaterial() {
 		MaterialWS wsMaterial = new MaterialWS();
 		
