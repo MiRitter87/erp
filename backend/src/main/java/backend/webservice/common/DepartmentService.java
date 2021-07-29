@@ -291,7 +291,7 @@ public class DepartmentService {
 		if(existingDepartmentWithHead != null && !department.getCode().equals(existingDepartmentWithHead.getCode())) {
 			//There is already another department which has the given employee set as head of department.
 			throw new Exception(MessageFormat.format(this.resources.getString("department.validation.employeeAlreadyHead"), 
-					department.getHead().getId(), department.getCode()));
+					department.getHead().getId(), existingDepartmentWithHead.getCode()));
 		}
 	}
 }

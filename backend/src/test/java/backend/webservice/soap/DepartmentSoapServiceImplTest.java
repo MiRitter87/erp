@@ -551,7 +551,7 @@ public class DepartmentSoapServiceImplTest {
 		//The error message should state the correct error reason.
 		expectedErrorMessage = MessageFormat.format(this.resources.getString("department.validation.employeeAlreadyHead"), 
 				newDepartment.getHead().getId(), this.departmentHr.getCode());
-		assertEquals(addDepartmentResult.getMessages().get(0).getText(), expectedErrorMessage);
+		assertEquals(expectedErrorMessage, addDepartmentResult.getMessages().get(0).getText());
 	}
 
 	
@@ -562,6 +562,7 @@ public class DepartmentSoapServiceImplTest {
 	public void testUpdateDepartmentWithMultiHeadEmployee() {
 		WebServiceResult updateDepartmentResult;
 		DepartmentSoapServiceImpl service = new DepartmentSoapServiceImpl();
+		String expectedErrorMessage;
 		
 		//Try to set an employee as head that is already a head of another department.
 		this.departmentSd.setHead(this.max);
@@ -570,6 +571,11 @@ public class DepartmentSoapServiceImplTest {
 		//There should be one error message of type E
 		assertTrue(updateDepartmentResult.getMessages().size() == 1);
 		assertTrue(updateDepartmentResult.getMessages().get(0).getType() == WebServiceMessageType.E);
+		
+		//The error message should state the correct error reason.
+		expectedErrorMessage = MessageFormat.format(this.resources.getString("department.validation.employeeAlreadyHead"), 
+				this.departmentSd.getHead().getId(), this.departmentHr.getCode());
+		assertEquals(expectedErrorMessage, updateDepartmentResult.getMessages().get(0).getText());
 	}
 	
 	
