@@ -135,6 +135,7 @@ public class BusinessPartner {
 		result = prime * result + ((phoneNumber == null) ? 0 : phoneNumber.hashCode());
 		result = prime * result + ((streetName == null) ? 0 : streetName.hashCode());
 		result = prime * result + ((zipCode == null) ? 0 : zipCode.hashCode());
+		result = prime * result + ((types == null) ? 0 : types.hashCode());
 		return result;
 	}
 
@@ -212,6 +213,13 @@ public class BusinessPartner {
 				return false;
 			}
 		} else if (!zipCode.equals(other.zipCode)) {
+			return false;
+		}
+		if (types == null) {
+			if (other.types != null) {
+				return false;
+			}
+		} else if (!types.equals(other.types)) {
 			return false;
 		}
 		return true;

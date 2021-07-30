@@ -1,7 +1,11 @@
 package backend.model;
 
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.fail;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+
+import java.util.HashSet;
+import java.util.Set;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -26,6 +30,8 @@ public class BusinessPartnerTest {
 	 * Tasks to be performed before each test is run.
 	 */
 	protected void setUp() {
+		Set<BusinessPartnerType> types = new HashSet<BusinessPartnerType>();
+		
 		this.moose = new BusinessPartner();
 		this.moose.setId(Integer.valueOf(1));
 		this.moose.setCompanyName("Amalgamated Moose Pasture");
@@ -36,6 +42,9 @@ public class BusinessPartnerTest {
 		this.moose.setZipCode("12345");
 		this.moose.setCityName("Moose City");
 		this.moose.setPhoneNumber("+1 123-456-7890");
+		
+		types.add(BusinessPartnerType.CUSTOMER);
+		this.moose.setTypes(types);
 	}
 	
 	
@@ -556,5 +565,31 @@ public class BusinessPartnerTest {
 		}
 		
 		assertEquals(expectedErrorMessage, errorMessage);
+	}
+	
+	
+	@Test
+	/**
+	 * Tests the equals method by comparing two business partners that have different types defined.
+	 */
+	public void testEqualsWithDifferentTypes() {
+		BusinessPartner testPartner = new BusinessPartner();
+		Set<BusinessPartnerType> types = new HashSet<BusinessPartnerType>();
+		
+		//The test partner equals the moose partner in all attributes except "types".
+		testPartner.setId(this.moose.getId());
+		testPartner.setCompanyName(this.moose.getCompanyName());
+		testPartner.setFirstName(this.moose.getFirstName());
+		testPartner.setLastName(this.moose.getLastName());
+		testPartner.setStreetName(this.moose.getStreetName());
+		testPartner.setHouseNumber(this.moose.getHouseNumber());
+		testPartner.setZipCode(this.moose.getZipCode());
+		testPartner.setCityName(this.moose.getCityName());
+		testPartner.setPhoneNumber(this.moose.getPhoneNumber());
+		
+		types.add(BusinessPartnerType.CUSTOMER);
+		types.add(BusinessPartnerType.VENDOR);
+		
+		assertFalse(testPartner.equals(this.moose));
 	}
 }
