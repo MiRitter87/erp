@@ -1,12 +1,19 @@
 package backend.model;
 
+import java.util.HashSet;
 import java.util.Set;
 
+import javax.persistence.CollectionTable;
 import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.ConstraintViolation;
@@ -97,12 +104,21 @@ public class BusinessPartner {
 	@NotNull(message = "{businessPartner.phoneNumber.notNull.message}")
 	private String phoneNumber;
 	
+	/**
+	 * The type of the business partner.
+	 */
+	@CollectionTable(name="BUSINESS_PARTNER_TYPES", joinColumns = {@JoinColumn(name="BUSINESS_PARTNER_ID")})
+	@Column(name = "type", nullable = false)
+	@ElementCollection(targetClass = BusinessPartnerType.class, fetch = FetchType.EAGER)
+	@Enumerated(EnumType.STRING)
+	private Set<BusinessPartnerType> types;
+	
 	
 	/**
 	 * Default constructor.
 	 */
 	public BusinessPartner() {
-		
+		this.types = new HashSet<BusinessPartnerType>();
 	}
 	
 	
@@ -369,5 +385,21 @@ public class BusinessPartner {
 	 */
 	public void setPhoneNumber(String phoneNumber) {
 		this.phoneNumber = phoneNumber;
+	}
+
+
+	/**
+	 * @return the types
+	 */
+	public Set<BusinessPartnerType> getTypes() {
+		return types;
+	}
+
+
+	/**
+	 * @param types the types to set
+	 */
+	public void setTypes(Set<BusinessPartnerType> types) {
+		this.types = types;
 	}
 }
