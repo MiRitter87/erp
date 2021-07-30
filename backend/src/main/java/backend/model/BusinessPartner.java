@@ -21,6 +21,7 @@ import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
 import javax.validation.constraints.Min;
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -108,9 +109,10 @@ public class BusinessPartner {
 	 * The type of the business partner.
 	 */
 	@CollectionTable(name="BUSINESS_PARTNER_TYPES", joinColumns = {@JoinColumn(name="BUSINESS_PARTNER_ID")})
-	@Column(name = "type", nullable = false)
+	@Column(name = "type", nullable = false, length = 20)
 	@ElementCollection(targetClass = BusinessPartnerType.class, fetch = FetchType.EAGER)
 	@Enumerated(EnumType.STRING)
+	@NotEmpty(message = "{businessPartner.types.notEmpty.message}")
 	private Set<BusinessPartnerType> types;
 	
 	
@@ -119,6 +121,16 @@ public class BusinessPartner {
 	 */
 	public BusinessPartner() {
 		this.types = new HashSet<BusinessPartnerType>();
+	}
+	
+	
+	/**
+	 * Adds the given type to the set of types.
+	 * 
+	 * @param type The type to be added.
+	 */
+	public void addType(final BusinessPartnerType type) {
+		this.types.add(type);
 	}
 	
 	

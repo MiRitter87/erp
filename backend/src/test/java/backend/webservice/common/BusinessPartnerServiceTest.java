@@ -19,6 +19,7 @@ import backend.dao.BusinessPartnerDao;
 import backend.dao.DAOManager;
 import backend.model.BusinessPartner;
 import backend.model.BusinessPartnerArray;
+import backend.model.BusinessPartnerType;
 import backend.model.webservice.WebServiceMessageType;
 import backend.model.webservice.WebServiceResult;
 import backend.tools.WebServiceTools;
@@ -104,6 +105,7 @@ public class BusinessPartnerServiceTest {
 		this.moose.setZipCode("12345");
 		this.moose.setCityName("Moose City");
 		this.moose.setPhoneNumber("+1 123-456-7890");
+		this.moose.addType(BusinessPartnerType.CUSTOMER);
 		
 		this.acme = new BusinessPartner();
 		this.acme.setCompanyName("A Company Making Everything");
@@ -114,6 +116,7 @@ public class BusinessPartnerServiceTest {
 		this.acme.setZipCode("1111");
 		this.acme.setCityName("Durango");
 		this.acme.setPhoneNumber("+1 456-125-7");
+		this.acme.addType(BusinessPartnerType.CUSTOMER);
 			
 		try {
 			businessPartnerDAO.insertBusinessPartner(this.moose);
@@ -155,6 +158,7 @@ public class BusinessPartnerServiceTest {
 		newBusinessPartner.setZipCode("02345");
 		newBusinessPartner.setCityName("Musterstadt");
 		newBusinessPartner.setPhoneNumber("04567 1263-0");
+		newBusinessPartner.addType(BusinessPartnerType.CUSTOMER);
 		
 		//Add a new business partner to the database via WebService
 		BusinessPartnerService businessPartnerService = new BusinessPartnerService();

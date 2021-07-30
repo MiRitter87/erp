@@ -5,7 +5,6 @@ import static org.junit.Assert.fail;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.HashSet;
-import java.util.Set;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -30,8 +29,6 @@ public class BusinessPartnerTest {
 	 * Tasks to be performed before each test is run.
 	 */
 	protected void setUp() {
-		Set<BusinessPartnerType> types = new HashSet<BusinessPartnerType>();
-		
 		this.moose = new BusinessPartner();
 		this.moose.setId(Integer.valueOf(1));
 		this.moose.setCompanyName("Amalgamated Moose Pasture");
@@ -42,9 +39,8 @@ public class BusinessPartnerTest {
 		this.moose.setZipCode("12345");
 		this.moose.setCityName("Moose City");
 		this.moose.setPhoneNumber("+1 123-456-7890");
-		
-		types.add(BusinessPartnerType.CUSTOMER);
-		this.moose.setTypes(types);
+		this.moose.addType(BusinessPartnerType.CUSTOMER);
+
 	}
 	
 	
@@ -574,7 +570,6 @@ public class BusinessPartnerTest {
 	 */
 	public void testEqualsWithDifferentTypes() {
 		BusinessPartner testPartner = new BusinessPartner();
-		Set<BusinessPartnerType> types = new HashSet<BusinessPartnerType>();
 		
 		//The test partner equals the moose partner in all attributes except "types".
 		testPartner.setId(this.moose.getId());
@@ -587,9 +582,55 @@ public class BusinessPartnerTest {
 		testPartner.setCityName(this.moose.getCityName());
 		testPartner.setPhoneNumber(this.moose.getPhoneNumber());
 		
-		types.add(BusinessPartnerType.CUSTOMER);
-		types.add(BusinessPartnerType.VENDOR);
+		testPartner.addType(BusinessPartnerType.CUSTOMER);
+		testPartner.addType(BusinessPartnerType.VENDOR);
 		
 		assertFalse(testPartner.equals(this.moose));
+	}
+	
+	
+	@Test
+	/**
+	 * Tests the validation of a business partner whose set of types is null.
+	 */
+	public void testTypesIsNull() {
+		ValidationMessageProvider messageProvider = new ValidationMessageProvider();
+		this.moose.setTypes(null);
+		
+		String expectedErrorMessage = messageProvider.getNotEmptyValidationMessage("businessPartner", "types");
+		String errorMessage = "";
+		
+		try {
+			this.moose.validate();
+			fail("Validation should have failed because types is null.");
+		}
+		catch(Exception expected) {
+			errorMessage = expected.getMessage();
+		}
+		
+		assertEquals(expectedErrorMessage, errorMessage);
+	}
+	
+	
+	@Test
+	/**
+	 * Tests the validation of a business partner whose set of types is empty.
+	 */
+	public void testTypesIsEmpty() {
+		ValidationMessageProvider messageProvider = new ValidationMessageProvider();
+		this.moose.setTypes(new HashSet<BusinessPartnerType>());
+		
+		String expectedErrorMessage = messageProvider.getNotEmptyValidationMessage("businessPartner", "types");
+		String errorMessage = "";
+		
+		try {
+			this.moose.validate();
+			fail("Validation should have failed because types is empty.");
+		}
+		catch(Exception expected) {
+			errorMessage = expected.getMessage();
+		}
+		
+		assertEquals(expectedErrorMessage, errorMessage);
 	}
 }

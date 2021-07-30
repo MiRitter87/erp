@@ -142,4 +142,28 @@ public class ValidationMessageProvider {
 		
 		return message;
 	}
+	
+	
+	/**
+	 * Provides the localized validation message of the @NotEmpty annotation.
+	 * 
+	 * @param className The name of the model class.
+	 * @param attributeName The name of the attribute.
+	 * @return The localized validation message.
+	 */
+	public String getNotEmptyValidationMessage(final String className, final String attributeName) {
+		StringBuilder builder = new StringBuilder();
+		String message;
+		
+		//Build the property name for access.
+		builder.append(className);
+		builder.append(".");
+		builder.append(attributeName);
+		builder.append(".notEmpty.message");
+		
+		//Get the validation message.
+		message = resources.getString(builder.toString());
+		
+		return message;
+	}
 }

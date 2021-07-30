@@ -28,6 +28,7 @@ import backend.dao.DAOManager;
 import backend.dao.MaterialDao;
 import backend.dao.SalesOrderDao;
 import backend.model.BusinessPartner;
+import backend.model.BusinessPartnerType;
 import backend.model.Currency;
 import backend.model.Material;
 import backend.model.SalesOrder;
@@ -197,6 +198,7 @@ public class SalesOrderServiceTest {
 		this.partner.setZipCode("12345");
 		this.partner.setCityName("Moose City");
 		this.partner.setPhoneNumber("+1 123-456-7890");
+		this.partner.addType(BusinessPartnerType.CUSTOMER);
 		
 		try {
 			partnerDAO.insertBusinessPartner(this.partner);
