@@ -185,6 +185,7 @@ public class BusinessPartnerServiceTest {
 			assertEquals(newBusinessPartner.getZipCode(), addedBusinessPartner.getZipCode());
 			assertEquals(newBusinessPartner.getCityName(), addedBusinessPartner.getCityName());
 			assertEquals(newBusinessPartner.getPhoneNumber(), addedBusinessPartner.getPhoneNumber());
+			assertEquals(newBusinessPartner.getTypes(), addedBusinessPartner.getTypes());
 		} catch (Exception e) {
 			fail(e.getMessage());
 		}
@@ -299,6 +300,7 @@ public class BusinessPartnerServiceTest {
 		assertEquals(businessPartner.getZipCode(), this.moose.getZipCode());
 		assertEquals(businessPartner.getCityName(), this.moose.getCityName());
 		assertEquals(businessPartner.getPhoneNumber(), this.moose.getPhoneNumber());
+		assertEquals(businessPartner.getTypes(), this.moose.getTypes());
 	}
 	
 	
@@ -333,6 +335,7 @@ public class BusinessPartnerServiceTest {
 		assertEquals(businessPartner.getZipCode(), this.moose.getZipCode());
 		assertEquals(businessPartner.getCityName(), this.moose.getCityName());
 		assertEquals(businessPartner.getPhoneNumber(), this.moose.getPhoneNumber());
+		assertEquals(businessPartner.getTypes(), this.moose.getTypes());
 		
 		businessPartner = businessPartners.getBusinessPartners().get(1);
 		assertEquals(businessPartner.getId(), this.acme.getId());
@@ -344,6 +347,7 @@ public class BusinessPartnerServiceTest {
 		assertEquals(businessPartner.getZipCode(), this.acme.getZipCode());
 		assertEquals(businessPartner.getCityName(), this.acme.getCityName());
 		assertEquals(businessPartner.getPhoneNumber(), this.acme.getPhoneNumber());
+		assertEquals(businessPartner.getTypes(), this.moose.getTypes());
 	}
 	
 	
