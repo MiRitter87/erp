@@ -8,9 +8,11 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
 import backend.model.BusinessPartner;
+import backend.model.webservice.BPTypeQueryParameter;
 import backend.model.webservice.WebServiceResult;
 import backend.webservice.common.BusinessPartnerService;
 
@@ -39,13 +41,14 @@ public class BusinessPartnerRestService {
 	/**
 	 * Provides a list of all business partners.
 	 * 
+	 * @param bpTypeQuery The type of the business partners to be queried.
 	 * @return A list of all business partners.
 	 */
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
-	public WebServiceResult getBusinessPartners() {
+	public WebServiceResult getBusinessPartners(@QueryParam("bpTypeQuery") final BPTypeQueryParameter bpTypeQuery) {
 		BusinessPartnerService businessPartnerService = new BusinessPartnerService();
-		return businessPartnerService.getBusinessPartners();
+		return businessPartnerService.getBusinessPartners(bpTypeQuery);
 	}
 	
 	

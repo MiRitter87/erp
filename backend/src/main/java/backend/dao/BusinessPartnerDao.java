@@ -4,6 +4,7 @@ import java.util.List;
 
 import backend.exception.ObjectUnchangedException;
 import backend.model.BusinessPartner;
+import backend.model.webservice.BPTypeQueryParameter;
 
 /**
  * Interface for business partner persistence.
@@ -32,10 +33,11 @@ public interface BusinessPartnerDao {
 	/**
 	 * Gets all business partners.
 	 * 
+	 * @param bpTypeQuery The type of the business partners to be queried.
 	 * @return All business partners.
 	 * @throws Exception Business partner retrieval failed.
 	 */
-	List<BusinessPartner> getBusinessPartners() throws Exception;
+	List<BusinessPartner> getBusinessPartners(final BPTypeQueryParameter bpTypeQuery) throws Exception;
 	
 	
 	/**

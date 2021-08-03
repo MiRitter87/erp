@@ -11,6 +11,7 @@ import backend.dao.DAOManager;
 import backend.exception.ObjectUnchangedException;
 import backend.model.BusinessPartner;
 import backend.model.BusinessPartnerArray;
+import backend.model.webservice.BPTypeQueryParameter;
 import backend.model.webservice.WebServiceMessage;
 import backend.model.webservice.WebServiceMessageType;
 import backend.model.webservice.WebServiceResult;
@@ -75,15 +76,16 @@ public class BusinessPartnerService {
 	/**
 	 * Provides a list of all business partners.
 	 * 
+	 * @param bpTypeQuery The type of the business partners to be queried.
 	 * @return A list of all business partners.
 	 */
-	public WebServiceResult getBusinessPartners() {
+	public WebServiceResult getBusinessPartners(final BPTypeQueryParameter bpTypeQuery) {
 		BusinessPartnerArray businessPartners = new BusinessPartnerArray();
 		WebServiceResult getBusinessPartnersResult = new WebServiceResult(null);
 		
 		try {
 			this.businessPartnerDAO = DAOManager.getInstance().getBusinessPartnerDAO();
-			businessPartners.setBusinessPartners(this.businessPartnerDAO.getBusinessPartners());
+			businessPartners.setBusinessPartners(this.businessPartnerDAO.getBusinessPartners(bpTypeQuery));
 			getBusinessPartnersResult.setData(businessPartners);
 		} catch (Exception e) {
 			getBusinessPartnersResult.addMessage(new WebServiceMessage(

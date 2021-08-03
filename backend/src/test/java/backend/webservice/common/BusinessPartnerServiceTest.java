@@ -20,6 +20,7 @@ import backend.dao.DAOManager;
 import backend.model.BusinessPartner;
 import backend.model.BusinessPartnerArray;
 import backend.model.BusinessPartnerType;
+import backend.model.webservice.BPTypeQueryParameter;
 import backend.model.webservice.WebServiceMessageType;
 import backend.model.webservice.WebServiceResult;
 import backend.tools.WebServiceTools;
@@ -116,7 +117,7 @@ public class BusinessPartnerServiceTest {
 		this.acme.setZipCode("1111");
 		this.acme.setCityName("Durango");
 		this.acme.setPhoneNumber("+1 456-125-7");
-		this.acme.addType(BusinessPartnerType.CUSTOMER);
+		this.acme.addType(BusinessPartnerType.VENDOR);
 			
 		try {
 			businessPartnerDAO.insertBusinessPartner(this.moose);
@@ -315,7 +316,7 @@ public class BusinessPartnerServiceTest {
 
 		//Get all business partners.
 		BusinessPartnerService businessPartnerService = new BusinessPartnerService();
-		getBusinessPartnersResult = businessPartnerService.getBusinessPartners();
+		getBusinessPartnersResult = businessPartnerService.getBusinessPartners(BPTypeQueryParameter.ALL);
 		businessPartners = (BusinessPartnerArray) getBusinessPartnersResult.getData();
 		
 		//Assure no error message exists
@@ -347,7 +348,7 @@ public class BusinessPartnerServiceTest {
 		assertEquals(businessPartner.getZipCode(), this.acme.getZipCode());
 		assertEquals(businessPartner.getCityName(), this.acme.getCityName());
 		assertEquals(businessPartner.getPhoneNumber(), this.acme.getPhoneNumber());
-		assertEquals(businessPartner.getTypes(), this.moose.getTypes());
+		assertEquals(businessPartner.getTypes(), this.acme.getTypes());
 	}
 	
 	

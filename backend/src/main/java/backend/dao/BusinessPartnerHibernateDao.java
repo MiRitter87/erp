@@ -11,6 +11,7 @@ import javax.persistence.criteria.Root;
 
 import backend.exception.ObjectUnchangedException;
 import backend.model.BusinessPartner;
+import backend.model.webservice.BPTypeQueryParameter;
 
 /**
  * Provides access to business partner database persistence using Hibernate.
@@ -82,7 +83,7 @@ public class BusinessPartnerHibernateDao implements BusinessPartnerDao {
 
 	
 	@Override
-	public List<BusinessPartner> getBusinessPartners() throws Exception {
+	public List<BusinessPartner> getBusinessPartners(final BPTypeQueryParameter bpTypeQuery) throws Exception {
 		List<BusinessPartner> businessPartners = null;
 		EntityManager entityManager = this.sessionFactory.createEntityManager();
 		entityManager.getTransaction().begin();
