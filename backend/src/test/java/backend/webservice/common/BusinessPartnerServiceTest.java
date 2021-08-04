@@ -309,7 +309,7 @@ public class BusinessPartnerServiceTest {
 	/**
 	 * Tests the retrieval of all business partners.
 	 */
-	public void testGetBusinessPartners() {
+	public void testGetAllBusinessPartners() {
 		WebServiceResult getBusinessPartnersResult;
 		BusinessPartnerArray businessPartners;
 		BusinessPartner businessPartner;
@@ -339,6 +339,76 @@ public class BusinessPartnerServiceTest {
 		assertEquals(businessPartner.getTypes(), this.moose.getTypes());
 		
 		businessPartner = businessPartners.getBusinessPartners().get(1);
+		assertEquals(businessPartner.getId(), this.acme.getId());
+		assertEquals(businessPartner.getCompanyName(), this.acme.getCompanyName());
+		assertEquals(businessPartner.getFirstName(), this.acme.getFirstName());
+		assertEquals(businessPartner.getLastName(), this.acme.getLastName());
+		assertEquals(businessPartner.getStreetName(), this.acme.getStreetName());
+		assertEquals(businessPartner.getHouseNumber(), this.acme.getHouseNumber());
+		assertEquals(businessPartner.getZipCode(), this.acme.getZipCode());
+		assertEquals(businessPartner.getCityName(), this.acme.getCityName());
+		assertEquals(businessPartner.getPhoneNumber(), this.acme.getPhoneNumber());
+		assertEquals(businessPartner.getTypes(), this.acme.getTypes());
+	}
+	
+	
+	@Test
+	/**
+	 * Tests the retrieval of all business partners that are of type customer.
+	 */
+	public void testGetAllBusinessPartnersCustomer() {
+		WebServiceResult getBusinessPartnersResult;
+		BusinessPartnerArray businessPartners;
+		BusinessPartner businessPartner;
+
+		//Get all business partners of type customer.
+		BusinessPartnerService businessPartnerService = new BusinessPartnerService();
+		getBusinessPartnersResult = businessPartnerService.getBusinessPartners(BPTypeQueryParameter.CUSTOMER);
+		businessPartners = (BusinessPartnerArray) getBusinessPartnersResult.getData();
+		
+		//Assure no error message exists.
+		assertTrue(WebServiceTools.resultContainsErrorMessage(getBusinessPartnersResult) == false);
+		
+		//Check if one business partner is returned.
+		assertTrue(businessPartners.getBusinessPartners().size() == 1);
+		
+		//Check the business partners by each attribute
+		businessPartner = businessPartners.getBusinessPartners().get(0);
+		assertEquals(businessPartner.getId(), this.moose.getId());
+		assertEquals(businessPartner.getCompanyName(), this.moose.getCompanyName());
+		assertEquals(businessPartner.getFirstName(), this.moose.getFirstName());
+		assertEquals(businessPartner.getLastName(), this.moose.getLastName());
+		assertEquals(businessPartner.getStreetName(), this.moose.getStreetName());
+		assertEquals(businessPartner.getHouseNumber(), this.moose.getHouseNumber());
+		assertEquals(businessPartner.getZipCode(), this.moose.getZipCode());
+		assertEquals(businessPartner.getCityName(), this.moose.getCityName());
+		assertEquals(businessPartner.getPhoneNumber(), this.moose.getPhoneNumber());
+		assertEquals(businessPartner.getTypes(), this.moose.getTypes());
+	}
+	
+	
+	@Test
+	/**
+	 * Tests the retrieval of all business partners that are of type vendor.
+	 */
+	public void testGetAllBusinessPartnersVendor() {
+		WebServiceResult getBusinessPartnersResult;
+		BusinessPartnerArray businessPartners;
+		BusinessPartner businessPartner;
+
+		//Get all business partners of type customer.
+		BusinessPartnerService businessPartnerService = new BusinessPartnerService();
+		getBusinessPartnersResult = businessPartnerService.getBusinessPartners(BPTypeQueryParameter.VENDOR);
+		businessPartners = (BusinessPartnerArray) getBusinessPartnersResult.getData();
+		
+		//Assure no error message exists.
+		assertTrue(WebServiceTools.resultContainsErrorMessage(getBusinessPartnersResult) == false);
+		
+		//Check if one business partner is returned.
+		assertTrue(businessPartners.getBusinessPartners().size() == 1);
+		
+		//Check the business partners by each attribute
+		businessPartner = businessPartners.getBusinessPartners().get(0);
 		assertEquals(businessPartner.getId(), this.acme.getId());
 		assertEquals(businessPartner.getCompanyName(), this.acme.getCompanyName());
 		assertEquals(businessPartner.getFirstName(), this.acme.getFirstName());

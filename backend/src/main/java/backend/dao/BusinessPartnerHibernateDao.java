@@ -1,5 +1,6 @@
 package backend.dao;
 
+import java.util.Collection;
 import java.util.List;
 
 import javax.persistence.EntityManager;
@@ -7,10 +8,13 @@ import javax.persistence.EntityManagerFactory;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Expression;
 import javax.persistence.criteria.Root;
 
 import backend.exception.ObjectUnchangedException;
+
 import backend.model.BusinessPartner;
+import backend.model.BusinessPartnerType;
 import backend.model.webservice.BPTypeQueryParameter;
 
 /**
@@ -93,6 +97,7 @@ public class BusinessPartnerHibernateDao implements BusinessPartnerDao {
 			CriteriaQuery<BusinessPartner> criteriaQuery = criteriaBuilder.createQuery(BusinessPartner.class);
 			Root<BusinessPartner> criteria = criteriaQuery.from(BusinessPartner.class);
 			criteriaQuery.select(criteria);
+			this.applyBPTypeQueryParameter(bpTypeQuery, criteriaQuery, criteriaBuilder, criteria);
 			criteriaQuery.orderBy(criteriaBuilder.asc(criteria.get("id")));	//Order by id ascending
 			TypedQuery<BusinessPartner> typedQuery = entityManager.createQuery(criteriaQuery);
 			businessPartners = typedQuery.getResultList();
@@ -152,5 +157,38 @@ public class BusinessPartnerHibernateDao implements BusinessPartnerDao {
 		
 		if(databaseBusinessPartner.equals(businessPartner))
 			throw new ObjectUnchangedException();
+	}
+	
+	
+	/**
+	 * Applies the type query parameter to the business partner query.
+	 * 
+	 * @param bpTypeQuery Specifies the business partners to be selected based on the type attribute.
+	 * @param bpCriteriaQuery The business partner criteria query.
+	 * @param criteriaBuilder The builder of criterias.
+	 * @param bpCriteria Root type of the business partner in the from clause.
+	 */
+	private void applyBPTypeQueryParameter(final BPTypeQueryParameter bpTypeQuery, CriteriaQuery<BusinessPartner> bpCriteriaQuery, 
+			final CriteriaBuilder criteriaBuilder, final Root<BusinessPartner> bpCriteria) {
+		
+		Expression<Collection<BusinessPartnerType>> types = bpCriteria.get("types");
+		BusinessPartnerType bpType = null;
+		
+		if(bpTypeQuery == null)
+			return;
+		
+		//Convert the type that is used to define the query into the type that is used in the data model.
+		switch(bpTypeQuery) {
+			case CUSTOMER:
+				bpType = BusinessPartnerType.CUSTOMER;
+				break;
+			case VENDOR:
+				bpType = BusinessPartnerType.VENDOR;
+				break;
+			case ALL:
+				return;
+		}
+		
+		bpCriteriaQuery.where(criteriaBuilder.isMember(bpType, types));
 	}
 }
