@@ -1,11 +1,16 @@
 package backend.model;
 
 import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.math.BigDecimal;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import backend.exception.NoItemsException;
+import backend.tools.test.ValidationMessageProvider;
 
 /**
  * Tests the purchase order model.
@@ -114,5 +119,81 @@ public class PurchaseOrderTest {
 		this.orderItem.setId(1);
 		this.orderItem.setMaterial(this.material);
 		this.orderItem.setQuantity(Long.valueOf(2));
+	}
+	
+	
+	@Test
+	/**
+	 * Tests validation of a valid purchase order.
+	 */
+	public void testValidationSuccess() {
+		try {
+			this.order.validate();
+		} catch (Exception e) {
+			fail(e.getMessage());
+		}
+	}
+	
+	
+	@Test
+	/**
+	 * Tests validation of a purchase order that has no items given.
+	 */
+	public void testNoItemsGiven() {
+		this.order.getItems().clear();
+		
+		try {
+			this.order.validate();
+			fail("Validation should have failed because the purchase order has no items defined.");
+		} catch (NoItemsException expected) {
+			//All is well.
+		} catch (Exception e) {
+			fail("No general exception should have occurred. Just the NoItemsException.");
+		}
+	}
+	
+	
+	@Test
+	/**
+	 * Tests validation of a purchase order that has no vendor defined.
+	 */
+	public void testNoVendorDefined() {
+		ValidationMessageProvider messageProvider = new ValidationMessageProvider();	
+		String expectedErrorMessage = messageProvider.getNotNullValidationMessage("purchaseOrder", "vendor");
+		String actualErrorMessage = "";
+
+		this.order.setVendor(null);
+		
+		try {
+			this.order.validate();
+			fail("Validation should have failed because no vendor is defined.");
+		} catch (Exception expected) {
+			actualErrorMessage = expected.getMessage();
+		}
+		
+		assertEquals(expectedErrorMessage, actualErrorMessage);
+	}
+	
+	
+	@Test
+	/**
+	 * Tests validation of a purchase order that has no status defined.
+	 */
+	public void testNoStatusDefined() {
+		ValidationMessageProvider messageProvider = new ValidationMessageProvider();		
+		this.order.setStatus(null);
+		
+		String expectedErrorMessage = messageProvider.getNotNullValidationMessage("purchaseOrder", "status");
+		String errorMessage = "";
+		
+		try {
+			this.order.validate();
+			fail("Validation should have failed because status is not set.");
+		} 
+		catch (Exception expected) {
+			errorMessage = expected.getMessage();
+		}
+		
+		assertEquals(expectedErrorMessage, errorMessage);
 	}
 }

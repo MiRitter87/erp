@@ -396,6 +396,7 @@ public class SalesOrder {
 	 * Validates additional characteristics of the sales order besides annotations.
 	 * 
 	 * @throws NoItemsException Indicates that the sales order has no items defined.
+	 * @throws DuplicateIdentifierException Indicates that multiple items share the same id.
 	 */
 	private void validateAdditionalCharacteristics() throws NoItemsException, DuplicateIdentifierException {
 		this.validateItemsDefined();
