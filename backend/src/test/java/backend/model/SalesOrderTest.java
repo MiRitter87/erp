@@ -160,6 +160,29 @@ public class SalesOrderTest {
 	
 	@Test
 	/**
+	 * Tests validation of the sales order whose ID is too low.
+	 */
+	public void testIdTooLow() {
+		ValidationMessageProvider messageProvider = new ValidationMessageProvider();		
+		this.order.setId(0);
+		
+		String expectedErrorMessage = messageProvider.getMinValidationMessage("salesOrder", "id", "1");
+		String errorMessage = "";
+		
+		try {
+			this.order.validate();
+			fail("Validation should have failed because ID is too low.");
+		} 
+		catch (Exception expected) {
+			errorMessage = expected.getMessage();
+		}
+		
+		assertEquals(expectedErrorMessage, errorMessage);
+	}
+	
+	
+	@Test
+	/**
 	 * Tests validation of a sales order that has no sold-to party defined.
 	 */
 	public void testNoSoldToPartyDefined() {

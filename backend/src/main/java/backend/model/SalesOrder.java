@@ -23,6 +23,7 @@ import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -47,6 +48,7 @@ public class SalesOrder {
 	@Id
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "salesOrderSequence")
 	@Column(name="SALES_ORDER_ID")
+	@Min(value = 1, message = "{salesOrder.id.min.message}")
 	private Integer id;
 	
 	/**
