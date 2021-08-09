@@ -1,6 +1,7 @@
 package backend.model;
 
 import java.math.BigDecimal;
+import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -11,6 +12,12 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import javax.validation.ConstraintViolation;
+import javax.validation.Validation;
+import javax.validation.Validator;
+import javax.validation.ValidatorFactory;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -28,6 +35,8 @@ public class PurchaseOrderItem {
 	 */
 	@Id
 	@Column(name="ITEM_ID")
+	@NotNull(message = "{purchaseOrderItem.id.notNull.message}")
+	@Min(value = 1, message = "{purchaseOrderItem.id.min.message}")
 	private Integer id;
 	
 	/**
@@ -44,12 +53,15 @@ public class PurchaseOrderItem {
 	 */
 	@OneToOne
 	@JoinColumn(name="MATERIAL_ID")
+	@NotNull(message = "{purchaseOrderItem.material.notNull.message}")
 	private Material material;
 	
 	/**
 	 * The quantitiy that is being ordered.
 	 */
 	@Column(name="QUANTITY")
+	@NotNull(message = "{purchaseOrderItem.quantity.notNull.message}")
+	@Min(value = 1, message = "{purchaseOrderItem.quantity.min.message}")
 	private Long quantity;
 	
 	/**
@@ -144,5 +156,31 @@ public class PurchaseOrderItem {
 	 */
 	public void setPriceTotal(BigDecimal priceTotal) {
 		this.priceTotal = priceTotal;
+	}
+	
+	
+	/**
+	 * Validates the purchase order item.
+	 * 
+	 * @throws Exception In case a general validation error occurred.
+	 */
+	public void validate() throws Exception {
+		this.validateAnnotations();
+	}
+	
+	
+	/**
+	 * Validates the purchase order item according to the annotations of the Validation Framework.
+	 * 
+	 * @exception Exception In case the validation failed.
+	 */
+	private void validateAnnotations() throws Exception {
+		ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
+		Validator validator = factory.getValidator();
+		Set<ConstraintViolation<PurchaseOrderItem>> violations = validator.validate(this);
+		
+		for(ConstraintViolation<PurchaseOrderItem> violation:violations) {
+			throw new Exception(violation.getMessage());
+		}
 	}
 }
