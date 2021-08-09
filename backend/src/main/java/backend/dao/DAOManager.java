@@ -48,6 +48,11 @@ public class DAOManager implements Closeable {
 	private SalesOrderDao salesOrderDao;
 	
 	/**
+	 * DAO to manage purchase order data.
+	 */
+	private PurchaseOrderDao purchaseOrderDao;
+	
+	/**
 	 * DAO to manage image data.
 	 */
 	private ImageDao imageDao;
@@ -152,6 +157,20 @@ public class DAOManager implements Closeable {
 			this.salesOrderDao = new SalesOrderHibernateDao(this.sessionFactory);
 		
 		return this.salesOrderDao;
+		
+	}
+	
+	
+	/**
+	 * Returns a DAO to manage purchase order data.
+	 * 
+	 * @return The PurchaseOrderDAO.
+	 */
+	public PurchaseOrderDao getPurchaseOrderDAO() {
+		if(this.purchaseOrderDao == null)
+			this.purchaseOrderDao = new PurchaseOrderHibernateDao(this.sessionFactory);
+		
+		return this.purchaseOrderDao;
 		
 	}
 	
