@@ -124,6 +124,7 @@ public class PurchaseOrderItem {
 	 */
 	public void setMaterial(Material material) {
 		this.material = material;
+		this.updatePriceTotal();
 	}
 
 
@@ -140,6 +141,7 @@ public class PurchaseOrderItem {
 	 */
 	public void setQuantity(Long quantity) {
 		this.quantity = quantity;
+		this.updatePriceTotal();
 	}
 
 
@@ -156,6 +158,17 @@ public class PurchaseOrderItem {
 	 */
 	public void setPriceTotal(BigDecimal priceTotal) {
 		this.priceTotal = priceTotal;
+	}
+	
+	
+	/**
+	 * Updates the total price of the purchase order item based on quantity and price per unit of the material.
+	 */
+	private void updatePriceTotal() {
+		if(this.material == null || this.material.getPricePerUnit() == null || this.quantity == null)
+			return;
+		
+		this.priceTotal = this.material.getPricePerUnit().multiply(new BigDecimal(this.quantity));
 	}
 	
 	

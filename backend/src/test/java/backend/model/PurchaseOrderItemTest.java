@@ -34,7 +34,7 @@ public class PurchaseOrderItemTest {
 	 */
 	private void setUp() {
 		this.initMaterial();
-		this.initSalesOrderItem();	
+		this.initPurchaseOrderItem();	
 	}
 	
 	
@@ -65,7 +65,7 @@ public class PurchaseOrderItemTest {
 	/**
 	 * Initializes the purchase order item.
 	 */
-	private void initSalesOrderItem() {
+	private void initPurchaseOrderItem() {
 		this.purchaseOrderItem = new PurchaseOrderItem();
 		this.purchaseOrderItem.setId(1);
 		this.purchaseOrderItem.setMaterial(this.material);
@@ -198,5 +198,40 @@ public class PurchaseOrderItemTest {
 		}
 		
 		assertEquals(expectedErrorMessage, errorMessage);
+	}
+	
+	
+	@Test
+	/**
+	 * Tests validation of a purchase order item whose quantity has changed. The price should be updated automatically.
+	 */
+	public void testPriceUpdateOnQuantityChange() {
+		this.purchaseOrderItem.setQuantity(Long.valueOf(3));
+		BigDecimal expectedPrice = this.material.getPricePerUnit().multiply(new BigDecimal(this.purchaseOrderItem.getQuantity()));
+		
+		assertEquals(expectedPrice, this.purchaseOrderItem.getPriceTotal());
+	}
+	
+	
+	@Test
+	/**
+	 * Tests validation of a purchase order item whose material has changed. The price should be updated automatically.
+	 */
+	public void testPriceUpdateOnMaterialChange() {		
+		Material otherMaterial = new Material();
+		BigDecimal expectedPrice;
+		
+		otherMaterial.setId(2);
+		otherMaterial.setName("Water");
+		otherMaterial.setDescription("Tap water.");
+		otherMaterial.setUnit(UnitOfMeasurement.L);
+		otherMaterial.setPricePerUnit(BigDecimal.valueOf(Double.valueOf(0.02)));
+		otherMaterial.setCurrency(Currency.EUR);
+		otherMaterial.setInventory(Long.valueOf(1000));
+		
+		expectedPrice = otherMaterial.getPricePerUnit().multiply(new BigDecimal(this.purchaseOrderItem.getQuantity()));
+		this.purchaseOrderItem.setMaterial(otherMaterial);
+		
+		assertEquals(expectedPrice, this.purchaseOrderItem.getPriceTotal());
 	}
 }
