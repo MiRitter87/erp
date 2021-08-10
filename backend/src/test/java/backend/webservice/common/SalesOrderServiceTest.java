@@ -312,7 +312,7 @@ public class SalesOrderServiceTest {
 		//Assure no error message exists
 		assertTrue(WebServiceTools.resultContainsErrorMessage(getSalesOrderResult) == false);
 		
-		//Assure that an employee is returned
+		//Assure that a sales order is returned
 		assertTrue(getSalesOrderResult.getData() instanceof SalesOrder);
 		
 		salesOrder = (SalesOrder) getSalesOrderResult.getData();
@@ -325,6 +325,9 @@ public class SalesOrderServiceTest {
 		assertEquals(salesOrder.getOrderDate().getTime(), this.order1.getOrderDate().getTime());
 		assertEquals(salesOrder.getRequestedDeliveryDate().getTime(), this.order1.getRequestedDeliveryDate().getTime());
 		assertEquals(salesOrder.getStatus(), this.order1.getStatus());
+		
+		//The returned sales order should have one item.
+		assertEquals(salesOrder.getItems().size(), this.order1.getItems().size());
 		
 		salesOrderItem = salesOrder.getItems().get(0);
 		

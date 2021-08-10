@@ -1,5 +1,7 @@
 package backend.webservice.common;
 
+import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.IOException;
@@ -11,6 +13,7 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import backend.dao.BusinessPartnerDao;
 import backend.dao.DAOManager;
@@ -24,6 +27,8 @@ import backend.model.PurchaseOrder;
 import backend.model.PurchaseOrderItem;
 import backend.model.PurchaseOrderStatus;
 import backend.model.UnitOfMeasurement;
+import backend.model.webservice.WebServiceResult;
+import backend.tools.WebServiceTools;
 
 /**
  * Tests the purchase order service.
@@ -266,5 +271,45 @@ public class PurchaseOrderServiceTest {
 		} catch (Exception e) {
 			fail(e.getMessage());
 		}
+	}
+	
+	
+	@Test
+	/**
+	 * Tests the retrieval of a purchase order.
+	 */
+	public void testGetPurchaseOrder() {
+		WebServiceResult getPurchaseOrderResult;
+		PurchaseOrder purchaseOrder;
+		PurchaseOrderItem purchaseOrderItem;
+		
+		//Get the purchase order.
+		PurchaseOrderService service = new PurchaseOrderService();
+		getPurchaseOrderResult = service.getPurchaseOrder(this.order1.getId());
+		
+		//Assure no error message exists
+		assertTrue(WebServiceTools.resultContainsErrorMessage(getPurchaseOrderResult) == false);
+		
+		//Assure that a purchase order is returned
+		assertTrue(getPurchaseOrderResult.getData() instanceof PurchaseOrder);
+		
+		purchaseOrder = (PurchaseOrder) getPurchaseOrderResult.getData();
+		
+		//Check each attribute of the purchase order
+		assertEquals(purchaseOrder.getId(), this.order1.getId());
+		assertEquals(purchaseOrder.getVendor(), this.order1.getVendor());
+		assertEquals(purchaseOrder.getOrderDate().getTime(), this.order1.getOrderDate().getTime());
+		assertEquals(purchaseOrder.getRequestedDeliveryDate().getTime(), this.order1.getRequestedDeliveryDate().getTime());
+		assertEquals(purchaseOrder.getStatus(), this.order1.getStatus());
+		
+		//The returned purchase order should have one item.
+		assertEquals(purchaseOrder.getItems().size(), this.order1.getItems().size());
+		
+		purchaseOrderItem = purchaseOrder.getItems().get(0);
+		
+		//Check the attributes of the purchase order item
+		assertEquals(purchaseOrderItem.getId(), this.orderItem1.getId());
+		assertEquals(purchaseOrderItem.getMaterial(), this.orderItem1.getMaterial());
+		assertEquals(purchaseOrderItem.getQuantity(), this.orderItem1.getQuantity());
 	}
 }
