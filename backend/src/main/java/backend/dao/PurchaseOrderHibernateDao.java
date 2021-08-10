@@ -7,6 +7,10 @@ import java.util.Map;
 import javax.persistence.EntityGraph;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
+import javax.persistence.TypedQuery;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
 
 import backend.exception.ObjectUnchangedException;
 import backend.model.PurchaseOrder;
@@ -82,8 +86,38 @@ public class PurchaseOrderHibernateDao implements PurchaseOrderDao {
 
 	@Override
 	public List<PurchaseOrder> getPurchaseOrders() throws Exception {
-		// TODO Auto-generated method stub
-		return null;
+		List<PurchaseOrder> purchaseOrders = null;
+		EntityManager entityManager = this.sessionFactory.createEntityManager();
+		
+		//Use entity graphs to load data of referenced PurchaseOrderItem instances.
+		EntityGraph<PurchaseOrder> graph = entityManager.createEntityGraph(PurchaseOrder.class);
+		graph.addAttributeNodes("items");
+		
+		entityManager.getTransaction().begin();
+		
+		try {
+			CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+			CriteriaQuery<PurchaseOrder> criteriaQuery = criteriaBuilder.createQuery(PurchaseOrder.class);
+			Root<PurchaseOrder> criteria = criteriaQuery.from(PurchaseOrder.class);
+			criteriaQuery.select(criteria);			
+			criteriaQuery.orderBy(criteriaBuilder.asc(criteria.get("id")));	//Order by id ascending
+			TypedQuery<PurchaseOrder> typedQuery = entityManager.createQuery(criteriaQuery);
+			typedQuery.setHint("javax.persistence.loadgraph", graph);	//Also fetch all item data.
+			purchaseOrders = typedQuery.getResultList();
+			
+			entityManager.getTransaction().commit();			
+		}
+		catch(Exception exception) {
+			//If something breaks a rollback is necessary.
+			if(entityManager.getTransaction().isActive())
+				entityManager.getTransaction().rollback();
+			throw exception;
+		}
+		finally {
+			entityManager.close();			
+		}
+		
+		return purchaseOrders;
 	}
 
 

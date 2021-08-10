@@ -9,6 +9,7 @@ import org.apache.logging.log4j.Logger;
 import backend.dao.DAOManager;
 import backend.dao.PurchaseOrderDao;
 import backend.model.PurchaseOrder;
+import backend.model.PurchaseOrderArray;
 import backend.model.webservice.WebServiceMessage;
 import backend.model.webservice.WebServiceMessageType;
 import backend.model.webservice.WebServiceResult;
@@ -74,5 +75,28 @@ public class PurchaseOrderService {
 		}
 		
 		return getPurchaseOrderResult;
+	}
+	
+	
+	/**
+	 * Provides a list of all purchase orders.
+	 * 
+	 * @return A list of all purchase orders.
+	 */
+	public WebServiceResult getPurchaseOrders() {
+		PurchaseOrderArray purchaseOrders = new PurchaseOrderArray();
+		WebServiceResult getPurchaseOrdersResult = new WebServiceResult(null);
+		
+		try {
+			purchaseOrders.setPurchaseOrders(this.purchaseOrderDAO.getPurchaseOrders());
+			getPurchaseOrdersResult.setData(purchaseOrders);
+		} catch (Exception e) {
+			getPurchaseOrdersResult.addMessage(new WebServiceMessage(
+					WebServiceMessageType.E, this.resources.getString("purchaseOrder.getPurchaseOrdersError")));
+			
+			logger.error(this.resources.getString("purchaseOrder.getPurchaseOrdersError"), e);
+		}
+		
+		return getPurchaseOrdersResult;
 	}
 }

@@ -24,6 +24,7 @@ import backend.model.BusinessPartnerType;
 import backend.model.Currency;
 import backend.model.Material;
 import backend.model.PurchaseOrder;
+import backend.model.PurchaseOrderArray;
 import backend.model.PurchaseOrderItem;
 import backend.model.PurchaseOrderStatus;
 import backend.model.UnitOfMeasurement;
@@ -311,5 +312,63 @@ public class PurchaseOrderServiceTest {
 		assertEquals(purchaseOrderItem.getId(), this.orderItem1.getId());
 		assertEquals(purchaseOrderItem.getMaterial(), this.orderItem1.getMaterial());
 		assertEquals(purchaseOrderItem.getQuantity(), this.orderItem1.getQuantity());
+	}
+	
+	
+	@Test
+	/**
+	 * Tests the retrieval of all purchase orders.
+	 */
+	public void testGetAllPurchaseOrders() {
+		WebServiceResult getPurchaseOrdersResult;
+		PurchaseOrderArray purchaseOrders;
+		PurchaseOrder purchaseOrder;
+		PurchaseOrderItem purchaseOrderItem;
+		
+		//Get the purchase orders.
+		PurchaseOrderService service = new PurchaseOrderService();
+		getPurchaseOrdersResult = service.getPurchaseOrders();
+		purchaseOrders = (PurchaseOrderArray) getPurchaseOrdersResult.getData();
+		
+		//Assure no error message exists
+		assertTrue(WebServiceTools.resultContainsErrorMessage(getPurchaseOrdersResult) == false);
+		
+		//Check if two purchase orders are returned.
+		assertTrue(purchaseOrders.getPurchaseOrders().size() == 2);
+		
+		//Check both purchase orders by each attribute
+		purchaseOrder = purchaseOrders.getPurchaseOrders().get(0);
+		assertEquals(purchaseOrder.getId(), this.order1.getId());
+		assertEquals(purchaseOrder.getVendor(), this.order1.getVendor());
+		assertEquals(purchaseOrder.getOrderDate().getTime(), this.order1.getOrderDate().getTime());
+		assertEquals(purchaseOrder.getRequestedDeliveryDate().getTime(), this.order1.getRequestedDeliveryDate().getTime());
+		assertEquals(purchaseOrder.getStatus(), this.order1.getStatus());
+		
+		assertEquals(purchaseOrder.getItems().size(), this.order1.getItems().size());
+		purchaseOrderItem = purchaseOrder.getItems().get(0);
+		assertEquals(purchaseOrderItem.getId(), this.orderItem1.getId());
+		assertEquals(purchaseOrderItem.getMaterial(), this.orderItem1.getMaterial());
+		assertEquals(purchaseOrderItem.getQuantity(), this.orderItem1.getQuantity());
+		assertEquals(purchaseOrderItem.getPriceTotal(), this.orderItem1.getPriceTotal());
+		
+		purchaseOrder = purchaseOrders.getPurchaseOrders().get(1);
+		assertEquals(purchaseOrder.getId(), this.order2.getId());
+		assertEquals(purchaseOrder.getVendor(), this.order2.getVendor());
+		assertEquals(purchaseOrder.getOrderDate().getTime(), this.order2.getOrderDate().getTime());
+		assertEquals(purchaseOrder.getRequestedDeliveryDate().getTime(), this.order2.getRequestedDeliveryDate().getTime());
+		assertEquals(purchaseOrder.getStatus(), this.order2.getStatus());
+		
+		assertEquals(purchaseOrder.getItems().size(), this.order2.getItems().size());
+		purchaseOrderItem = purchaseOrder.getItems().get(0);
+		assertEquals(purchaseOrderItem.getId(), this.orderItem21.getId());
+		assertEquals(purchaseOrderItem.getMaterial(), this.orderItem21.getMaterial());
+		assertEquals(purchaseOrderItem.getQuantity(), this.orderItem21.getQuantity());
+		assertEquals(purchaseOrderItem.getPriceTotal(), this.orderItem21.getPriceTotal());
+		
+		purchaseOrderItem = purchaseOrder.getItems().get(1);
+		assertEquals(purchaseOrderItem.getId(), this.orderItem22.getId());
+		assertEquals(purchaseOrderItem.getMaterial(), this.orderItem22.getMaterial());
+		assertEquals(purchaseOrderItem.getQuantity(), this.orderItem22.getQuantity());
+		assertEquals(purchaseOrderItem.getPriceTotal(), this.orderItem22.getPriceTotal());
 	}
 }
