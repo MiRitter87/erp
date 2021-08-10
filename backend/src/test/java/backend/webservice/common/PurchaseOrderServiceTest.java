@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.GregorianCalendar;
 
@@ -27,7 +28,9 @@ import backend.model.PurchaseOrder;
 import backend.model.PurchaseOrderArray;
 import backend.model.PurchaseOrderItem;
 import backend.model.PurchaseOrderStatus;
+import backend.model.SalesOrderItem;
 import backend.model.UnitOfMeasurement;
+import backend.model.webservice.WebServiceMessageType;
 import backend.model.webservice.WebServiceResult;
 import backend.tools.WebServiceTools;
 
@@ -370,5 +373,53 @@ public class PurchaseOrderServiceTest {
 		assertEquals(purchaseOrderItem.getMaterial(), this.orderItem22.getMaterial());
 		assertEquals(purchaseOrderItem.getQuantity(), this.orderItem22.getQuantity());
 		assertEquals(purchaseOrderItem.getPriceTotal(), this.orderItem22.getPriceTotal());
+	}
+	
+	
+	@Test
+	/**
+	 * Tests deletion of a purchase order.
+	 */
+	public void testDeletePurchaseOrder() {
+		WebServiceResult deletePurchaseOrderResult;
+		PurchaseOrder deletedPurchaseOrder;
+		
+		try {
+			//Delete purchase order 1 using the service.
+			PurchaseOrderService service = new PurchaseOrderService();
+			deletePurchaseOrderResult = service.deletePurchaseOrder(this.order1.getId());
+			
+			//There should be no error messages
+			assertTrue(WebServiceTools.resultContainsErrorMessage(deletePurchaseOrderResult) == false);
+			
+			//There should be a success message
+			assertTrue(deletePurchaseOrderResult.getMessages().size() == 1);
+			assertTrue(deletePurchaseOrderResult.getMessages().get(0).getType() == WebServiceMessageType.S);
+			
+			//Check if order 1 is missing using the DAO.
+			deletedPurchaseOrder = orderDAO.getPurchaseOrder(this.order1.getId());
+			
+			if(deletedPurchaseOrder != null)
+				fail("Purchase order 1 is still persisted but should have been deleted by the WebService operation 'deletePurchaseOrder'.");
+		}
+		catch (Exception e) {
+			fail(e.getMessage());
+		}
+		finally {
+			//Restore old database state by adding the purchase order that has been deleted previously.
+			try {
+				this.order1.setId(null);
+				
+				//The items have to be re-initialized in order to prevent exception regarding orphan-removal.
+				//org.hibernate.HibernateException: Don't change the reference to a collection with delete-orphan enabled : backend.model.PurchaseOrder.items
+				this.order1.setItems(new ArrayList<PurchaseOrderItem>());
+				this.order1.addItem(this.orderItem1);
+				
+				orderDAO.insertPurchaseOrder(this.order1);
+			} 
+			catch (Exception e) {
+				fail(e.getMessage());
+			}
+		}
 	}
 }

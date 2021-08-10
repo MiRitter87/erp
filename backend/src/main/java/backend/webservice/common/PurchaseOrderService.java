@@ -99,4 +99,41 @@ public class PurchaseOrderService {
 		
 		return getPurchaseOrdersResult;
 	}
+	
+	
+	/**
+	 * Deletes the purchase order with the given id.
+	 * 
+	 * @param id The id of the purchase order to be deleted.
+	 * @return The result of the delete function.
+	 */
+	public WebServiceResult deletePurchaseOrder(final Integer id) {
+		PurchaseOrder purchaseOrder = null;
+		WebServiceResult deletePurchaseOrderResult = new WebServiceResult(null);
+		
+		//Check if a purchase order with the given id exists.
+		try {
+			purchaseOrder = this.purchaseOrderDAO.getPurchaseOrder(id);
+			
+			if(purchaseOrder != null) {
+				//Delete purchase order if exists.
+				this.purchaseOrderDAO.deletePurchaseOrder(purchaseOrder);
+				deletePurchaseOrderResult.addMessage(new WebServiceMessage(WebServiceMessageType.S, 
+						MessageFormat.format(this.resources.getString("purchaseOrder.deleteSuccess"), id)));
+			}
+			else {
+				//Purchase order not found.
+				deletePurchaseOrderResult.addMessage(new WebServiceMessage(WebServiceMessageType.E, 
+						MessageFormat.format(this.resources.getString("purchaseOrder.notFound"), id)));
+			}
+		}
+		catch (Exception e) {
+			deletePurchaseOrderResult.addMessage(new WebServiceMessage(WebServiceMessageType.E,
+					MessageFormat.format(this.resources.getString("purchaseOrder.deleteError"), id)));
+			
+			logger.error(MessageFormat.format(this.resources.getString("purchaseOrder.deleteError"), id), e);
+		}
+		
+		return deletePurchaseOrderResult;
+	}
 }
