@@ -208,6 +208,9 @@ public class PurchaseOrder {
 	public void validate() throws NoItemsException, Exception {
 		this.validateAnnotations();
 		this.validateAdditionalCharacteristics();
+		
+		for(PurchaseOrderItem item:this.items)
+			item.validate();
 	}
 	
 	

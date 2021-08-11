@@ -9,6 +9,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.ResourceBundle;
 
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
@@ -34,6 +35,7 @@ import backend.model.webservice.PurchaseOrderWS;
 import backend.model.webservice.WebServiceMessageType;
 import backend.model.webservice.WebServiceResult;
 import backend.tools.WebServiceTools;
+import backend.tools.test.ValidationMessageProvider;
 
 /**
  * Tests the purchase order service.
@@ -41,6 +43,11 @@ import backend.tools.WebServiceTools;
  * @author Michael
  */
 public class PurchaseOrderServiceTest {
+	/**
+	 * Access to localized application resources.
+	 */
+	private ResourceBundle resources = ResourceBundle.getBundle("backend");	
+	
 	/**
 	 * DAO to access purchase order data.
 	 */
@@ -455,6 +462,118 @@ public class PurchaseOrderServiceTest {
 			fail(e.getMessage());
 		}
 	}
+	
+	
+	@Test
+	/**
+	 * Tests updating a purchase order with valid item data.
+	 */
+	public void testUpdateValidPurchaseOrderItem() {
+		WebServiceResult updatePurchaseOrderResult;
+		PurchaseOrder updatedPurchaseOrder;
+		PurchaseOrderService orderService = new PurchaseOrderService();
+		
+		//Update the ordered quantity of an item.
+		this.order1.getItems().get(0).setQuantity(Long.valueOf(2));
+		updatePurchaseOrderResult = orderService.updatePurchaseOrder(this.convertToWsOrder(this.order1));
+		
+		//Assure no error message exists
+		assertTrue(WebServiceTools.resultContainsErrorMessage(updatePurchaseOrderResult) == false);
+		
+		//There should be a success message
+		assertTrue(updatePurchaseOrderResult.getMessages().size() == 1);
+		assertTrue(updatePurchaseOrderResult.getMessages().get(0).getType() == WebServiceMessageType.S);
+		
+		//Retrieve the updated purchase order and check if the changes have been persisted.
+		try {
+			updatedPurchaseOrder = orderDAO.getPurchaseOrder(this.order1.getId());
+			assertEquals(this.order1.getItems().get(0).getQuantity(), updatedPurchaseOrder.getItems().get(0).getQuantity());
+		} catch (Exception e) {
+			fail(e.getMessage());
+		}
+	}
+	
+	
+	@Test
+	/**
+	 * Tests updating a purchase order without items.
+	 */
+	public void testUpdatePurchaseOrderWithoutItems() {
+		WebServiceResult updatePurchaseOrderResult;
+		PurchaseOrderService orderService = new PurchaseOrderService();
+		String actualErrorMessage, expectedErrorMessage;
+		
+		//Remove the item and try to update the purchase order.
+		this.order1.getItems().clear();
+		updatePurchaseOrderResult = orderService.updatePurchaseOrder(this.convertToWsOrder(this.order1));
+		
+		//There should be a return message of type E.
+		assertTrue(updatePurchaseOrderResult.getMessages().size() == 1);
+		assertTrue(updatePurchaseOrderResult.getMessages().get(0).getType() == WebServiceMessageType.E);
+		
+		//A proper message should be provided.
+		expectedErrorMessage = this.resources.getString("purchaseOrder.noItemsGiven");
+		actualErrorMessage = updatePurchaseOrderResult.getMessages().get(0).getText();
+		assertEquals(expectedErrorMessage, actualErrorMessage);
+	}
+	
+	
+	@Test
+	/**
+	 * Tests updating a purchase order with invalid data.
+	 */
+	public void testUpdateInvalidSalesOrder() {
+		WebServiceResult updatePurchaseOrderResult;
+		PurchaseOrderService orderService = new PurchaseOrderService();
+		ValidationMessageProvider messageProvider = new ValidationMessageProvider();
+		String actualErrorMessage, expectedErrorMessage;
+		
+		//Remove the vendor.
+		this.order1.setVendor(null);
+		updatePurchaseOrderResult = orderService.updatePurchaseOrder(this.convertToWsOrder(this.order1));
+		
+		//There should be a return message of type E.
+		assertTrue(updatePurchaseOrderResult.getMessages().size() == 1);
+		assertTrue(updatePurchaseOrderResult.getMessages().get(0).getType() == WebServiceMessageType.E);
+		
+		//A proper message should be provided.
+		expectedErrorMessage = messageProvider.getNotNullValidationMessage("purchaseOrder", "vendor");
+		actualErrorMessage = updatePurchaseOrderResult.getMessages().get(0).getText();
+		assertEquals(expectedErrorMessage, actualErrorMessage);
+	}
+	
+	
+	@Test
+	/**
+	 * Tests updating a sales order item with invalid data.
+	 */
+	public void testUpdateInvalidSalesOrderItem() {
+		WebServiceResult updatePurchaseOrderResult;
+		PurchaseOrderService orderService = new PurchaseOrderService();
+		ValidationMessageProvider messageProvider = new ValidationMessageProvider();
+		String actualErrorMessage, expectedErrorMessage;
+		
+		//Update order item with quantity of zero.
+		this.order1.getItems().get(0).setQuantity(Long.valueOf(0));
+		updatePurchaseOrderResult = orderService.updatePurchaseOrder(this.convertToWsOrder(this.order1));
+		
+		//There should be a return message of type E.
+		assertTrue(updatePurchaseOrderResult.getMessages().size() == 1);
+		assertTrue(updatePurchaseOrderResult.getMessages().get(0).getType() == WebServiceMessageType.E);
+		
+		//A proper message should be provided.
+		expectedErrorMessage = messageProvider.getMinValidationMessage("purchaseOrderItem", "quantity", "1");
+		actualErrorMessage = updatePurchaseOrderResult.getMessages().get(0).getText();
+		assertEquals(expectedErrorMessage, actualErrorMessage);
+	}
+	
+	
+	/*
+	 * TODO Additional tests
+	 * 
+	 * updateUnchanged
+	 * 
+	 */
 	
 	
 	/**
