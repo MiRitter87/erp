@@ -208,8 +208,8 @@ public class SalesOrderService {
 		}
 		catch(Exception exception) {
 			updateSalesOrderResult.addMessage(new WebServiceMessage(
-					WebServiceMessageType.E, this.resources.getString("salesOrder.updateError")));	
-			logger.error(this.resources.getString("salesOrder.updateError"), exception);
+					WebServiceMessageType.E, MessageFormat.format(this.resources.getString("salesOrder.updateError"), convertedSalesOrder.getId())));	
+			logger.error(MessageFormat.format(this.resources.getString("salesOrder.updateError"), convertedSalesOrder.getId()), exception);
 			return updateSalesOrderResult;
 		}
 		
