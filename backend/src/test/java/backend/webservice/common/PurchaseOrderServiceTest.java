@@ -28,8 +28,9 @@ import backend.model.PurchaseOrder;
 import backend.model.PurchaseOrderArray;
 import backend.model.PurchaseOrderItem;
 import backend.model.PurchaseOrderStatus;
-import backend.model.SalesOrderItem;
 import backend.model.UnitOfMeasurement;
+import backend.model.webservice.PurchaseOrderItemWS;
+import backend.model.webservice.PurchaseOrderWS;
 import backend.model.webservice.WebServiceMessageType;
 import backend.model.webservice.WebServiceResult;
 import backend.tools.WebServiceTools;
@@ -421,5 +422,69 @@ public class PurchaseOrderServiceTest {
 				fail(e.getMessage());
 			}
 		}
+	}
+	
+	
+	@Test
+	/**
+	 * Tests updating a purchase order with valid data.
+	 */
+	public void testUpdateValidPurchaseOrder() {
+		WebServiceResult updatePurchaseOrderResult;
+		PurchaseOrder updatedPurchaseOrder;
+		PurchaseOrderService orderService = new PurchaseOrderService();
+		
+		//Update the requested delivery date.
+		GregorianCalendar calendar = new GregorianCalendar();
+		calendar.add(GregorianCalendar.DAY_OF_MONTH, 14);
+		this.order1.setRequestedDeliveryDate(calendar.getTime());
+		updatePurchaseOrderResult = orderService.updatePurchaseOrder(this.convertToWsOrder(this.order1));
+		
+		//Assure no error message exists
+		assertTrue(WebServiceTools.resultContainsErrorMessage(updatePurchaseOrderResult) == false);
+		
+		//There should be a success message
+		assertTrue(updatePurchaseOrderResult.getMessages().size() == 1);
+		assertTrue(updatePurchaseOrderResult.getMessages().get(0).getType() == WebServiceMessageType.S);
+		
+		//Retrieve the updated purchase order and check if the changes have been persisted.
+		try {
+			updatedPurchaseOrder = orderDAO.getPurchaseOrder(this.order1.getId());
+			assertEquals(this.order1.getRequestedDeliveryDate().getTime(), updatedPurchaseOrder.getRequestedDeliveryDate().getTime());
+		} catch (Exception e) {
+			fail(e.getMessage());
+		}
+	}
+	
+	
+	/**
+	 * Converts a purchase order to the lean WebService representation.
+	 * 
+	 * @param order The purchase order to be converted.
+	 * @return The lean WebService representation of the purchase order.
+	 */
+	private PurchaseOrderWS convertToWsOrder(PurchaseOrder order) {
+		PurchaseOrderWS wsOrder = new PurchaseOrderWS();
+		
+		//Head level
+		wsOrder.setPurchaseOrderId(order.getId());
+		wsOrder.setOrderDate(order.getOrderDate());
+		wsOrder.setRequestedDeliveryDate(order.getRequestedDeliveryDate());
+		wsOrder.setStatus(order.getStatus());
+		
+		if(order.getVendor() != null)
+			wsOrder.setVendorId(order.getVendor().getId());
+		
+		//Item level
+		for(PurchaseOrderItem orderItem:order.getItems()) {
+			PurchaseOrderItemWS wsOrderItem = new PurchaseOrderItemWS();
+			wsOrderItem.setItemId(orderItem.getId());
+			wsOrderItem.setMaterialId(orderItem.getMaterial().getId());
+			wsOrderItem.setQuantity(orderItem.getQuantity());
+			wsOrderItem.setPriceTotal(orderItem.getPriceTotal());
+			wsOrder.addItem(wsOrderItem);
+		}
+		
+		return wsOrder;
 	}
 }

@@ -142,7 +142,12 @@ public class PurchaseOrderHibernateDao implements PurchaseOrderDao {
 
 	@Override
 	public void updatePurchaseOrder(PurchaseOrder purchaseOrder) throws ObjectUnchangedException, Exception {
-		// TODO Auto-generated method stub
+		EntityManager entityManager;
 		
+		entityManager = this.sessionFactory.createEntityManager();
+		entityManager.getTransaction().begin();
+		entityManager.merge(purchaseOrder);
+		entityManager.getTransaction().commit();
+		entityManager.close();
 	}
 }
