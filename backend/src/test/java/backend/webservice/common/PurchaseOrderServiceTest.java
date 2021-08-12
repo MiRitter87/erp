@@ -592,6 +592,35 @@ public class PurchaseOrderServiceTest {
 	}
 	
 	
+	@Test
+	/**
+	 * Tests updating a purchase order that has multiple items with the same item id.
+	 */
+	public void testUpdateWithDuplicateItemKey() {
+		WebServiceResult updatePurchaseOrderResult;
+		PurchaseOrderService orderService = new PurchaseOrderService();
+		String actualErrorMessage, expectedErrorMessage;
+		PurchaseOrderItem newItem = new PurchaseOrderItem();
+		
+		//Add a new item to the purchase order.
+		newItem.setId(this.orderItem1.getId());
+		newItem.setMaterial(this.g4560);
+		newItem.setQuantity(Long.valueOf(1));
+		this.order1.addItem(newItem);
+		updatePurchaseOrderResult = orderService.updatePurchaseOrder(this.convertToWsOrder(this.order1));
+		
+		//There should be a return message of type E.
+		assertTrue(updatePurchaseOrderResult.getMessages().size() == 1);
+		assertTrue(updatePurchaseOrderResult.getMessages().get(0).getType() == WebServiceMessageType.E);
+		
+		//A proper message should be provided.
+		expectedErrorMessage =  MessageFormat.format(this.resources.getString("purchaseOrder.duplicateItemKey"), 
+				this.order1.getId(), this.orderItem1.getId());
+		actualErrorMessage = updatePurchaseOrderResult.getMessages().get(0).getText();
+		assertEquals(expectedErrorMessage, actualErrorMessage);
+	}
+	
+	
 	/**
 	 * Converts a purchase order to the lean WebService representation.
 	 * 

@@ -12,6 +12,7 @@ import backend.dao.BusinessPartnerDao;
 import backend.dao.DAOManager;
 import backend.dao.MaterialDao;
 import backend.dao.PurchaseOrderDao;
+import backend.exception.DuplicateIdentifierException;
 import backend.exception.NoItemsException;
 import backend.exception.ObjectUnchangedException;
 import backend.model.PurchaseOrder;
@@ -261,6 +262,12 @@ public class PurchaseOrderService {
 		} 
 		catch(NoItemsException noItemsException) {
 			webServiceResult.addMessage(new WebServiceMessage(WebServiceMessageType.E, this.resources.getString("purchaseOrder.noItemsGiven")));
+			return webServiceResult;
+		}
+		catch(DuplicateIdentifierException duplicateIdentifierException) {
+			webServiceResult.addMessage(new WebServiceMessage(WebServiceMessageType.E, 
+					MessageFormat.format(this.resources.getString("purchaseOrder.duplicateItemKey"), purchaseOrder.getId(), 
+							duplicateIdentifierException.getDuplicateIdentifier())));
 			return webServiceResult;
 		}
 		catch (Exception validationException) {
