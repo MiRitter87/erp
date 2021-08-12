@@ -3,6 +3,7 @@ package backend.model.webservice;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 import backend.model.PurchaseOrderStatus;
 
@@ -34,9 +35,9 @@ public class PurchaseOrderWS {
 	private Date requestedDeliveryDate;
 	
 	/**
-	 * The status of the purchase order.
+	 * The set of active status of the purchase order.
 	 */
-	private PurchaseOrderStatus status;
+	private Set<PurchaseOrderStatus> status;
 	
 	/**
 	 * The items that are being ordered.
@@ -129,7 +130,7 @@ public class PurchaseOrderWS {
 	/**
 	 * @return the status
 	 */
-	public PurchaseOrderStatus getStatus() {
+	public Set<PurchaseOrderStatus> getStatus() {
 		return status;
 	}
 
@@ -137,7 +138,7 @@ public class PurchaseOrderWS {
 	/**
 	 * @param status the status to set
 	 */
-	public void setStatus(PurchaseOrderStatus status) {
+	public void setStatus(Set<PurchaseOrderStatus> status) {
 		this.status = status;
 	}
 

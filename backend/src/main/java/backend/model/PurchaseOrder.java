@@ -7,10 +7,13 @@ import java.util.List;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
+import javax.persistence.CollectionTable;
 import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -24,6 +27,7 @@ import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
 import javax.validation.constraints.Min;
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -71,12 +75,14 @@ public class PurchaseOrder {
 	private Date requestedDeliveryDate;
 	
 	/**
-	 * The status of the purchase order.
+	 * The set of active status of the purchase order.
 	 */
-	@Column(name="STATUS", length = 20)
+	@CollectionTable(name="PURCHASE_ORDER_STATUS", joinColumns = {@JoinColumn(name="PURCHASE_ORDER_ID")})
+	@Column(name="STATUS", nullable = false, length = 20)
+	@ElementCollection(targetClass = PurchaseOrderStatus.class, fetch = FetchType.EAGER)
 	@Enumerated(EnumType.STRING)
-	@NotNull(message = "{purchaseOrder.status.notNull.message}")
-	private PurchaseOrderStatus status;
+	@NotEmpty(message = "{purchaseOrder.status.notEmpty.message}")
+	private Set<PurchaseOrderStatus> status;
 	
 	/**
 	 * The items that are being ordered.
@@ -91,6 +97,7 @@ public class PurchaseOrder {
 	public PurchaseOrder() {
 		this.orderDate = new Date();
 		this.items = new ArrayList<PurchaseOrderItem>();
+		this.status = new HashSet<PurchaseOrderStatus>();
 	}
 	
 	
@@ -172,7 +179,7 @@ public class PurchaseOrder {
 	/**
 	 * @return the status
 	 */
-	public PurchaseOrderStatus getStatus() {
+	public Set<PurchaseOrderStatus> getStatus() {
 		return status;
 	}
 
@@ -180,10 +187,24 @@ public class PurchaseOrder {
 	/**
 	 * @param status the status to set
 	 */
-	public void setStatus(PurchaseOrderStatus status) {
+	public void setStatus(Set<PurchaseOrderStatus> status) {
 		this.status = status;
 	}
 
+	
+	/**
+	 * Sets the given status.
+	 * 
+	 * @param status The status to be set.
+	 * @param active Sets the given status to active if true; removes the given status if false.
+	 */
+	public void setStatus(final PurchaseOrderStatus status, final boolean active) {
+		if(active)
+			this.status.add(status);
+		else
+			this.status.remove(status);			
+	}
+	
 
 	/**
 	 * @return the items
@@ -248,7 +269,11 @@ public class PurchaseOrder {
 		} else if (requestedDeliveryDate.getTime() != other.requestedDeliveryDate.getTime()) {
 			return false;
 		}
-		if (status != other.status) {
+		if (status == null) {
+			if (other.status != null) {
+				return false;
+			}
+		} else if (!status.equals(other.status)) {
 			return false;
 		}
 		if (vendor == null) {

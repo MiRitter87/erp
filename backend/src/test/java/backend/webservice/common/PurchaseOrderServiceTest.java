@@ -219,7 +219,7 @@ public class PurchaseOrderServiceTest {
 		this.order1.setVendor(this.partner);
 		this.order1.setOrderDate(new Date());
 		this.order1.setRequestedDeliveryDate(new Date());
-		this.order1.setStatus(PurchaseOrderStatus.OPEN);
+		this.order1.setStatus(PurchaseOrderStatus.OPEN, true);
 		this.order1.addItem(this.orderItem1);
 		
 		this.orderItem21 = new PurchaseOrderItem();
@@ -236,7 +236,7 @@ public class PurchaseOrderServiceTest {
 		this.order2.setVendor(this.partner);
 		this.order2.setOrderDate(new Date());
 		this.order2.setRequestedDeliveryDate(tomorrow.getTime());
-		this.order2.setStatus(PurchaseOrderStatus.OPEN);
+		this.order2.setStatus(PurchaseOrderStatus.OPEN, true);
 		this.order2.addItem(this.orderItem21);
 		this.order2.addItem(this.orderItem22);
 		

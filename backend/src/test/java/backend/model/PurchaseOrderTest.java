@@ -4,6 +4,7 @@ import static org.junit.Assert.fail;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.math.BigDecimal;
+import java.util.HashSet;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -107,7 +108,7 @@ public class PurchaseOrderTest {
 		this.order = new PurchaseOrder();
 		this.order.setId(1);
 		this.order.setVendor(this.vendor);
-		this.order.setStatus(PurchaseOrderStatus.OPEN);
+		this.order.setStatus(PurchaseOrderStatus.OPEN, true);
 	}
 	
 	
@@ -200,20 +201,43 @@ public class PurchaseOrderTest {
 	
 	@Test
 	/**
-	 * Tests validation of a purchase order that has no status defined.
+	 * Tests the validation of a purchase order whose set of status is null.
 	 */
-	public void testNoStatusDefined() {
-		ValidationMessageProvider messageProvider = new ValidationMessageProvider();		
+	public void testTypesIsNull() {
+		ValidationMessageProvider messageProvider = new ValidationMessageProvider();
 		this.order.setStatus(null);
 		
-		String expectedErrorMessage = messageProvider.getNotNullValidationMessage("purchaseOrder", "status");
+		String expectedErrorMessage = messageProvider.getNotEmptyValidationMessage("purchaseOrder", "status");
 		String errorMessage = "";
 		
 		try {
 			this.order.validate();
-			fail("Validation should have failed because status is not set.");
-		} 
-		catch (Exception expected) {
+			fail("Validation should have failed because status is null.");
+		}
+		catch(Exception expected) {
+			errorMessage = expected.getMessage();
+		}
+		
+		assertEquals(expectedErrorMessage, errorMessage);
+	}
+	
+	
+	@Test
+	/**
+	 * Tests the validation of a purchase order whose set of status is empty.
+	 */
+	public void testStatusIsEmpty() {
+		ValidationMessageProvider messageProvider = new ValidationMessageProvider();
+		this.order.setStatus(new HashSet<PurchaseOrderStatus>());
+		
+		String expectedErrorMessage = messageProvider.getNotEmptyValidationMessage("purchaseOrder", "status");
+		String errorMessage = "";
+		
+		try {
+			this.order.validate();
+			fail("Validation should have failed because status is empty.");
+		}
+		catch(Exception expected) {
 			errorMessage = expected.getMessage();
 		}
 		
