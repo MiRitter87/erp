@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -568,12 +569,27 @@ public class PurchaseOrderServiceTest {
 	}
 	
 	
-	/*
-	 * TODO Additional tests
-	 * 
-	 * updateUnchanged
-	 * 
+	@Test
+	/**
+	 * Tests updating a purchase order without changing any data.
 	 */
+	public void testUpdateUnchangedPurchaseOrder() {
+		WebServiceResult updatePurchaseOrderResult;
+		PurchaseOrderService orderService = new PurchaseOrderService();
+		String actualErrorMessage, expectedErrorMessage;
+		
+		//Update purchase order without changing any data.
+		updatePurchaseOrderResult = orderService.updatePurchaseOrder(this.convertToWsOrder(this.order1));
+		
+		//There should be a return message of type I
+		assertTrue(updatePurchaseOrderResult.getMessages().size() == 1);
+		assertTrue(updatePurchaseOrderResult.getMessages().get(0).getType() == WebServiceMessageType.I);
+		
+		//A proper message should be provided.
+		expectedErrorMessage = MessageFormat.format(this.resources.getString("purchaseOrder.updateUnchanged"), this.order1.getId());
+		actualErrorMessage = updatePurchaseOrderResult.getMessages().get(0).getText();
+		assertEquals(expectedErrorMessage, actualErrorMessage);
+	}
 	
 	
 	/**

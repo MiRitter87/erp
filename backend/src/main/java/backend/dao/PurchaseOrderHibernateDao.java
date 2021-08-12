@@ -144,10 +144,27 @@ public class PurchaseOrderHibernateDao implements PurchaseOrderDao {
 	public void updatePurchaseOrder(PurchaseOrder purchaseOrder) throws ObjectUnchangedException, Exception {
 		EntityManager entityManager;
 		
+		this.checkPurchaseOrderDataChanged(purchaseOrder);
+		
 		entityManager = this.sessionFactory.createEntityManager();
 		entityManager.getTransaction().begin();
 		entityManager.merge(purchaseOrder);
 		entityManager.getTransaction().commit();
 		entityManager.close();
+	}
+	
+	
+	/**
+	 * Checks if the data of the given purchase order differ from the purchase order that is persisted at database level.
+	 * 
+	 * @param purchaseOrder The purchase order to be checked.
+	 * @throws ObjectUnchangedException In case the purchase order has not been changed.
+	 * @throws Exception In case an error occurred during determination of the purchase order stored at the database.
+	 */
+	private void checkPurchaseOrderDataChanged(final PurchaseOrder purchaseOrder) throws ObjectUnchangedException, Exception {
+		PurchaseOrder databasePurchaseOrder = this.getPurchaseOrder(purchaseOrder.getId());
+		
+		if(databasePurchaseOrder.equals(purchaseOrder))
+			throw new ObjectUnchangedException();
 	}
 }

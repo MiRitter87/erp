@@ -685,6 +685,7 @@ public class SalesOrderServiceTest {
 		assertEquals(expectedErrorMessage, actualErrorMessage);
 	}
 	
+	
 	@Test
 	/**
 	 * Tests updating a sales order that has multiple items with the same item id.

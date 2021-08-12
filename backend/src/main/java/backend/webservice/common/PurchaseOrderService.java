@@ -285,8 +285,8 @@ public class PurchaseOrderService {
 					MessageFormat.format(this.resources.getString("purchaseOrder.updateSuccess"), purchaseOrder.getId())));
 		} 
 		catch(ObjectUnchangedException objectUnchangedException) {
-			// TODO Auto-generated catch block
-			objectUnchangedException.printStackTrace();
+			webServiceResult.addMessage(new WebServiceMessage(WebServiceMessageType.I, 
+					MessageFormat.format(this.resources.getString("purchaseOrder.updateUnchanged"), purchaseOrder.getId())));
 		}
 		catch (Exception e) {
 			webServiceResult.addMessage(new WebServiceMessage(WebServiceMessageType.E, 
