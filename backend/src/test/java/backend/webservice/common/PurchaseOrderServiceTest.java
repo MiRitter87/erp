@@ -1,6 +1,7 @@
 package backend.webservice.common;
 
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.fail;
@@ -689,6 +690,44 @@ public class PurchaseOrderServiceTest {
 			}
 		}		
 	}
+	
+	
+	@Test
+	/**
+	 * Tests adding of an invalid purchase order.
+	 */
+	public void testAddInvalidPurchaseOrder() {
+		PurchaseOrder newPurchaseOrder = new PurchaseOrder();
+		WebServiceResult addPurchaseOrderResult;
+		PurchaseOrderService orderService = new PurchaseOrderService();
+		
+		//Define the new purchase order without an item.
+		newPurchaseOrder.setVendor(this.partner);
+		newPurchaseOrder.setStatus(PurchaseOrderStatus.OPEN, true);
+		
+		//Add a new purchase order to the database via WebService
+		addPurchaseOrderResult = orderService.addPurchaseOrder(this.convertToWsOrder(newPurchaseOrder));
+		
+		//There should be a return message of type E.
+		assertTrue(addPurchaseOrderResult.getMessages().size() == 1);
+		assertTrue(addPurchaseOrderResult.getMessages().get(0).getType() == WebServiceMessageType.E);
+		
+		//The new purchase order should not have been persisted
+		assertNull(newPurchaseOrder.getId());
+	}
+	
+	
+	/*
+	 * TODO Add additional tests
+	 *
+	 * -test ordered material quantity added to inventory if status GOODS_RECEIPT is set from inactive to active
+	 * -test ordered material quantity removed from inventory if status GOODS_RECEIPT is set from active to inactive
+	 * -test ordered material quantity removed from inventory if status GOODS_RECEIPT is active and order is being canceled
+	 * -test status FINISHED is set to active if INVOICE_RECEIPT, GOODS_RECEIPT and INVOICE_SETTLED are set to active
+	 * -test status FINISHED is set to inactive if either INVOICE_RECEIPT, GOODS_RECEIPT or INVOICE_SETTLED is set to inactive
+	 * -test status OPEN is set to active if either INVOICE_RECEIPT, GOODS_RECEIPT or INVOICE_SETTLED is set to inactive
+	 * -test status OPEN is set to inactive if INVOICE_RECEIPT, GOODS_RECEIPT and INVOICE_SETTLED are set to active
+	 */
 	
 	
 	/**
