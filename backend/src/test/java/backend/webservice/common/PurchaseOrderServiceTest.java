@@ -1,5 +1,6 @@
 package backend.webservice.common;
 
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.fail;
@@ -618,6 +619,75 @@ public class PurchaseOrderServiceTest {
 				this.order1.getId(), this.orderItem1.getId());
 		actualErrorMessage = updatePurchaseOrderResult.getMessages().get(0).getText();
 		assertEquals(expectedErrorMessage, actualErrorMessage);
+	}
+	
+	
+	@Test
+	/**
+	 * Tests adding of a new purchase order.
+	 */
+	public void testAddValidPurchaseOrder() {
+		PurchaseOrder newPurchaseOrder = new PurchaseOrder();
+		PurchaseOrderItem newPurchaseOrderItem = new PurchaseOrderItem();
+		PurchaseOrder addedPurchaseOrder;
+		PurchaseOrderItem addedPurchaseOrderItem;
+		WebServiceResult addPurchaseOrderResult;
+		PurchaseOrderService orderService = new PurchaseOrderService();
+		
+		//Define the new salesOrder
+		newPurchaseOrderItem.setId(1);
+		newPurchaseOrderItem.setMaterial(this.g4560);
+		newPurchaseOrderItem.setQuantity(Long.valueOf(1));
+		
+		newPurchaseOrder.setVendor(this.partner);
+		newPurchaseOrder.setStatus(PurchaseOrderStatus.OPEN, true);
+		newPurchaseOrder.addItem(newPurchaseOrderItem);
+		
+		//Add a new sales order to the database via WebService
+		addPurchaseOrderResult = orderService.addPurchaseOrder(this.convertToWsOrder(newPurchaseOrder));
+		
+		//Assure no error message exists
+		assertTrue(WebServiceTools.resultContainsErrorMessage(addPurchaseOrderResult) == false);
+		
+		//There should be a success message
+		assertTrue(addPurchaseOrderResult.getMessages().size() == 1);
+		assertTrue(addPurchaseOrderResult.getMessages().get(0).getType() == WebServiceMessageType.S);
+		
+		//The ID of the newly created purchase order should be provided in the data part of the WebService return.
+		assertNotNull(addPurchaseOrderResult.getData());
+		assertTrue(addPurchaseOrderResult.getData() instanceof Integer);
+		newPurchaseOrder.setId((Integer) addPurchaseOrderResult.getData());
+		
+		//Read the persisted purchase order via DAO
+		try {
+			addedPurchaseOrder = orderDAO.getPurchaseOrder(newPurchaseOrder.getId());
+			
+			//Check if the purchase order read by the DAO equals the purchase order inserted using the WebService in each attribute.
+			assertEquals(newPurchaseOrder.getId(), addedPurchaseOrder.getId());
+			assertEquals(newPurchaseOrder.getOrderDate().getTime(), addedPurchaseOrder.getOrderDate().getTime());
+			assertEquals(newPurchaseOrder.getRequestedDeliveryDate(), addedPurchaseOrder.getRequestedDeliveryDate());
+			assertEquals(newPurchaseOrder.getVendor(), addedPurchaseOrder.getVendor());
+			assertEquals(newPurchaseOrder.getStatus(), addedPurchaseOrder.getStatus());
+			
+			//Checks at item level.
+			assertEquals(newPurchaseOrder.getItems().size(), addedPurchaseOrder.getItems().size());
+			addedPurchaseOrderItem = addedPurchaseOrder.getItems().get(0);
+			assertEquals(newPurchaseOrderItem.getId(), addedPurchaseOrderItem.getId());
+			assertEquals(newPurchaseOrderItem.getMaterial().getId(), addedPurchaseOrderItem.getMaterial().getId());
+			assertEquals(newPurchaseOrderItem.getQuantity(), addedPurchaseOrderItem.getQuantity());
+			assertEquals(newPurchaseOrderItem.getPriceTotal(), addedPurchaseOrderItem.getPriceTotal());
+		} catch (Exception e) {
+			fail(e.getMessage());
+		}
+		finally {
+			//Delete the newly added purchase order.
+			try {
+				orderDAO.deletePurchaseOrder(newPurchaseOrder);
+			} 
+			catch (Exception e) {
+				fail(e.getMessage());
+			}
+		}		
 	}
 	
 	

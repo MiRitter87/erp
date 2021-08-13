@@ -113,6 +113,38 @@ public class PurchaseOrderService {
 	
 	
 	/**
+	 * Adds a purchase order.
+	 * 
+	 * @param purchaseOrder The purchase order to be added.
+	 * @return The result of the add function.
+	 */
+	public WebServiceResult addPurchaseOrder(final PurchaseOrderWS purchaseOrder) {
+		PurchaseOrder convertedPurchaseOrder = new PurchaseOrder();
+		WebServiceResult addPurchaseOrderResult = new WebServiceResult();
+		
+		try {
+			convertedPurchaseOrder = this.convertPurchaseOrder(purchaseOrder);
+		}
+		catch(Exception exception) {
+			addPurchaseOrderResult.addMessage(new WebServiceMessage(
+					WebServiceMessageType.E, this.resources.getString("purchaseOrder.addError")));	
+			logger.error(this.resources.getString("purchaseOrder.addError"), exception);
+			return addPurchaseOrderResult;
+		}
+			
+		addPurchaseOrderResult = this.validate(convertedPurchaseOrder);
+		if(WebServiceTools.resultContainsErrorMessage(addPurchaseOrderResult)) {
+			return addPurchaseOrderResult;
+		}
+	
+		addPurchaseOrderResult = this.add(convertedPurchaseOrder, addPurchaseOrderResult);
+		addPurchaseOrderResult.setData(convertedPurchaseOrder.getId());
+		
+		return addPurchaseOrderResult;
+	}
+	
+	
+	/**
 	 * Deletes the purchase order with the given id.
 	 * 
 	 * @param id The id of the purchase order to be deleted.
@@ -300,6 +332,28 @@ public class PurchaseOrderService {
 					MessageFormat.format(this.resources.getString("purchaseOrder.updateError"), purchaseOrder.getId())));
 			
 			logger.error(MessageFormat.format(this.resources.getString("purchaseOrder.updateError"), purchaseOrder.getId()), e);
+		}
+		
+		return webServiceResult;
+	}
+	
+	
+	/**
+	 * Inserts the given purchase order.
+	 * 
+	 * @param purchaseOrder The purchase order to be inserted.
+	 * @return The result of the insert function.
+	 */
+	private WebServiceResult add(final PurchaseOrder purchaseOrder, WebServiceResult webServiceResult) {		
+		try {
+			this.purchaseOrderDAO.insertPurchaseOrder(purchaseOrder);
+			webServiceResult.addMessage(new WebServiceMessage(
+					WebServiceMessageType.S, this.resources.getString("purchaseOrder.addSuccess")));			
+		} catch (Exception e) {
+			webServiceResult.addMessage(new WebServiceMessage(
+					WebServiceMessageType.E, this.resources.getString("purchaseOrder.addError")));
+			
+			logger.error(this.resources.getString("purchaseOrder.addError"), e);
 		}
 		
 		return webServiceResult;

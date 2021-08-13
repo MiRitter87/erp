@@ -789,6 +789,7 @@ public class SalesOrderServiceTest {
 			assertEquals(newSalesOrder.getSoldToParty(), addedSalesOrder.getSoldToParty());
 			assertEquals(newSalesOrder.getShipToParty(), addedSalesOrder.getShipToParty());
 			assertEquals(newSalesOrder.getBillToParty(), addedSalesOrder.getBillToParty());
+			assertEquals(newSalesOrder.getStatus(), addedSalesOrder.getStatus());
 			
 			//Checks at item level.
 			assertEquals(newSalesOrder.getItems().size(), addedSalesOrder.getItems().size());
