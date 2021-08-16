@@ -98,6 +98,7 @@ public class PurchaseOrder {
 		this.orderDate = new Date();
 		this.items = new ArrayList<PurchaseOrderItem>();
 		this.status = new HashSet<PurchaseOrderStatus>();
+		this.updateTransientStatus();
 	}
 	
 	
@@ -189,6 +190,9 @@ public class PurchaseOrder {
 	 */
 	public void setStatus(Set<PurchaseOrderStatus> status) {
 		this.status = status;
+		
+		if(status != null)
+			this.updateTransientStatus();
 	}
 
 	
@@ -198,11 +202,26 @@ public class PurchaseOrder {
 	 * @param status The status to be set.
 	 * @param active Sets the given status to active if true; removes the given status if false.
 	 */
-	public void setStatus(final PurchaseOrderStatus status, final boolean active) {
+	private void setStatus(final PurchaseOrderStatus status, final boolean active) {
 		if(active)
 			this.status.add(status);
 		else
-			this.status.remove(status);			
+			this.status.remove(status);		
+	}
+	
+	
+	/**
+	 * Sets the given status.
+	 * 
+	 * @param status The status to be set.
+	 * @param active Sets the given status to active if true; removes the given status if false.
+	 * @param updateTransientStatus Updates the transient status if set to true.
+	 */
+	public void setStatus(final PurchaseOrderStatus status, final boolean active, final boolean updateTransientStatus) {
+		this.setStatus(status, active);	
+		
+		if(updateTransientStatus)
+			this.updateTransientStatus();
 	}
 	
 
@@ -318,6 +337,39 @@ public class PurchaseOrder {
 		}
 		
 		return true;
+	}
+	
+	
+	/**
+	 * Checks if the purchase order status is OPEN.
+	 * 
+	 * @return true, if status is open; false if otherwise.
+	 */
+	private boolean isOpen() {
+		if(this.status.contains(PurchaseOrderStatus.GOODS_RECEIPT)
+				&& this.status.contains(PurchaseOrderStatus.INVOICE_RECEIPT)
+				&& this.status.contains(PurchaseOrderStatus.INVOICE_SETTLED)) {
+			
+			return false;
+		}
+		else {
+			return true;
+		}
+	}
+	
+	
+	/**
+	 * Updates the status like OPEN and FINISHED that are derived from other status.
+	 */
+	private void updateTransientStatus() {
+		if(this.isOpen()) {
+			this.setStatus(PurchaseOrderStatus.OPEN, true, false);
+			this.setStatus(PurchaseOrderStatus.FINISHED, false, false);
+		}
+		else {
+			this.setStatus(PurchaseOrderStatus.OPEN, false, false);
+			this.setStatus(PurchaseOrderStatus.FINISHED, true, false);
+		}
 	}
 
 

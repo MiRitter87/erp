@@ -1,10 +1,11 @@
 package backend.model;
 
-import static org.junit.Assert.fail;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.math.BigDecimal;
-import java.util.HashSet;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -108,7 +109,6 @@ public class PurchaseOrderTest {
 		this.order = new PurchaseOrder();
 		this.order.setId(1);
 		this.order.setVendor(this.vendor);
-		this.order.setStatus(PurchaseOrderStatus.OPEN, true);
 	}
 	
 	
@@ -224,23 +224,29 @@ public class PurchaseOrderTest {
 	
 	@Test
 	/**
-	 * Tests the validation of a purchase order whose set of status is empty.
+	 * Tests if the status OPEN is set initially after the purchase order has been created and has not been processed yet.
 	 */
-	public void testStatusIsEmpty() {
-		ValidationMessageProvider messageProvider = new ValidationMessageProvider();
-		this.order.setStatus(new HashSet<PurchaseOrderStatus>());
+	public void testStatusOpenSetInitially() {
+		//Verify that status OPEN is set initially.
+		assertTrue(this.order.getStatus().contains(PurchaseOrderStatus.OPEN));
+		//Verify that status FINISHED is not set initialy.
+		assertFalse(this.order.getStatus().contains(PurchaseOrderStatus.FINISHED));
+	}
+	
+	
+	@Test
+	/**
+	 * Tests if the status FINISHED is set automatically if all required status are set.
+	 */
+	public void testStatusFinishedSet() {
+		//Set all status to active that are required for the purchase order to be regarded as finished.
+		this.order.setStatus(PurchaseOrderStatus.GOODS_RECEIPT, true, true);
+		this.order.setStatus(PurchaseOrderStatus.INVOICE_RECEIPT, true, true);
+		this.order.setStatus(PurchaseOrderStatus.INVOICE_SETTLED, true, true);
 		
-		String expectedErrorMessage = messageProvider.getNotEmptyValidationMessage("purchaseOrder", "status");
-		String errorMessage = "";
-		
-		try {
-			this.order.validate();
-			fail("Validation should have failed because status is empty.");
-		}
-		catch(Exception expected) {
-			errorMessage = expected.getMessage();
-		}
-		
-		assertEquals(expectedErrorMessage, errorMessage);
+		//Verify that status OPEN is not set anymore.
+		assertFalse(this.order.getStatus().contains(PurchaseOrderStatus.OPEN));
+		//Verify that status FINISHED has been set.
+		assertTrue(this.order.getStatus().contains(PurchaseOrderStatus.FINISHED));
 	}
 }

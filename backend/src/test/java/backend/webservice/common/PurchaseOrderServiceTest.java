@@ -221,7 +221,6 @@ public class PurchaseOrderServiceTest {
 		this.order1.setVendor(this.partner);
 		this.order1.setOrderDate(new Date());
 		this.order1.setRequestedDeliveryDate(new Date());
-		this.order1.setStatus(PurchaseOrderStatus.OPEN, true);
 		this.order1.addItem(this.orderItem1);
 		
 		this.orderItem21 = new PurchaseOrderItem();
@@ -238,7 +237,6 @@ public class PurchaseOrderServiceTest {
 		this.order2.setVendor(this.partner);
 		this.order2.setOrderDate(new Date());
 		this.order2.setRequestedDeliveryDate(tomorrow.getTime());
-		this.order2.setStatus(PurchaseOrderStatus.OPEN, true);
 		this.order2.addItem(this.orderItem21);
 		this.order2.addItem(this.orderItem22);
 		
@@ -641,7 +639,6 @@ public class PurchaseOrderServiceTest {
 		newPurchaseOrderItem.setQuantity(Long.valueOf(1));
 		
 		newPurchaseOrder.setVendor(this.partner);
-		newPurchaseOrder.setStatus(PurchaseOrderStatus.OPEN, true);
 		newPurchaseOrder.addItem(newPurchaseOrderItem);
 		
 		//Add a new sales order to the database via WebService
@@ -703,7 +700,6 @@ public class PurchaseOrderServiceTest {
 		
 		//Define the new purchase order without an item.
 		newPurchaseOrder.setVendor(this.partner);
-		newPurchaseOrder.setStatus(PurchaseOrderStatus.OPEN, true);
 		
 		//Add a new purchase order to the database via WebService
 		addPurchaseOrderResult = orderService.addPurchaseOrder(this.convertToWsOrder(newPurchaseOrder));
@@ -722,11 +718,8 @@ public class PurchaseOrderServiceTest {
 	 *
 	 * -test ordered material quantity added to inventory if status GOODS_RECEIPT is set from inactive to active
 	 * -test ordered material quantity removed from inventory if status GOODS_RECEIPT is set from active to inactive
-	 * -test ordered material quantity removed from inventory if status GOODS_RECEIPT is active and order is being canceled
-	 * -test status FINISHED is set to active if INVOICE_RECEIPT, GOODS_RECEIPT and INVOICE_SETTLED are set to active
-	 * -test status FINISHED is set to inactive if either INVOICE_RECEIPT, GOODS_RECEIPT or INVOICE_SETTLED is set to inactive
-	 * -test status OPEN is set to active if either INVOICE_RECEIPT, GOODS_RECEIPT or INVOICE_SETTLED is set to inactive
-	 * -test status OPEN is set to inactive if INVOICE_RECEIPT, GOODS_RECEIPT and INVOICE_SETTLED are set to active
+	 * -test ordered material quantity removed from inventory if status GOODS_RECEIPT is active and order status CANCELED is set from inactive to active
+	 * -test ordered material quantity removed from inventory if status GOODS_RECEIPT is active and order is being deleted
 	 */
 	
 	
