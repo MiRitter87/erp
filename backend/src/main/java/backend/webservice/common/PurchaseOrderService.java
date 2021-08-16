@@ -37,6 +37,11 @@ public class PurchaseOrderService {
 	private PurchaseOrderDao purchaseOrderDAO;
 	
 	/**
+	 * Manager for material inventory.
+	 */
+	private PurchaseOrderInventoryManager inventoryManager;
+	
+	/**
 	 * Access to localized application resources.
 	 */
 	private ResourceBundle resources = ResourceBundle.getBundle("backend");
@@ -52,6 +57,7 @@ public class PurchaseOrderService {
 	 */
 	public PurchaseOrderService() {
 		this.purchaseOrderDAO = DAOManager.getInstance().getPurchaseOrderDAO();
+		this.inventoryManager = new PurchaseOrderInventoryManager();
 	}
 	
 	
@@ -317,9 +323,13 @@ public class PurchaseOrderService {
 	 * @param purchaseOrder The purchase order to be updated.
 	 * @return The result of the update function.
 	 */
-	private WebServiceResult update(final PurchaseOrder purchaseOrder, WebServiceResult webServiceResult) {	
+	private WebServiceResult update(final PurchaseOrder purchaseOrder, WebServiceResult webServiceResult) {
+		PurchaseOrder databasePurchaseOrder;
+		
 		try {
+			databasePurchaseOrder = this.purchaseOrderDAO.getPurchaseOrder(purchaseOrder.getId());
 			this.purchaseOrderDAO.updatePurchaseOrder(purchaseOrder);
+			this.inventoryManager.updateMaterialInventory(purchaseOrder, databasePurchaseOrder);
 			webServiceResult.addMessage(new WebServiceMessage(WebServiceMessageType.S, 
 					MessageFormat.format(this.resources.getString("purchaseOrder.updateSuccess"), purchaseOrder.getId())));
 		} 

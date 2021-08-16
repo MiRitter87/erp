@@ -371,6 +371,20 @@ public class PurchaseOrder {
 			this.setStatus(PurchaseOrderStatus.FINISHED, true, false);
 		}
 	}
+	
+	
+	/**
+	 * Checks if the given status is active.
+	 * 
+	 * @param status The status to be checked.
+	 * @return true, if status is active; false if not.
+	 */
+	public boolean isStatusActive(PurchaseOrderStatus status) {
+		if(this.status.contains(status))
+			return true;
+		else		
+			return false;
+	}
 
 
 	/**

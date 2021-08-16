@@ -31,6 +31,7 @@ import backend.model.Material;
 import backend.model.PurchaseOrder;
 import backend.model.PurchaseOrderArray;
 import backend.model.PurchaseOrderItem;
+import backend.model.PurchaseOrderStatus;
 import backend.model.UnitOfMeasurement;
 import backend.model.webservice.PurchaseOrderItemWS;
 import backend.model.webservice.PurchaseOrderWS;
@@ -712,6 +713,48 @@ public class PurchaseOrderServiceTest {
 	}
 	
 	
+	@Test
+	/**
+	 * Tests if the ordered material quantity is added to the material inventory if status GOODS_RECEIPT is set to active.
+	 */
+	public void testInventoryAddedOnGoodsReceipt() {
+		Material rx570, g4560;
+		Long rx570InventoryBefore = Long.valueOf(0), rx570InventoryAfter = Long.valueOf(0);
+		Long g4560InventoryBefore = Long.valueOf(0), g4560InventoryAfter = Long.valueOf(0);
+		PurchaseOrderService orderService = new PurchaseOrderService();
+		
+		//Get material inventory before the goods have been received.
+		try {
+			rx570 = materialDAO.getMaterial(this.rx570.getId());
+			g4560 = materialDAO.getMaterial(this.g4560.getId());
+			
+			rx570InventoryBefore = rx570.getInventory();
+			g4560InventoryBefore = g4560.getInventory();
+		} catch (Exception e) {
+			fail(e.getMessage());
+		}
+		
+		//Set the order status indicating goods have been received.
+		this.order2.setStatus(PurchaseOrderStatus.GOODS_RECEIPT, true);
+		orderService.updatePurchaseOrder(this.convertToWsOrder(this.order2));
+		
+		//Get material inventory after the order status has been updated.
+		try {
+			rx570 = materialDAO.getMaterial(this.rx570.getId());
+			g4560 = materialDAO.getMaterial(this.g4560.getId());
+			
+			rx570InventoryAfter = rx570.getInventory();
+			g4560InventoryAfter = g4560.getInventory();
+		} catch (Exception e) {
+			fail(e.getMessage());
+		}
+		
+		//Check if the material inventory has been increased by the quantity of the ordered item.
+		assertTrue(rx570InventoryAfter == (rx570InventoryBefore + this.orderItem21.getQuantity()));
+		assertTrue(g4560InventoryAfter == (g4560InventoryBefore + this.orderItem22.getQuantity()));	
+	}
+	
+	
 	/*
 	 * TODO Add additional tests
 	 *
@@ -719,6 +762,8 @@ public class PurchaseOrderServiceTest {
 	 * -test ordered material quantity removed from inventory if status GOODS_RECEIPT is set from active to inactive
 	 * -test ordered material quantity removed from inventory if status GOODS_RECEIPT is active and order status CANCELED is set from inactive to active
 	 * -test ordered material quantity removed from inventory if status GOODS_RECEIPT is active and order is being deleted
+	 * 
+	 * -test ordered material quantity of item removed from inventory if status GOODS_RECEIPT is active and item is being deleted
 	 */
 	
 	
