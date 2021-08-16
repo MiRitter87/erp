@@ -202,11 +202,8 @@ public class PurchaseOrder {
 	 * @param status The status to be set.
 	 * @param active Sets the given status to active if true; removes the given status if false.
 	 */
-	private void setStatus(final PurchaseOrderStatus status, final boolean active) {
-		if(active)
-			this.status.add(status);
-		else
-			this.status.remove(status);		
+	public void setStatus(final PurchaseOrderStatus status, final boolean active) {
+		this.setStatus(status, active, true);				
 	}
 	
 	
@@ -217,8 +214,11 @@ public class PurchaseOrder {
 	 * @param active Sets the given status to active if true; removes the given status if false.
 	 * @param updateTransientStatus Updates the transient status if set to true.
 	 */
-	public void setStatus(final PurchaseOrderStatus status, final boolean active, final boolean updateTransientStatus) {
-		this.setStatus(status, active);	
+	private void setStatus(final PurchaseOrderStatus status, final boolean active, final boolean updateTransientStatus) {
+		if(active)
+			this.status.add(status);
+		else
+			this.status.remove(status);
 		
 		if(updateTransientStatus)
 			this.updateTransientStatus();

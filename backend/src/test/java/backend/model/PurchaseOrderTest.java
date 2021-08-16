@@ -240,9 +240,9 @@ public class PurchaseOrderTest {
 	 */
 	public void testStatusFinishedSet() {
 		//Set all status to active that are required for the purchase order to be regarded as finished.
-		this.order.setStatus(PurchaseOrderStatus.GOODS_RECEIPT, true, true);
-		this.order.setStatus(PurchaseOrderStatus.INVOICE_RECEIPT, true, true);
-		this.order.setStatus(PurchaseOrderStatus.INVOICE_SETTLED, true, true);
+		this.order.setStatus(PurchaseOrderStatus.GOODS_RECEIPT, true);
+		this.order.setStatus(PurchaseOrderStatus.INVOICE_RECEIPT, true);
+		this.order.setStatus(PurchaseOrderStatus.INVOICE_SETTLED, true);
 		
 		//Verify that status OPEN is not set anymore.
 		assertFalse(this.order.getStatus().contains(PurchaseOrderStatus.OPEN));

@@ -31,7 +31,6 @@ import backend.model.Material;
 import backend.model.PurchaseOrder;
 import backend.model.PurchaseOrderArray;
 import backend.model.PurchaseOrderItem;
-import backend.model.PurchaseOrderStatus;
 import backend.model.UnitOfMeasurement;
 import backend.model.webservice.PurchaseOrderItemWS;
 import backend.model.webservice.PurchaseOrderWS;
