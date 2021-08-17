@@ -31,7 +31,10 @@ public class PurchaseOrderInventoryManager {
 		}
 		
 		//If the GOODS_RECEIPT status changes from active to inactive, the ordered materials are removed from the inventory.
-		
+		if(databasePurchaseOrder.isStatusActive(PurchaseOrderStatus.GOODS_RECEIPT) && !purchaseOrder.isStatusActive(PurchaseOrderStatus.GOODS_RECEIPT)) {
+			this.reduceMaterialInventoryForOrder(purchaseOrder);
+			return;
+		}
 		
 		//If the status GOODS_RECEIPT was already active and the status CANCELED changes from inactive to active, 
 		//the ordered materials are removed from the inventory.
@@ -55,6 +58,24 @@ public class PurchaseOrderInventoryManager {
 		for(PurchaseOrderItem item:purchaseOrder.getItems()) {
 			currentMaterial = item.getMaterial();
 			currentMaterial.setInventory(currentMaterial.getInventory() + item.getQuantity());
+			materialDAO.updateMaterial(currentMaterial);
+		}			
+	}
+	
+	
+	/**
+	 * Reduces the inventory of the materials that are ordered.
+	 * 
+	 * @param purchaseOrder The purchase order whose material inventories have to be reduced.
+	 * @throws Exception In case the update of the material inventory fails.
+	 */
+	private void reduceMaterialInventoryForOrder(final PurchaseOrder purchaseOrder) throws Exception {
+		MaterialDao materialDAO = DAOManager.getInstance().getMaterialDAO();
+		Material currentMaterial;
+		
+		for(PurchaseOrderItem item:purchaseOrder.getItems()) {
+			currentMaterial = item.getMaterial();
+			currentMaterial.setInventory(currentMaterial.getInventory() - item.getQuantity());
 			materialDAO.updateMaterial(currentMaterial);
 		}			
 	}
