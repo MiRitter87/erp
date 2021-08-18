@@ -38,7 +38,12 @@ public class PurchaseOrderInventoryManager {
 		
 		//If the status GOODS_RECEIPT was already active and the status CANCELED changes from inactive to active, 
 		//the ordered materials are removed from the inventory.
-		
+		if(databasePurchaseOrder.isStatusActive(PurchaseOrderStatus.GOODS_RECEIPT) && !databasePurchaseOrder.isStatusActive(PurchaseOrderStatus.CANCELED) &&
+				purchaseOrder.isStatusActive(PurchaseOrderStatus.CANCELED)) {
+			
+			this.reduceMaterialInventoryForOrder(purchaseOrder);
+			return;
+		}		
 		
 		//If the status GOODS_RECEIPT was already active and the status CANCELED changes from active to inactive,
 		//the ordered materials are added to the inventory.

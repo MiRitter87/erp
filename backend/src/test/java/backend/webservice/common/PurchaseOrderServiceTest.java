@@ -759,7 +759,7 @@ public class PurchaseOrderServiceTest {
 	/**
 	 * Tests if the ordered material quantity is reduced from the material inventory if the status GOODS_RECEIPT is set from active to inactive.
 	 */
-	public void testInventoryOnGoodsReceiptInactive() {
+	public void testInventoryReducedOnGoodsReceiptInactive() {
 		Material rx570, g4560;
 		Long rx570InventoryBefore = Long.valueOf(0), rx570InventoryAfter = Long.valueOf(0);
 		Long g4560InventoryBefore = Long.valueOf(0), g4560InventoryAfter = Long.valueOf(0);
@@ -805,13 +805,65 @@ public class PurchaseOrderServiceTest {
 	}
 	
 	
+	@Test
+	/**
+	 * Tests if the ordered material quantity is reduced from the material inventory if the status GOODS_RECEIPT is active and the order is being canceled.
+	 */
+	public void testInventoryReducedOnOrderCanceled() {
+		Material rx570, g4560;
+		Long rx570InventoryBefore = Long.valueOf(0), rx570InventoryAfter = Long.valueOf(0);
+		Long g4560InventoryBefore = Long.valueOf(0), g4560InventoryAfter = Long.valueOf(0);
+		PurchaseOrderService orderService = new PurchaseOrderService();
+		
+		//At first set the GOODS_RECEIPT status to active to trigger inbound booking of material inventory.
+		try {
+			this.order2.setStatus(PurchaseOrderStatus.GOODS_RECEIPT, true);
+			orderDAO.updatePurchaseOrder(this.order2);
+		} catch (Exception e) {
+			fail(e.getMessage());
+		}
+		
+		//Get material inventory before the status GOODS_RECEIPT is reverted.
+		try {
+			rx570 = materialDAO.getMaterial(this.rx570.getId());
+			g4560 = materialDAO.getMaterial(this.g4560.getId());
+			
+			rx570InventoryBefore = rx570.getInventory();
+			g4560InventoryBefore = g4560.getInventory();
+		} catch (Exception e) {
+			fail(e.getMessage());
+		}
+		
+		//Cancel the purchase order.
+		//this.order2.setStatus(PurchaseOrderStatus.OPEN, false);
+		this.order2.setStatus(PurchaseOrderStatus.CANCELED, true);
+		orderService.updatePurchaseOrder(this.convertToWsOrder(this.order2));
+		
+		//Get material inventory after the order status has been updated.
+		try {
+			rx570 = materialDAO.getMaterial(this.rx570.getId());
+			g4560 = materialDAO.getMaterial(this.g4560.getId());
+			
+			rx570InventoryAfter = rx570.getInventory();
+			g4560InventoryAfter = g4560.getInventory();
+		} catch (Exception e) {
+			fail(e.getMessage());
+		}
+		
+		//Check if the material inventory has been reduced by the quantity of the ordered item.
+		assertTrue(rx570InventoryAfter == (rx570InventoryBefore - this.orderItem21.getQuantity()));
+		assertTrue(g4560InventoryAfter == (g4560InventoryBefore - this.orderItem22.getQuantity()));	
+	}
+	
+	
 	/*
 	 * TODO Add additional tests
 	 *
-	 * -test ordered material quantity removed from inventory if status GOODS_RECEIPT is active and order status CANCELED is set from inactive to active
 	 * -test ordered material quantity removed from inventory if status GOODS_RECEIPT is active and order is being deleted
 	 * 
 	 * -test ordered material quantity of item removed from inventory if status GOODS_RECEIPT is active and item is being deleted
+	 * 
+	 * -test status OPEN and finished set to false if status canceled is set
 	 */
 	
 	

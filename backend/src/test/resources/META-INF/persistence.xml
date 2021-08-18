@@ -30,6 +30,9 @@
 	        
 	        <!-- Should not be used in production! Only for development! Use proper creation/migration scripts in production -->
 	        <property name="javax.persistence.schema-generation.database.action" value="create"/>
+	        
+	        <!--  Log SQL statements to console - This can be helpful when looking for errors. -->
+	        <property name="hibernate.show_sql" value="false"/>
         </properties>
     </persistence-unit>
 </persistence>

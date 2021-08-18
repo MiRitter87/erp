@@ -78,7 +78,7 @@ public class PurchaseOrder {
 	 * The set of active status of the purchase order.
 	 */
 	@CollectionTable(name="PURCHASE_ORDER_STATUS", joinColumns = {@JoinColumn(name="PURCHASE_ORDER_ID")})
-	@Column(name="STATUS", nullable = false, length = 20)
+	@Column(name="STATUS", length = 20)
 	@ElementCollection(targetClass = PurchaseOrderStatus.class, fetch = FetchType.EAGER)
 	@Enumerated(EnumType.STRING)
 	@NotEmpty(message = "{purchaseOrder.status.notEmpty.message}")
