@@ -341,34 +341,24 @@ public class PurchaseOrder {
 	
 	
 	/**
-	 * Checks if the purchase order status is OPEN.
-	 * 
-	 * @return true, if status is open; false if otherwise.
-	 */
-	private boolean isOpen() {
-		if(this.status.contains(PurchaseOrderStatus.GOODS_RECEIPT)
-				&& this.status.contains(PurchaseOrderStatus.INVOICE_RECEIPT)
-				&& this.status.contains(PurchaseOrderStatus.INVOICE_SETTLED)) {
-			
-			return false;
-		}
-		else {
-			return true;
-		}
-	}
-	
-	
-	/**
-	 * Updates the status like OPEN and FINISHED that are derived from other status.
+	 * Updates the transient status OPEN and FINISHED that are derived from other status.
 	 */
 	private void updateTransientStatus() {
-		if(this.isOpen()) {
-			this.setStatus(PurchaseOrderStatus.OPEN, true, false);
+		if(this.isStatusActive(PurchaseOrderStatus.CANCELED)) {
+			this.setStatus(PurchaseOrderStatus.OPEN, false, false);
 			this.setStatus(PurchaseOrderStatus.FINISHED, false, false);
 		}
 		else {
-			this.setStatus(PurchaseOrderStatus.OPEN, false, false);
-			this.setStatus(PurchaseOrderStatus.FINISHED, true, false);
+			if(this.isStatusActive(PurchaseOrderStatus.GOODS_RECEIPT) && this.isStatusActive(PurchaseOrderStatus.INVOICE_RECEIPT) &&
+					this.isStatusActive(PurchaseOrderStatus.INVOICE_SETTLED)) {
+				
+				this.setStatus(PurchaseOrderStatus.OPEN, false, false);
+				this.setStatus(PurchaseOrderStatus.FINISHED, true, false);
+			}
+			else {
+				this.setStatus(PurchaseOrderStatus.OPEN, true, false);
+				this.setStatus(PurchaseOrderStatus.FINISHED, false, false);
+			}
 		}
 	}
 	

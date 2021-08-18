@@ -249,4 +249,35 @@ public class PurchaseOrderTest {
 		//Verify that status FINISHED has been set.
 		assertTrue(this.order.getStatus().contains(PurchaseOrderStatus.FINISHED));
 	}
+	
+	
+	@Test
+	/**
+	 * Tests if the status OPEN is set inactive if status CANCELED is set.
+	 */
+	public void testStatusOpenInactiveOnCancellation() {
+		//Cancel the order which is not finished yet.
+		this.order.setStatus(PurchaseOrderStatus.CANCELED, true);
+		
+		//Verify that status OPEN is set inactive
+		assertFalse(this.order.getStatus().contains(PurchaseOrderStatus.OPEN));
+	}
+	
+	
+	@Test
+	/**
+	 * Tests if the status FINISHED is set inactive if status CANCELED is set.
+	 */
+	public void testStatusFinishedInactiveOnCancellation() {
+		//Finish the order first.
+		this.order.setStatus(PurchaseOrderStatus.GOODS_RECEIPT, true);
+		this.order.setStatus(PurchaseOrderStatus.INVOICE_RECEIPT, true);
+		this.order.setStatus(PurchaseOrderStatus.INVOICE_SETTLED, true);
+		
+		//Now cancel the order.
+		this.order.setStatus(PurchaseOrderStatus.CANCELED, true);
+		
+		//Verify that status FINISHED is set inactive.
+		assertFalse(this.order.getStatus().contains(PurchaseOrderStatus.FINISHED));
+	}
 }
