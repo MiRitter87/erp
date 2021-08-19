@@ -23,7 +23,7 @@ public class PurchaseOrderInventoryManager {
 	 * @param databasePurchaseOrder The database state of the purchase order before the update has been performed.
 	 * @throws Exception In case the update of the material inventory fails.
 	 */
-	public void updateMaterialInventory(final PurchaseOrder purchaseOrder, final PurchaseOrder databasePurchaseOrder) throws Exception {
+	public void updateMaterialInventoryOnOrderUpdate(final PurchaseOrder purchaseOrder, final PurchaseOrder databasePurchaseOrder) throws Exception {
 		//If the GOODS_RECEIPT status changes from inactive to active, the ordered materials are added to the inventory.
 		if(!databasePurchaseOrder.isStatusActive(PurchaseOrderStatus.GOODS_RECEIPT) && purchaseOrder.isStatusActive(PurchaseOrderStatus.GOODS_RECEIPT)) {
 			this.addMaterialInventoryForOrder(purchaseOrder);
@@ -47,6 +47,19 @@ public class PurchaseOrderInventoryManager {
 		
 		//If the status GOODS_RECEIPT was already active and the status CANCELED changes from active to inactive,
 		//the ordered materials are added to the inventory.
+	}
+	
+	
+	/**
+	 * Updates the material inventory on deletion of a purchase order.
+	 * 
+	 * @param purchaseOrder The purchase order that is being deleted.
+	 * @throws Exception In case the update of the material inventory fails.
+	 */
+	public void updateMaterialInventoryOnOrderDeletion(final PurchaseOrder purchaseOrder) throws Exception {
+		//If the GOODS_RECEIPT status is active, the ordered material quantities have to be reduced from the inventory.
+		if(purchaseOrder.isStatusActive(PurchaseOrderStatus.GOODS_RECEIPT))
+			this.reduceMaterialInventoryForOrder(purchaseOrder);
 	}
 	
 	

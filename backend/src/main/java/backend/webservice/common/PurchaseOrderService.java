@@ -167,6 +167,7 @@ public class PurchaseOrderService {
 			if(purchaseOrder != null) {
 				//Delete purchase order if exists.
 				this.purchaseOrderDAO.deletePurchaseOrder(purchaseOrder);
+				this.inventoryManager.updateMaterialInventoryOnOrderDeletion(purchaseOrder);
 				deletePurchaseOrderResult.addMessage(new WebServiceMessage(WebServiceMessageType.S, 
 						MessageFormat.format(this.resources.getString("purchaseOrder.deleteSuccess"), id)));
 			}
@@ -329,7 +330,7 @@ public class PurchaseOrderService {
 		try {
 			databasePurchaseOrder = this.purchaseOrderDAO.getPurchaseOrder(purchaseOrder.getId());
 			this.purchaseOrderDAO.updatePurchaseOrder(purchaseOrder);
-			this.inventoryManager.updateMaterialInventory(purchaseOrder, databasePurchaseOrder);
+			this.inventoryManager.updateMaterialInventoryOnOrderUpdate(purchaseOrder, databasePurchaseOrder);
 			webServiceResult.addMessage(new WebServiceMessage(WebServiceMessageType.S, 
 					MessageFormat.format(this.resources.getString("purchaseOrder.updateSuccess"), purchaseOrder.getId())));
 		} 

@@ -129,7 +129,7 @@ public class PurchaseOrderHibernateDao implements PurchaseOrderDao {
 		EntityGraph<PurchaseOrder> graph = entityManager.createEntityGraph(PurchaseOrder.class);
 		graph.addAttributeNodes("items");
 		Map<String, Object> hints = new HashMap<String, Object>();
-		hints.put("javax.persistence.loadgraph", graph);
+		hints.put("javax.persistence.fetchgraph", graph);
 		
 		entityManager.getTransaction().begin();
 		PurchaseOrder purchaseOrder = entityManager.find(PurchaseOrder.class, id, hints);

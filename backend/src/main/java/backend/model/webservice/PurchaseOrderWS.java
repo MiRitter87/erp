@@ -2,6 +2,7 @@ package backend.model.webservice;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -50,6 +51,7 @@ public class PurchaseOrderWS {
 	 */
 	public PurchaseOrderWS() {
 		this.items = new ArrayList<PurchaseOrderItemWS>();
+		this.status = new HashSet<PurchaseOrderStatus>();
 	}
 	
 	

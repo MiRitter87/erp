@@ -298,7 +298,7 @@ public class PurchaseOrderServiceTest {
 		
 		//Get the purchase order.
 		PurchaseOrderService service = new PurchaseOrderService();
-		getPurchaseOrderResult = service.getPurchaseOrder(this.order1.getId());
+		getPurchaseOrderResult = service.getPurchaseOrder(this.order2.getId());
 		
 		//Assure no error message exists
 		assertTrue(WebServiceTools.resultContainsErrorMessage(getPurchaseOrderResult) == false);
@@ -309,21 +309,25 @@ public class PurchaseOrderServiceTest {
 		purchaseOrder = (PurchaseOrder) getPurchaseOrderResult.getData();
 		
 		//Check each attribute of the purchase order
-		assertEquals(purchaseOrder.getId(), this.order1.getId());
-		assertEquals(purchaseOrder.getVendor(), this.order1.getVendor());
-		assertEquals(purchaseOrder.getOrderDate().getTime(), this.order1.getOrderDate().getTime());
-		assertEquals(purchaseOrder.getRequestedDeliveryDate().getTime(), this.order1.getRequestedDeliveryDate().getTime());
-		assertEquals(purchaseOrder.getStatus(), this.order1.getStatus());
+		assertEquals(purchaseOrder.getId(), this.order2.getId());
+		assertEquals(purchaseOrder.getVendor(), this.order2.getVendor());
+		assertEquals(purchaseOrder.getOrderDate().getTime(), this.order2.getOrderDate().getTime());
+		assertEquals(purchaseOrder.getRequestedDeliveryDate().getTime(), this.order2.getRequestedDeliveryDate().getTime());
+		assertEquals(purchaseOrder.getStatus(), this.order2.getStatus());
 		
-		//The returned purchase order should have one item.
-		assertEquals(purchaseOrder.getItems().size(), this.order1.getItems().size());
-		
+		//The returned purchase order should have two items.
+		assertEquals(purchaseOrder.getItems().size(), this.order2.getItems().size());
+				
+		//Check the attributes of the purchase order items
 		purchaseOrderItem = purchaseOrder.getItems().get(0);
+		assertEquals(purchaseOrderItem.getId(), this.orderItem21.getId());
+		assertEquals(purchaseOrderItem.getMaterial(), this.orderItem21.getMaterial());
+		assertEquals(purchaseOrderItem.getQuantity(), this.orderItem21.getQuantity());
 		
-		//Check the attributes of the purchase order item
-		assertEquals(purchaseOrderItem.getId(), this.orderItem1.getId());
-		assertEquals(purchaseOrderItem.getMaterial(), this.orderItem1.getMaterial());
-		assertEquals(purchaseOrderItem.getQuantity(), this.orderItem1.getQuantity());
+		purchaseOrderItem = purchaseOrder.getItems().get(1);
+		assertEquals(purchaseOrderItem.getId(), this.orderItem22.getId());
+		assertEquals(purchaseOrderItem.getMaterial(), this.orderItem22.getMaterial());
+		assertEquals(purchaseOrderItem.getQuantity(), this.orderItem22.getQuantity());
 	}
 	
 	
@@ -445,8 +449,8 @@ public class PurchaseOrderServiceTest {
 		//Update the requested delivery date.
 		GregorianCalendar calendar = new GregorianCalendar();
 		calendar.add(GregorianCalendar.DAY_OF_MONTH, 14);
-		this.order1.setRequestedDeliveryDate(calendar.getTime());
-		updatePurchaseOrderResult = orderService.updatePurchaseOrder(this.convertToWsOrder(this.order1));
+		this.order2.setRequestedDeliveryDate(calendar.getTime());
+		updatePurchaseOrderResult = orderService.updatePurchaseOrder(this.convertToWsOrder(this.order2));
 		
 		//Assure no error message exists
 		assertTrue(WebServiceTools.resultContainsErrorMessage(updatePurchaseOrderResult) == false);
@@ -457,8 +461,8 @@ public class PurchaseOrderServiceTest {
 		
 		//Retrieve the updated purchase order and check if the changes have been persisted.
 		try {
-			updatedPurchaseOrder = orderDAO.getPurchaseOrder(this.order1.getId());
-			assertEquals(this.order1.getRequestedDeliveryDate().getTime(), updatedPurchaseOrder.getRequestedDeliveryDate().getTime());
+			updatedPurchaseOrder = orderDAO.getPurchaseOrder(this.order2.getId());
+			assertEquals(this.order2.getRequestedDeliveryDate().getTime(), updatedPurchaseOrder.getRequestedDeliveryDate().getTime());
 		} catch (Exception e) {
 			fail(e.getMessage());
 		}
@@ -523,7 +527,7 @@ public class PurchaseOrderServiceTest {
 	/**
 	 * Tests updating a purchase order with invalid data.
 	 */
-	public void testUpdateInvalidSalesOrder() {
+	public void testUpdateInvalidPurchaseOrder() {
 		WebServiceResult updatePurchaseOrderResult;
 		PurchaseOrderService orderService = new PurchaseOrderService();
 		ValidationMessageProvider messageProvider = new ValidationMessageProvider();
@@ -548,7 +552,7 @@ public class PurchaseOrderServiceTest {
 	/**
 	 * Tests updating a sales order item with invalid data.
 	 */
-	public void testUpdateInvalidSalesOrderItem() {
+	public void testUpdateInvalidPurchaseOrderItem() {
 		WebServiceResult updatePurchaseOrderResult;
 		PurchaseOrderService orderService = new PurchaseOrderService();
 		ValidationMessageProvider messageProvider = new ValidationMessageProvider();
@@ -835,7 +839,6 @@ public class PurchaseOrderServiceTest {
 		}
 		
 		//Cancel the purchase order.
-		//this.order2.setStatus(PurchaseOrderStatus.OPEN, false);
 		this.order2.setStatus(PurchaseOrderStatus.CANCELED, true);
 		orderService.updatePurchaseOrder(this.convertToWsOrder(this.order2));
 		
@@ -856,14 +859,129 @@ public class PurchaseOrderServiceTest {
 	}
 	
 	
+	@Test
+	/**
+	 * Tests if the ordered material quantity is reduced from the material inventory if the status GOODS_RECEIPT is active and the order is being deleted.
+	 */
+	public void testInventoryReducedOnOrderDeleted() {
+		Material rx570, g4560;
+		Long rx570InventoryBefore = Long.valueOf(0), rx570InventoryAfter = Long.valueOf(0);
+		Long g4560InventoryBefore = Long.valueOf(0), g4560InventoryAfter = Long.valueOf(0);
+		PurchaseOrderService orderService = new PurchaseOrderService();
+		
+		//At first set the GOODS_RECEIPT status to active to trigger inbound booking of material inventory.
+		try {
+			this.order2.setStatus(PurchaseOrderStatus.GOODS_RECEIPT, true);
+			orderDAO.updatePurchaseOrder(this.order2);
+		} catch (Exception e) {
+			fail(e.getMessage());
+		}
+		
+		//Get material inventory before the purchase order is deleted.
+		try {
+			rx570 = materialDAO.getMaterial(this.rx570.getId());
+			g4560 = materialDAO.getMaterial(this.g4560.getId());
+			
+			rx570InventoryBefore = rx570.getInventory();
+			g4560InventoryBefore = g4560.getInventory();
+		} catch (Exception e) {
+			fail(e.getMessage());
+		}
+		
+		try {
+			//Delete the purchase order.
+			orderService.deletePurchaseOrder(this.order2.getId());
+			
+			//Get material inventory after the purchase order has been deleted.
+			rx570 = materialDAO.getMaterial(this.rx570.getId());
+			g4560 = materialDAO.getMaterial(this.g4560.getId());
+			
+			rx570InventoryAfter = rx570.getInventory();
+			g4560InventoryAfter = g4560.getInventory();
+			
+			//Check if the material inventory has been reduced by the quantity of the ordered item.
+			assertTrue(rx570InventoryAfter == (rx570InventoryBefore - this.orderItem21.getQuantity()));
+			assertTrue(g4560InventoryAfter == (g4560InventoryBefore - this.orderItem22.getQuantity()));	
+		} catch (Exception e) {
+			fail(e.getMessage());
+		}
+		finally {
+			//Restore old database state by adding the purchase order that has been deleted previously.
+			try {
+				this.order2.setId(null);
+				
+				//The items have to be re-initialized in order to prevent exception regarding orphan-removal.
+				//org.hibernate.HibernateException: Don't change the reference to a collection with delete-orphan enabled : backend.model.PurchaseOrder.items
+				this.order2.setItems(new ArrayList<PurchaseOrderItem>());
+				this.order2.addItem(this.orderItem21);
+				this.order2.addItem(this.orderItem22);
+				
+				orderDAO.insertPurchaseOrder(this.order2);
+			} 
+			catch (Exception e) {
+				fail(e.getMessage());
+			}
+		}
+	}
+	
+	
+	@Test
+	/**
+	 * Tests if the number of items of the purchase order does not change if the status has changed.
+	 */
+	public void testGetPurchaseOrderItemsOnStatusChanged() {
+		PurchaseOrderService orderService = new PurchaseOrderService();
+		PurchaseOrder purchaseOrder;
+		WebServiceResult getPurchaseOrderResult;
+		int numberItemsBefore, numberItemsAfter;
+		
+		try {
+			numberItemsBefore = this.order2.getItems().size();
+			
+			//Update the status of the purchase order
+			this.order2.setStatus(PurchaseOrderStatus.GOODS_RECEIPT, true);
+			this.order2.setStatus(PurchaseOrderStatus.INVOICE_RECEIPT, true);
+			orderDAO.updatePurchaseOrder(this.order2);
+			
+			getPurchaseOrderResult = orderService.getPurchaseOrder(this.order2.getId());
+			purchaseOrder = (PurchaseOrder) getPurchaseOrderResult.getData();
+			numberItemsAfter = purchaseOrder.getItems().size();
+			
+			assertEquals(numberItemsBefore, numberItemsAfter);
+		} catch (Exception e) {
+			fail(e.getMessage());
+		}
+	}
+	
+	
+	@Test
+	/**
+	 * Tests multiple updates of a purchase order activating additional status.
+	 */
+	public void testSuccessiveStatusUpdates() {
+		PurchaseOrderService orderService = new PurchaseOrderService();
+		WebServiceResult updatePurchaseOrderResult;
+		
+		this.order2.setStatus(PurchaseOrderStatus.GOODS_RECEIPT, true);
+		updatePurchaseOrderResult = orderService.updatePurchaseOrder(this.convertToWsOrder(this.order2));
+		
+		//Assure no error message exists
+		assertTrue(WebServiceTools.resultContainsErrorMessage(updatePurchaseOrderResult) == false);
+		
+		this.order2.setStatus(PurchaseOrderStatus.INVOICE_RECEIPT, true);
+		updatePurchaseOrderResult = orderService.updatePurchaseOrder(this.convertToWsOrder(this.order2));
+		
+		//Assure no error message exists
+		assertTrue(WebServiceTools.resultContainsErrorMessage(updatePurchaseOrderResult) == false);
+	}
+	
+	
 	/*
 	 * TODO Add additional tests
 	 *
-	 * -test ordered material quantity removed from inventory if status GOODS_RECEIPT is active and order is being deleted
+	 * -test ordered material quantity added to inventory if status GOODS_RECEIPT is active and order status CANCELED changes from active to inactive
 	 * 
 	 * -test ordered material quantity of item removed from inventory if status GOODS_RECEIPT is active and item is being deleted
-	 * 
-	 * -test status OPEN and finished set to false if status canceled is set
 	 */
 	
 	
@@ -880,10 +998,13 @@ public class PurchaseOrderServiceTest {
 		wsOrder.setPurchaseOrderId(order.getId());
 		wsOrder.setOrderDate(order.getOrderDate());
 		wsOrder.setRequestedDeliveryDate(order.getRequestedDeliveryDate());
-		wsOrder.setStatus(order.getStatus());
 		
 		if(order.getVendor() != null)
 			wsOrder.setVendorId(order.getVendor().getId());
+		
+		//Status
+		for(PurchaseOrderStatus status:order.getStatus())
+			wsOrder.getStatus().add(status);
 		
 		//Item level
 		for(PurchaseOrderItem orderItem:order.getItems()) {
