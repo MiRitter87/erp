@@ -1036,10 +1036,63 @@ public class PurchaseOrderServiceTest {
 	}
 	
 	
+	@Test
+	/**
+	 * Tests if the material inventory is reduced if an order item is deleted and the status GOODS_RECEIPT is active.
+	 */
+	public void testInventoryReducedOnItemRemoved() {
+		Material g4560;
+		Long g4560InventoryBefore = Long.valueOf(0), g4560InventoryAfter = Long.valueOf(0);
+		PurchaseOrderService orderService = new PurchaseOrderService();
+		
+		//At first set the GOODS_RECEIPT status to active to trigger inbound booking of material inventory.
+		try {
+			this.order2.setStatus(PurchaseOrderStatus.GOODS_RECEIPT, true);
+			orderDAO.updatePurchaseOrder(this.order2);
+		} catch (Exception e) {
+			fail(e.getMessage());
+		}
+		
+		//Get material inventory before the purchase order item is deleted.
+		try {
+			g4560 = materialDAO.getMaterial(this.g4560.getId());
+			g4560InventoryBefore = g4560.getInventory();
+		} catch (Exception e) {
+			fail(e.getMessage());
+		}
+		
+		try {
+			//Delete the purchase order item.
+			this.order2.getItems().remove(1);
+			orderService.updatePurchaseOrder(this.convertToWsOrder(this.order2));
+			
+			//Get material inventory after the purchase order item has been deleted.
+			g4560 = materialDAO.getMaterial(this.g4560.getId());
+			g4560InventoryAfter = g4560.getInventory();
+			
+			//Check if the material inventory has been reduced by the quantity of the ordered item.
+			assertTrue(g4560InventoryAfter == (g4560InventoryBefore - this.orderItem22.getQuantity()));	
+		} catch (Exception e) {
+			fail(e.getMessage());
+		}
+		finally {
+			//Restore old database state by adding the purchase order item that has been deleted previously.
+			try {
+				this.order2.addItem(this.orderItem22);;
+				orderDAO.updatePurchaseOrder(this.order2);
+			} 
+			catch (Exception e) {
+				fail(e.getMessage());
+			}
+		}
+	}
+	
+	
 	/*
 	 * TODO Add additional tests
 	 *
-	 * -test ordered material quantity of item removed from inventory if status GOODS_RECEIPT is active and item is being deleted
+	 * -test ordered material quantity of item added to inventory if status GOODS_RECEIPT is active and item is being added
+	 * -test inventory changed on ordered material quantities modified (one add, one reduced) if status GOODS_RECEIPT is active
 	 */
 	
 	

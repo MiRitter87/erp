@@ -1,5 +1,8 @@
 package backend.webservice.common;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import backend.dao.DAOManager;
 import backend.dao.MaterialDao;
 import backend.model.Material;
@@ -53,6 +56,8 @@ public class PurchaseOrderInventoryManager {
 			this.addMaterialInventoryForOrder(purchaseOrder);
 			return;
 		}
+		
+		this.updateMaterialInventoryForItems(purchaseOrder, databasePurchaseOrder);
 	}
 	
 	
@@ -102,5 +107,63 @@ public class PurchaseOrderInventoryManager {
 			currentMaterial.setInventory(currentMaterial.getInventory() - item.getQuantity());
 			materialDAO.updateMaterial(currentMaterial);
 		}			
+	}
+	
+	
+	/**
+	 * Updates the material inventories according to the changes of the order items.
+	 * To determine the changes, the database state is compared with the order to be updated.
+	 * 
+	 * @throws Exception In case the update of the material inventory fails.
+	 */
+	private void updateMaterialInventoryForItems(final PurchaseOrder purchaseOrder, final PurchaseOrder databasePurchaseOrder) throws Exception {
+		HashMap<Integer, Long> reductions = this.getMaterialReductions(purchaseOrder, databasePurchaseOrder);
+		MaterialDao materialDAO = DAOManager.getInstance().getMaterialDAO();
+		Material currentMaterial;
+		
+		//Decrease the material inventory by the reduced ordered quantities.
+		for (Map.Entry<Integer, Long> entry : reductions.entrySet()) {
+			currentMaterial = materialDAO.getMaterial(entry.getKey());
+			currentMaterial.setInventory(currentMaterial.getInventory() - entry.getValue());
+			materialDAO.updateMaterial(currentMaterial);
+		}
+	}
+	
+	
+	/**
+	 * Compares the database state of the purchase order with the given purchase order. All material reductions of the purchase order are returned.
+	 * 
+	 * @param purchaseOrder The purchase order that is being checked for reductions.
+	 * @param databasePurchaseOrder The database version of the purchase order.
+	 * @return The IDs and quantities of all materials that have their quantities reduced compared to the database state.
+	 */
+	private HashMap<Integer, Long> getMaterialReductions(final PurchaseOrder purchaseOrder, final PurchaseOrder databasePurchaseOrder) {
+		HashMap<Integer, Long> reductions = new HashMap<Integer, Long>();	//<MaterialId, Quantity>
+		boolean materialExistsInOrderItem;
+		Long orderItemQuantity = Long.valueOf(0);
+		
+		for(PurchaseOrderItem tempDatabaseItem:databasePurchaseOrder.getItems()) {
+			materialExistsInOrderItem = false;
+			
+			for(PurchaseOrderItem tempOrderItem:purchaseOrder.getItems()) {
+				if(tempDatabaseItem.getMaterial().getId().intValue() == tempOrderItem.getMaterial().getId().intValue()) {
+					materialExistsInOrderItem = true;
+					orderItemQuantity = orderItemQuantity + tempOrderItem.getQuantity();
+				}
+				
+			}
+			
+			//Add quantities for a removed material.
+			if(materialExistsInOrderItem == false) {
+				reductions.put(tempDatabaseItem.getMaterial().getId(), tempDatabaseItem.getQuantity());
+			}
+			else {
+				//Determine possible quantity reductions of an existing material.
+				if(tempDatabaseItem.getQuantity() > orderItemQuantity)
+					reductions.put(tempDatabaseItem.getMaterial().getId(), tempDatabaseItem.getQuantity()-orderItemQuantity);
+			}
+		}
+		
+		return reductions;
 	}
 }
