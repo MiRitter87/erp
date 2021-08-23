@@ -57,7 +57,8 @@ public class PurchaseOrderInventoryManager {
 			return;
 		}
 		
-		this.updateMaterialInventoryForItems(purchaseOrder, databasePurchaseOrder);
+		if(purchaseOrder.isStatusActive(PurchaseOrderStatus.GOODS_RECEIPT))
+			this.updateMaterialInventoryForItems(purchaseOrder, databasePurchaseOrder);
 	}
 	
 	
