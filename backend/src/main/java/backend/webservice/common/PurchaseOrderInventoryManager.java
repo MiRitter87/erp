@@ -149,10 +149,11 @@ public class PurchaseOrderInventoryManager {
 	private HashMap<Integer, Long> getMaterialAdditions(final PurchaseOrder purchaseOrder, final PurchaseOrder databasePurchaseOrder) {
 		HashMap<Integer, Long> additions = new HashMap<Integer, Long>();	//<MaterialId, Quantity>
 		boolean materialExistsInDatabaseItem;
-		Long databaseItemQuantity = Long.valueOf(0);
+		Long databaseItemQuantity;
 		
 		for(PurchaseOrderItem tempOrderItem:purchaseOrder.getItems()) {
 			materialExistsInDatabaseItem = false;
+			databaseItemQuantity = Long.valueOf(0);
 			
 			for(PurchaseOrderItem tempDatabaseItem:databasePurchaseOrder.getItems()) {
 				if(tempDatabaseItem.getMaterial().getId().intValue() == tempOrderItem.getMaterial().getId().intValue()) {
@@ -186,10 +187,11 @@ public class PurchaseOrderInventoryManager {
 	private HashMap<Integer, Long> getMaterialReductions(final PurchaseOrder purchaseOrder, final PurchaseOrder databasePurchaseOrder) {
 		HashMap<Integer, Long> reductions = new HashMap<Integer, Long>();	//<MaterialId, Quantity>
 		boolean materialExistsInOrderItem;
-		Long orderItemQuantity = Long.valueOf(0);
+		Long orderItemQuantity;
 		
 		for(PurchaseOrderItem tempDatabaseItem:databasePurchaseOrder.getItems()) {
 			materialExistsInOrderItem = false;
+			orderItemQuantity = Long.valueOf(0);
 			
 			for(PurchaseOrderItem tempOrderItem:purchaseOrder.getItems()) {
 				if(tempDatabaseItem.getMaterial().getId().intValue() == tempOrderItem.getMaterial().getId().intValue()) {

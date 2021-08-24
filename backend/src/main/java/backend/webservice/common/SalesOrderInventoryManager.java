@@ -111,10 +111,11 @@ public class SalesOrderInventoryManager {
 	private HashMap<Integer, Long> getMaterialAdditions(final SalesOrder salesOrder, final SalesOrder databaseSalesOrder) {
 		HashMap<Integer, Long> additions = new HashMap<Integer, Long>();	//<MaterialId, Quantity>
 		boolean materialExistsInDatabaseItem;
-		Long databaseItemQuantity = Long.valueOf(0);
+		Long databaseItemQuantity;
 		
 		for(SalesOrderItem tempOrderItem:salesOrder.getItems()) {
 			materialExistsInDatabaseItem = false;
+			databaseItemQuantity = Long.valueOf(0);
 			
 			for(SalesOrderItem tempDatabaseItem:databaseSalesOrder.getItems()) {
 				if(tempDatabaseItem.getMaterial().getId().intValue() == tempOrderItem.getMaterial().getId().intValue()) {
@@ -148,10 +149,11 @@ public class SalesOrderInventoryManager {
 	private HashMap<Integer, Long> getMaterialReductions(final SalesOrder salesOrder, final SalesOrder databaseSalesOrder) {
 		HashMap<Integer, Long> reductions = new HashMap<Integer, Long>();	//<MaterialId, Quantity>
 		boolean materialExistsInOrderItem;
-		Long orderItemQuantity = Long.valueOf(0);
+		Long orderItemQuantity;
 		
 		for(SalesOrderItem tempDatabaseItem:databaseSalesOrder.getItems()) {
 			materialExistsInOrderItem = false;
+			orderItemQuantity = Long.valueOf(0);
 			
 			for(SalesOrderItem tempOrderItem:salesOrder.getItems()) {
 				if(tempDatabaseItem.getMaterial().getId().intValue() == tempOrderItem.getMaterial().getId().intValue()) {

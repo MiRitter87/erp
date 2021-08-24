@@ -1135,11 +1135,49 @@ public class PurchaseOrderServiceTest {
 	}
 	
 	
-	/*
-	 * TODO Add additional tests
-	 *
-	 * -test inventory changed if ordered material quantities changed (one added, one reduced) if status GOODS_RECEIPT is active
+	@Test
+	/**
+	 * Tests if the material inventory is adapted if ordered item quantities are changed and the status GOODS_RECEIPT is active.
 	 */
+	public void testInventoryChangedOnItemQuantitiesChanged() {
+		Material rx570, g4560;
+		Long rx570InventoryBefore = Long.valueOf(0), rx570InventoryAfter = Long.valueOf(0);
+		Long g4560InventoryBefore = Long.valueOf(0), g4560InventoryAfter = Long.valueOf(0);
+		Long quantitiyAdded = Long.valueOf(1);
+		Long quantitiyReduced = Long.valueOf(1);
+		PurchaseOrderService orderService = new PurchaseOrderService();
+		
+		try {			
+			//At first set the GOODS_RECEIPT status to active to trigger inbound booking of material inventory.
+			this.order2.setStatus(PurchaseOrderStatus.GOODS_RECEIPT, true);
+			orderDAO.updatePurchaseOrder(this.order2);
+			
+			//Get material inventory before the new order item is added.
+			rx570 = materialDAO.getMaterial(this.rx570.getId());
+			g4560 = materialDAO.getMaterial(this.g4560.getId());
+			
+			rx570InventoryBefore = rx570.getInventory();
+			g4560InventoryBefore = g4560.getInventory();
+			
+			//Change ordered quantities
+			this.orderItem21.setQuantity(this.orderItem21.getQuantity() - quantitiyReduced);
+			this.orderItem22.setQuantity(this.orderItem22.getQuantity() + quantitiyAdded);
+			orderService.updatePurchaseOrder(this.convertToWsOrder(this.order2));
+						
+			//Get material inventory after the order item has been added.
+			rx570 = materialDAO.getMaterial(this.rx570.getId());
+			g4560 = materialDAO.getMaterial(this.g4560.getId());
+			
+			rx570InventoryAfter = rx570.getInventory();
+			g4560InventoryAfter = g4560.getInventory();
+			
+			//Check if the material inventory has been increased by the quantity of the newly ordered item.
+			assertEquals(rx570InventoryBefore - quantitiyReduced, rx570InventoryAfter);
+			assertEquals(g4560InventoryBefore + quantitiyAdded, g4560InventoryAfter);
+		} catch (Exception e) {
+			fail(e.getMessage());
+		}		
+	}
 	
 	
 	/**
