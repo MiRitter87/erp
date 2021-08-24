@@ -118,9 +118,17 @@ public class PurchaseOrderInventoryManager {
 	 * @throws Exception In case the update of the material inventory fails.
 	 */
 	private void updateMaterialInventoryForItems(final PurchaseOrder purchaseOrder, final PurchaseOrder databasePurchaseOrder) throws Exception {
+		HashMap<Integer, Long> additions = this.getMaterialAdditions(purchaseOrder, databasePurchaseOrder);
 		HashMap<Integer, Long> reductions = this.getMaterialReductions(purchaseOrder, databasePurchaseOrder);
 		MaterialDao materialDAO = DAOManager.getInstance().getMaterialDAO();
 		Material currentMaterial;
+		
+		//Increase the material inventory by the additionally ordered quantities.
+		for (Map.Entry<Integer, Long> entry : additions.entrySet()) {
+			currentMaterial = materialDAO.getMaterial(entry.getKey());
+			currentMaterial.setInventory(currentMaterial.getInventory() + entry.getValue());
+			materialDAO.updateMaterial(currentMaterial);
+		}
 		
 		//Decrease the material inventory by the reduced ordered quantities.
 		for (Map.Entry<Integer, Long> entry : reductions.entrySet()) {
@@ -128,6 +136,43 @@ public class PurchaseOrderInventoryManager {
 			currentMaterial.setInventory(currentMaterial.getInventory() - entry.getValue());
 			materialDAO.updateMaterial(currentMaterial);
 		}
+	}
+	
+	
+	/**
+	 * Compares the database state of the purchase order with the given purchase order. All material additions of the purchase order are returned.
+	 * 
+	 * @param purchaseOrder The purchase order that is being checked for additions.
+	 * @param databasePurchaseOrder The database version of the purchase order.
+	 * @return The IDs and quantities of all materials that have their quantities increased compared to the database state.
+	 */
+	private HashMap<Integer, Long> getMaterialAdditions(final PurchaseOrder purchaseOrder, final PurchaseOrder databasePurchaseOrder) {
+		HashMap<Integer, Long> additions = new HashMap<Integer, Long>();	//<MaterialId, Quantity>
+		boolean materialExistsInDatabaseItem;
+		Long databaseItemQuantity = Long.valueOf(0);
+		
+		for(PurchaseOrderItem tempOrderItem:purchaseOrder.getItems()) {
+			materialExistsInDatabaseItem = false;
+			
+			for(PurchaseOrderItem tempDatabaseItem:databasePurchaseOrder.getItems()) {
+				if(tempDatabaseItem.getMaterial().getId().intValue() == tempOrderItem.getMaterial().getId().intValue()) {
+					materialExistsInDatabaseItem = true;
+					databaseItemQuantity = databaseItemQuantity + tempDatabaseItem.getQuantity();
+				}
+			}
+			
+			//Add quantities for a new material.
+			if(materialExistsInDatabaseItem == false) {
+				additions.put(tempOrderItem.getMaterial().getId(), tempOrderItem.getQuantity());
+			}
+			else {
+				//Determine possible additional quantities of an existing material.
+				if(tempOrderItem.getQuantity() > databaseItemQuantity)
+					additions.put(tempOrderItem.getMaterial().getId(), tempOrderItem.getQuantity()-databaseItemQuantity);
+			}
+		}
+		
+		return additions;
 	}
 	
 	

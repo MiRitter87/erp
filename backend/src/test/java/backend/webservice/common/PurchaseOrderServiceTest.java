@@ -1088,11 +1088,57 @@ public class PurchaseOrderServiceTest {
 	}
 	
 	
+	@Test
+	/**
+	 * Tests if the material inventory is added if an order item is added and the status GOODS_RECEIPT is active.
+	 */
+	public void testInventoryAddedOnItemAdded() {
+		Material rx570, g4560;
+		Long rx570InventoryBefore = Long.valueOf(0), rx570InventoryAfter = Long.valueOf(0);
+		Long g4560InventoryBefore = Long.valueOf(0), g4560InventoryAfter = Long.valueOf(0);
+		PurchaseOrderService orderService = new PurchaseOrderService();
+		PurchaseOrderItem newOrderItem = new PurchaseOrderItem();
+		
+		try {			
+			//At first set the GOODS_RECEIPT status to active to trigger inbound booking of material inventory.
+			this.order1.setStatus(PurchaseOrderStatus.GOODS_RECEIPT, true);
+			orderDAO.updatePurchaseOrder(this.order1);
+			
+			//Get material inventory before the new order item is added.
+			rx570 = materialDAO.getMaterial(this.rx570.getId());
+			g4560 = materialDAO.getMaterial(this.g4560.getId());
+			
+			rx570InventoryBefore = rx570.getInventory();
+			g4560InventoryBefore = g4560.getInventory();
+			
+			//Add a new item to the order.
+			newOrderItem.setId(2);
+			newOrderItem.setMaterial(this.g4560);
+			newOrderItem.setQuantity(Long.valueOf(1));
+			
+			this.order1.addItem(newOrderItem);
+			orderService.updatePurchaseOrder(this.convertToWsOrder(this.order1));
+						
+			//Get material inventory after the order item has been added.
+			rx570 = materialDAO.getMaterial(this.rx570.getId());
+			g4560 = materialDAO.getMaterial(this.g4560.getId());
+			
+			rx570InventoryAfter = rx570.getInventory();
+			g4560InventoryAfter = g4560.getInventory();
+			
+			//Check if the material inventory has been increased by the quantity of the newly ordered item.
+			assertEquals(rx570InventoryBefore, rx570InventoryAfter);
+			assertEquals(g4560InventoryBefore + newOrderItem.getQuantity(), g4560InventoryAfter);
+		} catch (Exception e) {
+			fail(e.getMessage());
+		}		
+	}
+	
+	
 	/*
 	 * TODO Add additional tests
 	 *
-	 * -test ordered material quantity of item added to inventory if status GOODS_RECEIPT is active and item is being added
-	 * -test inventory changed on ordered material quantities modified (one add, one reduced) if status GOODS_RECEIPT is active
+	 * -test inventory changed if ordered material quantities changed (one added, one reduced) if status GOODS_RECEIPT is active
 	 */
 	
 	
