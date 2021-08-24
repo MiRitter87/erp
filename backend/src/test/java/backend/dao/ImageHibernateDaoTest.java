@@ -105,18 +105,12 @@ public class ImageHibernateDaoTest {
 		try {
 			this.dummyImageData1.setData(FileReader.readFile(DUMMY_IMAGE_FILE_PATH));
 			this.dummyImageData2.setData(FileReader.readFile(DUMMY_IMAGE_FILE_PATH));
-		} catch (FileNotFoundException fileNotFoundException) {
-			fail(fileNotFoundException.getMessage());
-		} catch (IOException ioException) {
-			fail(ioException.getMessage());
-		}
-		
-		this.dummyImageMetaData1 = new ImageMetaData();
-		this.dummyImageMetaData1.setMimeType("image/png");
-		this.dummyImageMetaData2 = new ImageMetaData();
-		this.dummyImageMetaData2.setMimeType("image/png");
-		
-		try {
+			
+			this.dummyImageMetaData1 = new ImageMetaData();
+			this.dummyImageMetaData1.setMimeType("image/png");
+			this.dummyImageMetaData2 = new ImageMetaData();
+			this.dummyImageMetaData2.setMimeType("image/png");
+			
 			imageDAO.insertImage(this.dummyImageData1);
 			imageDAO.insertImage(this.dummyImageData2);
 			
@@ -124,6 +118,10 @@ public class ImageHibernateDaoTest {
 			imageDAO.updateImageMetaData(this.dummyImageMetaData1);
 			this.dummyImageMetaData2.setId(this.dummyImageData2.getId());
 			imageDAO.updateImageMetaData(this.dummyImageMetaData2);
+		} catch (FileNotFoundException fileNotFoundException) {
+			fail(fileNotFoundException.getMessage());
+		} catch (IOException ioException) {
+			fail(ioException.getMessage());
 		} catch (Exception e) {
 			fail(e.getMessage());
 		}

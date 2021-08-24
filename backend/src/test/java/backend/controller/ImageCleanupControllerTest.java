@@ -95,20 +95,18 @@ public class ImageCleanupControllerTest {
 		
 		try {
 			this.dummyImageData.setData(FileReader.readFile(DUMMY_IMAGE_FILE_PATH));
-		} catch (FileNotFoundException fileNotFoundException) {
-			fail(fileNotFoundException.getMessage());
-		} catch (IOException ioException) {
-			fail(ioException.getMessage());
-		}
-		
-		this.dummyImageMetaData = new ImageMetaData();
-		this.dummyImageMetaData.setMimeType("image/png");
-		
-		try {
+			
+			this.dummyImageMetaData = new ImageMetaData();
+			this.dummyImageMetaData.setMimeType("image/png");
+			
 			imageDAO.insertImage(this.dummyImageData);
 			
 			this.dummyImageMetaData.setId(this.dummyImageData.getId());
 			imageDAO.updateImageMetaData(this.dummyImageMetaData);
+		} catch (FileNotFoundException fileNotFoundException) {
+			fail(fileNotFoundException.getMessage());
+		} catch (IOException ioException) {
+			fail(ioException.getMessage());
 		} catch (Exception e) {
 			fail(e.getMessage());
 		}
@@ -146,14 +144,10 @@ public class ImageCleanupControllerTest {
 		newMaterial.setInventory(Long.valueOf(2000));
 		newMaterial.setImage(this.dummyImageMetaData);
 		
-		//Add the new material to the database via DAO.
 		try {
+			//Add the new material to the database via DAO.
 			materialDAO.insertMaterial(newMaterial);
-		} catch (Exception e) {
-			fail(e.getMessage());
-		}
-		
-		try {
+
 			//Cleanup obsolete images. There is only one image and it is referenced by a material. Therefore it should not be cleaned up.
 			imageCleanupController.cleanup();
 			

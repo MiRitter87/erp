@@ -869,68 +869,61 @@ public class SalesOrderServiceTest {
 		Material rx570, g4560;
 		Long rx570InventoryBefore = Long.valueOf(0), rx570InventoryAfter = Long.valueOf(0);
 		Long g4560InventoryBefore = Long.valueOf(0), g4560InventoryAfter = Long.valueOf(0);
-		SalesOrder newOrder;
+		SalesOrder newOrder = new SalesOrder();
 		SalesOrderItem itemG4560, itemRX570;
 		WebServiceResult addOrderResult;
 		SalesOrderService orderService = new SalesOrderService();
 		
-		//Get the inventory of the ordered material before placing the order.
 		try {
+			//Get the inventory of the ordered material before placing the order.
 			rx570 = materialDAO.getMaterial(this.rx570.getId());
 			g4560 = materialDAO.getMaterial(this.g4560.getId());
 			
 			rx570InventoryBefore = rx570.getInventory();
-			g4560InventoryBefore = g4560.getInventory();
-		} catch (Exception e) {
-			fail(e.getMessage());
-		}		
+			g4560InventoryBefore = g4560.getInventory();	
 		
-		//Place the order
-		itemRX570 = new SalesOrderItem();
-		itemRX570.setId(1);
-		itemRX570.setMaterial(this.rx570);
-		itemRX570.setQuantity(Long.valueOf(1));
+			//Place the order
+			itemRX570 = new SalesOrderItem();
+			itemRX570.setId(1);
+			itemRX570.setMaterial(this.rx570);
+			itemRX570.setQuantity(Long.valueOf(1));
+			
+			itemG4560 = new SalesOrderItem();
+			itemG4560.setId(2);
+			itemG4560.setMaterial(this.g4560);
+			itemG4560.setQuantity(Long.valueOf(1));
+				
+			newOrder.setSoldToParty(this.partner);
+			newOrder.setShipToParty(this.partner);
+			newOrder.setBillToParty(this.partner);
+			newOrder.setOrderDate(new Date());
+			newOrder.setRequestedDeliveryDate(new Date());
+			newOrder.setStatus(SalesOrderStatus.OPEN);
+			newOrder.addItem(itemRX570);
+			newOrder.addItem(itemG4560);
+			
+			addOrderResult = orderService.addSalesOrder(this.convertToWsOrder(newOrder));
+			
+			//Assure no error message exists
+			assertTrue(WebServiceTools.resultContainsErrorMessage(addOrderResult) == false);
+			
+			//There should be a success message
+			assertTrue(addOrderResult.getMessages().size() == 1);
+			assertTrue(addOrderResult.getMessages().get(0).getType() == WebServiceMessageType.S);
+			
+			newOrder.setId((Integer) addOrderResult.getData());
 		
-		itemG4560 = new SalesOrderItem();
-		itemG4560.setId(2);
-		itemG4560.setMaterial(this.g4560);
-		itemG4560.setQuantity(Long.valueOf(1));
-		
-		newOrder = new SalesOrder();		
-		newOrder.setSoldToParty(this.partner);
-		newOrder.setShipToParty(this.partner);
-		newOrder.setBillToParty(this.partner);
-		newOrder.setOrderDate(new Date());
-		newOrder.setRequestedDeliveryDate(new Date());
-		newOrder.setStatus(SalesOrderStatus.OPEN);
-		newOrder.addItem(itemRX570);
-		newOrder.addItem(itemG4560);
-		
-		addOrderResult = orderService.addSalesOrder(this.convertToWsOrder(newOrder));
-		
-		//Assure no error message exists
-		assertTrue(WebServiceTools.resultContainsErrorMessage(addOrderResult) == false);
-		
-		//There should be a success message
-		assertTrue(addOrderResult.getMessages().size() == 1);
-		assertTrue(addOrderResult.getMessages().get(0).getType() == WebServiceMessageType.S);
-		
-		newOrder.setId((Integer) addOrderResult.getData());
-		
-		//Check if the material inventory is reduced by the ordered quantity
-		try {
+			//Check if the material inventory is reduced by the ordered quantity
 			rx570 = materialDAO.getMaterial(this.rx570.getId());
 			g4560 = materialDAO.getMaterial(this.g4560.getId());
 			
 			rx570InventoryAfter = rx570.getInventory();
 			g4560InventoryAfter = g4560.getInventory();
-		} catch (Exception e) {
-			fail(e.getMessage());
-		}
-		
-		try {
+			
 			assertTrue(rx570InventoryAfter == (rx570InventoryBefore - itemRX570.getQuantity()));
 			assertTrue(g4560InventoryAfter == (g4560InventoryBefore - itemG4560.getQuantity()));			
+		} catch (Exception e) {
+			fail(e.getMessage());
 		}
 		finally {
 			//Delete the newly added sales order.
@@ -955,30 +948,26 @@ public class SalesOrderServiceTest {
 		WebServiceResult updateOrderResult;
 		SalesOrderService orderService = new SalesOrderService();
 		
-		//Get the material inventory before order cancellation.
 		try {
+			//Get the material inventory before order cancellation.
 			rx570 = materialDAO.getMaterial(this.rx570.getId());
 			g4560 = materialDAO.getMaterial(this.g4560.getId());
 			
 			rx570InventoryBefore = rx570.getInventory();
 			g4560InventoryBefore = g4560.getInventory();
-		} catch (Exception e) {
-			fail(e.getMessage());
-		}
 		
-		//Update order with status canceled
-		this.order2.setStatus(SalesOrderStatus.CANCELED);
-		updateOrderResult = orderService.updateSalesOrder(this.convertToWsOrder(this.order2));
-		
-		//Assure no error message exists
-		assertTrue(WebServiceTools.resultContainsErrorMessage(updateOrderResult) == false);
-		
-		//There should be a success message
-		assertTrue(updateOrderResult.getMessages().size() == 1);
-		assertTrue(updateOrderResult.getMessages().get(0).getType() == WebServiceMessageType.S);
-		
-		//Get the material inventory after order cancellation.
-		try {
+			//Update order with status canceled
+			this.order2.setStatus(SalesOrderStatus.CANCELED);
+			updateOrderResult = orderService.updateSalesOrder(this.convertToWsOrder(this.order2));
+			
+			//Assure no error message exists
+			assertTrue(WebServiceTools.resultContainsErrorMessage(updateOrderResult) == false);
+			
+			//There should be a success message
+			assertTrue(updateOrderResult.getMessages().size() == 1);
+			assertTrue(updateOrderResult.getMessages().get(0).getType() == WebServiceMessageType.S);
+			
+			//Get the material inventory after order cancellation.
 			rx570 = materialDAO.getMaterial(this.rx570.getId());
 			g4560 = materialDAO.getMaterial(this.g4560.getId());
 			
@@ -1004,37 +993,30 @@ public class SalesOrderServiceTest {
 		Long g4560InventoryBefore = Long.valueOf(0), g4560InventoryAfter = Long.valueOf(0);
 		SalesOrderService orderService = new SalesOrderService();
 		
-		//Get the material inventory before order deletion.
 		try {
+			//Get the material inventory before order deletion.
 			rx570 = materialDAO.getMaterial(this.rx570.getId());
 			g4560 = materialDAO.getMaterial(this.g4560.getId());
 			
 			rx570InventoryBefore = rx570.getInventory();
 			g4560InventoryBefore = g4560.getInventory();
-		} catch (Exception e) {
-			fail(e.getMessage());
-		}
+
+			//Delete the sales order
+			orderService.deleteSalesOrder(this.order2.getId());
 		
-		//Delete the sales order
-		orderService.deleteSalesOrder(this.order2.getId());
-		
-		//Get the inventory of the items after deletion
-		try {
+			//Get the inventory of the items after deletion
 			rx570 = materialDAO.getMaterial(this.rx570.getId());
 			g4560 = materialDAO.getMaterial(this.g4560.getId());
 			
 			rx570InventoryAfter = rx570.getInventory();
 			g4560InventoryAfter = g4560.getInventory();
-		} catch (Exception e) {
-			fail(e.getMessage());
-		}
-		
-		try {
+			
 			//Check if ordered quantity has been added to the inventory
 			assertTrue(rx570InventoryAfter == (rx570InventoryBefore + this.orderItem21.getQuantity()));
 			assertTrue(g4560InventoryAfter == (g4560InventoryBefore + this.orderItem22.getQuantity()));		
-		}
-		finally {
+		} catch (Exception e) {
+			fail(e.getMessage());
+		} finally {
 			try {
 				//Restore old database state by adding the sales order that has been deleted previously.
 				this.order2.setId(null);
@@ -1062,26 +1044,21 @@ public class SalesOrderServiceTest {
 		Material g4560;
 		Long g4560InventoryBefore = Long.valueOf(0), g4560InventoryAfter = Long.valueOf(0);
 		SalesOrderService orderService = new SalesOrderService();
-		SalesOrderItem newItem;
+		SalesOrderItem newItem = new SalesOrderItem();;
 		
-		//Get material inventory before an additional item is added to an existing sales order.
 		try {
+			//Get material inventory before an additional item is added to an existing sales order.
 			g4560 = materialDAO.getMaterial(this.g4560.getId());
 			g4560InventoryBefore = g4560.getInventory();
-		} catch (Exception e) {
-			fail(e.getMessage());
-		}
 		
-		//Add a new item to an existing sales order.
-		newItem = new SalesOrderItem();
-		newItem.setId(2);
-		newItem.setMaterial(this.g4560);
-		newItem.setQuantity(Long.valueOf(1));
-		this.order1.addItem(newItem);
-		orderService.updateSalesOrder(this.convertToWsOrder(this.order1));
-		
-		//Get material inventory after the item has been added.
-		try {
+			//Add a new item to an existing sales order.
+			newItem.setId(2);
+			newItem.setMaterial(this.g4560);
+			newItem.setQuantity(Long.valueOf(1));
+			this.order1.addItem(newItem);
+			orderService.updateSalesOrder(this.convertToWsOrder(this.order1));
+			
+			//Get material inventory after the item has been added.
 			g4560 = materialDAO.getMaterial(this.g4560.getId());
 			g4560InventoryAfter = g4560.getInventory();
 		} catch (Exception e) {
@@ -1104,21 +1081,17 @@ public class SalesOrderServiceTest {
 		Long quantitiyAdded = Long.valueOf(1);
 		SalesOrderService orderService = new SalesOrderService();
 		
-		//Get the material inventory before the ordered quantity is changed.
 		try {
+			//Get the material inventory before the ordered quantity is changed.
 			rx570 = materialDAO.getMaterial(this.rx570.getId());
 			rx570InventoryBefore = rx570.getInventory();
-		} catch (Exception e) {
-			fail(e.getMessage());
-		}
-		
-		//Change the ordered quantity
-		item = this.order1.getItemWithId(this.orderItem1.getId());
-		item.setQuantity(item.getQuantity() + quantitiyAdded);
-		orderService.updateSalesOrder(this.convertToWsOrder(this.order1));
-		
-		//Get the material inventory after the ordered quantity has been changed.
-		try {
+
+			//Change the ordered quantity
+			item = this.order1.getItemWithId(this.orderItem1.getId());
+			item.setQuantity(item.getQuantity() + quantitiyAdded);
+			orderService.updateSalesOrder(this.convertToWsOrder(this.order1));
+			
+			//Get the material inventory after the ordered quantity has been changed.
 			rx570 = materialDAO.getMaterial(this.rx570.getId());
 			rx570InventoryAfter = rx570.getInventory();
 		} catch (Exception e) {
@@ -1143,16 +1116,12 @@ public class SalesOrderServiceTest {
 		try {
 			g4560 = materialDAO.getMaterial(this.g4560.getId());
 			g4560InventoryBefore = g4560.getInventory();
-		} catch (Exception e) {
-			fail(e.getMessage());
-		}
 		
-		//Remove the item from an existing sales order
-		this.order2.getItems().remove(1);
-		orderService.updateSalesOrder(this.convertToWsOrder(this.order2));
-		
-		//Get material inventory after the item has been removed.
-		try {
+			//Remove the item from an existing sales order
+			this.order2.getItems().remove(1);
+			orderService.updateSalesOrder(this.convertToWsOrder(this.order2));
+			
+			//Get material inventory after the item has been removed.
 			g4560 = materialDAO.getMaterial(this.g4560.getId());
 			g4560InventoryAfter = g4560.getInventory();
 		} catch (Exception e) {
@@ -1179,17 +1148,13 @@ public class SalesOrderServiceTest {
 		try {
 			rx570 = materialDAO.getMaterial(this.rx570.getId());
 			rx570InventoryBefore = rx570.getInventory();
-		} catch (Exception e) {
-			fail(e.getMessage());
-		}
-		
-		//Change the ordered quantity
-		item = this.order2.getItemWithId(this.orderItem21.getId());
-		item.setQuantity(item.getQuantity() - quantitiyReduced);
-		orderService.updateSalesOrder(this.convertToWsOrder(this.order2));
-		
-		//Get the material inventory after the ordered quantity has been changed.
-		try {
+
+			//Change the ordered quantity
+			item = this.order2.getItemWithId(this.orderItem21.getId());
+			item.setQuantity(item.getQuantity() - quantitiyReduced);
+			orderService.updateSalesOrder(this.convertToWsOrder(this.order2));
+			
+			//Get the material inventory after the ordered quantity has been changed.
 			rx570 = materialDAO.getMaterial(this.rx570.getId());
 			rx570InventoryAfter = rx570.getInventory();
 		} catch (Exception e) {

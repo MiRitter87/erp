@@ -130,29 +130,24 @@ public class EmployeeSoapServiceImplTest {
 		try {
 			employeeDAO.insertEmpoyee(this.olaf);
 			employeeDAO.insertEmpoyee(this.jim);
+			
+			/*
+			 * After the employees have been persisted, their ID is generated and available.
+			 * Now we can add salary data, that use the generated ID as primary key, too.
+			 */
+			this.jim.setSalaryData(new EmployeeSalary(1200));
+			
+			//Set a fixed date in the past. This prevents circumstances where the date does not differ because object
+			//initialization and alteration happen within milliseconds during a test case.
+			Calendar pastDate = Calendar.getInstance();
+			pastDate.set(2020, 2, 2, 8, 23, 54);
+			this.jim.getSalaryData().setSalaryLastChange(pastDate.getTime());
+			
+			employeeDAO.updateEmployee(this.jim);
 		} 
 		catch (EntityExistsException e) {
 			fail(e.getMessage());
 		} 
-		catch (Exception e) {
-			fail(e.getMessage());
-		}
-		
-		/*
-		 * After the employees have been persisted, their ID is generated and available.
-		 * Now we can add salary data, that use the generated ID as primary key, too.
-		 */
-		this.jim.setSalaryData(new EmployeeSalary(1200));
-		
-		//Set a fixed date in the past. This prevents circumstances where the date does not differ because object
-		//initialization and alteration happen within milliseconds during a test case.
-		Calendar pastDate = Calendar.getInstance();
-		pastDate.set(2020, 2, 2, 8, 23, 54);
-		this.jim.getSalaryData().setSalaryLastChange(pastDate.getTime());
-		
-		try {
-			employeeDAO.updateEmployee(this.jim);
-		}
 		catch (Exception e) {
 			fail(e.getMessage());
 		}

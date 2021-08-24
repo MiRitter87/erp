@@ -239,38 +239,36 @@ public class ImageServiceTest {
     	ImageData newImage = new ImageData();
     	ImageData addedImageData;
     	
-    	//Define the new image.
     	try {
+    		//Define the new image.
 			newImage.setData(FileReader.readFile(DUMMY_IMAGE_FILE_PATH));
-    	} catch (FileNotFoundException fileNotFoundException) {
-			fail(fileNotFoundException.getMessage());
-		} catch (IOException ioException) {
-			fail(ioException.getMessage());
-		}
-    	
-    	//Add a new image to the database via WebService
-    	ImageService imageService = new ImageService();
-		addImageResult = imageService.addImage(newImage);
-    	
-		//Assure no error message exists
-		assertTrue(WebServiceTools.resultContainsErrorMessage(addImageResult) == false);
-		
-		//There should be a success message
-		assertTrue(addImageResult.getMessages().size() == 1);
-		assertTrue(addImageResult.getMessages().get(0).getType() == WebServiceMessageType.S);
-		
-		//The ID of the newly created image should be provided in the data part of the result message.
-		assertNotNull(addImageResult.getData());
-		assertTrue(addImageResult.getData() instanceof Integer);
-		assertEquals(newImage.getId(), addImageResult.getData());
-		
-		//Read the persisted image via DAO
-		try {
+
+	    	//Add a new image to the database via WebService
+	    	ImageService imageService = new ImageService();
+			addImageResult = imageService.addImage(newImage);
+	    	
+			//Assure no error message exists
+			assertTrue(WebServiceTools.resultContainsErrorMessage(addImageResult) == false);
+			
+			//There should be a success message
+			assertTrue(addImageResult.getMessages().size() == 1);
+			assertTrue(addImageResult.getMessages().get(0).getType() == WebServiceMessageType.S);
+			
+			//The ID of the newly created image should be provided in the data part of the result message.
+			assertNotNull(addImageResult.getData());
+			assertTrue(addImageResult.getData() instanceof Integer);
+			assertEquals(newImage.getId(), addImageResult.getData());
+			
+			//Read the persisted image via DAO
 			addedImageData = imageDAO.getImageData(newImage.getId());
 			
 			//Check if the image read by the DAO equals the image inserted using the WebService in each attribute.
 			assertEquals(newImage.getId(), addedImageData.getId());
 			assertArrayEquals(newImage.getData(), addedImageData.getData());
+    	} catch (FileNotFoundException fileNotFoundException) {
+			fail(fileNotFoundException.getMessage());
+		} catch (IOException ioException) {
+			fail(ioException.getMessage());
 		} catch (Exception e) {
 			fail(e.getMessage());
 		}

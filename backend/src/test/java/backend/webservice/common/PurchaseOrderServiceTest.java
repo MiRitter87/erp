@@ -727,23 +727,19 @@ public class PurchaseOrderServiceTest {
 		Long g4560InventoryBefore = Long.valueOf(0), g4560InventoryAfter = Long.valueOf(0);
 		PurchaseOrderService orderService = new PurchaseOrderService();
 		
-		//Get material inventory before the goods have been received.
 		try {
+			//Get material inventory before the goods have been received.
 			rx570 = materialDAO.getMaterial(this.rx570.getId());
 			g4560 = materialDAO.getMaterial(this.g4560.getId());
 			
 			rx570InventoryBefore = rx570.getInventory();
 			g4560InventoryBefore = g4560.getInventory();
-		} catch (Exception e) {
-			fail(e.getMessage());
-		}
+
+			//Set the order status indicating goods have been received.
+			this.order2.setStatus(PurchaseOrderStatus.GOODS_RECEIPT, true);
+			orderService.updatePurchaseOrder(this.convertToWsOrder(this.order2));
 		
-		//Set the order status indicating goods have been received.
-		this.order2.setStatus(PurchaseOrderStatus.GOODS_RECEIPT, true);
-		orderService.updatePurchaseOrder(this.convertToWsOrder(this.order2));
-		
-		//Get material inventory after the order status has been updated.
-		try {
+			//Get material inventory after the order status has been updated.
 			rx570 = materialDAO.getMaterial(this.rx570.getId());
 			g4560 = materialDAO.getMaterial(this.g4560.getId());
 			
@@ -769,31 +765,23 @@ public class PurchaseOrderServiceTest {
 		Long g4560InventoryBefore = Long.valueOf(0), g4560InventoryAfter = Long.valueOf(0);
 		PurchaseOrderService orderService = new PurchaseOrderService();
 		
-		//At first set the GOODS_RECEIPT status to active to trigger inbound booking of material inventory.
 		try {
+			//At first set the GOODS_RECEIPT status to active to trigger inbound booking of material inventory.
 			this.order2.setStatus(PurchaseOrderStatus.GOODS_RECEIPT, true);
 			orderDAO.updatePurchaseOrder(this.order2);
-		} catch (Exception e) {
-			fail(e.getMessage());
-		}
-		
-		//Get material inventory before the status GOODS_RECEIPT is reverted.
-		try {
+
+			//Get material inventory before the status GOODS_RECEIPT is reverted.
 			rx570 = materialDAO.getMaterial(this.rx570.getId());
 			g4560 = materialDAO.getMaterial(this.g4560.getId());
 			
 			rx570InventoryBefore = rx570.getInventory();
 			g4560InventoryBefore = g4560.getInventory();
-		} catch (Exception e) {
-			fail(e.getMessage());
-		}
-		
-		//Set the order status indicating goods have not been received.
-		this.order2.setStatus(PurchaseOrderStatus.GOODS_RECEIPT, false);
-		orderService.updatePurchaseOrder(this.convertToWsOrder(this.order2));
-		
-		//Get material inventory after the order status has been updated.
-		try {
+
+			//Set the order status indicating goods have not been received.
+			this.order2.setStatus(PurchaseOrderStatus.GOODS_RECEIPT, false);
+			orderService.updatePurchaseOrder(this.convertToWsOrder(this.order2));
+			
+			//Get material inventory after the order status has been updated.
 			rx570 = materialDAO.getMaterial(this.rx570.getId());
 			g4560 = materialDAO.getMaterial(this.g4560.getId());
 			
@@ -823,27 +811,19 @@ public class PurchaseOrderServiceTest {
 		try {
 			this.order2.setStatus(PurchaseOrderStatus.GOODS_RECEIPT, true);
 			orderDAO.updatePurchaseOrder(this.order2);
-		} catch (Exception e) {
-			fail(e.getMessage());
-		}
-		
-		//Get material inventory before the status GOODS_RECEIPT is reverted.
-		try {
+
+			//Get material inventory before the status GOODS_RECEIPT is reverted.
 			rx570 = materialDAO.getMaterial(this.rx570.getId());
 			g4560 = materialDAO.getMaterial(this.g4560.getId());
 			
 			rx570InventoryBefore = rx570.getInventory();
 			g4560InventoryBefore = g4560.getInventory();
-		} catch (Exception e) {
-			fail(e.getMessage());
-		}
-		
-		//Cancel the purchase order.
-		this.order2.setStatus(PurchaseOrderStatus.CANCELED, true);
-		orderService.updatePurchaseOrder(this.convertToWsOrder(this.order2));
-		
-		//Get material inventory after the order status has been updated.
-		try {
+
+			//Cancel the purchase order.
+			this.order2.setStatus(PurchaseOrderStatus.CANCELED, true);
+			orderService.updatePurchaseOrder(this.convertToWsOrder(this.order2));
+			
+			//Get material inventory after the order status has been updated.
 			rx570 = materialDAO.getMaterial(this.rx570.getId());
 			g4560 = materialDAO.getMaterial(this.g4560.getId());
 			
@@ -869,39 +849,27 @@ public class PurchaseOrderServiceTest {
 		Long g4560InventoryBefore = Long.valueOf(0), g4560InventoryAfter = Long.valueOf(0);
 		PurchaseOrderService orderService = new PurchaseOrderService();
 		
-		//At first set the GOODS_RECEIPT status to active to trigger inbound booking of material inventory.
 		try {
+			//At first set the GOODS_RECEIPT status to active to trigger inbound booking of material inventory.
 			this.order2.setStatus(PurchaseOrderStatus.GOODS_RECEIPT, true);
 			orderDAO.updatePurchaseOrder(this.order2);
-		} catch (Exception e) {
-			fail(e.getMessage());
-		}
 		
-		//Cancel the order.
-		try {
+			//Cancel the order.
 			this.order2.setStatus(PurchaseOrderStatus.CANCELED, true);
 			orderDAO.updatePurchaseOrder(this.order2);
-		} catch (Exception e) {
-			fail(e.getMessage());
-		}
-		
-		//Get material inventory before the status CANCELED is reverted.
-		try {
+
+			//Get material inventory before the status CANCELED is reverted.
 			rx570 = materialDAO.getMaterial(this.rx570.getId());
 			g4560 = materialDAO.getMaterial(this.g4560.getId());
 			
 			rx570InventoryBefore = rx570.getInventory();
 			g4560InventoryBefore = g4560.getInventory();
-		} catch (Exception e) {
-			fail(e.getMessage());
-		}
+
+			//Revert order cancellation.
+			this.order2.setStatus(PurchaseOrderStatus.CANCELED, false);
+			orderService.updatePurchaseOrder(this.convertToWsOrder(this.order2));
 		
-		//Revert order cancellation.
-		this.order2.setStatus(PurchaseOrderStatus.CANCELED, false);
-		orderService.updatePurchaseOrder(this.convertToWsOrder(this.order2));
-		
-		//Get material inventory after the order status has been updated.
-		try {
+			//Get material inventory after the order status has been updated.
 			rx570 = materialDAO.getMaterial(this.rx570.getId());
 			g4560 = materialDAO.getMaterial(this.g4560.getId());
 			
@@ -927,26 +895,18 @@ public class PurchaseOrderServiceTest {
 		Long g4560InventoryBefore = Long.valueOf(0), g4560InventoryAfter = Long.valueOf(0);
 		PurchaseOrderService orderService = new PurchaseOrderService();
 		
-		//At first set the GOODS_RECEIPT status to active to trigger inbound booking of material inventory.
 		try {
+			//At first set the GOODS_RECEIPT status to active to trigger inbound booking of material inventory.
 			this.order2.setStatus(PurchaseOrderStatus.GOODS_RECEIPT, true);
 			orderDAO.updatePurchaseOrder(this.order2);
-		} catch (Exception e) {
-			fail(e.getMessage());
-		}
 		
-		//Get material inventory before the purchase order is deleted.
-		try {
+			//Get material inventory before the purchase order is deleted.
 			rx570 = materialDAO.getMaterial(this.rx570.getId());
 			g4560 = materialDAO.getMaterial(this.g4560.getId());
 			
 			rx570InventoryBefore = rx570.getInventory();
 			g4560InventoryBefore = g4560.getInventory();
-		} catch (Exception e) {
-			fail(e.getMessage());
-		}
-		
-		try {
+
 			//Delete the purchase order.
 			orderService.deletePurchaseOrder(this.order2.getId());
 			
@@ -1045,23 +1005,15 @@ public class PurchaseOrderServiceTest {
 		Long g4560InventoryBefore = Long.valueOf(0), g4560InventoryAfter = Long.valueOf(0);
 		PurchaseOrderService orderService = new PurchaseOrderService();
 		
-		//At first set the GOODS_RECEIPT status to active to trigger inbound booking of material inventory.
 		try {
+			//At first set the GOODS_RECEIPT status to active to trigger inbound booking of material inventory.
 			this.order2.setStatus(PurchaseOrderStatus.GOODS_RECEIPT, true);
 			orderDAO.updatePurchaseOrder(this.order2);
-		} catch (Exception e) {
-			fail(e.getMessage());
-		}
 		
-		//Get material inventory before the purchase order item is deleted.
-		try {
+			//Get material inventory before the purchase order item is deleted.
 			g4560 = materialDAO.getMaterial(this.g4560.getId());
 			g4560InventoryBefore = g4560.getInventory();
-		} catch (Exception e) {
-			fail(e.getMessage());
-		}
-		
-		try {
+
 			//Delete the purchase order item.
 			this.order2.getItems().remove(1);
 			orderService.updatePurchaseOrder(this.convertToWsOrder(this.order2));

@@ -116,20 +116,18 @@ public class MaterialHibernateDaoTest {
 		
 		try {
 			this.dummyImageData.setData(FileReader.readFile(DUMMY_IMAGE_FILE_PATH));
-		} catch (FileNotFoundException fileNotFoundException) {
-			fail(fileNotFoundException.getMessage());
-		} catch (IOException ioException) {
-			fail(ioException.getMessage());
-		}
-		
-		this.dummyImageMetaData = new ImageMetaData();
-		this.dummyImageMetaData.setMimeType("image/png");
-		
-		try {
+			
+			this.dummyImageMetaData = new ImageMetaData();
+			this.dummyImageMetaData.setMimeType("image/png");
+			
 			imageDAO.insertImage(this.dummyImageData);
 			
 			this.dummyImageMetaData.setId(this.dummyImageData.getId());
 			imageDAO.updateImageMetaData(this.dummyImageMetaData);
+		} catch (FileNotFoundException fileNotFoundException) {
+			fail(fileNotFoundException.getMessage());
+		} catch (IOException ioException) {
+			fail(ioException.getMessage());
 		} catch (Exception e) {
 			fail(e.getMessage());
 		}
