@@ -12,6 +12,11 @@ public enum PurchaseOrderStatus {
 	OPEN,
 	
 	/**
+	 * The purchase order is currently being processed.
+	 */
+	IN_PROCESS,
+	
+	/**
 	 * The purchase order has been fully processed.
 	 */
 	FINISHED,

@@ -228,9 +228,11 @@ public class PurchaseOrderTest {
 	 */
 	public void testStatusOpenSetInitially() {
 		//Verify that status OPEN is set initially.
-		assertTrue(this.order.getStatus().contains(PurchaseOrderStatus.OPEN));
+		assertTrue(this.order.isStatusActive(PurchaseOrderStatus.OPEN));
 		//Verify that status FINISHED is not set initialy.
-		assertFalse(this.order.getStatus().contains(PurchaseOrderStatus.FINISHED));
+		assertFalse(this.order.isStatusActive(PurchaseOrderStatus.FINISHED));
+		//Verify that status IN_PROCESS is not set initialy.
+		assertFalse(this.order.isStatusActive(PurchaseOrderStatus.IN_PROCESS));
 	}
 	
 	
@@ -245,9 +247,11 @@ public class PurchaseOrderTest {
 		this.order.setStatus(PurchaseOrderStatus.INVOICE_SETTLED, true);
 		
 		//Verify that status OPEN is not set anymore.
-		assertFalse(this.order.getStatus().contains(PurchaseOrderStatus.OPEN));
+		assertFalse(this.order.isStatusActive(PurchaseOrderStatus.OPEN));
+		//Verify that status IN_PROCESS is not set anymore.
+		assertFalse(this.order.isStatusActive(PurchaseOrderStatus.IN_PROCESS));
 		//Verify that status FINISHED has been set.
-		assertTrue(this.order.getStatus().contains(PurchaseOrderStatus.FINISHED));
+		assertTrue(this.order.isStatusActive(PurchaseOrderStatus.FINISHED));
 	}
 	
 	
@@ -260,7 +264,23 @@ public class PurchaseOrderTest {
 		this.order.setStatus(PurchaseOrderStatus.CANCELED, true);
 		
 		//Verify that status OPEN is set inactive
-		assertFalse(this.order.getStatus().contains(PurchaseOrderStatus.OPEN));
+		assertFalse(this.order.isStatusActive(PurchaseOrderStatus.OPEN));
+	}
+	
+	
+	@Test
+	/**
+	 * Tests if the status IN_PROCESS is set inactive if status CANCELED is set.
+	 */
+	public void testStatusInProcessInactiveOnCancellation() {
+		//Begin processing the purchase order.
+		this.order.setStatus(PurchaseOrderStatus.INVOICE_RECEIPT, true);
+		
+		//Cancel the order which is in process.
+		this.order.setStatus(PurchaseOrderStatus.CANCELED, true);
+		
+		//Verify that status IN_PROCESS is set inactive
+		assertFalse(this.order.isStatusActive(PurchaseOrderStatus.IN_PROCESS));
 	}
 	
 	
@@ -278,6 +298,35 @@ public class PurchaseOrderTest {
 		this.order.setStatus(PurchaseOrderStatus.CANCELED, true);
 		
 		//Verify that status FINISHED is set inactive.
-		assertFalse(this.order.getStatus().contains(PurchaseOrderStatus.FINISHED));
+		assertFalse(this.order.isStatusActive(PurchaseOrderStatus.FINISHED));
+	}
+	
+	
+	@Test
+	/**
+	 * Tests if the status IN_PROCESS is set to active if any progressive status has been set.
+	 * The status OPEN has to be set to inactive then.
+	 */
+	public void testStatusInProcessSet() {
+		this.order.setStatus(PurchaseOrderStatus.GOODS_RECEIPT, true);
+		
+		assertTrue(this.order.isStatusActive(PurchaseOrderStatus.IN_PROCESS));
+		assertFalse(this.order.isStatusActive(PurchaseOrderStatus.OPEN));
+		assertFalse(this.order.isStatusActive(PurchaseOrderStatus.FINISHED));
+	}
+	
+	
+	@Test
+	/**
+	 * Tests if the status IN_PROCESS is set to inactive if the necessary preconditions are reset.
+	 */
+	public void testStatusInProcessReset() {
+		//Set the status IN_PROCESS.
+		this.order.setStatus(PurchaseOrderStatus.GOODS_RECEIPT, true);
+		assertTrue(this.order.isStatusActive(PurchaseOrderStatus.IN_PROCESS));
+		
+		//Revert the progress.
+		this.order.setStatus(PurchaseOrderStatus.GOODS_RECEIPT, false);
+		assertFalse(this.order.isStatusActive(PurchaseOrderStatus.IN_PROCESS));
 	}
 }

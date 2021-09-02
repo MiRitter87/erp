@@ -341,11 +341,12 @@ public class PurchaseOrder {
 	
 	
 	/**
-	 * Updates the transient status OPEN and FINISHED that are derived from other status.
+	 * Updates the transient status OPEN, IN_PROCESS and FINISHED that are derived from other status.
 	 */
 	private void updateTransientStatus() {
 		if(this.isStatusActive(PurchaseOrderStatus.CANCELED)) {
 			this.setStatus(PurchaseOrderStatus.OPEN, false, false);
+			this.setStatus(PurchaseOrderStatus.IN_PROCESS, false, false);
 			this.setStatus(PurchaseOrderStatus.FINISHED, false, false);
 		}
 		else {
@@ -353,11 +354,23 @@ public class PurchaseOrder {
 					this.isStatusActive(PurchaseOrderStatus.INVOICE_SETTLED)) {
 				
 				this.setStatus(PurchaseOrderStatus.OPEN, false, false);
+				this.setStatus(PurchaseOrderStatus.IN_PROCESS, false, false);
 				this.setStatus(PurchaseOrderStatus.FINISHED, true, false);
 			}
 			else {
-				this.setStatus(PurchaseOrderStatus.OPEN, true, false);
-				this.setStatus(PurchaseOrderStatus.FINISHED, false, false);
+				if(this.isStatusActive(PurchaseOrderStatus.GOODS_RECEIPT) || this.isStatusActive(PurchaseOrderStatus.INVOICE_RECEIPT) ||
+						this.isStatusActive(PurchaseOrderStatus.INVOICE_SETTLED)) {
+					
+					this.setStatus(PurchaseOrderStatus.OPEN, false, false);
+					this.setStatus(PurchaseOrderStatus.IN_PROCESS, true, false);
+					this.setStatus(PurchaseOrderStatus.FINISHED, false, false);
+				}
+				else {					
+					this.setStatus(PurchaseOrderStatus.OPEN, true, false);
+					this.setStatus(PurchaseOrderStatus.IN_PROCESS, false, false);
+					this.setStatus(PurchaseOrderStatus.FINISHED, false, false);
+				}
+					
 			}
 		}
 	}
