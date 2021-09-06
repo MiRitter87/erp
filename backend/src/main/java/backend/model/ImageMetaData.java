@@ -23,8 +23,8 @@ public class ImageMetaData extends BaseImage {
 	/**
 	 * The MIME type of the file. For example: "image/png".
 	 */
-	@Column(name="MIME_TYPE", length = 9)
-	@Size(min = 0, max = 9, message = "{image.mimeType.size.message}")
+	@Column(name="MIME_TYPE", length = 25)
+	@Size(min = 1, max = 25, message = "{image.mimeType.size.message}")
 	private String mimeType;
 
 	

@@ -61,15 +61,39 @@ public class ImageMetaDataTest {
 	 */
 	public void testFileTypeTooLong() {
 		ValidationMessageProvider messageProvider = new ValidationMessageProvider();		
-		this.imageMetaData.setMimeType("abcde/abcd");
+		this.imageMetaData.setMimeType("abcde/abcdfghijklmnopqrstu");
 		
 		String expectedErrorMessage = messageProvider.getSizeValidationMessage("image", "mimeType", 
-				String.valueOf(this.imageMetaData.getMimeType().length()), "0", "9");
+				String.valueOf(this.imageMetaData.getMimeType().length()), "1", "25");
 		String errorMessage = "";
 		
 		try {
 			this.imageMetaData.validate();
-			fail("Validation should have failed because file type is too long.");
+			fail("Validation should have failed because mime type is too long.");
+		} 
+		catch (Exception expected) {
+			errorMessage = expected.getMessage();
+		}
+		
+		assertEquals(expectedErrorMessage, errorMessage);
+	}
+	
+	
+	@Test
+	/**
+	 * Tests validation of image meta data whose mime type is not given.
+	 */
+	public void testMimeTypeNotGiven() {
+		ValidationMessageProvider messageProvider = new ValidationMessageProvider();		
+		this.imageMetaData.setMimeType("");
+		
+		String expectedErrorMessage = messageProvider.getSizeValidationMessage("image", "mimeType", 
+				String.valueOf(this.imageMetaData.getMimeType().length()), "1", "25");
+		String errorMessage = "";
+		
+		try {
+			this.imageMetaData.validate();
+			fail("Validation should have failed because mime type is not given");
 		} 
 		catch (Exception expected) {
 			errorMessage = expected.getMessage();
