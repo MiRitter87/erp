@@ -18,6 +18,7 @@ import backend.exception.ObjectUnchangedException;
 import backend.model.PurchaseOrder;
 import backend.model.PurchaseOrderArray;
 import backend.model.PurchaseOrderItem;
+import backend.model.PurchaseOrderStatus;
 import backend.model.webservice.PurchaseOrderItemWS;
 import backend.model.webservice.PurchaseOrderWS;
 import backend.model.webservice.WebServiceMessage;
@@ -98,14 +99,15 @@ public class PurchaseOrderService {
 	/**
 	 * Provides a list of all purchase orders.
 	 * 
+	 * @param orderStatusQuery Specifies the purchase orders to be selected based on the status.
 	 * @return A list of all purchase orders.
 	 */
-	public WebServiceResult getPurchaseOrders() {
+	public WebServiceResult getPurchaseOrders(final PurchaseOrderStatus orderStatusQuery) {
 		PurchaseOrderArray purchaseOrders = new PurchaseOrderArray();
 		WebServiceResult getPurchaseOrdersResult = new WebServiceResult(null);
 		
 		try {
-			purchaseOrders.setPurchaseOrders(this.purchaseOrderDAO.getPurchaseOrders());
+			purchaseOrders.setPurchaseOrders(this.purchaseOrderDAO.getPurchaseOrders(orderStatusQuery));
 			getPurchaseOrdersResult.setData(purchaseOrders);
 		} catch (Exception e) {
 			getPurchaseOrdersResult.addMessage(new WebServiceMessage(

@@ -4,6 +4,7 @@ import java.util.List;
 
 import backend.exception.ObjectUnchangedException;
 import backend.model.PurchaseOrder;
+import backend.model.PurchaseOrderStatus;
 
 /**
  * Interface for purchase order persistence.
@@ -32,10 +33,11 @@ public interface PurchaseOrderDao {
 	/**
 	 * Gets all purchase orders.
 	 * 
+	 * @param orderStatusQuery Specifies the purchase orders to be selected based on the status.
 	 * @return All purchase orders.
 	 * @throws Exception Purchase order retrieval failed.
 	 */
-	List<PurchaseOrder> getPurchaseOrders() throws Exception;
+	List<PurchaseOrder> getPurchaseOrders(final PurchaseOrderStatus orderStatusQuery) throws Exception;
 	
 	
 	/**

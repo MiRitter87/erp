@@ -343,7 +343,7 @@ public class PurchaseOrderServiceTest {
 		
 		//Get the purchase orders.
 		PurchaseOrderService service = new PurchaseOrderService();
-		getPurchaseOrdersResult = service.getPurchaseOrders();
+		getPurchaseOrdersResult = service.getPurchaseOrders(null);
 		purchaseOrders = (PurchaseOrderArray) getPurchaseOrdersResult.getData();
 		
 		//Assure no error message exists

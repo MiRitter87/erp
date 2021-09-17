@@ -14,6 +14,7 @@ import javax.persistence.criteria.Root;
 
 import backend.exception.ObjectUnchangedException;
 import backend.model.PurchaseOrder;
+import backend.model.PurchaseOrderStatus;
 
 /**
  * Provides access to purchase order database persistence using Hibernate.
@@ -85,7 +86,7 @@ public class PurchaseOrderHibernateDao implements PurchaseOrderDao {
 
 
 	@Override
-	public List<PurchaseOrder> getPurchaseOrders() throws Exception {
+	public List<PurchaseOrder> getPurchaseOrders(final PurchaseOrderStatus orderStatusQuery) throws Exception {
 		List<PurchaseOrder> purchaseOrders = null;
 		EntityManager entityManager = this.sessionFactory.createEntityManager();
 		

@@ -8,8 +8,10 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
+import backend.model.PurchaseOrderStatus;
 import backend.model.webservice.PurchaseOrderWS;
 import backend.model.webservice.WebServiceResult;
 import backend.webservice.common.PurchaseOrderService;
@@ -39,13 +41,14 @@ public class PurchaseOrderRestService {
 	/**
 	 * Provides a list of all purchase orders.
 	 * 
+	 * @param orderStatusQuery Specifies the purchase orders to be selected based on the status.
 	 * @return A list of all purchase orders.
 	 */
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
-	public WebServiceResult getPurchaseOrders() {
+	public WebServiceResult getPurchaseOrders(@QueryParam("orderStatusQuery") final PurchaseOrderStatus orderStatusQuery) {
 		PurchaseOrderService purchaseOrderService = new PurchaseOrderService();
-		return purchaseOrderService.getPurchaseOrders();
+		return purchaseOrderService.getPurchaseOrders(orderStatusQuery);
 	}
 	
 	
