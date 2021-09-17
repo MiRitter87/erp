@@ -1,5 +1,6 @@
 package backend.dao;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -10,6 +11,7 @@ import javax.persistence.EntityManagerFactory;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Expression;
 import javax.persistence.criteria.Root;
 
 import backend.exception.ObjectUnchangedException;
@@ -100,7 +102,8 @@ public class PurchaseOrderHibernateDao implements PurchaseOrderDao {
 			CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
 			CriteriaQuery<PurchaseOrder> criteriaQuery = criteriaBuilder.createQuery(PurchaseOrder.class);
 			Root<PurchaseOrder> criteria = criteriaQuery.from(PurchaseOrder.class);
-			criteriaQuery.select(criteria);			
+			criteriaQuery.select(criteria);
+			this.applyOrderStatusQueryParameter(orderStatusQuery, criteriaQuery, criteriaBuilder, criteria);
 			criteriaQuery.orderBy(criteriaBuilder.asc(criteria.get("id")));	//Order by id ascending
 			TypedQuery<PurchaseOrder> typedQuery = entityManager.createQuery(criteriaQuery);
 			typedQuery.setHint("javax.persistence.loadgraph", graph);	//Also fetch all item data.
@@ -167,5 +170,25 @@ public class PurchaseOrderHibernateDao implements PurchaseOrderDao {
 		
 		if(databasePurchaseOrder.equals(purchaseOrder))
 			throw new ObjectUnchangedException();
+	}
+	
+	
+	/**
+	 * Applies the order status query parameter to the purchase order query.
+	 * 
+	 * @param orderStatusQuery The query parameter for purchase order status.
+	 * @param orderCriteriaQuery The purchase order criteria query.
+	 * @param criteriaBuilder The builder of criterias.
+	 * @param criteria The root entity of the purchase order that is being queried.
+	 */
+	private void applyOrderStatusQueryParameter(final PurchaseOrderStatus orderStatusQuery, final CriteriaQuery<PurchaseOrder> orderCriteriaQuery, 
+			final CriteriaBuilder criteriaBuilder, final Root<PurchaseOrder> criteria) {
+		
+		Expression<Collection<PurchaseOrderStatus>> status = criteria.get("status");
+		
+		if(orderStatusQuery == null)
+			return;	//No further query restrictions needed.
+		
+		orderCriteriaQuery.where(criteriaBuilder.isMember(orderStatusQuery, status));
 	}
 }

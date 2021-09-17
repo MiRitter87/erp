@@ -24,6 +24,7 @@ import backend.dao.BusinessPartnerDao;
 import backend.dao.DAOManager;
 import backend.dao.MaterialDao;
 import backend.dao.PurchaseOrderDao;
+import backend.exception.ObjectUnchangedException;
 import backend.model.BusinessPartner;
 import backend.model.BusinessPartnerType;
 import backend.model.Currency;
@@ -386,6 +387,54 @@ public class PurchaseOrderServiceTest {
 		assertEquals(purchaseOrderItem.getMaterial(), this.orderItem22.getMaterial());
 		assertEquals(purchaseOrderItem.getQuantity(), this.orderItem22.getQuantity());
 		assertEquals(purchaseOrderItem.getPriceTotal(), this.orderItem22.getPriceTotal());
+	}
+	
+	
+	@Test
+	/**
+	 * Tests the retrieval of all purchase orders that are in status "In Process".
+	 */
+	public void testGetPurchaseOrdersInProcess() {
+		WebServiceResult getPurchaseOrdersResult;
+		PurchaseOrderArray purchaseOrders;
+		PurchaseOrder purchaseOrder;
+		PurchaseOrderItem purchaseOrderItem;
+		
+		try {
+			//Set status of purchase order 1 to "IN_PROCESS"
+			this.order1.setStatus(PurchaseOrderStatus.GOODS_RECEIPT, true);
+			orderDAO.updatePurchaseOrder(this.order1);
+			
+			//Get all purchase orders in status IN_PROCESS.
+			PurchaseOrderService service = new PurchaseOrderService();
+			getPurchaseOrdersResult = service.getPurchaseOrders(PurchaseOrderStatus.IN_PROCESS);
+			purchaseOrders = (PurchaseOrderArray) getPurchaseOrdersResult.getData();
+			
+			//Assure no error message exists
+			assertTrue(WebServiceTools.resultContainsErrorMessage(getPurchaseOrdersResult) == false);
+			
+			//Check if one purchase orders are returned.
+			assertTrue(purchaseOrders.getPurchaseOrders().size() == 1);
+			
+			//Check the purchase order by each attribute
+			purchaseOrder = purchaseOrders.getPurchaseOrders().get(0);
+			assertEquals(purchaseOrder.getId(), this.order1.getId());
+			assertEquals(purchaseOrder.getVendor(), this.order1.getVendor());
+			assertEquals(purchaseOrder.getOrderDate().getTime(), this.order1.getOrderDate().getTime());
+			assertEquals(purchaseOrder.getRequestedDeliveryDate().getTime(), this.order1.getRequestedDeliveryDate().getTime());
+			assertEquals(purchaseOrder.getStatus(), this.order1.getStatus());
+			
+			assertEquals(purchaseOrder.getItems().size(), this.order1.getItems().size());
+			purchaseOrderItem = purchaseOrder.getItems().get(0);
+			assertEquals(purchaseOrderItem.getId(), this.orderItem1.getId());
+			assertEquals(purchaseOrderItem.getMaterial(), this.orderItem1.getMaterial());
+			assertEquals(purchaseOrderItem.getQuantity(), this.orderItem1.getQuantity());
+			assertEquals(purchaseOrderItem.getPriceTotal(), this.orderItem1.getPriceTotal());
+		} catch (ObjectUnchangedException e) {
+			fail(e.getMessage());
+		} catch (Exception e) {
+			fail(e.getMessage());
+		}	
 	}
 	
 	
