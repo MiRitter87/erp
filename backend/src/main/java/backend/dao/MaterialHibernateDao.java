@@ -12,7 +12,7 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 
 import backend.exception.ObjectUnchangedException;
-import backend.model.Material;
+import backend.model.material.Material;
 
 /**
  * Provides access to material database persistence using Hibernate.

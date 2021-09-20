@@ -11,8 +11,8 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
-import backend.model.BusinessPartner;
-import backend.model.webservice.BPTypeQueryParameter;
+import backend.model.businessPartner.BPTypeQueryParameter;
+import backend.model.businessPartner.BusinessPartner;
 import backend.model.webservice.WebServiceResult;
 import backend.webservice.common.BusinessPartnerService;
 

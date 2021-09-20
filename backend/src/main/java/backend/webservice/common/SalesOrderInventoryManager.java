@@ -5,10 +5,10 @@ import java.util.Map;
 
 import backend.dao.DAOManager;
 import backend.dao.MaterialDao;
-import backend.model.Material;
-import backend.model.SalesOrder;
-import backend.model.SalesOrderItem;
-import backend.model.SalesOrderStatus;
+import backend.model.material.Material;
+import backend.model.salesOrder.SalesOrder;
+import backend.model.salesOrder.SalesOrderItem;
+import backend.model.salesOrder.SalesOrderStatus;
 
 /**
  * Manages the material inventory handling of the sales order service.

@@ -10,6 +10,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import backend.exception.QuantityExceedsInventoryException;
+import backend.model.material.Material;
+import backend.model.material.UnitOfMeasurement;
+import backend.model.salesOrder.SalesOrderItem;
 import backend.tools.test.ValidationMessageProvider;
 
 /**

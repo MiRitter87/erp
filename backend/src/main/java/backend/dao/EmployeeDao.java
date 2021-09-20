@@ -3,8 +3,8 @@ package backend.dao;
 import java.util.List;
 
 import backend.exception.ObjectUnchangedException;
-import backend.model.Employee;
-import backend.model.webservice.EmployeeHeadQueryParameter;
+import backend.model.employee.Employee;
+import backend.model.employee.EmployeeHeadQueryParameter;
 
 /**
  * Interface for employee persistence.

@@ -14,8 +14,8 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import backend.model.ImageData;
-import backend.model.ImageMetaData;
+import backend.model.image.ImageData;
+import backend.model.image.ImageMetaData;
 import backend.tools.test.FileReader;
 
 /**

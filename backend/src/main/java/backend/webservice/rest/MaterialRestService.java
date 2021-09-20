@@ -10,7 +10,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
-import backend.model.webservice.MaterialWS;
+import backend.model.material.MaterialWS;
 import backend.model.webservice.WebServiceResult;
 import backend.webservice.common.MaterialService;
 

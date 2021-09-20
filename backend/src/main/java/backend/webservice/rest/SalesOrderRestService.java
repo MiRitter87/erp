@@ -11,8 +11,8 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
-import backend.model.SalesOrderStatus;
-import backend.model.webservice.SalesOrderWS;
+import backend.model.salesOrder.SalesOrderStatus;
+import backend.model.salesOrder.SalesOrderWS;
 import backend.model.webservice.WebServiceResult;
 import backend.webservice.common.SalesOrderService;
 

@@ -20,8 +20,8 @@ import org.apache.logging.log4j.Logger;
 import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
 import org.glassfish.jersey.media.multipart.FormDataParam;
 
-import backend.model.ImageData;
-import backend.model.ImageMetaData;
+import backend.model.image.ImageData;
+import backend.model.image.ImageMetaData;
 import backend.model.webservice.WebServiceMessage;
 import backend.model.webservice.WebServiceMessageType;
 import backend.model.webservice.WebServiceResult;

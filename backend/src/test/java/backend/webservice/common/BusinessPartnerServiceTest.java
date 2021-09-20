@@ -17,10 +17,10 @@ import org.junit.jupiter.api.Test;
 
 import backend.dao.BusinessPartnerDao;
 import backend.dao.DAOManager;
-import backend.model.BusinessPartner;
-import backend.model.BusinessPartnerArray;
-import backend.model.BusinessPartnerType;
-import backend.model.webservice.BPTypeQueryParameter;
+import backend.model.businessPartner.BPTypeQueryParameter;
+import backend.model.businessPartner.BusinessPartner;
+import backend.model.businessPartner.BusinessPartnerArray;
+import backend.model.businessPartner.BusinessPartnerType;
 import backend.model.webservice.WebServiceMessageType;
 import backend.model.webservice.WebServiceResult;
 import backend.tools.WebServiceTools;

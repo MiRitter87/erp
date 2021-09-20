@@ -18,8 +18,8 @@ import org.junit.jupiter.api.Test;
 
 import backend.dao.DAOManager;
 import backend.dao.ImageDao;
-import backend.model.ImageData;
-import backend.model.ImageMetaData;
+import backend.model.image.ImageData;
+import backend.model.image.ImageMetaData;
 import backend.model.webservice.WebServiceMessageType;
 import backend.model.webservice.WebServiceResult;
 import backend.tools.WebServiceTools;

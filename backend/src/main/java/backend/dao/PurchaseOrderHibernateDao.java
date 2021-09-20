@@ -15,8 +15,8 @@ import javax.persistence.criteria.Expression;
 import javax.persistence.criteria.Root;
 
 import backend.exception.ObjectUnchangedException;
-import backend.model.PurchaseOrder;
-import backend.model.PurchaseOrderStatus;
+import backend.model.purchaseOrder.PurchaseOrder;
+import backend.model.purchaseOrder.PurchaseOrderStatus;
 
 /**
  * Provides access to purchase order database persistence using Hibernate.

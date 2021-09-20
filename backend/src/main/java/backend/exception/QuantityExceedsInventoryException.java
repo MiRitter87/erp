@@ -1,6 +1,6 @@
 package backend.exception;
 
-import backend.model.SalesOrderItem;
+import backend.model.salesOrder.SalesOrderItem;
 
 /**
  * Exception that indicates that the ordered quantity exceeds the inventory of the material.

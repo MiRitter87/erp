@@ -3,8 +3,8 @@ package backend.dao;
 import java.util.List;
 
 import backend.exception.ObjectUnchangedException;
-import backend.model.BusinessPartner;
-import backend.model.webservice.BPTypeQueryParameter;
+import backend.model.businessPartner.BPTypeQueryParameter;
+import backend.model.businessPartner.BusinessPartner;
 
 /**
  * Interface for business partner persistence.

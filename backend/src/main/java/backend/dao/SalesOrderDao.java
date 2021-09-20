@@ -3,8 +3,8 @@ package backend.dao;
 import java.util.List;
 
 import backend.exception.ObjectUnchangedException;
-import backend.model.SalesOrder;
-import backend.model.SalesOrderStatus;
+import backend.model.salesOrder.SalesOrder;
+import backend.model.salesOrder.SalesOrderStatus;
 
 /**
  * Interface for sales order persistence.

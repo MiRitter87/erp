@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.Set;
 
 import backend.exception.ObjectUnchangedException;
-import backend.model.Material;
+import backend.model.material.Material;
 
 /**
  * Interface for material persistence.

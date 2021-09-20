@@ -10,6 +10,8 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import backend.model.businessPartner.BusinessPartner;
+import backend.model.businessPartner.BusinessPartnerType;
 import backend.tools.test.ValidationMessageProvider;
 
 /**

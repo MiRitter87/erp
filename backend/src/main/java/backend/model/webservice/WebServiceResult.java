@@ -7,12 +7,12 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlSeeAlso;
 
-import backend.model.BusinessPartnerArray;
-import backend.model.DepartmentArray;
-import backend.model.EmployeeArray;
-import backend.model.MaterialArray;
-import backend.model.PurchaseOrderArray;
-import backend.model.SalesOrderArray;
+import backend.model.businessPartner.BusinessPartnerArray;
+import backend.model.department.DepartmentArray;
+import backend.model.employee.EmployeeArray;
+import backend.model.material.MaterialArray;
+import backend.model.purchaseOrder.PurchaseOrderArray;
+import backend.model.salesOrder.SalesOrderArray;
 
 /**
  * The result of a WebService call.

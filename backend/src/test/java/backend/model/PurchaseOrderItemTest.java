@@ -9,6 +9,9 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import backend.model.material.Material;
+import backend.model.material.UnitOfMeasurement;
+import backend.model.purchaseOrder.PurchaseOrderItem;
 import backend.tools.test.ValidationMessageProvider;
 
 /**

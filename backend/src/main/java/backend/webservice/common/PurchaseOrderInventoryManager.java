@@ -5,10 +5,10 @@ import java.util.Map;
 
 import backend.dao.DAOManager;
 import backend.dao.MaterialDao;
-import backend.model.Material;
-import backend.model.PurchaseOrder;
-import backend.model.PurchaseOrderItem;
-import backend.model.PurchaseOrderStatus;
+import backend.model.material.Material;
+import backend.model.purchaseOrder.PurchaseOrder;
+import backend.model.purchaseOrder.PurchaseOrderItem;
+import backend.model.purchaseOrder.PurchaseOrderStatus;
 
 /**
  * Manages the material inventory handling of the purchase order service.

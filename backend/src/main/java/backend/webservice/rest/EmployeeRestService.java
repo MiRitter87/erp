@@ -11,8 +11,8 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
-import backend.model.Employee;
-import backend.model.webservice.EmployeeHeadQueryParameter;
+import backend.model.employee.Employee;
+import backend.model.employee.EmployeeHeadQueryParameter;
 import backend.model.webservice.WebServiceResult;
 import backend.webservice.common.EmployeeService;
 

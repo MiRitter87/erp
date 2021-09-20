@@ -12,10 +12,9 @@ import javax.persistence.criteria.Expression;
 import javax.persistence.criteria.Root;
 
 import backend.exception.ObjectUnchangedException;
-
-import backend.model.BusinessPartner;
-import backend.model.BusinessPartnerType;
-import backend.model.webservice.BPTypeQueryParameter;
+import backend.model.businessPartner.BPTypeQueryParameter;
+import backend.model.businessPartner.BusinessPartner;
+import backend.model.businessPartner.BusinessPartnerType;
 
 /**
  * Provides access to business partner database persistence using Hibernate.

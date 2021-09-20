@@ -13,7 +13,7 @@ import javax.persistence.criteria.Path;
 import javax.persistence.criteria.Root;
 
 import backend.exception.ObjectUnchangedException;
-import backend.model.Department;
+import backend.model.department.Department;
 
 /**
  * Provides access to department database persistence using hibernate.

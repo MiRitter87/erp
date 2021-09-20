@@ -4,18 +4,18 @@
         version="2.0">
     <persistence-unit name="my-persistence-unit">
     	<!-- The classes that are persisted -->
-        <class>backend.model.EmployeeSalary</class>
-        <class>backend.model.Employee</class>
-        <class>backend.model.Department</class>
-        <class>backend.model.Material</class>
-        <class>backend.model.BusinessPartner</class>
-        <class>backend.model.SalesOrder</class>
-        <class>backend.model.SalesOrderItem</class>
-        <class>backend.model.BaseImage</class>
-        <class>backend.model.ImageMetaData</class>
-        <class>backend.model.ImageData</class>
-        <class>backend.model.PurchaseOrder</class>
-        <class>backend.model.PurchaseOrderItem</class>
+        <class>backend.model.employee.EmployeeSalary</class>
+        <class>backend.model.employee.Employee</class>
+        <class>backend.model.department.Department</class>
+        <class>backend.model.material.Material</class>
+        <class>backend.model.businessPartner.BusinessPartner</class>
+        <class>backend.model.salesOrder.SalesOrder</class>
+        <class>backend.model.salesOrder.SalesOrderItem</class>
+        <class>backend.model.image.BaseImage</class>
+        <class>backend.model.image.ImageMetaData</class>
+        <class>backend.model.image.ImageData</class>
+        <class>backend.model.purchaseOrder.PurchaseOrder</class>
+        <class>backend.model.purchaseOrder.PurchaseOrderItem</class>
         
         <!-- Several configuration properties -->
         <properties>

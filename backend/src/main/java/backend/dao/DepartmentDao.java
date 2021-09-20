@@ -5,7 +5,7 @@ import java.util.List;
 import javax.persistence.EntityExistsException;
 
 import backend.exception.ObjectUnchangedException;
-import backend.model.Department;
+import backend.model.department.Department;
 
 /**
  * Interface for department persistence.

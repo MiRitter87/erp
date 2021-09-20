@@ -14,7 +14,7 @@ import backend.dao.DAOManager;
 import backend.dao.ImageDao;
 import backend.dao.MaterialDao;
 import backend.dao.NativeSqlDao;
-import backend.model.ImageMetaData;
+import backend.model.image.ImageMetaData;
 
 /**
  * Looks for images in the database that are not referenced by any master data object.

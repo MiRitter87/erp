@@ -11,9 +11,9 @@ import javax.persistence.criteria.Root;
 import javax.persistence.criteria.Subquery;
 
 import backend.exception.ObjectUnchangedException;
-import backend.model.Department;
-import backend.model.Employee;
-import backend.model.webservice.EmployeeHeadQueryParameter;
+import backend.model.department.Department;
+import backend.model.employee.Employee;
+import backend.model.employee.EmployeeHeadQueryParameter;
 
 /**
  * Provides access to employee database persistence using hibernate.

@@ -3,8 +3,8 @@ package backend.dao;
 import java.util.List;
 
 import backend.exception.ObjectUnchangedException;
-import backend.model.ImageData;
-import backend.model.ImageMetaData;
+import backend.model.image.ImageData;
+import backend.model.image.ImageMetaData;
 
 /**
  * Interface for image persistence.

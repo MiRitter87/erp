@@ -13,8 +13,8 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 
 import backend.exception.ObjectUnchangedException;
-import backend.model.SalesOrder;
-import backend.model.SalesOrderStatus;
+import backend.model.salesOrder.SalesOrder;
+import backend.model.salesOrder.SalesOrderStatus;
 
 /**
  * Provides access to sales order database persistence using Hibernate.

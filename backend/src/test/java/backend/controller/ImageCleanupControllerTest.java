@@ -19,10 +19,10 @@ import backend.dao.DAOManager;
 import backend.dao.ImageDao;
 import backend.dao.MaterialDao;
 import backend.model.Currency;
-import backend.model.ImageData;
-import backend.model.ImageMetaData;
-import backend.model.Material;
-import backend.model.UnitOfMeasurement;
+import backend.model.image.ImageData;
+import backend.model.image.ImageMetaData;
+import backend.model.material.Material;
+import backend.model.material.UnitOfMeasurement;
 import backend.tools.test.FileReader;
 
 public class ImageCleanupControllerTest {

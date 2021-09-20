@@ -13,6 +13,12 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import backend.exception.NoItemsException;
+import backend.model.businessPartner.BusinessPartner;
+import backend.model.material.Material;
+import backend.model.material.UnitOfMeasurement;
+import backend.model.salesOrder.SalesOrder;
+import backend.model.salesOrder.SalesOrderItem;
+import backend.model.salesOrder.SalesOrderStatus;
 import backend.tools.test.ValidationMessageProvider;
 
 /**

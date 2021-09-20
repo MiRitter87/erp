@@ -10,8 +10,8 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 
 import backend.exception.ObjectUnchangedException;
-import backend.model.ImageData;
-import backend.model.ImageMetaData;
+import backend.model.image.ImageData;
+import backend.model.image.ImageMetaData;
 
 /**
  * Provides access to image database persistence using Hibernate.

@@ -12,6 +12,12 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import backend.exception.NoItemsException;
+import backend.model.businessPartner.BusinessPartner;
+import backend.model.material.Material;
+import backend.model.material.UnitOfMeasurement;
+import backend.model.purchaseOrder.PurchaseOrder;
+import backend.model.purchaseOrder.PurchaseOrderItem;
+import backend.model.purchaseOrder.PurchaseOrderStatus;
 import backend.tools.test.ValidationMessageProvider;
 
 /**

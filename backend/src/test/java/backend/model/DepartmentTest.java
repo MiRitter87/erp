@@ -7,6 +7,9 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import backend.model.department.Department;
+import backend.model.employee.Employee;
+import backend.model.employee.Gender;
 import backend.tools.test.ValidationMessageProvider;
 
 /**
