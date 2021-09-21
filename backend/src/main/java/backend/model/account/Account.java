@@ -1,6 +1,7 @@
 package backend.model.account;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 import backend.model.Currency;
 
@@ -29,6 +30,11 @@ public class Account {
 	 * The currency of the balance.
 	 */
 	private Currency currency;
+	
+	/**
+	 * The postings of the account.
+	 */
+	private List<Posting> postings;
 	
 	
 	/**
@@ -100,5 +106,21 @@ public class Account {
 	 */
 	public void setCurrency(Currency currency) {
 		this.currency = currency;
+	}
+
+
+	/**
+	 * @return the postings
+	 */
+	public List<Posting> getPostings() {
+		return postings;
+	}
+
+
+	/**
+	 * @param postings the postings to set
+	 */
+	public void setPostings(List<Posting> postings) {
+		this.postings = postings;
 	}
 }
