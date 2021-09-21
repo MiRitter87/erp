@@ -1,4 +1,4 @@
-package backend.model;
+package backend.model.salesOrder;
 
 import static org.junit.Assert.fail;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -13,6 +13,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import backend.exception.NoItemsException;
+import backend.model.Currency;
 import backend.model.businessPartner.BusinessPartner;
 import backend.model.material.Material;
 import backend.model.material.UnitOfMeasurement;

@@ -1,4 +1,4 @@
-package backend.model;
+package backend.model.salesOrder;
 
 import static org.junit.Assert.fail;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -9,21 +9,23 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import backend.exception.QuantityExceedsInventoryException;
+import backend.model.Currency;
 import backend.model.material.Material;
 import backend.model.material.UnitOfMeasurement;
-import backend.model.purchaseOrder.PurchaseOrderItem;
+import backend.model.salesOrder.SalesOrderItem;
 import backend.tools.test.ValidationMessageProvider;
 
 /**
- * Tests the purchase order item model.
+ * Tests the sales order item model.
  * 
  * @author Michael
  */
-public class PurchaseOrderItemTest {
+public class SalesOrderItemTest {
 	/**
-	 * The purchase order item under test.
+	 * The sales order item under test.
 	 */
-	private PurchaseOrderItem purchaseOrderItem;
+	private SalesOrderItem orderItem;
 	
 	/**
 	 * The material that is being ordered.
@@ -37,7 +39,7 @@ public class PurchaseOrderItemTest {
 	 */
 	private void setUp() {
 		this.initMaterial();
-		this.initPurchaseOrderItem();	
+		this.initSalesOrderItem();	
 	}
 	
 	
@@ -46,7 +48,7 @@ public class PurchaseOrderItemTest {
 	 * Tasks to be performed after each test has been run.
 	 */
 	private void tearDown() {
-		this.purchaseOrderItem = null;
+		this.orderItem = null;
 	}
 	
 	
@@ -66,23 +68,23 @@ public class PurchaseOrderItemTest {
 	
 	
 	/**
-	 * Initializes the purchase order item.
+	 * Initializes the sales order item.
 	 */
-	private void initPurchaseOrderItem() {
-		this.purchaseOrderItem = new PurchaseOrderItem();
-		this.purchaseOrderItem.setId(1);
-		this.purchaseOrderItem.setMaterial(this.material);
-		this.purchaseOrderItem.setQuantity(Long.valueOf(2));
+	private void initSalesOrderItem() {
+		this.orderItem = new SalesOrderItem();
+		this.orderItem.setId(1);
+		this.orderItem.setMaterial(this.material);
+		this.orderItem.setQuantity(Long.valueOf(2));
 	}
 	
 	
 	@Test
 	/**
-	 * Tests validation of a valid purchase order item.
+	 * Tests validation of a valid sales order item.
 	 */
 	public void testValidationSuccess() {
 		try {
-			this.purchaseOrderItem.validate();
+			this.orderItem.validate();
 		} catch (Exception e) {
 			fail(e.getMessage());
 		}
@@ -91,17 +93,17 @@ public class PurchaseOrderItemTest {
 	
 	@Test
 	/**
-	 * Tests validation of a purchase order item whose ID is not given.
+	 * Tests validation of a sales order item whose ID is not given.
 	 */
 	public void testIdNotGiven() {
 		ValidationMessageProvider messageProvider = new ValidationMessageProvider();		
-		this.purchaseOrderItem.setId(null);
+		this.orderItem.setId(null);
 		
-		String expectedErrorMessage = messageProvider.getNotNullValidationMessage("purchaseOrderItem", "id");
+		String expectedErrorMessage = messageProvider.getNotNullValidationMessage("salesOrderItem", "id");
 		String errorMessage = "";
 		
 		try {
-			this.purchaseOrderItem.validate();
+			this.orderItem.validate();
 			fail("Validation should have failed because ID is null.");
 		} 
 		catch (Exception expected) {
@@ -114,17 +116,17 @@ public class PurchaseOrderItemTest {
 	
 	@Test
 	/**
-	 * Tests validation of a purchase order item whose ID is too low.
+	 * Tests validation of a sales order item whose ID is too low.
 	 */
 	public void testIdTooLow() {
 		ValidationMessageProvider messageProvider = new ValidationMessageProvider();		
-		this.purchaseOrderItem.setId(0);
+		this.orderItem.setId(0);
 		
-		String expectedErrorMessage = messageProvider.getMinValidationMessage("purchaseOrderItem", "id", "1");
+		String expectedErrorMessage = messageProvider.getMinValidationMessage("salesOrderItem", "id", "1");
 		String errorMessage = "";
 		
 		try {
-			this.purchaseOrderItem.validate();
+			this.orderItem.validate();
 			fail("Validation should have failed because ID is too low.");
 		} 
 		catch (Exception expected) {
@@ -137,17 +139,17 @@ public class PurchaseOrderItemTest {
 	
 	@Test
 	/**
-	 * Tests validation of a purchase order item whose material is not given.
+	 * Tests validation of a sales order item whose material is not given.
 	 */
 	public void testMaterialNotGiven() {
 		ValidationMessageProvider messageProvider = new ValidationMessageProvider();		
-		this.purchaseOrderItem.setMaterial(null);
+		this.orderItem.setMaterial(null);
 		
-		String expectedErrorMessage = messageProvider.getNotNullValidationMessage("purchaseOrderItem", "material");
+		String expectedErrorMessage = messageProvider.getNotNullValidationMessage("salesOrderItem", "material");
 		String errorMessage = "";
 		
 		try {
-			this.purchaseOrderItem.validate();
+			this.orderItem.validate();
 			fail("Validation should have failed because material is null.");
 		} 
 		catch (Exception expected) {
@@ -160,17 +162,17 @@ public class PurchaseOrderItemTest {
 	
 	@Test
 	/**
-	 * Tests validation of a purchase order item whose quantity is not given.
+	 * Tests validation of a sales order item whose quantity is not given.
 	 */
 	public void testQuantityNotGiven() {
 		ValidationMessageProvider messageProvider = new ValidationMessageProvider();		
-		this.purchaseOrderItem.setQuantity(null);
+		this.orderItem.setQuantity(null);
 		
-		String expectedErrorMessage = messageProvider.getNotNullValidationMessage("purchaseOrderItem", "quantity");
+		String expectedErrorMessage = messageProvider.getNotNullValidationMessage("salesOrderItem", "quantity");
 		String errorMessage = "";
 		
 		try {
-			this.purchaseOrderItem.validate();
+			this.orderItem.validate();
 			fail("Validation should have failed because quantity is null.");
 		} 
 		catch (Exception expected) {
@@ -183,17 +185,17 @@ public class PurchaseOrderItemTest {
 	
 	@Test
 	/**
-	 * Tests validation of a purchase order item whose quantity is too low.
+	 * Tests validation of a sales order item whose quantity is too low.
 	 */
 	public void testQuantityTooLow() {
 		ValidationMessageProvider messageProvider = new ValidationMessageProvider();		
-		this.purchaseOrderItem.setQuantity(Long.valueOf(0));
+		this.orderItem.setQuantity(Long.valueOf(0));
 		
-		String expectedErrorMessage = messageProvider.getMinValidationMessage("purchaseOrderItem", "quantity", "1");
+		String expectedErrorMessage = messageProvider.getMinValidationMessage("salesOrderItem", "quantity", "1");
 		String errorMessage = "";
 		
 		try {
-			this.purchaseOrderItem.validate();
+			this.orderItem.validate();
 			fail("Validation should have failed because quantity is too low.");
 		} 
 		catch (Exception expected) {
@@ -206,19 +208,19 @@ public class PurchaseOrderItemTest {
 	
 	@Test
 	/**
-	 * Tests validation of a purchase order item whose quantity has changed. The price should be updated automatically.
+	 * Tests validation of a sales order item whose quantity has changed. The price should be updated automatically.
 	 */
 	public void testPriceUpdateOnQuantityChange() {
-		this.purchaseOrderItem.setQuantity(Long.valueOf(3));
-		BigDecimal expectedPrice = this.material.getPricePerUnit().multiply(new BigDecimal(this.purchaseOrderItem.getQuantity()));
+		this.orderItem.setQuantity(Long.valueOf(3));
+		BigDecimal expectedPrice = this.material.getPricePerUnit().multiply(new BigDecimal(this.orderItem.getQuantity()));
 		
-		assertEquals(expectedPrice, this.purchaseOrderItem.getPriceTotal());
+		assertEquals(expectedPrice, this.orderItem.getPriceTotal());
 	}
 	
 	
 	@Test
 	/**
-	 * Tests validation of a purchase order item whose material has changed. The price should be updated automatically.
+	 * Tests validation of a sales order item whose material has changed. The price should be updated automatically.
 	 */
 	public void testPriceUpdateOnMaterialChange() {		
 		Material otherMaterial = new Material();
@@ -232,9 +234,28 @@ public class PurchaseOrderItemTest {
 		otherMaterial.setCurrency(Currency.EUR);
 		otherMaterial.setInventory(Long.valueOf(1000));
 		
-		expectedPrice = otherMaterial.getPricePerUnit().multiply(new BigDecimal(this.purchaseOrderItem.getQuantity()));
-		this.purchaseOrderItem.setMaterial(otherMaterial);
+		expectedPrice = otherMaterial.getPricePerUnit().multiply(new BigDecimal(this.orderItem.getQuantity()));
+		this.orderItem.setMaterial(otherMaterial);
 		
-		assertEquals(expectedPrice, this.purchaseOrderItem.getPriceTotal());
+		assertEquals(expectedPrice, this.orderItem.getPriceTotal());
+	}
+	
+	
+	@Test
+	/**
+	 * Tests validation of a sales order item whose ordered quantity exceeds the inventory of the given material.
+	 */
+	public void testOrderQuantityExceedsInventory() {
+		this.orderItem.setQuantity(this.orderItem.getMaterial().getInventory() + 1);
+		
+		try {
+			this.orderItem.validate();
+			fail("Validation should have failed because the ordered quantity exceeds the inventory.");
+		} catch (QuantityExceedsInventoryException expected) {
+			//All is well.
+		}
+		catch (Exception e) {
+			fail("No general exception should have occurred. Just the QuantityExceedsInventoryException.");
+		}
 	}
 }

@@ -1,4 +1,4 @@
-package backend.model;
+package backend.model.purchaseOrder;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -12,6 +12,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import backend.exception.NoItemsException;
+import backend.model.Currency;
 import backend.model.businessPartner.BusinessPartner;
 import backend.model.material.Material;
 import backend.model.material.UnitOfMeasurement;

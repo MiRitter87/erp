@@ -1,4 +1,4 @@
-package backend.model;
+package backend.model.material;
 
 import static org.junit.Assert.fail;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -9,6 +9,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import backend.model.Currency;
 import backend.model.material.Material;
 import backend.model.material.UnitOfMeasurement;
 import backend.tools.test.ValidationMessageProvider;

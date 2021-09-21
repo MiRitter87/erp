@@ -1,4 +1,4 @@
-package backend.model;
+package backend.model.businessPartner;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.fail;

@@ -1,4 +1,4 @@
-package backend.model;
+package backend.model.department;
 
 import static org.junit.Assert.fail;
 import static org.junit.jupiter.api.Assertions.assertEquals;
