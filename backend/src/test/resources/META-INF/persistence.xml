@@ -16,6 +16,8 @@
         <class>backend.model.image.ImageData</class>
         <class>backend.model.purchaseOrder.PurchaseOrder</class>
         <class>backend.model.purchaseOrder.PurchaseOrderItem</class>
+        <class>backend.model.account.Account</class>
+        <class>backend.model.account.Posting</class>
         
         <!-- Several configuration properties -->
         <properties>

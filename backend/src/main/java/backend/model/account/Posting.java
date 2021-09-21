@@ -3,6 +3,18 @@ package backend.model.account;
 import java.math.BigDecimal;
 import java.util.Date;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToOne;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
+
 import backend.model.Currency;
 import backend.model.businessPartner.BusinessPartner;
 
@@ -12,40 +24,55 @@ import backend.model.businessPartner.BusinessPartner;
  * @author Michael
  *
  */
+@Table(name="POSTING")
+@Entity
+@SequenceGenerator(name = "postingSequence", initialValue = 1, allocationSize = 1)
 public class Posting {
 	/**
 	 * The distinct identification number.
 	 */
+	@Id
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "postingSequence")
+	@Column(name="POSTING_ID")
 	private Integer id;
 	
 	/**
 	 * The posting type.
 	 */
+	@Column(name="TYPE", length = 10)
+	@Enumerated(EnumType.STRING)
 	private PostingType type;
 	
 	/**
 	 * The date and time of the posting.
 	 */
+	@Column(name="TIMESTAMP")
 	private Date timestamp;
 	
 	/**
 	 * The counterparty.
 	 */
+	@OneToOne
+	@JoinColumn(name="COUNTERPARTY_ID")
 	private BusinessPartner counterparty;
 	
 	/**
 	 * The reference number.
 	 */
+	@Column(name="REFERENCE_NUMBER", length = 54)
 	private String referenceNumber;
 	
 	/**
 	 * The payment amount.
 	 */
+	@Column(name="AMOUNT")
 	private BigDecimal amount;
 	
 	/**
 	 * The currency of the amount.
 	 */
+	@Column(name="CURRENCY", length = 3)
+	@Enumerated(EnumType.STRING)
 	private Currency currency;
 	
 	
