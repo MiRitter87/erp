@@ -2,6 +2,7 @@ package backend.model.account;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -15,6 +16,12 @@ import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.validation.ConstraintViolation;
+import javax.validation.Validation;
+import javax.validation.Validator;
+import javax.validation.ValidatorFactory;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 import backend.model.Currency;
 
@@ -39,12 +46,15 @@ public class Account {
 	 * The description.
 	 */
 	@Column(name="DESCRIPTION", length = 100)
+	@NotNull(message = "{account.description.notNull.message}")
+	@Size(min = 1, max = 100, message = "{account.description.size.message}")
 	private String description;
 	
 	/**
 	 * The current cash balance.
 	 */
 	@Column(name="BALANCE")
+	@NotNull(message = "{account.balance.notNull.message}")
 	private BigDecimal balance;
 	
 	/**
@@ -52,6 +62,7 @@ public class Account {
 	 */
 	@Column(name="CURRENCY", length = 3)
 	@Enumerated(EnumType.STRING)
+	@NotNull(message = "{account.currency.notNull.message}")
 	private Currency currency;
 	
 	/**
@@ -67,6 +78,32 @@ public class Account {
 	 */
 	public Account() {
 		
+	}
+	
+	
+	/**
+	 * Validates the account.
+	 * 
+	 * @throws Exception In case a general validation error occurred.
+	 */
+	public void validate() throws Exception {
+		this.validateAnnotations();
+	}
+	
+	
+	/**
+	 * Validates the account according to the annotations of the Validation Framework.
+	 * 
+	 * @exception Exception In case the validation failed.
+	 */
+	private void validateAnnotations() throws Exception {
+		ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
+		Validator validator = factory.getValidator();
+		Set<ConstraintViolation<Account>> violations = validator.validate(this);
+		
+		for(ConstraintViolation<Account> violation:violations) {
+			throw new Exception(violation.getMessage());
+		}
 	}
 
 
