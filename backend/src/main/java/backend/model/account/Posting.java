@@ -2,6 +2,7 @@ package backend.model.account;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -14,6 +15,13 @@ import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.validation.ConstraintViolation;
+import javax.validation.Validation;
+import javax.validation.Validator;
+import javax.validation.ValidatorFactory;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 import backend.model.Currency;
 import backend.model.businessPartner.BusinessPartner;
@@ -34,6 +42,8 @@ public class Posting {
 	@Id
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "postingSequence")
 	@Column(name="POSTING_ID")
+	@NotNull(message = "{posting.id.notNull.message}")
+	@Min(value = 1, message = "{posting.id.min.message}")
 	private Integer id;
 	
 	/**
@@ -41,6 +51,7 @@ public class Posting {
 	 */
 	@Column(name="TYPE", length = 10)
 	@Enumerated(EnumType.STRING)
+	@NotNull(message = "{posting.type.notNull.message}")
 	private PostingType type;
 	
 	/**
@@ -54,18 +65,22 @@ public class Posting {
 	 */
 	@OneToOne
 	@JoinColumn(name="COUNTERPARTY_ID")
+	@NotNull(message = "{posting.counterparty.notNull.message}")
 	private BusinessPartner counterparty;
 	
 	/**
 	 * The reference number.
 	 */
 	@Column(name="REFERENCE_NUMBER", length = 54)
+	@Size(min = 0, max = 54, message = "{posting.referenceNumber.size.message}")
 	private String referenceNumber;
 	
 	/**
 	 * The payment amount.
 	 */
 	@Column(name="AMOUNT")
+	@NotNull(message = "{posting.amount.notNull.message}")
+	@Min(value = 1, message = "{posting.amount.min.message}")
 	private BigDecimal amount;
 	
 	/**
@@ -73,6 +88,7 @@ public class Posting {
 	 */
 	@Column(name="CURRENCY", length = 3)
 	@Enumerated(EnumType.STRING)
+	@NotNull(message = "{posting.currency.notNull.message}")
 	private Currency currency;
 	
 	
@@ -80,7 +96,33 @@ public class Posting {
 	 * Default constructor.
 	 */
 	public Posting() {
+		this.timestamp = new Date();
+	}
+	
+	
+	/**
+	 * Validates the posting.
+	 * 
+	 * @throws Exception In case a general validation error occurred.
+	 */
+	public void validate() throws Exception {
+		this.validateAnnotations();
+	}
+	
+	
+	/**
+	 * Validates the posting according to the annotations of the Validation Framework.
+	 * 
+	 * @exception Exception In case the validation failed.
+	 */
+	private void validateAnnotations() throws Exception {
+		ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
+		Validator validator = factory.getValidator();
+		Set<ConstraintViolation<Posting>> violations = validator.validate(this);
 		
+		for(ConstraintViolation<Posting> violation:violations) {
+			throw new Exception(violation.getMessage());
+		}
 	}
 
 
