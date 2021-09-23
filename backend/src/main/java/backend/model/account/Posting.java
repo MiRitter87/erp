@@ -42,7 +42,6 @@ public class Posting {
 	@Id
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "postingSequence")
 	@Column(name="POSTING_ID")
-	@NotNull(message = "{posting.id.notNull.message}")
 	@Min(value = 1, message = "{posting.id.min.message}")
 	private Integer id;
 	

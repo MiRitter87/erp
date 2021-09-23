@@ -62,29 +62,6 @@ public class AccountTest {
 	
 	@Test
 	/**
-	 * Tests validation of an account whose ID is null.
-	 */
-	public void testIdIsNull() {
-		ValidationMessageProvider messageProvider = new ValidationMessageProvider();		
-		this.account.setId(null);
-		
-		String expectedErrorMessage = messageProvider.getNotNullValidationMessage("account", "id");
-		String errorMessage = "";
-		
-		try {
-			this.account.validate();
-			fail("Validation should have failed because Id is null.");
-		} 
-		catch (Exception expected) {
-			errorMessage = expected.getMessage();
-		}
-		
-		assertEquals(expectedErrorMessage, errorMessage);
-	}
-	
-	
-	@Test
-	/**
 	 * Tests validation of an account whose ID is too low.
 	 */
 	public void testIdTooLow() {

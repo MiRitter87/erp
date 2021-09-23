@@ -41,7 +41,6 @@ public class Account {
 	@Id
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "accountSequence")
 	@Column(name="ACCOUNT_ID")
-	@NotNull(message = "{account.id.notNull.message}")
 	@Min(value = 1, message = "{account.id.min.message}")
 	private Integer id;
 	
