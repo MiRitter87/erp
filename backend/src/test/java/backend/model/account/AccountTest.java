@@ -30,6 +30,7 @@ public class AccountTest {
 	 */
 	protected void setUp() {
 		this.account = new Account();
+		this.account.setId(Integer.valueOf(1));
 		this.account.setDescription("Geschäftskonto - Europa");
 		this.account.setBalance(BigDecimal.valueOf(Double.valueOf(189000)));
 		this.account.setCurrency(Currency.EUR);
@@ -56,6 +57,52 @@ public class AccountTest {
 		catch(Exception exception) {
 			fail(exception.getMessage());
 		}
+	}
+	
+	
+	@Test
+	/**
+	 * Tests validation of an account whose ID is null.
+	 */
+	public void testIdIsNull() {
+		ValidationMessageProvider messageProvider = new ValidationMessageProvider();		
+		this.account.setId(null);
+		
+		String expectedErrorMessage = messageProvider.getNotNullValidationMessage("account", "id");
+		String errorMessage = "";
+		
+		try {
+			this.account.validate();
+			fail("Validation should have failed because Id is null.");
+		} 
+		catch (Exception expected) {
+			errorMessage = expected.getMessage();
+		}
+		
+		assertEquals(expectedErrorMessage, errorMessage);
+	}
+	
+	
+	@Test
+	/**
+	 * Tests validation of an account whose ID is too low.
+	 */
+	public void testIdTooLow() {
+		ValidationMessageProvider messageProvider = new ValidationMessageProvider();		
+		this.account.setId(0);
+		
+		String expectedErrorMessage = messageProvider.getMinValidationMessage("account", "id", "1");
+		String errorMessage = "";
+		
+		try {
+			this.account.validate();
+			fail("Validation should have failed because Id is too low.");
+		} 
+		catch (Exception expected) {
+			errorMessage = expected.getMessage();
+		}
+		
+		assertEquals(expectedErrorMessage, errorMessage);
 	}
 	
 	
