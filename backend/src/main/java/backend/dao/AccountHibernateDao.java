@@ -2,6 +2,8 @@ package backend.dao;
 
 import java.util.List;
 
+import javax.persistence.EntityManagerFactory;
+
 import backend.exception.ObjectUnchangedException;
 import backend.model.account.Account;
 
@@ -11,6 +13,22 @@ import backend.model.account.Account;
  * @author Michael
  */
 public class AccountHibernateDao implements AccountDao {
+	/**
+	 * Factory for database session.
+	 */
+	protected EntityManagerFactory sessionFactory;
+	
+	
+	/**
+	 * Default constructor.
+	 * 
+	 * @param sessionFactory The database session factory.
+	 */
+	public AccountHibernateDao(final EntityManagerFactory sessionFactory) {
+		this.sessionFactory = sessionFactory;
+	}
+	
+	
 	@Override
 	public void insertAccount(Account account) throws Exception {
 		// TODO Auto-generated method stub
