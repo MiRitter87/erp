@@ -2,6 +2,7 @@ package backend.dao;
 
 import java.util.List;
 
+import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 
 import backend.exception.ObjectUnchangedException;
@@ -31,13 +32,48 @@ public class AccountHibernateDao implements AccountDao {
 	
 	@Override
 	public void insertAccount(Account account) throws Exception {
-		// TODO Auto-generated method stub
+		EntityManager entityManager = this.sessionFactory.createEntityManager();
+		entityManager.getTransaction().begin();
+		
+		try {
+			entityManager.persist(account);
+			entityManager.flush();	//Assures, that the generated account ID is available.
+			entityManager.getTransaction().commit();
+		}
+		catch(Exception exception) {
+			//If something breaks a rollback is necessary!?
+			if(entityManager.getTransaction().isActive())
+				entityManager.getTransaction().rollback();
+			throw exception;
+		}
+		finally {
+			entityManager.close();			
+		}
 	}
 
 	
 	@Override
 	public void deleteAccount(Account account) throws Exception {
-		// TODO Auto-generated method stub
+		EntityManager entityManager = this.sessionFactory.createEntityManager();
+		
+		//In order to successfully delete an entity, it first has to be fetched from the database.
+		Account deleteAccount = entityManager.find(Account.class, account.getId());
+		
+		entityManager.getTransaction().begin();
+		
+		try {
+			entityManager.remove(deleteAccount);
+			entityManager.getTransaction().commit();			
+		}
+		catch(Exception exception) {
+			//If something breaks a rollback is necessary.
+			if(entityManager.getTransaction().isActive())
+				entityManager.getTransaction().rollback();
+			throw exception;
+		}
+		finally {
+			entityManager.close();			
+		}
 	}
 
 	
