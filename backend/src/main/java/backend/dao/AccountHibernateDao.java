@@ -86,8 +86,14 @@ public class AccountHibernateDao implements AccountDao {
 	
 	@Override
 	public Account getAccount(Integer id) throws Exception {
-		// TODO Auto-generated method stub
-		return null;
+		EntityManager entityManager = this.sessionFactory.createEntityManager();
+		
+		entityManager.getTransaction().begin();
+		Account account = entityManager.find(Account.class, id);
+		entityManager.getTransaction().commit();
+		entityManager.close();
+		
+		return account;
 	}
 
 	
