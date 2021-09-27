@@ -9,6 +9,7 @@ import org.apache.logging.log4j.Logger;
 import backend.dao.AccountDao;
 import backend.dao.DAOManager;
 import backend.model.account.Account;
+import backend.model.account.AccountArray;
 import backend.model.webservice.WebServiceMessage;
 import backend.model.webservice.WebServiceMessageType;
 import backend.model.webservice.WebServiceResult;
@@ -83,7 +84,20 @@ public class AccountService {
 	 * @return A list of all accounts.
 	 */
 	public WebServiceResult getAccounts() {
-		return null;
+		AccountArray accounts = new AccountArray();
+		WebServiceResult getAccountsResult = new WebServiceResult(null);
+		
+		try {
+			accounts.setAccounts(this.accountDAO.getAccounts());
+			getAccountsResult.setData(accounts);
+		} catch (Exception e) {
+			getAccountsResult.addMessage(new WebServiceMessage(
+					WebServiceMessageType.E, this.resources.getString("account.getAccountsError")));
+			
+			logger.error(this.resources.getString("account.getAccountsError"), e);
+		}
+		
+		return getAccountsResult;
 	}
 	
 	

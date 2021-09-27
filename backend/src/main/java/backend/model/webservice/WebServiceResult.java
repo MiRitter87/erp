@@ -7,6 +7,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlSeeAlso;
 
+import backend.model.account.AccountArray;
 import backend.model.businessPartner.BusinessPartnerArray;
 import backend.model.department.DepartmentArray;
 import backend.model.employee.EmployeeArray;
@@ -21,7 +22,8 @@ import backend.model.salesOrder.SalesOrderArray;
  * @author Michael
  *
  */
-@XmlSeeAlso({EmployeeArray.class, DepartmentArray.class, MaterialArray.class, BusinessPartnerArray.class, SalesOrderArray.class, PurchaseOrderArray.class})
+@XmlSeeAlso({EmployeeArray.class, DepartmentArray.class, MaterialArray.class, BusinessPartnerArray.class, SalesOrderArray.class, PurchaseOrderArray.class,
+				AccountArray.class})
 public class WebServiceResult {
 	/**
 	 * A list of messages.

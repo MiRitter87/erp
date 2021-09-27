@@ -20,6 +20,7 @@ import backend.dao.AccountDao;
 import backend.dao.DAOManager;
 import backend.model.Currency;
 import backend.model.account.Account;
+import backend.model.account.AccountArray;
 import backend.model.webservice.WebServiceMessageType;
 import backend.model.webservice.WebServiceResult;
 import backend.tools.WebServiceTools;
@@ -97,7 +98,7 @@ public class AccountServiceTest {
 	private void createDummyAccounts() {
 		this.account1 = new Account();
 		this.account1.setDescription("Account 1");
-		this.account1.setBalance(BigDecimal.valueOf(1500.00));
+		this.account1.setBalance(BigDecimal.valueOf(1500));
 		this.account1.setCurrency(Currency.EUR);
 		
 		this.account2 = new Account();
@@ -150,7 +151,7 @@ public class AccountServiceTest {
 		//Check each attribute of the account
 		assertEquals(account.getId(), this.account2.getId());
 		assertEquals(account.getDescription(), this.account2.getDescription());
-		assertEquals(account.getBalance(), this.account2.getBalance());
+		assertTrue(account.getBalance().compareTo(this.account2.getBalance()) == 0);
 		assertEquals(account.getCurrency(), this.account2.getCurrency());
 	}
 	
@@ -179,5 +180,40 @@ public class AccountServiceTest {
 		expectedErrorMessage = MessageFormat.format(this.resources.getString("account.notFound"), accountId);
 		actualErrorMessage = getAccountResult.getMessages().get(0).getText();
 		assertEquals(expectedErrorMessage, actualErrorMessage);
+	}
+	
+	
+	@Test
+	/**
+	 * Tests the retrieval of all accounts.
+	 */
+	public void testGetAllAccounts() {
+		WebServiceResult getAccountsResult;
+		AccountArray accounts;
+		Account account;
+		
+		//Get the accounts.
+		AccountService service = new AccountService();
+		getAccountsResult = service.getAccounts();
+		accounts = (AccountArray) getAccountsResult.getData();
+		
+		//Assure no error message exists
+		assertTrue(WebServiceTools.resultContainsErrorMessage(getAccountsResult) == false);
+		
+		//Check if two accounts are returned.
+		assertTrue(accounts.getAccounts().size() == 2);
+		
+		//Check both accounts by each attribute
+		account = accounts.getAccounts().get(0);
+		assertEquals(account.getId(), this.account1.getId());
+		assertEquals(account.getDescription(), this.account1.getDescription());
+		assertTrue(account.getBalance().compareTo(this.account1.getBalance()) == 0);
+		assertEquals(account.getCurrency(), this.account1.getCurrency());
+		
+		account = accounts.getAccounts().get(1);
+		assertEquals(account.getId(), this.account2.getId());
+		assertEquals(account.getDescription(), this.account2.getDescription());
+		assertTrue(account.getBalance().compareTo(this.account2.getBalance()) == 0);
+		assertEquals(account.getCurrency(), this.account2.getCurrency());
 	}
 }
