@@ -119,7 +119,33 @@ public class AccountService {
 	 * @return The result of the delete function.
 	 */
 	public WebServiceResult deleteAccount(final Integer id) {
-		return null;
+		Account account = null;
+		WebServiceResult deleteAccountResult = new WebServiceResult(null);
+		
+		//Check if an account with the given id exists.
+		try {
+			account = this.accountDAO.getAccount(id);
+			
+			if(account != null) {
+				//Delete account if exists.
+				this.accountDAO.deleteAccount(account);
+				deleteAccountResult.addMessage(new WebServiceMessage(WebServiceMessageType.S, 
+						MessageFormat.format(this.resources.getString("account.deleteSuccess"), id)));
+			}
+			else {
+				//Account not found.
+				deleteAccountResult.addMessage(new WebServiceMessage(WebServiceMessageType.E, 
+						MessageFormat.format(this.resources.getString("account.notFound"), id)));
+			}
+		}
+		catch (Exception e) {
+			deleteAccountResult.addMessage(new WebServiceMessage(WebServiceMessageType.E,
+					MessageFormat.format(this.resources.getString("account.deleteError"), id)));
+			
+			logger.error(MessageFormat.format(this.resources.getString("account.deleteError"), id), e);
+		}
+		
+		return deleteAccountResult;
 	}
 	
 	
