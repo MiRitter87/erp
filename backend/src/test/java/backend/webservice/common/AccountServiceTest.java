@@ -96,15 +96,8 @@ public class AccountServiceTest {
 	 * Initializes the database with dummy accounts.
 	 */
 	private void createDummyAccounts() {
-		this.account1 = new Account();
-		this.account1.setDescription("Account 1");
-		this.account1.setBalance(BigDecimal.valueOf(1500));
-		this.account1.setCurrency(Currency.EUR);
-		
-		this.account2 = new Account();
-		this.account2.setDescription("Account 2");
-		this.account2.setBalance(BigDecimal.valueOf(9999.23));
-		this.account2.setCurrency(Currency.EUR);
+		this.account1 = this.getDummyAccount1();
+		this.account2 = this.getDummyAccount2();
 		
 		try {
 			accountDAO.insertAccount(this.account1);
@@ -112,6 +105,40 @@ public class AccountServiceTest {
 		} catch (Exception e) {
 			fail(e.getMessage());
 		}
+	}
+	
+	
+	/**
+	 * Initializes and returns dummy account 1.
+	 * 
+	 * @return Dummy account 1.
+	 */
+	private Account getDummyAccount1() {
+		Account account;
+		
+		account = new Account();
+		account.setDescription("Account 1");
+		account.setBalance(BigDecimal.valueOf(1500));
+		account.setCurrency(Currency.EUR);
+		
+		return account;
+	}
+	
+	
+	/**
+	 * Initializes and returns dummy account 2.
+	 * 
+	 * @return Dummy account 2.
+	 */
+	private Account getDummyAccount2() {
+		Account account;
+		
+		account = new Account();
+		account.setDescription("Account 2");
+		account.setBalance(BigDecimal.valueOf(9999.23));
+		account.setCurrency(Currency.EUR);
+		
+		return account;
 	}
 	
 	
@@ -250,7 +277,7 @@ public class AccountServiceTest {
 		finally {
 			//Restore old database state by adding the account that has been deleted previously.
 			try {
-				this.account1.setId(null);
+				this.account1 = this.getDummyAccount1();
 				accountDAO.insertAccount(this.account1);
 			} 
 			catch (Exception e) {
@@ -258,4 +285,43 @@ public class AccountServiceTest {
 			}
 		}
 	}
+	
+	
+	@Test
+	/**
+	 * Tests updating an account with valid data.
+	 */
+	public void testUpdateValidAccount() {
+		WebServiceResult updateAccountResult;
+		Account updatedAccount;
+		AccountService service = new AccountService();
+		
+		//Update the requested delivery date.
+		this.account1.setDescription("Account 1 - editiert");
+		updateAccountResult = service.updateAccount(this.account1);
+		
+		//Assure no error message exists
+		assertTrue(WebServiceTools.resultContainsErrorMessage(updateAccountResult) == false);
+		
+		//There should be a success message
+		assertTrue(updateAccountResult.getMessages().size() == 1);
+		assertTrue(updateAccountResult.getMessages().get(0).getType() == WebServiceMessageType.S);
+		
+		//Retrieve the updated account and check if the changes have been persisted.
+		try {
+			updatedAccount = accountDAO.getAccount(this.account1.getId());
+			assertEquals(this.account1.getDescription(), updatedAccount.getDescription());
+		} catch (Exception e) {
+			fail(e.getMessage());
+		}
+	}
+	
+	
+	/*
+	 * TODO implement additional tests.
+	 * 
+	 * testUpdateInvalidAccount()
+	 * testUpdateUnchangedAccount()
+	 * ...
+	 */
 }

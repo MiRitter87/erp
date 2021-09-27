@@ -1,6 +1,7 @@
 package backend.model.account;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -79,7 +80,7 @@ public class Account {
 	 * Default constructor.
 	 */
 	public Account() {
-		
+		this.postings = new ArrayList<Posting>();
 	}
 	
 	

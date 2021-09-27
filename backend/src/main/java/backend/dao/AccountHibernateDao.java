@@ -127,6 +127,14 @@ public class AccountHibernateDao implements AccountDao {
 	
 	@Override
 	public void updateAccount(Account account) throws ObjectUnchangedException, Exception {
-		// TODO Auto-generated method stub
+		EntityManager entityManager;
+		
+		//TODO this.checkMaterialDataChanged(material);
+		
+		entityManager = this.sessionFactory.createEntityManager();
+		entityManager.getTransaction().begin();
+		entityManager.merge(account);
+		entityManager.getTransaction().commit();
+		entityManager.close();	
 	}
 }

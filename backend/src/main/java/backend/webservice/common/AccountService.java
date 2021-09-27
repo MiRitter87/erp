@@ -8,6 +8,7 @@ import org.apache.logging.log4j.Logger;
 
 import backend.dao.AccountDao;
 import backend.dao.DAOManager;
+import backend.exception.ObjectUnchangedException;
 import backend.model.account.Account;
 import backend.model.account.AccountArray;
 import backend.model.webservice.WebServiceMessage;
@@ -156,6 +157,33 @@ public class AccountService {
 	 * @return The result of the update function.
 	 */
 	public WebServiceResult updateAccount(final Account account) {
-		return null;
+		WebServiceResult updateAccountResult = new WebServiceResult(null);
+		
+		//Validation of the given account.
+		try {
+			account.validate();
+		} catch (Exception validationException) {
+			updateAccountResult.addMessage(new WebServiceMessage(WebServiceMessageType.E, validationException.getMessage()));
+			return updateAccountResult;
+		}
+		
+		//Update account if validation is successful.
+		try {
+			this.accountDAO.updateAccount(account);
+			updateAccountResult.addMessage(new WebServiceMessage(WebServiceMessageType.S, 
+					MessageFormat.format(this.resources.getString("account.updateSuccess"), account.getId())));
+		} 
+		catch(ObjectUnchangedException objectUnchangedException) {
+			updateAccountResult.addMessage(new WebServiceMessage(WebServiceMessageType.I, 
+					MessageFormat.format(this.resources.getString("account.updateUnchanged"), account.getId())));
+		}
+		catch (Exception e) {
+			updateAccountResult.addMessage(new WebServiceMessage(WebServiceMessageType.E, 
+					MessageFormat.format(this.resources.getString("account.updateError"), account.getId())));
+			
+			logger.error(MessageFormat.format(this.resources.getString("account.updateError"), account.getId()), e);
+		}
+		
+		return updateAccountResult;
 	}
 }
