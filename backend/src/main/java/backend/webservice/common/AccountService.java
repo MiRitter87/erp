@@ -109,7 +109,27 @@ public class AccountService {
 	 * @return The result of the add function.
 	 */
 	public WebServiceResult addAccount(final Account account) {
-		return null;
+		WebServiceResult addAccountResult = new WebServiceResult();
+		
+		//Validate the given account.
+		try {
+			account.validate();
+		} catch (Exception validationException) {
+			addAccountResult.addMessage(new WebServiceMessage(WebServiceMessageType.E, validationException.getMessage()));
+			return addAccountResult;
+		}
+		
+		//Insert account if validation is successful.
+		try {
+			this.accountDAO.insertAccount(account);
+			addAccountResult.addMessage(new WebServiceMessage(WebServiceMessageType.S, this.resources.getString("account.addSuccess")));
+			addAccountResult.setData(account.getId());
+		} catch (Exception e) {
+			addAccountResult.addMessage(new WebServiceMessage(WebServiceMessageType.E, this.resources.getString("account.addError")));
+			logger.error(this.resources.getString("account.addError"), e);
+		}
+		
+		return addAccountResult;
 	}
 	
 	

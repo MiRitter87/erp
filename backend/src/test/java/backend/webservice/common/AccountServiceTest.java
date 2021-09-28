@@ -1,5 +1,6 @@
 package backend.webservice.common;
 
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -366,9 +367,63 @@ public class AccountServiceTest {
 	}
 	
 	
+	@Test
+	/**
+	 * Tests adding of a new account.
+	 */
+	public void testAddValidAccount() {
+		Account newAccount = new Account();
+		Account addedAccount;
+		WebServiceResult addAccountResult;
+		AccountService service = new AccountService();
+		
+		//Define the new account
+		newAccount.setDescription("Neues Konto");
+		newAccount.setBalance(BigDecimal.valueOf(0));
+		newAccount.setCurrency(Currency.EUR);
+		
+		//Add a new account to the database via WebService
+		addAccountResult = service.addAccount(newAccount);
+		
+		//Assure no error message exists
+		assertTrue(WebServiceTools.resultContainsErrorMessage(addAccountResult) == false);
+		
+		//There should be a success message
+		assertTrue(addAccountResult.getMessages().size() == 1);
+		assertTrue(addAccountResult.getMessages().get(0).getType() == WebServiceMessageType.S);
+		
+		//The ID of the newly created account should be provided in the data part of the WebService return.
+		assertNotNull(addAccountResult.getData());
+		assertTrue(addAccountResult.getData() instanceof Integer);
+		newAccount.setId((Integer) addAccountResult.getData());
+		
+		//Read the persisted account via DAO
+		try {
+			addedAccount = accountDAO.getAccount(newAccount.getId());
+			
+			//Check if the account read by the DAO equals the account inserted using the WebService in each attribute.
+			assertEquals(newAccount.getId(), addedAccount.getId());
+			assertEquals(newAccount.getDescription(), addedAccount.getDescription());
+			assertTrue(newAccount.getBalance().compareTo(addedAccount.getBalance()) == 0);
+			assertEquals(newAccount.getCurrency(), addedAccount.getCurrency());
+		} catch (Exception e) {
+			fail(e.getMessage());
+		}
+		finally {
+			//Delete the newly added account.
+			try {
+				accountDAO.deleteAccount(newAccount);
+			} 
+			catch (Exception e) {
+				fail(e.getMessage());
+			}
+		}		
+	}
+	
+	
 	/*
 	 * TODO implement additional tests.
 	 * 
-	 * 
+	 * add assertEquals of all postings to all relevant tests (get, add)
 	 */
 }
