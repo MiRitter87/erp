@@ -129,12 +129,27 @@ public class AccountHibernateDao implements AccountDao {
 	public void updateAccount(Account account) throws ObjectUnchangedException, Exception {
 		EntityManager entityManager;
 		
-		//TODO this.checkMaterialDataChanged(material);
+		this.checkAccountDataChanged(account);
 		
 		entityManager = this.sessionFactory.createEntityManager();
 		entityManager.getTransaction().begin();
 		entityManager.merge(account);
 		entityManager.getTransaction().commit();
 		entityManager.close();	
+	}
+	
+	
+	/**
+	 * Checks if the data of the given account differ from the account that is persisted at database level.
+	 * 
+	 * @param account The account to be checked.
+	 * @throws ObjectUnchangedException In case the account has not been changed.
+	 * @throws Exception In case an error occurred during determination of the account stored at the database.
+	 */
+	private void checkAccountDataChanged(final Account account) throws ObjectUnchangedException, Exception {
+		Account databaseAccount = this.getAccount(account.getId());
+		
+		if(databaseAccount.equals(account))
+			throw new ObjectUnchangedException();
 	}
 }

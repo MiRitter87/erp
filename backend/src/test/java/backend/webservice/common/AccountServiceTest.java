@@ -24,6 +24,7 @@ import backend.model.account.AccountArray;
 import backend.model.webservice.WebServiceMessageType;
 import backend.model.webservice.WebServiceResult;
 import backend.tools.WebServiceTools;
+import backend.tools.test.ValidationMessageProvider;
 
 /**
  * Tests the account service.
@@ -317,11 +318,57 @@ public class AccountServiceTest {
 	}
 	
 	
+	@Test
+	/**
+	 * Tests updating an account with invalid data.
+	 */
+	public void testUpdateInvalidAccount() {
+		WebServiceResult updateAccountResult;
+		AccountService service = new AccountService();
+		ValidationMessageProvider messageProvider = new ValidationMessageProvider();
+		String actualErrorMessage, expectedErrorMessage;
+		
+		//Remove the currency.
+		this.account1.setCurrency(null);
+		updateAccountResult = service.updateAccount(this.account1);
+		
+		//There should be a return message of type E.
+		assertTrue(updateAccountResult.getMessages().size() == 1);
+		assertTrue(updateAccountResult.getMessages().get(0).getType() == WebServiceMessageType.E);
+		
+		//A proper message should be provided.
+		expectedErrorMessage = messageProvider.getNotNullValidationMessage("account", "currency");
+		actualErrorMessage = updateAccountResult.getMessages().get(0).getText();
+		assertEquals(expectedErrorMessage, actualErrorMessage);
+	}
+	
+	
+	@Test
+	/**
+	 * Tests updating an accout without changing any data.
+	 */
+	public void testUpdateUnchangedPurchaseOrder() {
+		WebServiceResult updateAccountResult;
+		AccountService service = new AccountService();
+		String actualErrorMessage, expectedErrorMessage;
+		
+		//Update purchase order without changing any data.
+		updateAccountResult = service.updateAccount(this.account1);
+		
+		//There should be a return message of type I
+		assertTrue(updateAccountResult.getMessages().size() == 1);
+		assertTrue(updateAccountResult.getMessages().get(0).getType() == WebServiceMessageType.I);
+		
+		//A proper message should be provided.
+		expectedErrorMessage = MessageFormat.format(this.resources.getString("account.updateUnchanged"), this.account1.getId());
+		actualErrorMessage = updateAccountResult.getMessages().get(0).getText();
+		assertEquals(expectedErrorMessage, actualErrorMessage);
+	}
+	
+	
 	/*
 	 * TODO implement additional tests.
 	 * 
-	 * testUpdateInvalidAccount()
-	 * testUpdateUnchangedAccount()
-	 * ...
+	 * 
 	 */
 }
