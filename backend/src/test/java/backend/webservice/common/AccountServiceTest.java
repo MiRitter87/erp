@@ -421,6 +421,31 @@ public class AccountServiceTest {
 	}
 	
 	
+	@Test
+	/**
+	 * Tests adding of an invalid account.
+	 */
+	public void testAddInvalidAccount() {
+		Account newAccount = new Account();
+		WebServiceResult addAccountResult;
+		AccountService service = new AccountService();
+		
+		//Define the new account without a currency
+		newAccount.setDescription("New Account without Currency");
+		newAccount.setBalance(BigDecimal.valueOf(1));
+		
+		//Add a new account to the database via WebService
+		addAccountResult = service.addAccount(newAccount);
+		
+		//There should be a return message of type E.
+		assertTrue(addAccountResult.getMessages().size() == 1);
+		assertTrue(addAccountResult.getMessages().get(0).getType() == WebServiceMessageType.E);
+		
+		//The new account should not have been persisted
+		assertNull(newAccount.getId());
+	}
+	
+	
 	/*
 	 * TODO implement additional tests.
 	 * 
