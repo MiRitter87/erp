@@ -58,6 +58,11 @@ public class DAOManager implements Closeable {
 	private AccountDao accountDao;
 	
 	/**
+	 * DAO to manage posting data.
+	 */
+	private PostingDao postingDao;
+	
+	/**
 	 * DAO to manage image data.
 	 */
 	private ImageDao imageDao;
@@ -188,6 +193,19 @@ public class DAOManager implements Closeable {
 			this.accountDao = new AccountHibernateDao(this.sessionFactory);
 		
 		return this.accountDao;
+	}
+	
+	
+	/**
+	 * Returns a DAO to manage posting data.
+	 * 
+	 * @return The PostingDao.
+	 */
+	public PostingDao getPostingDAO() {
+		if(this.postingDao == null)
+			this.postingDao = new PostingHibernateDao(this.sessionFactory);
+		
+		return this.postingDao;
 	}
 	
 	
