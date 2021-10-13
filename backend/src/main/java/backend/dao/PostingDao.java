@@ -24,4 +24,14 @@ public interface PostingDao {
 	 * @throws Exception Deletion failed.
 	 */
 	void deletePosting(final Posting posting) throws Exception;
+	
+	
+	/**
+	 * Gets the posting with the given id.
+	 * 
+	 * @param id The id of the posting.
+	 * @return The posting with the given id.
+	 * @throws Exception Posting retrieval failed.
+	 */
+	Posting getPosting(final Integer id) throws Exception;
 }
