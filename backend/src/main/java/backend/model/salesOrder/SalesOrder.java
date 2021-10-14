@@ -31,6 +31,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import backend.exception.DuplicateIdentifierException;
 import backend.exception.NoItemsException;
 import backend.exception.QuantityExceedsInventoryException;
+import backend.model.account.Account;
 import backend.model.businessPartner.BusinessPartner;
 
 /**
@@ -75,6 +76,14 @@ public class SalesOrder {
 	@JoinColumn(name="BILL_TO_ID")
 	@NotNull(message = "{salesOrder.billToParty.notNull.message}")
 	private BusinessPartner billToParty;
+	
+	/**
+	 * The account on which the bill has to be settled.
+	 */
+	@OneToOne
+	@JoinColumn(name="PAYMENT_ACCOUNT_ID")
+	@NotNull(message = "{salesOrder.paymentAccount.notNull.message}")
+	private Account paymentAccount;
 	
 	/**
 	 * The order date.
@@ -188,6 +197,22 @@ public class SalesOrder {
 
 
 	/**
+	 * @return the paymentAccount
+	 */
+	public Account getPaymentAccount() {
+		return paymentAccount;
+	}
+
+
+	/**
+	 * @param paymentAccount the paymentAccount to set
+	 */
+	public void setPaymentAccount(Account paymentAccount) {
+		this.paymentAccount = paymentAccount;
+	}
+
+
+	/**
 	 * @return the orderDate
 	 */
 	public Date getOrderDate() {
@@ -259,6 +284,7 @@ public class SalesOrder {
 		result = prime * result + ((id == null) ? 0 : id.hashCode());
 		result = prime * result + ((items == null) ? 0 : items.hashCode());
 		result = prime * result + ((orderDate == null) ? 0 : orderDate.hashCode());
+		result = prime * result + ((paymentAccount == null) ? 0 : paymentAccount.hashCode());
 		result = prime * result + ((requestedDeliveryDate == null) ? 0 : requestedDeliveryDate.hashCode());
 		result = prime * result + ((shipToParty == null) ? 0 : shipToParty.hashCode());
 		result = prime * result + ((soldToParty == null) ? 0 : soldToParty.hashCode());
@@ -298,6 +324,13 @@ public class SalesOrder {
 				return false;
 			}
 		} else if (orderDate.getTime() != other.orderDate.getTime()) {
+			return false;
+		}
+		if (paymentAccount == null) {
+			if (other.paymentAccount != null) {
+				return false;
+			}
+		} else if (!paymentAccount.equals(other.paymentAccount)) {
 			return false;
 		}
 		if (requestedDeliveryDate == null) {

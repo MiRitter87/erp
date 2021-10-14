@@ -9,6 +9,7 @@ import java.util.ResourceBundle;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import backend.dao.AccountDao;
 import backend.dao.BusinessPartnerDao;
 import backend.dao.DAOManager;
 import backend.dao.MaterialDao;
@@ -343,6 +344,7 @@ public class SalesOrderService {
 	 */
 	private SalesOrder convertSalesOrderHead(final SalesOrderWS salesOrderWS) throws Exception {
 		BusinessPartnerDao partnerDAO = DAOManager.getInstance().getBusinessPartnerDAO();
+		AccountDao accountDAO = DAOManager.getInstance().getAccountDAO();
 		SalesOrder salesOrder = new SalesOrder();
 		
 		//Basic object data that are copied as-is.
@@ -360,6 +362,9 @@ public class SalesOrderService {
 		
 		if(salesOrderWS.getBillToId() != null)
 			salesOrder.setBillToParty(partnerDAO.getBusinessPartner(salesOrderWS.getBillToId()));
+		
+		if(salesOrderWS.getPaymentAccountId() != null)
+			salesOrder.setPaymentAccount(accountDAO.getAccount(salesOrderWS.getPaymentAccountId()));
 		
 		return salesOrder;
 	}

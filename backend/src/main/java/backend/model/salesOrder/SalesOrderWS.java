@@ -32,6 +32,11 @@ public class SalesOrderWS {
 	private Integer billToId;
 	
 	/**
+	 * The ID of the payment account.
+	 */
+	private Integer paymentAccountId;
+	
+	/**
 	 * The order date.
 	 */
 	private Date orderDate;
@@ -134,6 +139,22 @@ public class SalesOrderWS {
 	}
 
 	
+	/**
+	 * @return the paymentAccountId
+	 */
+	public Integer getPaymentAccountId() {
+		return paymentAccountId;
+	}
+
+
+	/**
+	 * @param paymentAccountId the paymentAccountId to set
+	 */
+	public void setPaymentAccountId(Integer paymentAccountId) {
+		this.paymentAccountId = paymentAccountId;
+	}
+
+
 	/**
 	 * @return the orderDate
 	 */

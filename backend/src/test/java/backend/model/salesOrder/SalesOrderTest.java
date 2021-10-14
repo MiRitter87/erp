@@ -14,6 +14,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import backend.exception.NoItemsException;
 import backend.model.Currency;
+import backend.model.account.Account;
 import backend.model.businessPartner.BusinessPartner;
 import backend.model.material.Material;
 import backend.model.material.UnitOfMeasurement;
@@ -48,6 +49,11 @@ public class SalesOrderTest {
 	 */
 	private Material material;
 	
+	/**
+	 * The account for settlement of payments.
+	 */
+	private Account paymentAccount;
+	
 	
 	@BeforeEach
 	/**
@@ -56,6 +62,7 @@ public class SalesOrderTest {
 	private void setUp() {
 		this.initBusinessPartner();
 		this.initMaterial();
+		this.initPaymentAccount();
 		this.initSalesOrder();
 		this.initSalesOrderItem();
 		
@@ -119,6 +126,7 @@ public class SalesOrderTest {
 		this.order.setSoldToParty(this.businessPartner);
 		this.order.setShipToParty(this.businessPartner);
 		this.order.setBillToParty(this.businessPartner);
+		this.order.setPaymentAccount(this.paymentAccount);
 		this.order.setStatus(SalesOrderStatus.OPEN);
 	}
 	
@@ -131,6 +139,18 @@ public class SalesOrderTest {
 		this.orderItem.setId(1);
 		this.orderItem.setMaterial(this.material);
 		this.orderItem.setQuantity(Long.valueOf(2));
+	}
+	
+	
+	/**
+	 * Initializes the payment account.
+	 */
+	private void initPaymentAccount() {
+		this.paymentAccount = new Account();
+		this.paymentAccount.setId(1);
+		this.paymentAccount.setDescription("Settlement account for sales orders.");
+		this.paymentAccount.setBalance(BigDecimal.valueOf(1000));
+		this.paymentAccount.setCurrency(Currency.EUR);
 	}
 	
 	
@@ -246,6 +266,28 @@ public class SalesOrderTest {
 		try {
 			this.order.validate();
 			fail("Validation should have failed because no bill-to party is defined.");
+		} catch (Exception expected) {
+			actualErrorMessage = expected.getMessage();
+		}
+		
+		assertEquals(expectedErrorMessage, actualErrorMessage);
+	}
+	
+	
+	@Test
+	/**
+	 * Tests validation of a sales order that has no payment account defined.
+	 */
+	public void testNoPaymentAccountDefined() {
+		ValidationMessageProvider messageProvider = new ValidationMessageProvider();	
+		String expectedErrorMessage = messageProvider.getNotNullValidationMessage("salesOrder", "paymentAccount");
+		String actualErrorMessage = "";
+		
+		this.order.setPaymentAccount(null);
+		
+		try {
+			this.order.validate();
+			fail("Validation should have failed because no payment account is defined.");
 		} catch (Exception expected) {
 			actualErrorMessage = expected.getMessage();
 		}

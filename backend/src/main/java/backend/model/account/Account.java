@@ -1,8 +1,7 @@
 package backend.model.account;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -74,14 +73,14 @@ public class Account {
 	 */
 	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
 	@JoinColumn(name="ACCOUNT_ID")
-	private List<Posting> postings;
+	private Set<Posting> postings;
 	
 	
 	/**
 	 * Default constructor.
 	 */
 	public Account() {
-		this.postings = new ArrayList<Posting>();
+		this.postings = new HashSet<Posting>();
 	}
 	
 	
@@ -178,7 +177,7 @@ public class Account {
 	/**
 	 * @return the postings
 	 */
-	public List<Posting> getPostings() {
+	public Set<Posting> getPostings() {
 		return postings;
 	}
 
@@ -186,7 +185,7 @@ public class Account {
 	/**
 	 * @param postings the postings to set
 	 */
-	public void setPostings(List<Posting> postings) {
+	public void setPostings(Set<Posting> postings) {
 		this.postings = postings;
 	}
 

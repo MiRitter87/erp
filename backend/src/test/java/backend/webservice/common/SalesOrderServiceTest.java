@@ -23,11 +23,13 @@ import org.junit.jupiter.api.Test;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import backend.dao.AccountDao;
 import backend.dao.BusinessPartnerDao;
 import backend.dao.DAOManager;
 import backend.dao.MaterialDao;
 import backend.dao.SalesOrderDao;
 import backend.model.Currency;
+import backend.model.account.Account;
 import backend.model.businessPartner.BusinessPartner;
 import backend.model.businessPartner.BusinessPartnerType;
 import backend.model.material.Material;
@@ -70,6 +72,11 @@ public class SalesOrderServiceTest {
 	private static BusinessPartnerDao partnerDAO;
 	
 	/**
+	 * DAO to access account data.
+	 */
+	private static AccountDao accountDAO;
+	
+	/**
 	 * The sales order under test.
 	 */
 	private SalesOrder order1;
@@ -109,6 +116,11 @@ public class SalesOrderServiceTest {
 	 */
 	private BusinessPartner partner;
 	
+	/**
+	 * The account for payment settlement.
+	 */
+	private Account paymentAccount;
+	
 	
 	@BeforeAll
 	/**
@@ -118,6 +130,7 @@ public class SalesOrderServiceTest {
 		materialDAO = DAOManager.getInstance().getMaterialDAO();
 		partnerDAO = DAOManager.getInstance().getBusinessPartnerDAO();
 		orderDAO = DAOManager.getInstance().getSalesOrderDAO();
+		accountDAO = DAOManager.getInstance().getAccountDAO();
 	}
 	
 	
@@ -141,6 +154,7 @@ public class SalesOrderServiceTest {
 	private void setUp() {
 		this.createDummyMaterials();
 		this.createDummyPartner();
+		this.createDummyAccount();
 		this.createDummyOrders();
 	}
 	
@@ -151,6 +165,7 @@ public class SalesOrderServiceTest {
 	 */
 	private void tearDown() {
 		this.deleteDummyOrders();
+		this.deleteDummyAccount();
 		this.deleteDummyPartner();
 		this.deleteDummyMaterials();
 	}
@@ -206,6 +221,23 @@ public class SalesOrderServiceTest {
 			fail(e.getMessage());
 		}
 	}
+	
+	
+	/**
+	 * Initializes the database with a dummy account.
+	 */
+	private void createDummyAccount() {
+		this.paymentAccount = new Account();
+		this.paymentAccount.setDescription("Account for order bill payment settlement");
+		this.paymentAccount.setBalance(BigDecimal.valueOf(1000));
+		this.paymentAccount.setCurrency(Currency.EUR);
+		
+		try {
+			accountDAO.insertAccount(this.paymentAccount);
+		} catch (Exception e) {
+			fail(e.getMessage());
+		}
+	}
 
 	
 	/**
@@ -224,6 +256,7 @@ public class SalesOrderServiceTest {
 		this.order1.setSoldToParty(this.partner);
 		this.order1.setShipToParty(this.partner);
 		this.order1.setBillToParty(this.partner);
+		this.order1.setPaymentAccount(this.paymentAccount);
 		this.order1.setOrderDate(new Date());
 		this.order1.setRequestedDeliveryDate(new Date());
 		this.order1.setStatus(SalesOrderStatus.OPEN);
@@ -243,6 +276,7 @@ public class SalesOrderServiceTest {
 		this.order2.setSoldToParty(this.partner);
 		this.order2.setShipToParty(this.partner);
 		this.order2.setBillToParty(this.partner);
+		this.order2.setPaymentAccount(this.paymentAccount);
 		this.order2.setOrderDate(new Date());
 		this.order2.setRequestedDeliveryDate(tomorrow.getTime());
 		this.order2.setStatus(SalesOrderStatus.IN_PROCESS);
@@ -265,6 +299,18 @@ public class SalesOrderServiceTest {
 		try {
 			orderDAO.deleteSalesOrder(this.order2);
 			orderDAO.deleteSalesOrder(this.order1);
+		} catch (Exception e) {
+			fail(e.getMessage());
+		}
+	}
+	
+	
+	/**
+	 * Deletes the dummy account from the database.
+	 */
+	private void deleteDummyAccount() {
+		try {
+			accountDAO.deleteAccount(this.paymentAccount);
 		} catch (Exception e) {
 			fail(e.getMessage());
 		}
@@ -322,6 +368,7 @@ public class SalesOrderServiceTest {
 		assertEquals(salesOrder.getSoldToParty(), this.order1.getSoldToParty());
 		assertEquals(salesOrder.getShipToParty(), this.order1.getShipToParty());
 		assertEquals(salesOrder.getBillToParty(), this.order1.getBillToParty());
+		assertEquals(salesOrder.getPaymentAccount(), this.order1.getPaymentAccount());
 		assertEquals(salesOrder.getOrderDate().getTime(), this.order1.getOrderDate().getTime());
 		assertEquals(salesOrder.getRequestedDeliveryDate().getTime(), this.order1.getRequestedDeliveryDate().getTime());
 		assertEquals(salesOrder.getStatus(), this.order1.getStatus());
@@ -365,6 +412,7 @@ public class SalesOrderServiceTest {
 		assertEquals(salesOrder.getSoldToParty(), this.order1.getSoldToParty());
 		assertEquals(salesOrder.getShipToParty(), this.order1.getShipToParty());
 		assertEquals(salesOrder.getBillToParty(), this.order1.getBillToParty());
+		assertEquals(salesOrder.getPaymentAccount(), this.order1.getPaymentAccount());
 		assertEquals(salesOrder.getOrderDate().getTime(), this.order1.getOrderDate().getTime());
 		assertEquals(salesOrder.getRequestedDeliveryDate().getTime(), this.order1.getRequestedDeliveryDate().getTime());
 		assertEquals(salesOrder.getStatus(), this.order1.getStatus());
@@ -381,6 +429,7 @@ public class SalesOrderServiceTest {
 		assertEquals(salesOrder.getSoldToParty(), this.order2.getSoldToParty());
 		assertEquals(salesOrder.getShipToParty(), this.order2.getShipToParty());
 		assertEquals(salesOrder.getBillToParty(), this.order2.getBillToParty());
+		assertEquals(salesOrder.getPaymentAccount(), this.order2.getPaymentAccount());
 		assertEquals(salesOrder.getOrderDate().getTime(), this.order2.getOrderDate().getTime());
 		assertEquals(salesOrder.getRequestedDeliveryDate().getTime(), this.order2.getRequestedDeliveryDate().getTime());
 		assertEquals(salesOrder.getStatus(), this.order2.getStatus());
@@ -426,6 +475,7 @@ public class SalesOrderServiceTest {
 		assertEquals(salesOrder.getSoldToParty(), this.order2.getSoldToParty());
 		assertEquals(salesOrder.getShipToParty(), this.order2.getShipToParty());
 		assertEquals(salesOrder.getBillToParty(), this.order2.getBillToParty());
+		assertEquals(salesOrder.getPaymentAccount(), this.order2.getPaymentAccount());
 		assertEquals(salesOrder.getOrderDate().getTime(), this.order2.getOrderDate().getTime());
 		assertEquals(salesOrder.getRequestedDeliveryDate().getTime(), this.order2.getRequestedDeliveryDate().getTime());
 		assertEquals(salesOrder.getStatus(), this.order2.getStatus());
@@ -760,6 +810,7 @@ public class SalesOrderServiceTest {
 		newSalesOrder.setSoldToParty(this.partner);
 		newSalesOrder.setShipToParty(this.partner);
 		newSalesOrder.setBillToParty(this.partner);
+		newSalesOrder.setPaymentAccount(this.paymentAccount);
 		newSalesOrder.setStatus(SalesOrderStatus.OPEN);
 		newSalesOrder.addItem(newSalesOrderItem);
 		
@@ -789,6 +840,7 @@ public class SalesOrderServiceTest {
 			assertEquals(newSalesOrder.getSoldToParty(), addedSalesOrder.getSoldToParty());
 			assertEquals(newSalesOrder.getShipToParty(), addedSalesOrder.getShipToParty());
 			assertEquals(newSalesOrder.getBillToParty(), addedSalesOrder.getBillToParty());
+			assertEquals(newSalesOrder.getPaymentAccount(), addedSalesOrder.getPaymentAccount());
 			assertEquals(newSalesOrder.getStatus(), addedSalesOrder.getStatus());
 			
 			//Checks at item level.
@@ -826,6 +878,7 @@ public class SalesOrderServiceTest {
 		newSalesOrder.setSoldToParty(this.partner);
 		newSalesOrder.setShipToParty(this.partner);
 		newSalesOrder.setBillToParty(this.partner);
+		newSalesOrder.setPaymentAccount(this.paymentAccount);
 		newSalesOrder.setStatus(SalesOrderStatus.OPEN);
 		
 		//Add a new sales order to the database via WebService
@@ -896,6 +949,7 @@ public class SalesOrderServiceTest {
 			newOrder.setSoldToParty(this.partner);
 			newOrder.setShipToParty(this.partner);
 			newOrder.setBillToParty(this.partner);
+			newOrder.setPaymentAccount(this.paymentAccount);
 			newOrder.setOrderDate(new Date());
 			newOrder.setRequestedDeliveryDate(new Date());
 			newOrder.setStatus(SalesOrderStatus.OPEN);
@@ -1189,6 +1243,9 @@ public class SalesOrderServiceTest {
 		
 		if(order.getBillToParty() != null)
 			wsOrder.setBillToId(order.getBillToParty().getId());
+		
+		if(order.getPaymentAccount() != null)
+			wsOrder.setPaymentAccountId(order.getPaymentAccount().getId());
 		
 		//Item level
 		for(SalesOrderItem orderItem:order.getItems()) {
