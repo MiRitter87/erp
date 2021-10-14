@@ -1220,6 +1220,49 @@ public class SalesOrderServiceTest {
 	}
 	
 	
+	@Test
+	/**
+	 * Tests if the balance of the payment account is increased by the price of all ordered items
+	 * if the status of the sales order changes to finished.
+	 */
+	public void testAccountBalanceOnFinished() {
+		SalesOrderService orderService = new SalesOrderService();
+		BigDecimal accountBalanceBefore, accountBalanceAfter, expectedAccountBalanceAfter;
+		Account account;
+		
+		try {
+			//Get the account balance before the order is set to finished
+			account = accountDAO.getAccount(this.paymentAccount.getId());
+			accountBalanceBefore = account.getBalance();
+			
+			//Set the order to finished
+			this.order2.setStatus(SalesOrderStatus.FINISHED);
+			orderService.updateSalesOrder(this.convertToWsOrder(this.order2));
+			
+			//Check, if the account balance has increased by the price of all order items.
+			account = accountDAO.getAccount(this.paymentAccount.getId());
+			accountBalanceAfter = account.getBalance();
+			expectedAccountBalanceAfter = accountBalanceBefore.add(this.order2.getPriceTotal());
+			
+			assertTrue(accountBalanceAfter.compareTo(expectedAccountBalanceAfter) == 0);
+		} catch (Exception e) {
+			fail(e.getMessage());
+		}
+	}
+	
+	
+	/*
+	 * TODO Add additional test cases
+	 * 
+	 * testAccountBalanceOnFinishedReverted
+	 * testAccountBalanceOnFinishedDeleted
+	 * 
+	 * testPostingOnFinished
+	 * testPostingOnFinishedReverted
+	 * testPostingOnFinishedDeleted
+	 */
+	
+	
 	/**
 	 * Converts a sales order to the lean WebService representation.
 	 * 

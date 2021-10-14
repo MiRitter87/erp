@@ -1,5 +1,6 @@
 package backend.model.salesOrder;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
@@ -483,5 +484,21 @@ public class SalesOrder {
 		}
 		
 		return null;
+	}
+	
+	
+	/**
+	 * Gets the total price of all items.
+	 * 
+	 * @return
+	 */
+	public BigDecimal getPriceTotal() {
+		BigDecimal priceTotal = BigDecimal.valueOf(0);
+		
+		for(SalesOrderItem tempItem:this.items) {
+			priceTotal = priceTotal.add(tempItem.getPriceTotal());
+		}
+		
+		return priceTotal;
 	}
 }

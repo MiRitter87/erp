@@ -47,6 +47,11 @@ public class SalesOrderService {
 	private SalesOrderInventoryManager inventoryManager;
 	
 	/**
+	 * Manager for sales order payments.
+	 */
+	private SalesOrderPaymentManager paymentManager;
+	
+	/**
 	 * Access to localized application resources.
 	 */
 	private ResourceBundle resources = ResourceBundle.getBundle("backend");
@@ -63,6 +68,7 @@ public class SalesOrderService {
 	public SalesOrderService() {
 		this.salesOrderDAO = DAOManager.getInstance().getSalesOrderDAO();
 		this.inventoryManager = new SalesOrderInventoryManager();
+		this.paymentManager = new SalesOrderPaymentManager();
 	}
 	
 	
@@ -277,6 +283,7 @@ public class SalesOrderService {
 			databaseSalesOrder = this.salesOrderDAO.getSalesOrder(salesOrder.getId());
 			this.salesOrderDAO.updateSalesOrder(salesOrder);
 			this.inventoryManager.updateMaterialInventory(salesOrder, databaseSalesOrder);
+			this.paymentManager.updateSalesOrderPayment(salesOrder, databaseSalesOrder);
 			webServiceResult.addMessage(new WebServiceMessage(WebServiceMessageType.S, 
 					MessageFormat.format(this.resources.getString("salesOrder.updateSuccess"), salesOrder.getId())));
 		} 
