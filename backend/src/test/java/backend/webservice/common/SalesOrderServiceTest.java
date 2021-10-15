@@ -1251,10 +1251,45 @@ public class SalesOrderServiceTest {
 	}
 	
 	
+	@Test
+	/**
+	 * Tests if the balance of the payment account is decreased by the price of all ordered items
+	 * if the status of the sales order changes from finished to any other status.
+	 */
+	public void testAccountBalanceOnFinishedReverted() {
+		SalesOrderService orderService = new SalesOrderService();
+		BigDecimal accountBalanceBefore, accountBalanceAfter, expectedAccountBalanceAfter;
+		Account account;
+		
+		//Set the sales order status to finished.
+		this.order2.setStatus(SalesOrderStatus.FINISHED);
+		orderService.updateSalesOrder(this.convertToWsOrder(this.order2));
+		
+		try {
+			//Get the balance of the payment account.
+			account = accountDAO.getAccount(this.paymentAccount.getId());			
+			accountBalanceBefore = account.getBalance();
+			
+			//Revert the status finished.
+			this.order2.setStatus(SalesOrderStatus.IN_PROCESS);
+			orderService.updateSalesOrder(this.convertToWsOrder(this.order2));
+			
+			//Get the balance of the payment account.
+			account = accountDAO.getAccount(this.paymentAccount.getId());			
+			accountBalanceAfter = account.getBalance();
+			
+			//Check if the account balance has been decreased by the total price of all ordered items.
+			expectedAccountBalanceAfter = accountBalanceBefore.subtract(this.order2.getPriceTotal());
+			assertTrue(accountBalanceAfter.compareTo(expectedAccountBalanceAfter) == 0);
+		} catch (Exception e) {
+			fail(e.getMessage());
+		}
+	}
+	
+	
 	/*
 	 * TODO Add additional test cases
 	 * 
-	 * testAccountBalanceOnFinishedReverted
 	 * testAccountBalanceOnFinishedDeleted
 	 * 
 	 * testPostingOnFinished

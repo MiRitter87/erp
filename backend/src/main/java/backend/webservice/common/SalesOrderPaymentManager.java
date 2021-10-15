@@ -36,6 +36,12 @@ public class SalesOrderPaymentManager {
 			this.addPaymentToAccount(salesOrder);
 			return;
 		}
+		
+		//If the sales order status "Finished" is reverted, a posting of payment disbursal is created and the total price is subtracted from the payment account.
+		if(databaseSalesOrder.getStatus() == SalesOrderStatus.FINISHED && salesOrder.getStatus() != SalesOrderStatus.FINISHED) {
+			this.removePaymentFromAccount(salesOrder);
+			return;
+		}
 	}
 	
 	
@@ -51,6 +57,22 @@ public class SalesOrderPaymentManager {
 		Account paymentAccount = salesOrder.getPaymentAccount();
 		
 		paymentAccount.setBalance(salesOrder.getPaymentAccount().getBalance().add(salesOrder.getPriceTotal()));
+		accountDAO.updateAccount(paymentAccount);
+	}
+	
+	
+	/**
+	 * Removes the total price of the sales order from the referenced payment account.
+	 * 
+	 * @param salesOrder The sales order.
+	 * @throws Exception Update of the account failed.
+	 * @throws ObjectUnchangedException The account has not been changed.
+	 */
+	private void removePaymentFromAccount(SalesOrder salesOrder) throws ObjectUnchangedException, Exception {
+		AccountDao accountDAO = DAOManager.getInstance().getAccountDAO();
+		Account paymentAccount = salesOrder.getPaymentAccount();
+		
+		paymentAccount.setBalance(salesOrder.getPaymentAccount().getBalance().subtract(salesOrder.getPriceTotal()));
 		accountDAO.updateAccount(paymentAccount);
 	}
 	
