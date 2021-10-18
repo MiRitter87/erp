@@ -179,7 +179,12 @@ public class SalesOrderService {
 			if(salesOrder != null) {
 				//Delete sales order if exists.
 				this.salesOrderDAO.deleteSalesOrder(salesOrder);
+				
 				this.inventoryManager.addMaterialInventoryForOrder(salesOrder);
+				
+				if(salesOrder.getStatus() == SalesOrderStatus.FINISHED)
+					this.paymentManager.removePaymentFromAccount(salesOrder);
+				
 				deleteSalesOrderResult.addMessage(new WebServiceMessage(WebServiceMessageType.S, 
 						MessageFormat.format(this.resources.getString("salesOrder.deleteSuccess"), id)));
 			}

@@ -1287,10 +1287,60 @@ public class SalesOrderServiceTest {
 	}
 	
 	
+	@Test
+	/**
+	 * Tests if the balance of the payment account is decreased by the price of all ordered items
+	 * if a finished sales order is being deleted.
+	 */
+	public void testAccountBalanceOnFinishedDeleted() {
+		SalesOrderService orderService = new SalesOrderService();
+		BigDecimal accountBalanceBefore, accountBalanceAfter, expectedAccountBalanceAfter;
+		Account account;
+		
+		//Set the sales order status to finished.
+		this.order2.setStatus(SalesOrderStatus.FINISHED);
+		orderService.updateSalesOrder(this.convertToWsOrder(this.order2));
+		
+		try {
+			//Get the balance of the payment account.
+			account = accountDAO.getAccount(this.paymentAccount.getId());
+			accountBalanceBefore = account.getBalance();
+			
+			//Delete the finished sales order.
+			orderService.deleteSalesOrder(this.order2.getId());
+			
+			//Get the balance of the payment account.
+			account = accountDAO.getAccount(this.paymentAccount.getId());			
+			accountBalanceAfter = account.getBalance();
+						
+			//Check if the account balance has been decreased by the total price of all ordered items.
+			expectedAccountBalanceAfter = accountBalanceBefore.subtract(this.order2.getPriceTotal());
+			assertTrue(accountBalanceAfter.compareTo(expectedAccountBalanceAfter) == 0);
+		} catch (Exception e) {
+			fail(e.getMessage());
+		}
+		finally {
+			//Restore old database state by adding the sales order that has been deleted previously.
+			try {
+				this.order2.setId(null);
+				
+				//The items have to be re-initialized in order to prevent exception regarding orphan-removal.
+				//org.hibernate.HibernateException: Don't change the reference to a collection with delete-orphan enabled : backend.model.SalesOrder.items
+				this.order2.setItems(new ArrayList<SalesOrderItem>());
+				this.order2.addItem(this.orderItem21);
+				this.order2.addItem(this.orderItem22);
+				
+				orderDAO.insertSalesOrder(this.order2);
+			} 
+			catch (Exception e) {
+				fail(e.getMessage());
+			}
+		}
+	}
+	
+	
 	/*
 	 * TODO Add additional test cases
-	 * 
-	 * testAccountBalanceOnFinishedDeleted
 	 * 
 	 * testPostingOnFinished
 	 * testPostingOnFinishedReverted

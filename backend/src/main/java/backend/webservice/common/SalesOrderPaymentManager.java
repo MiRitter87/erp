@@ -68,7 +68,7 @@ public class SalesOrderPaymentManager {
 	 * @throws Exception Update of the account failed.
 	 * @throws ObjectUnchangedException The account has not been changed.
 	 */
-	private void removePaymentFromAccount(SalesOrder salesOrder) throws ObjectUnchangedException, Exception {
+	public void removePaymentFromAccount(SalesOrder salesOrder) throws ObjectUnchangedException, Exception {
 		AccountDao accountDAO = DAOManager.getInstance().getAccountDAO();
 		Account paymentAccount = salesOrder.getPaymentAccount();
 		
