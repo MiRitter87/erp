@@ -4,6 +4,7 @@ import backend.dao.AccountDao;
 import backend.dao.DAOManager;
 import backend.exception.ObjectUnchangedException;
 import backend.model.account.Account;
+import backend.model.account.Posting;
 import backend.model.account.PostingType;
 import backend.model.salesOrder.SalesOrder;
 import backend.model.salesOrder.SalesOrderStatus;
@@ -24,6 +25,22 @@ public class SalesOrderPaymentManager {
 	
 	
 	/**
+	 * Gets the reference number for the given sales order.
+	 * 
+	 * @param salesOrder The sales order.
+	 * @return The reference number.
+	 */
+	public static String getReferenceNumber(SalesOrder salesOrder) {
+		StringBuilder referenceNumberBuilder = new StringBuilder();
+		
+		referenceNumberBuilder.append(REFERENCE_PREFIX);
+		referenceNumberBuilder.append(salesOrder.getId());
+		
+		return referenceNumberBuilder.toString();
+	}
+	
+	
+	/**
 	 * Updates the payment account and creates a posting if the sales order is being updated.
 	 * 
 	 * @param salesOrder The sales order being updated.
@@ -34,6 +51,7 @@ public class SalesOrderPaymentManager {
 		//If the sales order status changes to "Finished", a posting of payment receipt is created and the total price is added to the payment account.
 		if(databaseSalesOrder.getStatus() != SalesOrderStatus.FINISHED && salesOrder.getStatus() == SalesOrderStatus.FINISHED) {
 			this.addPaymentToAccount(salesOrder);
+			//this.createPosting(salesOrder, PostingType.RECEIPT);
 			return;
 		}
 		
@@ -57,6 +75,7 @@ public class SalesOrderPaymentManager {
 		Account paymentAccount = salesOrder.getPaymentAccount();
 		
 		paymentAccount.setBalance(salesOrder.getPaymentAccount().getBalance().add(salesOrder.getPriceTotal()));
+		paymentAccount.getPostings().add(this.getPosting(salesOrder, PostingType.RECEIPT));
 		accountDAO.updateAccount(paymentAccount);
 	}
 	
@@ -78,12 +97,22 @@ public class SalesOrderPaymentManager {
 	
 	
 	/**
-	 * Creates a posting with the given type for the sales order.
+	 * Returns a posting with the given type for the sales order.
 	 * 
 	 * @param salesOrder The sales order for which the posting is created.
 	 * @param type The type of the posting.
+	 * @return The posting.
 	 */
-	private void createPosting(SalesOrder salesOrder, PostingType type) {
+	private Posting getPosting(SalesOrder salesOrder, PostingType type) {
+		Posting posting;
 		
+		posting = new Posting();
+		posting.setType(type);
+		posting.setCounterparty(salesOrder.getBillToParty());
+		posting.setReferenceNumber(getReferenceNumber(salesOrder));
+		posting.setAmount(salesOrder.getPriceTotal());
+		posting.setCurrency(salesOrder.getPriceTotalCurrency());
+		
+		return posting;	
 	}
 }

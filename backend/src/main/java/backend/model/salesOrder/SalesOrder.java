@@ -32,6 +32,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import backend.exception.DuplicateIdentifierException;
 import backend.exception.NoItemsException;
 import backend.exception.QuantityExceedsInventoryException;
+import backend.model.Currency;
 import backend.model.account.Account;
 import backend.model.businessPartner.BusinessPartner;
 
@@ -500,5 +501,21 @@ public class SalesOrder {
 		}
 		
 		return priceTotal;
+	}
+	
+	
+	/**
+	 * Gets the currency of the price total.
+	 * 
+	 * @return The currency.
+	 */
+	public Currency getPriceTotalCurrency() {
+		Currency currency = Currency.EUR;	//Initialize default currency.
+		
+		for(SalesOrderItem tempItem:this.items) {
+			currency =  tempItem.getMaterial().getCurrency();
+		}
+		
+		return currency;
 	}
 }

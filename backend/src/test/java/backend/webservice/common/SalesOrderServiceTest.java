@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.ResourceBundle;
+import java.util.Set;
 
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
@@ -30,6 +31,8 @@ import backend.dao.MaterialDao;
 import backend.dao.SalesOrderDao;
 import backend.model.Currency;
 import backend.model.account.Account;
+import backend.model.account.Posting;
+import backend.model.account.PostingType;
 import backend.model.businessPartner.BusinessPartner;
 import backend.model.businessPartner.BusinessPartnerType;
 import backend.model.material.Material;
@@ -1339,10 +1342,43 @@ public class SalesOrderServiceTest {
 	}
 	
 	
+	@Test
+	/**
+	 * Tests if an account posting exists if the status of a sales order is set to finished.
+	 */
+	public void testPostingOnFinished() {
+		SalesOrderService orderService = new SalesOrderService();
+		Account account;
+		Set<Posting> postings;
+		Posting posting;
+		
+		//Set sales order to finished.
+		this.order2.setStatus(SalesOrderStatus.FINISHED);
+		orderService.updateSalesOrder(this.convertToWsOrder(this.order2));
+		
+		try {
+			//Get payment account of sales order.
+			account = accountDAO.getAccount(this.paymentAccount.getId());
+			
+			//Check if expected posting is referenced in the payment account.
+			postings = account.getPostings();
+			assertEquals(1, postings.size());
+			
+			posting = postings.iterator().next();
+			assertEquals(PostingType.RECEIPT, posting.getType());
+			assertEquals(this.order2.getBillToParty(), posting.getCounterparty());
+			assertEquals(SalesOrderPaymentManager.getReferenceNumber(this.order2), posting.getReferenceNumber());
+			assertEquals(this.order2.getPriceTotal(), posting.getAmount());
+			assertEquals(this.order2.getPriceTotalCurrency(), posting.getCurrency());
+		} catch (Exception e) {
+			fail(e.getMessage());
+		}
+	}
+	
+	
 	/*
 	 * TODO Add additional test cases
 	 * 
-	 * testPostingOnFinished
 	 * testPostingOnFinishedReverted
 	 * testPostingOnFinishedDeleted
 	 */
