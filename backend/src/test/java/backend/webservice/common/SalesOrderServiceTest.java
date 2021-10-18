@@ -1376,10 +1376,48 @@ public class SalesOrderServiceTest {
 	}
 	
 	
+	@Test
+	/**
+	 * Tests if an account posting exists if the status of the sales order changes from 'finished' to any other status.
+	 */
+	public void testPostingOnFinishedReverted() {
+		SalesOrderService orderService = new SalesOrderService();
+		Account account;
+		Set<Posting> postings;
+		Posting posting;
+		
+		//Set sales order to finished.
+		this.order2.setStatus(SalesOrderStatus.FINISHED);
+		orderService.updateSalesOrder(this.convertToWsOrder(this.order2));
+		
+		//Revert status 'finished'.
+		this.order2.setStatus(SalesOrderStatus.IN_PROCESS);
+		orderService.updateSalesOrder(this.convertToWsOrder(this.order2));
+		
+		try {
+			//Get payment account of sales order.
+			account = accountDAO.getAccount(this.paymentAccount.getId());
+			
+			//There should be two postings. One RECEIPT for finished sales order and one disbursal for the reversion of 'finished'.
+			postings = account.getPostings();
+			assertEquals(2, postings.size());
+			
+			posting = postings.iterator().next(); //The receipt.
+			posting = postings.iterator().next(); //The disbursal.
+			assertEquals(PostingType.DISBURSAL, posting.getType());
+			assertEquals(this.order2.getBillToParty(), posting.getCounterparty());
+			assertEquals(SalesOrderPaymentManager.getReferenceNumber(this.order2), posting.getReferenceNumber());
+			assertEquals(this.order2.getPriceTotal(), posting.getAmount());
+			assertEquals(this.order2.getPriceTotalCurrency(), posting.getCurrency());
+		} catch (Exception e) {
+			fail(e.getMessage());
+		}
+	}
+	
+	
 	/*
 	 * TODO Add additional test cases
 	 * 
-	 * testPostingOnFinishedReverted
 	 * testPostingOnFinishedDeleted
 	 */
 	

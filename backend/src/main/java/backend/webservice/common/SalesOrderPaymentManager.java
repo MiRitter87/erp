@@ -51,7 +51,6 @@ public class SalesOrderPaymentManager {
 		//If the sales order status changes to "Finished", a posting of payment receipt is created and the total price is added to the payment account.
 		if(databaseSalesOrder.getStatus() != SalesOrderStatus.FINISHED && salesOrder.getStatus() == SalesOrderStatus.FINISHED) {
 			this.addPaymentToAccount(salesOrder);
-			//this.createPosting(salesOrder, PostingType.RECEIPT);
 			return;
 		}
 		
@@ -92,6 +91,7 @@ public class SalesOrderPaymentManager {
 		Account paymentAccount = salesOrder.getPaymentAccount();
 		
 		paymentAccount.setBalance(salesOrder.getPaymentAccount().getBalance().subtract(salesOrder.getPriceTotal()));
+		paymentAccount.getPostings().add(this.getPosting(salesOrder, PostingType.DISBURSAL));
 		accountDAO.updateAccount(paymentAccount);
 	}
 	
