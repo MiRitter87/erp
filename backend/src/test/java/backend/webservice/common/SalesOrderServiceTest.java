@@ -12,6 +12,7 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.Iterator;
 import java.util.ResourceBundle;
 import java.util.Set;
 
@@ -1344,7 +1345,7 @@ public class SalesOrderServiceTest {
 	
 	@Test
 	/**
-	 * Tests if an account posting exists if the status of a sales order is set to finished.
+	 * Tests if an account posting receipt exists if the status of a sales order is set to finished.
 	 */
 	public void testPostingOnFinished() {
 		SalesOrderService orderService = new SalesOrderService();
@@ -1378,13 +1379,14 @@ public class SalesOrderServiceTest {
 	
 	@Test
 	/**
-	 * Tests if an account posting exists if the status of the sales order changes from 'finished' to any other status.
+	 * Tests if an account posting disbursal exists if the status of the sales order changes from 'finished' to any other status.
 	 */
 	public void testPostingOnFinishedReverted() {
 		SalesOrderService orderService = new SalesOrderService();
 		Account account;
 		Set<Posting> postings;
 		Posting posting;
+		Iterator<Posting> postingIterator;
 		
 		//Set sales order to finished.
 		this.order2.setStatus(SalesOrderStatus.FINISHED);
@@ -1402,24 +1404,85 @@ public class SalesOrderServiceTest {
 			postings = account.getPostings();
 			assertEquals(2, postings.size());
 			
-			posting = postings.iterator().next(); //The receipt.
-			posting = postings.iterator().next(); //The disbursal.
-			assertEquals(PostingType.DISBURSAL, posting.getType());
-			assertEquals(this.order2.getBillToParty(), posting.getCounterparty());
-			assertEquals(SalesOrderPaymentManager.getReferenceNumber(this.order2), posting.getReferenceNumber());
-			assertEquals(this.order2.getPriceTotal(), posting.getAmount());
-			assertEquals(this.order2.getPriceTotalCurrency(), posting.getCurrency());
+			postingIterator = postings.iterator();
+			while(postingIterator.hasNext()) {
+				posting = postingIterator.next();
+				
+				if(posting.getType() == PostingType.RECEIPT)
+					continue;
+								
+				assertEquals(PostingType.DISBURSAL, posting.getType());
+				assertEquals(this.order2.getBillToParty(), posting.getCounterparty());
+				assertEquals(SalesOrderPaymentManager.getReferenceNumber(this.order2), posting.getReferenceNumber());
+				assertEquals(this.order2.getPriceTotal(), posting.getAmount());
+				assertEquals(this.order2.getPriceTotalCurrency(), posting.getCurrency());
+			}
 		} catch (Exception e) {
 			fail(e.getMessage());
 		}
 	}
 	
 	
-	/*
-	 * TODO Add additional test cases
-	 * 
-	 * testPostingOnFinishedDeleted
+	@Test
+	/**
+	 * Tests if an account posting disbursal exists if a finished sales order is deleted.
 	 */
+	public void testPostingOnFinishedDeleted() {
+		SalesOrderService orderService = new SalesOrderService();
+		Account account;
+		Set<Posting> postings;
+		Posting posting;
+		Iterator<Posting> postingIterator;
+		
+		//Set the sales order status to finished.
+		this.order2.setStatus(SalesOrderStatus.FINISHED);
+		orderService.updateSalesOrder(this.convertToWsOrder(this.order2));
+		
+		try {
+			//Delete the finished sales order.
+			orderService.deleteSalesOrder(this.order2.getId());
+			
+			//Get payment account of sales order.
+			account = accountDAO.getAccount(this.paymentAccount.getId());
+			
+			//There should be two postings. One RECEIPT for finished sales order and one disbursal for sales order deletion.
+			postings = account.getPostings();
+			assertEquals(2, postings.size());
+			
+			postingIterator = postings.iterator();
+			while(postingIterator.hasNext()) {
+				posting = postingIterator.next();
+				
+				if(posting.getType() == PostingType.RECEIPT)
+					continue;
+								
+				assertEquals(PostingType.DISBURSAL, posting.getType());
+				assertEquals(this.order2.getBillToParty(), posting.getCounterparty());
+				assertEquals(SalesOrderPaymentManager.getReferenceNumber(this.order2), posting.getReferenceNumber());
+				assertEquals(this.order2.getPriceTotal(), posting.getAmount());
+				assertEquals(this.order2.getPriceTotalCurrency(), posting.getCurrency());
+			}
+		} catch (Exception e) {
+			fail(e.getMessage());
+		}
+		finally {
+			//Restore old database state by adding the sales order that has been deleted previously.
+			try {
+				this.order2.setId(null);
+				
+				//The items have to be re-initialized in order to prevent exception regarding orphan-removal.
+				//org.hibernate.HibernateException: Don't change the reference to a collection with delete-orphan enabled : backend.model.SalesOrder.items
+				this.order2.setItems(new ArrayList<SalesOrderItem>());
+				this.order2.addItem(this.orderItem21);
+				this.order2.addItem(this.orderItem22);
+				
+				orderDAO.insertSalesOrder(this.order2);
+			} 
+			catch (Exception e) {
+				fail(e.getMessage());
+			}
+		}
+	}
 	
 	
 	/**
