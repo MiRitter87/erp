@@ -9,6 +9,8 @@ import static org.junit.jupiter.api.Assertions.fail;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.text.MessageFormat;
+import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.ResourceBundle;
 
 import org.junit.jupiter.api.AfterAll;
@@ -17,12 +19,21 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import backend.dao.AccountDao;
+import backend.dao.BusinessPartnerDao;
 import backend.dao.DAOManager;
 import backend.dao.MaterialDao;
+import backend.dao.SalesOrderDao;
 import backend.model.Currency;
+import backend.model.account.Account;
+import backend.model.businessPartner.BusinessPartner;
+import backend.model.businessPartner.BusinessPartnerType;
 import backend.model.material.Material;
 import backend.model.material.MaterialArray;
 import backend.model.material.UnitOfMeasurement;
+import backend.model.salesOrder.SalesOrder;
+import backend.model.salesOrder.SalesOrderItem;
+import backend.model.salesOrder.SalesOrderStatus;
 import backend.model.webservice.WebServiceMessageType;
 import backend.model.webservice.WebServiceResult;
 import backend.tools.WebServiceTools;
@@ -45,6 +56,36 @@ public class MaterialServiceTest {
 	private static MaterialDao materialDAO;
 	
 	/**
+	 * DAO to access business partner data.
+	 */
+	private static BusinessPartnerDao partnerDAO;
+	
+	/**
+	 * DAO to access sales order data.
+	 */
+	private static SalesOrderDao salesOrderDAO;
+	
+	/**
+	 * DAO to access account data.
+	 */
+	private static AccountDao accountDAO;
+	
+	/**
+	 * The sales order that is used for certain test cases.
+	 */
+	private SalesOrder salesOrder;
+	
+	/**
+	 * The sales order item under test.
+	 */
+	private SalesOrderItem salesOrderItem;
+	
+	/**
+	 * The account for payment settlement.
+	 */
+	private Account paymentAccount;
+	
+	/**
 	 * Test material: AMD RX570 GPU.
 	 */
 	protected Material rx570;
@@ -54,6 +95,11 @@ public class MaterialServiceTest {
 	 */
 	protected Material g4560;
 	
+	/**
+	 * The order partner.
+	 */
+	private BusinessPartner partner;
+	
 	
 	@BeforeAll
 	/**
@@ -61,6 +107,9 @@ public class MaterialServiceTest {
 	 */
 	public static void setUpClass() {
 		materialDAO = DAOManager.getInstance().getMaterialDAO();
+		partnerDAO = DAOManager.getInstance().getBusinessPartnerDAO();
+		accountDAO = DAOManager.getInstance().getAccountDAO();
+		salesOrderDAO = DAOManager.getInstance().getSalesOrderDAO();
 	}
 	
 	
@@ -133,6 +182,112 @@ public class MaterialServiceTest {
 		try {
 			materialDAO.deleteMaterial(this.rx570);
 			materialDAO.deleteMaterial(this.g4560);
+		} catch (Exception e) {
+			fail(e.getMessage());
+		}
+	}
+	
+	
+	/**
+	 * Initializes the database with a dummy business partner.
+	 */
+	private void createDummyPartner() {
+		this.partner = new BusinessPartner();
+		this.partner.setCompanyName("Amalgamated Moose Pasture");
+		this.partner.setFirstName("John");
+		this.partner.setLastName("Doe");
+		this.partner.setStreetName("Main Street");
+		this.partner.setHouseNumber("1a");
+		this.partner.setZipCode("12345");
+		this.partner.setCityName("Moose City");
+		this.partner.setPhoneNumber("+1 123-456-7890");
+		this.partner.addType(BusinessPartnerType.CUSTOMER);
+		
+		try {
+			partnerDAO.insertBusinessPartner(this.partner);
+		} catch (Exception e) {
+			fail(e.getMessage());
+		}
+	}
+	
+	
+	/**
+	 * Deletes the dummy business partner from the database.
+	 */
+	private void deleteDummyPartner() {
+		try {
+			partnerDAO.deleteBusinessPartner(this.partner);
+		} catch (Exception e) {
+			fail(e.getMessage());
+		}
+	}
+	
+	
+	/**
+	 * Initializes the database with a dummy sales order.
+	 */
+	private void createDummySalesOrder() {
+		GregorianCalendar tomorrow = new GregorianCalendar();
+		tomorrow.add(GregorianCalendar.DAY_OF_MONTH, 1);
+		
+		this.salesOrderItem = new SalesOrderItem();
+		this.salesOrderItem.setId(1);
+		this.salesOrderItem.setMaterial(this.g4560);
+		this.salesOrderItem.setQuantity(Long.valueOf(1));
+		
+		this.salesOrder = new SalesOrder();
+		this.salesOrder.setSoldToParty(this.partner);
+		this.salesOrder.setShipToParty(this.partner);
+		this.salesOrder.setBillToParty(this.partner);
+		this.salesOrder.setPaymentAccount(this.paymentAccount);
+		this.salesOrder.setOrderDate(new Date());
+		this.salesOrder.setRequestedDeliveryDate(new Date());
+		this.salesOrder.setStatus(SalesOrderStatus.OPEN);
+		this.salesOrder.addItem(this.salesOrderItem);
+		
+		try {
+			salesOrderDAO.insertSalesOrder(this.salesOrder);
+		} catch (Exception e) {
+			fail(e.getMessage());
+		}
+	}
+	
+	
+	/**
+	 * Deletes the dummy sales order from the database.
+	 */
+	private void deleteDummySalesOrder() {
+		try {
+			salesOrderDAO.deleteSalesOrder(this.salesOrder);
+		} catch (Exception e) {
+			fail(e.getMessage());
+		}
+	}
+	
+	
+	/**
+	 * Initializes the database with a dummy account.
+	 */
+	private void createDummyAccount() {
+		this.paymentAccount = new Account();
+		this.paymentAccount.setDescription("Account for order bill payment settlement");
+		this.paymentAccount.setBalance(BigDecimal.valueOf(1000));
+		this.paymentAccount.setCurrency(Currency.EUR);
+		
+		try {
+			accountDAO.insertAccount(this.paymentAccount);
+		} catch (Exception e) {
+			fail(e.getMessage());
+		}
+	}
+	
+	
+	/**
+	 * Deletes the dummy account from the database.
+	 */
+	private void deleteDummyAccount() {
+		try {
+			accountDAO.deleteAccount(this.paymentAccount);
 		} catch (Exception e) {
 			fail(e.getMessage());
 		}
@@ -236,6 +391,58 @@ public class MaterialServiceTest {
 			fail(e.getMessage());
 		}
 	}
+	
+	
+	
+	/**
+	 * Tests deletion of a material that is used in a least one sales order.
+	 */
+	public void testDeleteMaterialUsedInSo() {
+		String expectedErrorMessage, actualErrorMessage;
+		WebServiceResult deleteMaterialResult;
+		Material deletedMaterial;
+		MaterialService materialService = new MaterialService();
+		
+		try {
+			System.out.println("Test");
+			
+			//Create account, partner and sales order that are used for this test case.
+			this.createDummyAccount();
+			this.createDummyPartner();
+			this.createDummySalesOrder();
+						
+			//Try to delete the material used in the sales order.
+			deleteMaterialResult = materialService.deleteMaterial(this.g4560.getId());
+			
+			//There should be a return message of type E.
+			assertTrue(deleteMaterialResult.getMessages().size() == 1);
+			assertTrue(deleteMaterialResult.getMessages().get(0).getType() == WebServiceMessageType.E);
+			
+			//Check the correct error message.
+			expectedErrorMessage = MessageFormat.format(this.resources.getString("material.deleteUsedInSalesOrder"), 
+					this.g4560.getId(), this.salesOrder.getId());
+			actualErrorMessage = deleteMaterialResult.getMessages().get(0).getText();
+			assertEquals(expectedErrorMessage, actualErrorMessage);
+			
+			//Try to read the material that is used in the sales order.
+			
+			//Check if the material has not been deleted.
+
+		} finally {
+			//Delete account, partner and sales order that are used for this test case.
+			this.deleteDummySalesOrder();
+			this.deleteDummyPartner();
+			this.deleteDummyAccount();
+		}
+	}
+	
+	
+	/*
+	 * TODO
+	 * 
+	 * testDeleteMaterialUsedInSo
+	 * testDeleteMaterialUsedInPo
+	 */
 	
 	
 	@Test
