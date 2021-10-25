@@ -3,6 +3,7 @@ package backend.dao;
 import java.util.List;
 import java.util.Set;
 
+import backend.exception.ObjectInUseException;
 import backend.exception.ObjectUnchangedException;
 import backend.model.material.Material;
 
@@ -25,9 +26,10 @@ public interface MaterialDao {
 	 * Deletes a material.
 	 * 
 	 * @param material The material to be deleted.
+	 * @throws ObjectInUseException The material is being used by another object.
 	 * @throws Exception Deletion failed.
 	 */
-	void deleteMaterial(final Material material) throws Exception;
+	void deleteMaterial(final Material material) throws ObjectInUseException, Exception;
 	
 	
 	/**

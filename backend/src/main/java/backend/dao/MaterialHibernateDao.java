@@ -11,8 +11,10 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 
+import backend.exception.ObjectInUseException;
 import backend.exception.ObjectUnchangedException;
 import backend.model.material.Material;
+import backend.model.salesOrder.SalesOrderItem;
 
 /**
  * Provides access to material database persistence using Hibernate.
@@ -59,8 +61,10 @@ public class MaterialHibernateDao implements MaterialDao {
 
 	
 	@Override
-	public void deleteMaterial(Material material) throws Exception {
+	public void deleteMaterial(Material material) throws ObjectInUseException, Exception {
 		EntityManager entityManager = this.sessionFactory.createEntityManager();
+		
+		this.checkMaterialInUse(material, entityManager);
 		
 		//In order to successfully delete an entity, it first has to be fetched from the database.
 		Material deleteMaterial = entityManager.find(Material.class, material.getId());
@@ -189,5 +193,31 @@ public class MaterialHibernateDao implements MaterialDao {
 		
 		if(databaseMaterial.equals(material))
 			throw new ObjectUnchangedException();
+	}
+	
+	
+	/**
+	 * Checks if the material is referenced by another business object.
+	 * 
+	 * @param material The material which is checked.
+	 * @throws ObjectInUseException In case the material is in use.
+	 */
+	private void checkMaterialInUse(final Material material, final EntityManager entityManager) throws ObjectInUseException {		
+		SalesOrderItem salesOrderItem;
+		List<SalesOrderItem> salesOrderItems;		
+		CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+		CriteriaQuery<SalesOrderItem> criteriaQuery = criteriaBuilder.createQuery(SalesOrderItem.class);
+		
+		Root<SalesOrderItem> criteria = criteriaQuery.from(SalesOrderItem.class);
+		criteriaQuery.select(criteria).distinct(true);
+		criteriaQuery.where(criteriaBuilder.equal(criteria.get("material"), material));
+		
+		TypedQuery<SalesOrderItem> typedQuery = entityManager.createQuery(criteriaQuery);
+		salesOrderItems = typedQuery.getResultList();
+		
+		if(salesOrderItems.size() > 0) {
+			salesOrderItem = salesOrderItems.get(0);
+			throw new ObjectInUseException(material.getId(), salesOrderItem.getSalesOrder().getId(), salesOrderItem.getSalesOrder());
+		}
 	}
 }

@@ -393,19 +393,17 @@ public class MaterialServiceTest {
 	}
 	
 	
-	
+	@Test
 	/**
-	 * Tests deletion of a material that is used in a least one sales order.
+	 * Tests deletion of a material that is used in at least one sales order.
 	 */
 	public void testDeleteMaterialUsedInSo() {
 		String expectedErrorMessage, actualErrorMessage;
 		WebServiceResult deleteMaterialResult;
-		Material deletedMaterial;
+		Material deletedMaterial = null;
 		MaterialService materialService = new MaterialService();
 		
 		try {
-			System.out.println("Test");
-			
 			//Create account, partner and sales order that are used for this test case.
 			this.createDummyAccount();
 			this.createDummyPartner();
@@ -425,10 +423,15 @@ public class MaterialServiceTest {
 			assertEquals(expectedErrorMessage, actualErrorMessage);
 			
 			//Try to read the material that is used in the sales order.
+			deletedMaterial = materialDAO.getMaterial(this.g4560.getId());
 			
 			//Check if the material has not been deleted.
-
-		} finally {
+			assertNotNull(deletedMaterial);
+		}
+		catch (Exception e) {
+			fail(e.getMessage());
+		}
+		finally {
 			//Delete account, partner and sales order that are used for this test case.
 			this.deleteDummySalesOrder();
 			this.deleteDummyPartner();
@@ -440,7 +443,6 @@ public class MaterialServiceTest {
 	/*
 	 * TODO
 	 * 
-	 * testDeleteMaterialUsedInSo
 	 * testDeleteMaterialUsedInPo
 	 */
 	

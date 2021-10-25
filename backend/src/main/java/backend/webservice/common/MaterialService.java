@@ -9,10 +9,12 @@ import org.apache.logging.log4j.Logger;
 import backend.dao.DAOManager;
 import backend.dao.ImageDao;
 import backend.dao.MaterialDao;
+import backend.exception.ObjectInUseException;
 import backend.exception.ObjectUnchangedException;
 import backend.model.material.Material;
 import backend.model.material.MaterialArray;
 import backend.model.material.MaterialWS;
+import backend.model.salesOrder.SalesOrder;
 import backend.model.webservice.WebServiceMessage;
 import backend.model.webservice.WebServiceMessageType;
 import backend.model.webservice.WebServiceResult;
@@ -169,6 +171,12 @@ public class MaterialService {
 				//Material not found.
 				deleteMaterialResult.addMessage(new WebServiceMessage(WebServiceMessageType.E, 
 						MessageFormat.format(this.resources.getString("material.notFound"), id)));
+			}
+		}
+		catch(ObjectInUseException objectInUseException) {
+			if(objectInUseException.getUsedByObject() instanceof SalesOrder) {
+				deleteMaterialResult.addMessage(new WebServiceMessage(WebServiceMessageType.E, 
+						MessageFormat.format(this.resources.getString("material.deleteUsedInSalesOrder"), id, objectInUseException.getUsedById())));
 			}
 		}
 		catch (Exception e) {
