@@ -23,6 +23,7 @@ import backend.dao.AccountDao;
 import backend.dao.BusinessPartnerDao;
 import backend.dao.DAOManager;
 import backend.dao.MaterialDao;
+import backend.dao.PurchaseOrderDao;
 import backend.dao.SalesOrderDao;
 import backend.model.Currency;
 import backend.model.account.Account;
@@ -31,6 +32,8 @@ import backend.model.businessPartner.BusinessPartnerType;
 import backend.model.material.Material;
 import backend.model.material.MaterialArray;
 import backend.model.material.UnitOfMeasurement;
+import backend.model.purchaseOrder.PurchaseOrder;
+import backend.model.purchaseOrder.PurchaseOrderItem;
 import backend.model.salesOrder.SalesOrder;
 import backend.model.salesOrder.SalesOrderItem;
 import backend.model.salesOrder.SalesOrderStatus;
@@ -66,6 +69,11 @@ public class MaterialServiceTest {
 	private static SalesOrderDao salesOrderDAO;
 	
 	/**
+	 * DAO to access purchase order data.
+	 */
+	private static PurchaseOrderDao purchaseOrderDAO;
+	
+	/**
 	 * DAO to access account data.
 	 */
 	private static AccountDao accountDAO;
@@ -84,6 +92,16 @@ public class MaterialServiceTest {
 	 * The account for payment settlement.
 	 */
 	private Account paymentAccount;
+	
+	/**
+	 * The purchase order that is used for certain test cases.
+	 */
+	private PurchaseOrder purchaseOrder;
+	
+	/**
+	 * The purchase order item under test.
+	 */
+	private PurchaseOrderItem purchaseOrderItem;
 	
 	/**
 	 * Test material: AMD RX570 GPU.
@@ -110,6 +128,7 @@ public class MaterialServiceTest {
 		partnerDAO = DAOManager.getInstance().getBusinessPartnerDAO();
 		accountDAO = DAOManager.getInstance().getAccountDAO();
 		salesOrderDAO = DAOManager.getInstance().getSalesOrderDAO();
+		purchaseOrderDAO = DAOManager.getInstance().getPurchaseOrderDAO();
 	}
 	
 	
@@ -294,6 +313,44 @@ public class MaterialServiceTest {
 	}
 	
 	
+	/**
+	 * Initializes the database with a dummy purchase order.
+	 */
+	private void createDummyPurchaseOrder() {
+		GregorianCalendar tomorrow = new GregorianCalendar();
+		tomorrow.add(GregorianCalendar.DAY_OF_MONTH, 1);
+		
+		this.purchaseOrderItem = new PurchaseOrderItem();
+		this.purchaseOrderItem.setId(1);
+		this.purchaseOrderItem.setMaterial(this.g4560);
+		this.purchaseOrderItem.setQuantity(Long.valueOf(1));
+		
+		this.purchaseOrder = new PurchaseOrder();
+		this.purchaseOrder.setVendor(this.partner);
+		this.purchaseOrder.setOrderDate(new Date());
+		this.purchaseOrder.setRequestedDeliveryDate(new Date());
+		this.purchaseOrder.addItem(this.purchaseOrderItem);
+		
+		try {
+			purchaseOrderDAO.insertPurchaseOrder(this.purchaseOrder);
+		} catch (Exception e) {
+			fail(e.getMessage());
+		}
+	}
+	
+	
+	/**
+	 * Deletes the dummy purchase order from the database.
+	 */
+	private void deleteDummyPurchaseOrder() {
+		try {
+			purchaseOrderDAO.deletePurchaseOrder(this.purchaseOrder);
+		} catch (Exception e) {
+			fail(e.getMessage());
+		}
+	}
+	
+	
 	@Test
 	/**
 	 * Tests adding of a new material.
@@ -440,12 +497,52 @@ public class MaterialServiceTest {
 	}
 	
 	
-	/*
-	 * TODO
-	 * 
-	 * testDeleteMaterialUsedInPo
+	@Test
+	/**
+	 * Tests deletion of a material that is used in at least one purchase order.
 	 */
-	
+	public void testDeleteMaterialUsedInPo() {
+		String expectedErrorMessage, actualErrorMessage;
+		WebServiceResult deleteMaterialResult;
+		Material deletedMaterial = null;
+		MaterialService materialService = new MaterialService();
+		
+		try {
+			//Create account, partner and purchase order that are used for this test case.
+			this.createDummyAccount();
+			this.createDummyPartner();
+			this.createDummyPurchaseOrder();
+						
+			//Try to delete the material used in the purchase order.
+			deleteMaterialResult = materialService.deleteMaterial(this.g4560.getId());
+			
+			//There should be a return message of type E.
+			assertTrue(deleteMaterialResult.getMessages().size() == 1);
+			assertTrue(deleteMaterialResult.getMessages().get(0).getType() == WebServiceMessageType.E);
+			
+			//Check the correct error message.
+			expectedErrorMessage = MessageFormat.format(this.resources.getString("material.deleteUsedInPurchaseOrder"), 
+					this.g4560.getId(), this.purchaseOrder.getId());
+			actualErrorMessage = deleteMaterialResult.getMessages().get(0).getText();
+			assertEquals(expectedErrorMessage, actualErrorMessage);
+			
+			//Try to read the material that is used in the purchase order.
+			deletedMaterial = materialDAO.getMaterial(this.g4560.getId());
+			
+			//Check if the material has not been deleted.
+			assertNotNull(deletedMaterial);
+		}
+		catch (Exception e) {
+			fail(e.getMessage());
+		}
+		finally {
+			//Delete account, partner and purchase order that are used for this test case.
+			this.deleteDummyPurchaseOrder();
+			this.deleteDummyPartner();
+			this.deleteDummyAccount();
+		}
+	}
+
 	
 	@Test
 	/**

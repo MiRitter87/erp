@@ -14,6 +14,7 @@ import javax.persistence.criteria.Root;
 import backend.exception.ObjectInUseException;
 import backend.exception.ObjectUnchangedException;
 import backend.model.material.Material;
+import backend.model.purchaseOrder.PurchaseOrderItem;
 import backend.model.salesOrder.SalesOrderItem;
 
 /**
@@ -203,6 +204,18 @@ public class MaterialHibernateDao implements MaterialDao {
 	 * @throws ObjectInUseException In case the material is in use.
 	 */
 	private void checkMaterialInUse(final Material material, final EntityManager entityManager) throws ObjectInUseException {		
+		this.checkMaterialUsedInSalesOrder(material, entityManager);
+		this.checkMaterialUsedInPurchaseOrder(material, entityManager);
+	}
+	
+	
+	/**
+	 * Checks if the material is referenced in any sales order.
+	 * 
+	 * @param material The material which is checked.
+	 * @throws ObjectInUseException In case the material is in use.
+	 */
+	private void checkMaterialUsedInSalesOrder(final Material material, final EntityManager entityManager) throws ObjectInUseException {
 		SalesOrderItem salesOrderItem;
 		List<SalesOrderItem> salesOrderItems;		
 		CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
@@ -218,6 +231,32 @@ public class MaterialHibernateDao implements MaterialDao {
 		if(salesOrderItems.size() > 0) {
 			salesOrderItem = salesOrderItems.get(0);
 			throw new ObjectInUseException(material.getId(), salesOrderItem.getSalesOrder().getId(), salesOrderItem.getSalesOrder());
+		}
+	}
+	
+	
+	/**
+	 * Checks if the material is referenced in any purchase order.
+	 * 
+	 * @param material The material which is checked.
+	 * @throws ObjectInUseException In case the material is in use.
+	 */
+	private void checkMaterialUsedInPurchaseOrder(final Material material, final EntityManager entityManager) throws ObjectInUseException {
+		PurchaseOrderItem purchaseOrderItem;
+		List<PurchaseOrderItem> purchaseOrderItems;		
+		CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+		CriteriaQuery<PurchaseOrderItem> criteriaQuery = criteriaBuilder.createQuery(PurchaseOrderItem.class);
+		
+		Root<PurchaseOrderItem> criteria = criteriaQuery.from(PurchaseOrderItem.class);
+		criteriaQuery.select(criteria).distinct(true);
+		criteriaQuery.where(criteriaBuilder.equal(criteria.get("material"), material));
+		
+		TypedQuery<PurchaseOrderItem> typedQuery = entityManager.createQuery(criteriaQuery);
+		purchaseOrderItems = typedQuery.getResultList();
+		
+		if(purchaseOrderItems.size() > 0) {
+			purchaseOrderItem = purchaseOrderItems.get(0);
+			throw new ObjectInUseException(material.getId(), purchaseOrderItem.getPurchaseOrder().getId(), purchaseOrderItem.getPurchaseOrder());
 		}
 	}
 }

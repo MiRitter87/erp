@@ -14,6 +14,7 @@ import backend.exception.ObjectUnchangedException;
 import backend.model.material.Material;
 import backend.model.material.MaterialArray;
 import backend.model.material.MaterialWS;
+import backend.model.purchaseOrder.PurchaseOrder;
 import backend.model.salesOrder.SalesOrder;
 import backend.model.webservice.WebServiceMessage;
 import backend.model.webservice.WebServiceMessageType;
@@ -177,6 +178,10 @@ public class MaterialService {
 			if(objectInUseException.getUsedByObject() instanceof SalesOrder) {
 				deleteMaterialResult.addMessage(new WebServiceMessage(WebServiceMessageType.E, 
 						MessageFormat.format(this.resources.getString("material.deleteUsedInSalesOrder"), id, objectInUseException.getUsedById())));
+			}
+			if(objectInUseException.getUsedByObject() instanceof PurchaseOrder) {
+				deleteMaterialResult.addMessage(new WebServiceMessage(WebServiceMessageType.E, 
+						MessageFormat.format(this.resources.getString("material.deleteUsedInPurchaseOrder"), id, objectInUseException.getUsedById())));
 			}
 		}
 		catch (Exception e) {
