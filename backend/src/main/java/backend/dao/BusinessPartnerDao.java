@@ -2,6 +2,7 @@ package backend.dao;
 
 import java.util.List;
 
+import backend.exception.ObjectInUseException;
 import backend.exception.ObjectUnchangedException;
 import backend.model.businessPartner.BPTypeQueryParameter;
 import backend.model.businessPartner.BusinessPartner;
@@ -25,9 +26,10 @@ public interface BusinessPartnerDao {
 	 * Deletes a business partner.
 	 * 
 	 * @param businessPartner The business partner to be deleted.
+	 * @throws ObjectInUseException The business partner is being used by another object.
 	 * @throws Exception Deletion failed.
 	 */
-	void deleteBusinessPartner(final BusinessPartner businessPartner) throws Exception;
+	void deleteBusinessPartner(final BusinessPartner businessPartner) throws ObjectInUseException, Exception;
 	
 	
 	/**

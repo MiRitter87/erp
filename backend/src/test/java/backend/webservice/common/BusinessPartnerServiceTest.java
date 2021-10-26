@@ -1,5 +1,6 @@
 package backend.webservice.common;
 
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -107,6 +108,9 @@ public class BusinessPartnerServiceTest {
 	 */
 	public static void setUpClass() {
 		businessPartnerDAO = DAOManager.getInstance().getBusinessPartnerDAO();
+		materialDAO = DAOManager.getInstance().getMaterialDAO();
+		salesOrderDAO = DAOManager.getInstance().getSalesOrderDAO();
+		accountDAO = DAOManager.getInstance().getAccountDAO();
 	}
 	
 	
@@ -192,7 +196,7 @@ public class BusinessPartnerServiceTest {
 	/**
 	 * Initializes the database with dummy materials.
 	 */
-	private void createDummyMaterials() {
+	private void createDummyMaterial() {
 		this.g4560 = new Material();
 		this.g4560.setName("Pentium G4560");
 		this.g4560.setDescription("Desktop processor that has 2 cores / 4 threads. Released in january 2017. Has 54W TDP.");
@@ -213,7 +217,7 @@ public class BusinessPartnerServiceTest {
 	/**
 	 * Removes dummy materials from the database.
 	 */
-	private void deleteDummyMaterials() {
+	private void deleteDummyMaterial() {
 		try {
 			materialDAO.deleteMaterial(this.g4560);
 		} catch (Exception e) {
@@ -264,9 +268,9 @@ public class BusinessPartnerServiceTest {
 		this.salesOrderItem.setQuantity(Long.valueOf(1));
 		
 		this.salesOrder = new SalesOrder();
-		this.salesOrder.setSoldToParty(this.acme);
+		this.salesOrder.setSoldToParty(this.moose);
 		this.salesOrder.setShipToParty(this.acme);
-		this.salesOrder.setBillToParty(this.acme);
+		this.salesOrder.setBillToParty(this.moose);
 		this.salesOrder.setPaymentAccount(this.paymentAccount);
 		this.salesOrder.setOrderDate(new Date());
 		this.salesOrder.setRequestedDeliveryDate(new Date());
@@ -653,18 +657,56 @@ public class BusinessPartnerServiceTest {
 	}
 	
 	
+	@Test
 	/**
 	 * Tests deletion of a business partner that is used in at least one sales order.
 	 */
 	public void testDeleteBpUsedInSalesOrder() {
+		String expectedErrorMessage, actualErrorMessage;
+		WebServiceResult deletePartnerResult;
+		BusinessPartner deletedPartner = null;
+		BusinessPartnerService partnerService = new BusinessPartnerService();
 		
+		try {
+			//Create account, material and sales order that are used for this test case.
+			this.createDummyAccount();
+			this.createDummyMaterial();
+			this.createDummySalesOrder();
+						
+			//Try to delete the partner used in the sales order.
+			deletePartnerResult = partnerService.deleteBusinessPartner(this.acme.getId());
+			
+			//There should be a return message of type E.
+			assertTrue(deletePartnerResult.getMessages().size() == 1);
+			assertTrue(deletePartnerResult.getMessages().get(0).getType() == WebServiceMessageType.E);
+			
+			//Check the correct error message.
+			expectedErrorMessage = MessageFormat.format(this.resources.getString("businessPartner.deleteUsedInSalesOrder"), 
+					this.acme.getId(), this.salesOrder.getId());
+			actualErrorMessage = deletePartnerResult.getMessages().get(0).getText();
+			assertEquals(expectedErrorMessage, actualErrorMessage);
+			
+			//Try to read the business partner that is used in the sales order.
+			deletedPartner = businessPartnerDAO.getBusinessPartner(this.acme.getId());
+			
+			//Check if the business partner has not been deleted.
+			assertNotNull(deletedPartner);
+		}
+		catch (Exception e) {
+			fail(e.getMessage());
+		}
+		finally {
+			//Delete account, material and sales order that are used for this test case.
+			this.deleteDummySalesOrder();
+			this.deleteDummyMaterial();
+			this.deleteDummyAccount();
+		}
 	}
 	
 	
 	/*
 	 * TODO Implement additional tests
 	 * 
-	 * testDeleteBpUsedInSalesOrder
 	 * testDeleteBpUsedInPurchaseOrder
 	 * testDeleteBpUsedInBooking 
 	 */

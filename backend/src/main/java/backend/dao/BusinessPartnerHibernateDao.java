@@ -11,10 +11,12 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Expression;
 import javax.persistence.criteria.Root;
 
+import backend.exception.ObjectInUseException;
 import backend.exception.ObjectUnchangedException;
 import backend.model.businessPartner.BPTypeQueryParameter;
 import backend.model.businessPartner.BusinessPartner;
 import backend.model.businessPartner.BusinessPartnerType;
+import backend.model.salesOrder.SalesOrder;
 
 /**
  * Provides access to business partner database persistence using Hibernate.
@@ -63,6 +65,8 @@ public class BusinessPartnerHibernateDao implements BusinessPartnerDao {
 	@Override
 	public void deleteBusinessPartner(BusinessPartner businessPartner) throws Exception {
 		EntityManager entityManager = this.sessionFactory.createEntityManager();
+		
+		this.checkBusinessPartnerInUse(businessPartner, entityManager);
 		
 		//In order to successfully delete an entity, it first has to be fetched from the database.
 		BusinessPartner deleteBusinessPartner = entityManager.find(BusinessPartner.class, businessPartner.getId());
@@ -189,5 +193,45 @@ public class BusinessPartnerHibernateDao implements BusinessPartnerDao {
 		}
 		
 		bpCriteriaQuery.where(criteriaBuilder.isMember(bpType, types));
+	}
+	
+	
+	/**
+	 * Checks if the business partner is referenced by another business object.
+	 * 
+	 * @param businessPartner The business partner which is checked.
+	 * @throws ObjectInUseException In case the business partner is in use.
+	 */
+	private void checkBusinessPartnerInUse(final BusinessPartner businessPartner, final EntityManager entityManager) throws ObjectInUseException {		
+		this.checkBusinessPartnerUsedInSalesOrder(businessPartner, entityManager);
+	}
+	
+	
+	/**
+	 * Checks if the business partner is referenced in any sales order.
+	 * 
+	 * @param businessPartner The business partner who is checked.
+	 * @throws ObjectInUseException In case the business partner is in use.
+	 */
+	private void checkBusinessPartnerUsedInSalesOrder(final BusinessPartner businessPartner, final EntityManager entityManager) throws ObjectInUseException {
+		SalesOrder salesOrder;
+		List<SalesOrder> salesOrders;		
+		CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+		CriteriaQuery<SalesOrder> criteriaQuery = criteriaBuilder.createQuery(SalesOrder.class);
+		
+		Root<SalesOrder> criteria = criteriaQuery.from(SalesOrder.class);
+		criteriaQuery.select(criteria).distinct(true);
+		criteriaQuery.where(criteriaBuilder.or(
+				criteriaBuilder.equal(criteria.get("soldToParty"), businessPartner),
+				criteriaBuilder.equal(criteria.get("shipToParty"), businessPartner),
+				criteriaBuilder.equal(criteria.get("billToParty"), businessPartner)));
+		
+		TypedQuery<SalesOrder> typedQuery = entityManager.createQuery(criteriaQuery);
+		salesOrders = typedQuery.getResultList();
+		
+		if(salesOrders.size() > 0) {
+			salesOrder = salesOrders.get(0);
+			throw new ObjectInUseException(businessPartner.getId(), salesOrder.getId(), salesOrder);
+		}
 	}
 }

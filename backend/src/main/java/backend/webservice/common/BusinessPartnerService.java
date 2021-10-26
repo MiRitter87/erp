@@ -8,10 +8,12 @@ import org.apache.logging.log4j.Logger;
 
 import backend.dao.BusinessPartnerDao;
 import backend.dao.DAOManager;
+import backend.exception.ObjectInUseException;
 import backend.exception.ObjectUnchangedException;
 import backend.model.businessPartner.BPTypeQueryParameter;
 import backend.model.businessPartner.BusinessPartner;
 import backend.model.businessPartner.BusinessPartnerArray;
+import backend.model.salesOrder.SalesOrder;
 import backend.model.webservice.WebServiceMessage;
 import backend.model.webservice.WebServiceMessageType;
 import backend.model.webservice.WebServiceResult;
@@ -157,6 +159,12 @@ public class BusinessPartnerService {
 				//Business partner not found.
 				deleteBusinessPartnerResult.addMessage(new WebServiceMessage(WebServiceMessageType.E, 
 						MessageFormat.format(this.resources.getString("businessPartner.notFound"), id)));
+			}
+		}
+		catch(ObjectInUseException objectInUseException) {
+			if(objectInUseException.getUsedByObject() instanceof SalesOrder) {
+				deleteBusinessPartnerResult.addMessage(new WebServiceMessage(WebServiceMessageType.E, 
+						MessageFormat.format(this.resources.getString("businessPartner.deleteUsedInSalesOrder"), id, objectInUseException.getUsedById())));
 			}
 		}
 		catch (Exception e) {
