@@ -6,7 +6,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.text.MessageFormat;
+import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.ResourceBundle;
 
 import org.junit.jupiter.api.AfterAll;
@@ -15,12 +18,22 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import backend.dao.AccountDao;
 import backend.dao.BusinessPartnerDao;
 import backend.dao.DAOManager;
+import backend.dao.MaterialDao;
+import backend.dao.SalesOrderDao;
+import backend.model.Currency;
+import backend.model.account.Account;
 import backend.model.businessPartner.BPTypeQueryParameter;
 import backend.model.businessPartner.BusinessPartner;
 import backend.model.businessPartner.BusinessPartnerArray;
 import backend.model.businessPartner.BusinessPartnerType;
+import backend.model.material.Material;
+import backend.model.material.UnitOfMeasurement;
+import backend.model.salesOrder.SalesOrder;
+import backend.model.salesOrder.SalesOrderItem;
+import backend.model.salesOrder.SalesOrderStatus;
 import backend.model.webservice.WebServiceMessageType;
 import backend.model.webservice.WebServiceResult;
 import backend.tools.WebServiceTools;
@@ -43,14 +56,49 @@ public class BusinessPartnerServiceTest {
 	private static BusinessPartnerDao businessPartnerDAO;
 	
 	/**
+	 * DAO to access material data.
+	 */
+	private static MaterialDao materialDAO;
+	
+	/**
+	 * DAO to access sales order data.
+	 */
+	private static SalesOrderDao salesOrderDAO;
+	
+	/**
+	 * DAO to access account data.
+	 */
+	private static AccountDao accountDAO;
+	
+	/**
 	 * Test business partner: Amalgamated Moose Pasture.
 	 */
-	protected BusinessPartner moose;
+	private BusinessPartner moose;
 	
 	/**
 	 * Test business partner: A Company Making Everything.
 	 */
-	protected BusinessPartner acme;
+	private BusinessPartner acme;
+	
+	/**
+	 * Test material.
+	 */
+	private Material g4560;
+	
+	/**
+	 * Test sales order.
+	 */
+	private SalesOrder salesOrder;
+	
+	/**
+	 * Test sales order item.
+	 */
+	private SalesOrderItem salesOrderItem;
+	
+	/**
+	 * The account for payment settlement.
+	 */
+	private Account paymentAccount;
 	
 	
 	@BeforeAll
@@ -135,6 +183,110 @@ public class BusinessPartnerServiceTest {
 		try {
 			businessPartnerDAO.deleteBusinessPartner(this.moose);
 			businessPartnerDAO.deleteBusinessPartner(this.acme);
+		} catch (Exception e) {
+			fail(e.getMessage());
+		}
+	}
+	
+	
+	/**
+	 * Initializes the database with dummy materials.
+	 */
+	private void createDummyMaterials() {
+		this.g4560 = new Material();
+		this.g4560.setName("Pentium G4560");
+		this.g4560.setDescription("Desktop processor that has 2 cores / 4 threads. Released in january 2017. Has 54W TDP.");
+		this.g4560.setUnit(UnitOfMeasurement.ST);
+		this.g4560.setPricePerUnit(BigDecimal.valueOf(Double.valueOf(54.99)));
+		this.g4560.setCurrency(Currency.EUR);
+		this.g4560.setInventory(Long.valueOf(25));
+		this.g4560.setImage(null);
+		
+		try {
+			materialDAO.insertMaterial(this.g4560);
+		} catch (Exception e) {
+			fail(e.getMessage());
+		}
+	}
+	
+	
+	/**
+	 * Removes dummy materials from the database.
+	 */
+	private void deleteDummyMaterials() {
+		try {
+			materialDAO.deleteMaterial(this.g4560);
+		} catch (Exception e) {
+			fail(e.getMessage());
+		}
+	}
+	
+	
+	/**
+	 * Initializes the database with a dummy account.
+	 */
+	private void createDummyAccount() {
+		this.paymentAccount = new Account();
+		this.paymentAccount.setDescription("Account for order bill payment settlement");
+		this.paymentAccount.setBalance(BigDecimal.valueOf(1000));
+		this.paymentAccount.setCurrency(Currency.EUR);
+		
+		try {
+			accountDAO.insertAccount(this.paymentAccount);
+		} catch (Exception e) {
+			fail(e.getMessage());
+		}
+	}
+	
+	
+	/**
+	 * Deletes the dummy account from the database.
+	 */
+	private void deleteDummyAccount() {
+		try {
+			accountDAO.deleteAccount(this.paymentAccount);
+		} catch (Exception e) {
+			fail(e.getMessage());
+		}
+	}
+	
+	
+	/**
+	 * Initializes the database with a dummy sales order.
+	 */
+	private void createDummySalesOrder() {
+		GregorianCalendar tomorrow = new GregorianCalendar();
+		tomorrow.add(GregorianCalendar.DAY_OF_MONTH, 1);
+		
+		this.salesOrderItem = new SalesOrderItem();
+		this.salesOrderItem.setId(1);
+		this.salesOrderItem.setMaterial(this.g4560);
+		this.salesOrderItem.setQuantity(Long.valueOf(1));
+		
+		this.salesOrder = new SalesOrder();
+		this.salesOrder.setSoldToParty(this.acme);
+		this.salesOrder.setShipToParty(this.acme);
+		this.salesOrder.setBillToParty(this.acme);
+		this.salesOrder.setPaymentAccount(this.paymentAccount);
+		this.salesOrder.setOrderDate(new Date());
+		this.salesOrder.setRequestedDeliveryDate(new Date());
+		this.salesOrder.setStatus(SalesOrderStatus.OPEN);
+		this.salesOrder.addItem(this.salesOrderItem);
+		
+		try {
+			salesOrderDAO.insertSalesOrder(this.salesOrder);
+		} catch (Exception e) {
+			fail(e.getMessage());
+		}
+	}
+	
+	
+	/**
+	 * Deletes the dummy sales order from the database.
+	 */
+	private void deleteDummySalesOrder() {
+		try {
+			salesOrderDAO.deleteSalesOrder(this.salesOrder);
 		} catch (Exception e) {
 			fail(e.getMessage());
 		}
@@ -499,4 +651,21 @@ public class BusinessPartnerServiceTest {
 		actualInfoMessage = updateBusinessPartnerResult.getMessages().get(0).getText();
 		assertEquals(expectedInfoMessage, actualInfoMessage);
 	}
+	
+	
+	/**
+	 * Tests deletion of a business partner that is used in at least one sales order.
+	 */
+	public void testDeleteBpUsedInSalesOrder() {
+		
+	}
+	
+	
+	/*
+	 * TODO Implement additional tests
+	 * 
+	 * testDeleteBpUsedInSalesOrder
+	 * testDeleteBpUsedInPurchaseOrder
+	 * testDeleteBpUsedInBooking 
+	 */
 }
