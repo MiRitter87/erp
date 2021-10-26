@@ -23,6 +23,7 @@ import backend.dao.AccountDao;
 import backend.dao.BusinessPartnerDao;
 import backend.dao.DAOManager;
 import backend.dao.MaterialDao;
+import backend.dao.PurchaseOrderDao;
 import backend.dao.SalesOrderDao;
 import backend.model.Currency;
 import backend.model.account.Account;
@@ -32,6 +33,8 @@ import backend.model.businessPartner.BusinessPartnerArray;
 import backend.model.businessPartner.BusinessPartnerType;
 import backend.model.material.Material;
 import backend.model.material.UnitOfMeasurement;
+import backend.model.purchaseOrder.PurchaseOrder;
+import backend.model.purchaseOrder.PurchaseOrderItem;
 import backend.model.salesOrder.SalesOrder;
 import backend.model.salesOrder.SalesOrderItem;
 import backend.model.salesOrder.SalesOrderStatus;
@@ -72,6 +75,11 @@ public class BusinessPartnerServiceTest {
 	private static AccountDao accountDAO;
 	
 	/**
+	 * DAO to access purchase order data.
+	 */
+	private static PurchaseOrderDao purchaseOrderDAO;
+	
+	/**
 	 * Test business partner: Amalgamated Moose Pasture.
 	 */
 	private BusinessPartner moose;
@@ -101,6 +109,16 @@ public class BusinessPartnerServiceTest {
 	 */
 	private Account paymentAccount;
 	
+	/**
+	 * The purchase order that is used for certain test cases.
+	 */
+	private PurchaseOrder purchaseOrder;
+	
+	/**
+	 * The purchase order item under test.
+	 */
+	private PurchaseOrderItem purchaseOrderItem;
+	
 	
 	@BeforeAll
 	/**
@@ -111,6 +129,7 @@ public class BusinessPartnerServiceTest {
 		materialDAO = DAOManager.getInstance().getMaterialDAO();
 		salesOrderDAO = DAOManager.getInstance().getSalesOrderDAO();
 		accountDAO = DAOManager.getInstance().getAccountDAO();
+		purchaseOrderDAO = DAOManager.getInstance().getPurchaseOrderDAO();
 	}
 	
 	
@@ -291,6 +310,44 @@ public class BusinessPartnerServiceTest {
 	private void deleteDummySalesOrder() {
 		try {
 			salesOrderDAO.deleteSalesOrder(this.salesOrder);
+		} catch (Exception e) {
+			fail(e.getMessage());
+		}
+	}
+	
+	
+	/**
+	 * Initializes the database with a dummy purchase order.
+	 */
+	private void createDummyPurchaseOrder() {
+		GregorianCalendar tomorrow = new GregorianCalendar();
+		tomorrow.add(GregorianCalendar.DAY_OF_MONTH, 1);
+		
+		this.purchaseOrderItem = new PurchaseOrderItem();
+		this.purchaseOrderItem.setId(1);
+		this.purchaseOrderItem.setMaterial(this.g4560);
+		this.purchaseOrderItem.setQuantity(Long.valueOf(1));
+		
+		this.purchaseOrder = new PurchaseOrder();
+		this.purchaseOrder.setVendor(this.acme);
+		this.purchaseOrder.setOrderDate(new Date());
+		this.purchaseOrder.setRequestedDeliveryDate(new Date());
+		this.purchaseOrder.addItem(this.purchaseOrderItem);
+		
+		try {
+			purchaseOrderDAO.insertPurchaseOrder(this.purchaseOrder);
+		} catch (Exception e) {
+			fail(e.getMessage());
+		}
+	}
+	
+	
+	/**
+	 * Deletes the dummy purchase order from the database.
+	 */
+	private void deleteDummyPurchaseOrder() {
+		try {
+			purchaseOrderDAO.deletePurchaseOrder(this.purchaseOrder);
 		} catch (Exception e) {
 			fail(e.getMessage());
 		}
@@ -704,10 +761,56 @@ public class BusinessPartnerServiceTest {
 	}
 	
 	
+	@Test
+	/**
+	 * Tests deletion of a business partner that is used in at least one purchase order.
+	 */
+	public void testDeleteBpUsedInPurchaseOrder() {
+		String expectedErrorMessage, actualErrorMessage;
+		WebServiceResult deletePartnerResult;
+		BusinessPartner deletedPartner = null;
+		BusinessPartnerService partnerService = new BusinessPartnerService();
+		
+		try {
+			//Create account, material and purchase order that are used for this test case.
+			this.createDummyAccount();
+			this.createDummyMaterial();
+			this.createDummyPurchaseOrder();
+						
+			//Try to delete the business partner used in the purchase order.
+			deletePartnerResult = partnerService.deleteBusinessPartner(this.acme.getId());
+			
+			//There should be a return message of type E.
+			assertTrue(deletePartnerResult.getMessages().size() == 1);
+			assertTrue(deletePartnerResult.getMessages().get(0).getType() == WebServiceMessageType.E);
+			
+			//Check the correct error message.
+			expectedErrorMessage = MessageFormat.format(this.resources.getString("businessPartner.deleteUsedInPurchaseOrder"), 
+					this.acme.getId(), this.purchaseOrder.getId());
+			actualErrorMessage = deletePartnerResult.getMessages().get(0).getText();
+			assertEquals(expectedErrorMessage, actualErrorMessage);
+			
+			//Try to read the business partner that is used in the purchase order.
+			deletedPartner = businessPartnerDAO.getBusinessPartner(this.acme.getId());
+			
+			//Check if the business partner has not been deleted.
+			assertNotNull(deletedPartner);
+		}
+		catch (Exception e) {
+			fail(e.getMessage());
+		}
+		finally {
+			//Delete account, partner and purchase order that are used for this test case.
+			this.deleteDummyPurchaseOrder();
+			this.deleteDummyMaterial();
+			this.deleteDummyAccount();
+		}
+	}
+	
+	
 	/*
 	 * TODO Implement additional tests
 	 * 
-	 * testDeleteBpUsedInPurchaseOrder
 	 * testDeleteBpUsedInBooking 
 	 */
 }

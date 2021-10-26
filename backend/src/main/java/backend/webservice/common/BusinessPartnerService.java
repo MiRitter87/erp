@@ -13,6 +13,7 @@ import backend.exception.ObjectUnchangedException;
 import backend.model.businessPartner.BPTypeQueryParameter;
 import backend.model.businessPartner.BusinessPartner;
 import backend.model.businessPartner.BusinessPartnerArray;
+import backend.model.purchaseOrder.PurchaseOrder;
 import backend.model.salesOrder.SalesOrder;
 import backend.model.webservice.WebServiceMessage;
 import backend.model.webservice.WebServiceMessageType;
@@ -165,6 +166,10 @@ public class BusinessPartnerService {
 			if(objectInUseException.getUsedByObject() instanceof SalesOrder) {
 				deleteBusinessPartnerResult.addMessage(new WebServiceMessage(WebServiceMessageType.E, 
 						MessageFormat.format(this.resources.getString("businessPartner.deleteUsedInSalesOrder"), id, objectInUseException.getUsedById())));
+			}
+			if(objectInUseException.getUsedByObject() instanceof PurchaseOrder) {
+				deleteBusinessPartnerResult.addMessage(new WebServiceMessage(WebServiceMessageType.E, 
+						MessageFormat.format(this.resources.getString("businessPartner.deleteUsedInPurchaseOrder"), id, objectInUseException.getUsedById())));
 			}
 		}
 		catch (Exception e) {

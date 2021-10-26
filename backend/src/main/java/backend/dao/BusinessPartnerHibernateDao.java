@@ -16,6 +16,7 @@ import backend.exception.ObjectUnchangedException;
 import backend.model.businessPartner.BPTypeQueryParameter;
 import backend.model.businessPartner.BusinessPartner;
 import backend.model.businessPartner.BusinessPartnerType;
+import backend.model.purchaseOrder.PurchaseOrder;
 import backend.model.salesOrder.SalesOrder;
 
 /**
@@ -204,6 +205,7 @@ public class BusinessPartnerHibernateDao implements BusinessPartnerDao {
 	 */
 	private void checkBusinessPartnerInUse(final BusinessPartner businessPartner, final EntityManager entityManager) throws ObjectInUseException {		
 		this.checkBusinessPartnerUsedInSalesOrder(businessPartner, entityManager);
+		this.checkBusinessPartnerUsedInPurchaseOrder(businessPartner, entityManager);
 	}
 	
 	
@@ -232,6 +234,32 @@ public class BusinessPartnerHibernateDao implements BusinessPartnerDao {
 		if(salesOrders.size() > 0) {
 			salesOrder = salesOrders.get(0);
 			throw new ObjectInUseException(businessPartner.getId(), salesOrder.getId(), salesOrder);
+		}
+	}
+	
+	
+	/**
+	 * Checks if the business partner is referenced in any purchase order.
+	 * 
+	 * @param businessPartner The business partner who is checked.
+	 * @throws ObjectInUseException In case the business partner is in use.
+	 */
+	private void checkBusinessPartnerUsedInPurchaseOrder(final BusinessPartner businessPartner, final EntityManager entityManager) throws ObjectInUseException {
+		PurchaseOrder purchaseOrder;
+		List<PurchaseOrder> purchaseOrders;		
+		CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+		CriteriaQuery<PurchaseOrder> criteriaQuery = criteriaBuilder.createQuery(PurchaseOrder.class);
+		
+		Root<PurchaseOrder> criteria = criteriaQuery.from(PurchaseOrder.class);
+		criteriaQuery.select(criteria).distinct(true);
+		criteriaQuery.where(criteriaBuilder.equal(criteria.get("vendor"), businessPartner));
+		
+		TypedQuery<PurchaseOrder> typedQuery = entityManager.createQuery(criteriaQuery);
+		purchaseOrders = typedQuery.getResultList();
+		
+		if(purchaseOrders.size() > 0) {
+			purchaseOrder = purchaseOrders.get(0);
+			throw new ObjectInUseException(businessPartner.getId(), purchaseOrder.getId(), purchaseOrder);
 		}
 	}
 }
