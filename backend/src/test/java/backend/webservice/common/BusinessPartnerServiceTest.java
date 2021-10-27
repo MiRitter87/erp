@@ -23,10 +23,13 @@ import backend.dao.AccountDao;
 import backend.dao.BusinessPartnerDao;
 import backend.dao.DAOManager;
 import backend.dao.MaterialDao;
+import backend.dao.PostingDao;
 import backend.dao.PurchaseOrderDao;
 import backend.dao.SalesOrderDao;
 import backend.model.Currency;
 import backend.model.account.Account;
+import backend.model.account.Posting;
+import backend.model.account.PostingType;
 import backend.model.businessPartner.BPTypeQueryParameter;
 import backend.model.businessPartner.BusinessPartner;
 import backend.model.businessPartner.BusinessPartnerArray;
@@ -80,6 +83,11 @@ public class BusinessPartnerServiceTest {
 	private static PurchaseOrderDao purchaseOrderDAO;
 	
 	/**
+	 * DAO to access posting data.
+	 */
+	private static PostingDao postingDAO;
+	
+	/**
 	 * Test business partner: Amalgamated Moose Pasture.
 	 */
 	private BusinessPartner moose;
@@ -119,6 +127,11 @@ public class BusinessPartnerServiceTest {
 	 */
 	private PurchaseOrderItem purchaseOrderItem;
 	
+	/**
+	 * The posting under test.
+	 */
+	private Posting posting;
+	
 	
 	@BeforeAll
 	/**
@@ -130,6 +143,7 @@ public class BusinessPartnerServiceTest {
 		salesOrderDAO = DAOManager.getInstance().getSalesOrderDAO();
 		accountDAO = DAOManager.getInstance().getAccountDAO();
 		purchaseOrderDAO = DAOManager.getInstance().getPurchaseOrderDAO();
+		postingDAO = DAOManager.getInstance().getPostingDAO();
 	}
 	
 	
@@ -348,6 +362,38 @@ public class BusinessPartnerServiceTest {
 	private void deleteDummyPurchaseOrder() {
 		try {
 			purchaseOrderDAO.deletePurchaseOrder(this.purchaseOrder);
+		} catch (Exception e) {
+			fail(e.getMessage());
+		}
+	}
+	
+	
+	/**
+	 * Initializes the database with a dummy posting.
+	 */
+	private void createDummyPosting() {
+		this.posting = new Posting();
+		this.posting.setType(PostingType.DISBURSAL);
+		this.posting.setTimestamp(new Date());
+		this.posting.setCounterparty(this.acme);
+		this.posting.setReferenceNumber("A1234");
+		this.posting.setAmount(BigDecimal.valueOf(99.95));
+		this.posting.setCurrency(Currency.EUR);
+		
+		try {
+			postingDAO.insertPosting(this.posting);
+		} catch (Exception e) {
+			fail(e.getMessage());
+		}
+	}
+	
+	
+	/**
+	 * Removes the dummy posting from the database.
+	 */
+	private void deleteDummyPosting() {
+		try {
+			postingDAO.deletePosting(this.posting);
 		} catch (Exception e) {
 			fail(e.getMessage());
 		}
@@ -808,9 +854,45 @@ public class BusinessPartnerServiceTest {
 	}
 	
 	
-	/*
-	 * TODO Implement additional tests
-	 * 
-	 * testDeleteBpUsedInBooking 
+	@Test
+	/**
+	 * Tests deletion of a business partner that is used in at least one posting.
 	 */
+	public void testDeleteBpUsedInPosting() {
+		String expectedErrorMessage, actualErrorMessage;
+		WebServiceResult deletePartnerResult;
+		BusinessPartner deletedPartner = null;
+		BusinessPartnerService partnerService = new BusinessPartnerService();
+		
+		try {
+			//Create posting that is used for this test case.
+			this.createDummyPosting();
+						
+			//Try to delete the business partner used in the posting.
+			deletePartnerResult = partnerService.deleteBusinessPartner(this.acme.getId());
+			
+			//There should be a return message of type E.
+			assertTrue(deletePartnerResult.getMessages().size() == 1);
+			assertTrue(deletePartnerResult.getMessages().get(0).getType() == WebServiceMessageType.E);
+			
+			//Check the correct error message.
+			expectedErrorMessage = MessageFormat.format(this.resources.getString("businessPartner.deleteUsedInPosting"), 
+					this.acme.getId(), this.posting.getId());
+			actualErrorMessage = deletePartnerResult.getMessages().get(0).getText();
+			assertEquals(expectedErrorMessage, actualErrorMessage);
+			
+			//Try to read the business partner that is used in the purchase order.
+			deletedPartner = businessPartnerDAO.getBusinessPartner(this.acme.getId());
+			
+			//Check if the business partner has not been deleted.
+			assertNotNull(deletedPartner);
+		}
+		catch (Exception e) {
+			fail(e.getMessage());
+		}
+		finally {
+			//Delete posting that is used for this test case.
+			this.deleteDummyPosting();
+		}
+	}
 }

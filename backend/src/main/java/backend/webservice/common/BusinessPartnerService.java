@@ -10,6 +10,7 @@ import backend.dao.BusinessPartnerDao;
 import backend.dao.DAOManager;
 import backend.exception.ObjectInUseException;
 import backend.exception.ObjectUnchangedException;
+import backend.model.account.Posting;
 import backend.model.businessPartner.BPTypeQueryParameter;
 import backend.model.businessPartner.BusinessPartner;
 import backend.model.businessPartner.BusinessPartnerArray;
@@ -170,6 +171,10 @@ public class BusinessPartnerService {
 			if(objectInUseException.getUsedByObject() instanceof PurchaseOrder) {
 				deleteBusinessPartnerResult.addMessage(new WebServiceMessage(WebServiceMessageType.E, 
 						MessageFormat.format(this.resources.getString("businessPartner.deleteUsedInPurchaseOrder"), id, objectInUseException.getUsedById())));
+			}
+			if(objectInUseException.getUsedByObject() instanceof Posting) {
+				deleteBusinessPartnerResult.addMessage(new WebServiceMessage(WebServiceMessageType.E, 
+						MessageFormat.format(this.resources.getString("businessPartner.deleteUsedInPosting"), id, objectInUseException.getUsedById())));
 			}
 		}
 		catch (Exception e) {

@@ -13,6 +13,7 @@ import javax.persistence.criteria.Root;
 
 import backend.exception.ObjectInUseException;
 import backend.exception.ObjectUnchangedException;
+import backend.model.account.Posting;
 import backend.model.businessPartner.BPTypeQueryParameter;
 import backend.model.businessPartner.BusinessPartner;
 import backend.model.businessPartner.BusinessPartnerType;
@@ -206,6 +207,7 @@ public class BusinessPartnerHibernateDao implements BusinessPartnerDao {
 	private void checkBusinessPartnerInUse(final BusinessPartner businessPartner, final EntityManager entityManager) throws ObjectInUseException {		
 		this.checkBusinessPartnerUsedInSalesOrder(businessPartner, entityManager);
 		this.checkBusinessPartnerUsedInPurchaseOrder(businessPartner, entityManager);
+		this.checkBusinessPartnerUsedInPosting(businessPartner, entityManager);
 	}
 	
 	
@@ -260,6 +262,32 @@ public class BusinessPartnerHibernateDao implements BusinessPartnerDao {
 		if(purchaseOrders.size() > 0) {
 			purchaseOrder = purchaseOrders.get(0);
 			throw new ObjectInUseException(businessPartner.getId(), purchaseOrder.getId(), purchaseOrder);
+		}
+	}
+	
+	
+	/**
+	 * Checks if the business partner is referenced in any posting.
+	 * 
+	 * @param businessPartner The business partner who is checked.
+	 * @throws ObjectInUseException In case the business partner is in use.
+	 */
+	private void checkBusinessPartnerUsedInPosting(final BusinessPartner businessPartner, final EntityManager entityManager) throws ObjectInUseException {
+		Posting posting;
+		List<Posting> postings;		
+		CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+		CriteriaQuery<Posting> criteriaQuery = criteriaBuilder.createQuery(Posting.class);
+		
+		Root<Posting> criteria = criteriaQuery.from(Posting.class);
+		criteriaQuery.select(criteria).distinct(true);
+		criteriaQuery.where(criteriaBuilder.equal(criteria.get("counterparty"), businessPartner));
+		
+		TypedQuery<Posting> typedQuery = entityManager.createQuery(criteriaQuery);
+		postings = typedQuery.getResultList();
+		
+		if(postings.size() > 0) {
+			posting = postings.get(0);
+			throw new ObjectInUseException(businessPartner.getId(), posting.getId(), posting);
 		}
 	}
 }
