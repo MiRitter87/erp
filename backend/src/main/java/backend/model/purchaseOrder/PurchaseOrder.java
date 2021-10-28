@@ -34,6 +34,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import backend.exception.DuplicateIdentifierException;
 import backend.exception.NoItemsException;
+import backend.model.account.Account;
 import backend.model.businessPartner.BusinessPartner;
 
 /**
@@ -62,6 +63,14 @@ public class PurchaseOrder {
 	@JoinColumn(name="VENDOR_ID")
 	@NotNull(message = "{purchaseOrder.vendor.notNull.message}")
 	private BusinessPartner vendor;
+	
+	/**
+	 * The account on which the bill has to be settled.
+	 */
+	@OneToOne
+	@JoinColumn(name="PAYMENT_ACCOUNT_ID")
+	@NotNull(message = "{purchaseOrder.paymentAccount.notNull.message}")
+	private Account paymentAccount;
 	
 	/**
 	 * The order date.
@@ -143,6 +152,22 @@ public class PurchaseOrder {
 	 */
 	public void setVendor(BusinessPartner vendor) {
 		this.vendor = vendor;
+	}
+
+
+	/**
+	 * @return the paymentAccount
+	 */
+	public Account getPaymentAccount() {
+		return paymentAccount;
+	}
+
+
+	/**
+	 * @param paymentAccount the paymentAccount to set
+	 */
+	public void setPaymentAccount(Account paymentAccount) {
+		this.paymentAccount = paymentAccount;
 	}
 
 
@@ -252,6 +277,7 @@ public class PurchaseOrder {
 		result = prime * result + ((requestedDeliveryDate == null) ? 0 : requestedDeliveryDate.hashCode());
 		result = prime * result + ((status == null) ? 0 : status.hashCode());
 		result = prime * result + ((vendor == null) ? 0 : vendor.hashCode());
+		result = prime * result + ((paymentAccount == null) ? 0 : paymentAccount.hashCode());
 		return result;
 	}
 
@@ -301,6 +327,13 @@ public class PurchaseOrder {
 				return false;
 			}
 		} else if (!vendor.equals(other.vendor)) {
+			return false;
+		}
+		if (paymentAccount == null) {
+			if (other.paymentAccount != null) {
+				return false;
+			}
+		} else if (!paymentAccount.equals(other.paymentAccount)) {
 			return false;
 		}
 		

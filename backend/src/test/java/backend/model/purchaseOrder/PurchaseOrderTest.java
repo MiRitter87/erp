@@ -2,8 +2,8 @@ package backend.model.purchaseOrder;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
 
 import java.math.BigDecimal;
 
@@ -13,6 +13,7 @@ import org.junit.jupiter.api.Test;
 
 import backend.exception.NoItemsException;
 import backend.model.Currency;
+import backend.model.account.Account;
 import backend.model.businessPartner.BusinessPartner;
 import backend.model.material.Material;
 import backend.model.material.UnitOfMeasurement;
@@ -47,6 +48,11 @@ public class PurchaseOrderTest {
 	 */
 	private Material material;
 	
+	/**
+	 * The account for settlement of payments.
+	 */
+	private Account paymentAccount;
+	
 	
 	@BeforeEach
 	/**
@@ -55,6 +61,7 @@ public class PurchaseOrderTest {
 	private void setUp() {
 		this.initVendor();
 		this.initMaterial();
+		this.initPaymentAccount();
 		this.initPurchaseOrder();
 		this.initPurchaseOrderItem();
 		
@@ -116,6 +123,7 @@ public class PurchaseOrderTest {
 		this.order = new PurchaseOrder();
 		this.order.setId(1);
 		this.order.setVendor(this.vendor);
+		this.order.setPaymentAccount(this.paymentAccount);
 	}
 	
 	
@@ -127,6 +135,18 @@ public class PurchaseOrderTest {
 		this.orderItem.setId(1);
 		this.orderItem.setMaterial(this.material);
 		this.orderItem.setQuantity(Long.valueOf(2));
+	}
+	
+	
+	/**
+	 * Initializes the payment account.
+	 */
+	private void initPaymentAccount() {
+		this.paymentAccount = new Account();
+		this.paymentAccount.setId(1);
+		this.paymentAccount.setDescription("Settlement account for purchase orders.");
+		this.paymentAccount.setBalance(BigDecimal.valueOf(1000));
+		this.paymentAccount.setCurrency(Currency.EUR);
 	}
 	
 	
@@ -198,6 +218,28 @@ public class PurchaseOrderTest {
 		try {
 			this.order.validate();
 			fail("Validation should have failed because no vendor is defined.");
+		} catch (Exception expected) {
+			actualErrorMessage = expected.getMessage();
+		}
+		
+		assertEquals(expectedErrorMessage, actualErrorMessage);
+	}
+	
+	
+	@Test
+	/**
+	 * Tests validation of a purchase order that has no payment account defined.
+	 */
+	public void testNoPaymentAccountDefined() {
+		ValidationMessageProvider messageProvider = new ValidationMessageProvider();	
+		String expectedErrorMessage = messageProvider.getNotNullValidationMessage("purchaseOrder", "paymentAccount");
+		String actualErrorMessage = "";
+		
+		this.order.setPaymentAccount(null);
+		
+		try {
+			this.order.validate();
+			fail("Validation should have failed because no payment account is defined.");
 		} catch (Exception expected) {
 			actualErrorMessage = expected.getMessage();
 		}
