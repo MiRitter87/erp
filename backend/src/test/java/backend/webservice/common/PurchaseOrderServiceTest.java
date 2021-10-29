@@ -1233,10 +1233,40 @@ public class PurchaseOrderServiceTest {
 	}
 	
 	
+	@Test
+	/**
+	 * Tests if the balance of the payment account is decreased by the price of all ordered items
+	 * if the status of the sales order changes to 'invoice settled'.
+	 */
+	public void testAccountBalanceOnInvoiceSettled() {
+		PurchaseOrderService orderService = new PurchaseOrderService();
+		BigDecimal accountBalanceBefore, accountBalanceAfter, expectedAccountBalanceAfter;
+		Account account;
+		
+		try {
+			//Get the account balance before the order is set to 'invoice settled'.
+			account = accountDAO.getAccount(this.paymentAccount.getId());
+			accountBalanceBefore = account.getBalance();
+			
+			//Set the order to 'invoice settled'.
+			this.order2.setStatus(PurchaseOrderStatus.INVOICE_SETTLED, true);
+			orderService.updatePurchaseOrder(this.convertToWsOrder(this.order2));
+			
+			//Check, if the account balance has been decreased by the price of all order items.
+			account = accountDAO.getAccount(this.paymentAccount.getId());
+			accountBalanceAfter = account.getBalance();
+			expectedAccountBalanceAfter = accountBalanceBefore.subtract(this.order2.getPriceTotal());
+			
+			assertTrue(accountBalanceAfter.compareTo(expectedAccountBalanceAfter) == 0);
+		} catch (Exception e) {
+			fail(e.getMessage());
+		}
+	}
+	
+	
 	/*
 	 * TODO Implement new unit tests for payment handling
 	 * 
-	 * testAccountBalanceOnInvoiceSettled
 	 * testAccountBalanceOnInvoiceSettledReverted
 	 * testAccountBalanceOnInvoiceSettledDeleted
 	 * 

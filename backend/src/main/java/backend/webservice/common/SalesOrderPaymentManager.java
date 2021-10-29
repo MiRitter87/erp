@@ -12,7 +12,7 @@ import backend.model.salesOrder.SalesOrderStatus;
 /**
  * Manages the payment handling of the sales order service.
  * 
- * Updating and deleting of sales orders can influence the balance of the payment account.
+ * Updating and deleting of sales orders can influence the balance of the corresponding payment account.
  * This manager creates postings and updates the balance of the payment account on relevant sales order status changes.
  * 
  * @author Michael

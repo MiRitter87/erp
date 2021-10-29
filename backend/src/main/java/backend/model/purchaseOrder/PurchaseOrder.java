@@ -1,5 +1,6 @@
 package backend.model.purchaseOrder;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
@@ -34,6 +35,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import backend.exception.DuplicateIdentifierException;
 import backend.exception.NoItemsException;
+import backend.model.Currency;
 import backend.model.account.Account;
 import backend.model.businessPartner.BusinessPartner;
 
@@ -511,5 +513,37 @@ public class PurchaseOrder {
 		}
 		
 		return null;
+	}
+	
+	
+	/**
+	 * Gets the total price of all items.
+	 * 
+	 * @return
+	 */
+	public BigDecimal getPriceTotal() {
+		BigDecimal priceTotal = BigDecimal.valueOf(0);
+		
+		for(PurchaseOrderItem tempItem:this.items) {
+			priceTotal = priceTotal.add(tempItem.getPriceTotal());
+		}
+		
+		return priceTotal;
+	}
+	
+	
+	/**
+	 * Gets the currency of the price total.
+	 * 
+	 * @return The currency.
+	 */
+	public Currency getPriceTotalCurrency() {
+		Currency currency = Currency.EUR;	//Initialize default currency.
+		
+		for(PurchaseOrderItem tempItem:this.items) {
+			currency =  tempItem.getMaterial().getCurrency();
+		}
+		
+		return currency;
 	}
 }
