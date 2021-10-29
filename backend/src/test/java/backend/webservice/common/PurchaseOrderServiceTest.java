@@ -1233,6 +1233,19 @@ public class PurchaseOrderServiceTest {
 	}
 	
 	
+	/*
+	 * TODO Implement new unit tests for payment handling
+	 * 
+	 * testAccountBalanceOnInvoiceSettled
+	 * testAccountBalanceOnInvoiceSettledReverted
+	 * testAccountBalanceOnInvoiceSettledDeleted
+	 * 
+	 * testPostingOnInvoiceSettled
+	 * testPostingOnInvoiceSettledReverted
+	 * testPostingOnInvoiceSettledDeleted
+	 */
+	
+	
 	/**
 	 * Converts a purchase order to the lean WebService representation.
 	 * 
