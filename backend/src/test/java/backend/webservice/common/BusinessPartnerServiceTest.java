@@ -344,6 +344,7 @@ public class BusinessPartnerServiceTest {
 		
 		this.purchaseOrder = new PurchaseOrder();
 		this.purchaseOrder.setVendor(this.acme);
+		this.purchaseOrder.setPaymentAccount(this.paymentAccount);
 		this.purchaseOrder.setOrderDate(new Date());
 		this.purchaseOrder.setRequestedDeliveryDate(new Date());
 		this.purchaseOrder.addItem(this.purchaseOrderItem);

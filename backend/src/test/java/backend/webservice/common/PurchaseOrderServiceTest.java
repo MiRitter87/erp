@@ -20,12 +20,14 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import backend.dao.AccountDao;
 import backend.dao.BusinessPartnerDao;
 import backend.dao.DAOManager;
 import backend.dao.MaterialDao;
 import backend.dao.PurchaseOrderDao;
 import backend.exception.ObjectUnchangedException;
 import backend.model.Currency;
+import backend.model.account.Account;
 import backend.model.businessPartner.BusinessPartner;
 import backend.model.businessPartner.BusinessPartnerType;
 import backend.model.material.Material;
@@ -68,6 +70,11 @@ public class PurchaseOrderServiceTest {
 	private static BusinessPartnerDao partnerDAO;
 	
 	/**
+	 * DAO to access account data.
+	 */
+	private static AccountDao accountDAO;
+	
+	/**
 	 * The purchase order under test.
 	 */
 	private PurchaseOrder order1;
@@ -107,6 +114,11 @@ public class PurchaseOrderServiceTest {
 	 */
 	private BusinessPartner partner;
 	
+	/**
+	 * The account for payment settlement.
+	 */
+	private Account paymentAccount;
+	
 	
 	@BeforeAll
 	/**
@@ -116,6 +128,7 @@ public class PurchaseOrderServiceTest {
 		materialDAO = DAOManager.getInstance().getMaterialDAO();
 		partnerDAO = DAOManager.getInstance().getBusinessPartnerDAO();
 		orderDAO = DAOManager.getInstance().getPurchaseOrderDAO();
+		accountDAO = DAOManager.getInstance().getAccountDAO();
 	}
 	
 	
@@ -139,6 +152,7 @@ public class PurchaseOrderServiceTest {
 	private void setUp() {
 		this.createDummyMaterials();
 		this.createDummyPartner();
+		this.createDummyAccount();
 		this.createDummyOrders();
 	}
 	
@@ -149,6 +163,7 @@ public class PurchaseOrderServiceTest {
 	 */
 	private void tearDown() {
 		this.deleteDummyOrders();
+		this.deleteDummyAccount();
 		this.deleteDummyPartner();
 		this.deleteDummyMaterials();
 	}
@@ -207,6 +222,23 @@ public class PurchaseOrderServiceTest {
 	
 	
 	/**
+	 * Initializes the database with a dummy account.
+	 */
+	private void createDummyAccount() {
+		this.paymentAccount = new Account();
+		this.paymentAccount.setDescription("Account for purchase order bill payment settlement");
+		this.paymentAccount.setBalance(BigDecimal.valueOf(1000));
+		this.paymentAccount.setCurrency(Currency.EUR);
+		
+		try {
+			accountDAO.insertAccount(this.paymentAccount);
+		} catch (Exception e) {
+			fail(e.getMessage());
+		}
+	}
+	
+	
+	/**
 	 * Initializes the database with dummy purchase orders.
 	 */
 	private void createDummyOrders() {
@@ -220,6 +252,7 @@ public class PurchaseOrderServiceTest {
 		
 		this.order1 = new PurchaseOrder();
 		this.order1.setVendor(this.partner);
+		this.order1.setPaymentAccount(this.paymentAccount);
 		this.order1.setOrderDate(new Date());
 		this.order1.setRequestedDeliveryDate(new Date());
 		this.order1.addItem(this.orderItem1);
@@ -236,6 +269,7 @@ public class PurchaseOrderServiceTest {
 		
 		this.order2 = new PurchaseOrder();
 		this.order2.setVendor(this.partner);
+		this.order2.setPaymentAccount(this.paymentAccount);
 		this.order2.setOrderDate(new Date());
 		this.order2.setRequestedDeliveryDate(tomorrow.getTime());
 		this.order2.addItem(this.orderItem21);
@@ -288,6 +322,18 @@ public class PurchaseOrderServiceTest {
 	}
 	
 	
+	/**
+	 * Deletes the dummy account from the database.
+	 */
+	private void deleteDummyAccount() {
+		try {
+			accountDAO.deleteAccount(this.paymentAccount);
+		} catch (Exception e) {
+			fail(e.getMessage());
+		}
+	}
+	
+	
 	@Test
 	/**
 	 * Tests the retrieval of a purchase order.
@@ -312,6 +358,7 @@ public class PurchaseOrderServiceTest {
 		//Check each attribute of the purchase order
 		assertEquals(purchaseOrder.getId(), this.order2.getId());
 		assertEquals(purchaseOrder.getVendor(), this.order2.getVendor());
+		assertEquals(purchaseOrder.getPaymentAccount(), this.order2.getPaymentAccount());
 		assertEquals(purchaseOrder.getOrderDate().getTime(), this.order2.getOrderDate().getTime());
 		assertEquals(purchaseOrder.getRequestedDeliveryDate().getTime(), this.order2.getRequestedDeliveryDate().getTime());
 		assertEquals(purchaseOrder.getStatus(), this.order2.getStatus());
@@ -357,6 +404,7 @@ public class PurchaseOrderServiceTest {
 		purchaseOrder = purchaseOrders.getPurchaseOrders().get(0);
 		assertEquals(purchaseOrder.getId(), this.order1.getId());
 		assertEquals(purchaseOrder.getVendor(), this.order1.getVendor());
+		assertEquals(purchaseOrder.getPaymentAccount(), this.order1.getPaymentAccount());
 		assertEquals(purchaseOrder.getOrderDate().getTime(), this.order1.getOrderDate().getTime());
 		assertEquals(purchaseOrder.getRequestedDeliveryDate().getTime(), this.order1.getRequestedDeliveryDate().getTime());
 		assertEquals(purchaseOrder.getStatus(), this.order1.getStatus());
@@ -371,6 +419,7 @@ public class PurchaseOrderServiceTest {
 		purchaseOrder = purchaseOrders.getPurchaseOrders().get(1);
 		assertEquals(purchaseOrder.getId(), this.order2.getId());
 		assertEquals(purchaseOrder.getVendor(), this.order2.getVendor());
+		assertEquals(purchaseOrder.getPaymentAccount(), this.order2.getPaymentAccount());
 		assertEquals(purchaseOrder.getOrderDate().getTime(), this.order2.getOrderDate().getTime());
 		assertEquals(purchaseOrder.getRequestedDeliveryDate().getTime(), this.order2.getRequestedDeliveryDate().getTime());
 		assertEquals(purchaseOrder.getStatus(), this.order2.getStatus());
@@ -420,6 +469,7 @@ public class PurchaseOrderServiceTest {
 			purchaseOrder = purchaseOrders.getPurchaseOrders().get(0);
 			assertEquals(purchaseOrder.getId(), this.order1.getId());
 			assertEquals(purchaseOrder.getVendor(), this.order1.getVendor());
+			assertEquals(purchaseOrder.getPaymentAccount(), this.order1.getPaymentAccount());
 			assertEquals(purchaseOrder.getOrderDate().getTime(), this.order1.getOrderDate().getTime());
 			assertEquals(purchaseOrder.getRequestedDeliveryDate().getTime(), this.order1.getRequestedDeliveryDate().getTime());
 			assertEquals(purchaseOrder.getStatus(), this.order1.getStatus());
@@ -692,6 +742,7 @@ public class PurchaseOrderServiceTest {
 		newPurchaseOrderItem.setQuantity(Long.valueOf(1));
 		
 		newPurchaseOrder.setVendor(this.partner);
+		newPurchaseOrder.setPaymentAccount(this.paymentAccount);
 		newPurchaseOrder.addItem(newPurchaseOrderItem);
 		
 		//Add a new sales order to the database via WebService
@@ -718,6 +769,7 @@ public class PurchaseOrderServiceTest {
 			assertEquals(newPurchaseOrder.getOrderDate().getTime(), addedPurchaseOrder.getOrderDate().getTime());
 			assertEquals(newPurchaseOrder.getRequestedDeliveryDate(), addedPurchaseOrder.getRequestedDeliveryDate());
 			assertEquals(newPurchaseOrder.getVendor(), addedPurchaseOrder.getVendor());
+			assertEquals(newPurchaseOrder.getPaymentAccount(), addedPurchaseOrder.getPaymentAccount());
 			assertEquals(newPurchaseOrder.getStatus(), addedPurchaseOrder.getStatus());
 			
 			//Checks at item level.
@@ -1197,6 +1249,9 @@ public class PurchaseOrderServiceTest {
 		
 		if(order.getVendor() != null)
 			wsOrder.setVendorId(order.getVendor().getId());
+		
+		if(order.getPaymentAccount() != null)
+			wsOrder.setPaymentAccountId(order.getPaymentAccount().getId());
 		
 		//Status
 		for(PurchaseOrderStatus status:order.getStatus())

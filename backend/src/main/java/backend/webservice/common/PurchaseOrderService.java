@@ -8,6 +8,7 @@ import java.util.ResourceBundle;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import backend.dao.AccountDao;
 import backend.dao.BusinessPartnerDao;
 import backend.dao.DAOManager;
 import backend.dao.MaterialDao;
@@ -247,6 +248,7 @@ public class PurchaseOrderService {
 	 */
 	private PurchaseOrder convertPurchaseOrderHead(final PurchaseOrderWS purchaseOrderWS) throws Exception {
 		BusinessPartnerDao partnerDAO = DAOManager.getInstance().getBusinessPartnerDAO();
+		AccountDao accountDAO = DAOManager.getInstance().getAccountDAO();
 		PurchaseOrder purchaseOrder = new PurchaseOrder();
 		
 		//Basic object data that are copied as-is.
@@ -258,6 +260,9 @@ public class PurchaseOrderService {
 		//Object references. Only the ID is given and the whole backend object has to be loaded and referenced.
 		if(purchaseOrderWS.getVendorId() != null)
 			purchaseOrder.setVendor(partnerDAO.getBusinessPartner(purchaseOrderWS.getVendorId()));
+		
+		if(purchaseOrderWS.getPaymentAccountId() != null)
+			purchaseOrder.setPaymentAccount(accountDAO.getAccount(purchaseOrderWS.getPaymentAccountId()));
 		
 		return purchaseOrder;
 	}

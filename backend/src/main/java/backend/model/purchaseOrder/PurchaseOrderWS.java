@@ -24,6 +24,11 @@ public class PurchaseOrderWS {
 	private Integer vendorId;
 	
 	/**
+	 * The ID of the payment account.
+	 */
+	private Integer paymentAccountId;
+	
+	/**
 	 * The order date.
 	 */
 	private Date orderDate;
@@ -92,6 +97,22 @@ public class PurchaseOrderWS {
 	 */
 	public void setVendorId(Integer vendorId) {
 		this.vendorId = vendorId;
+	}
+
+
+	/**
+	 * @return the paymentAccountId
+	 */
+	public Integer getPaymentAccountId() {
+		return paymentAccountId;
+	}
+
+
+	/**
+	 * @param paymentAccountId the paymentAccountId to set
+	 */
+	public void setPaymentAccountId(Integer paymentAccountId) {
+		this.paymentAccountId = paymentAccountId;
 	}
 
 

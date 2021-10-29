@@ -327,6 +327,7 @@ public class MaterialServiceTest {
 		
 		this.purchaseOrder = new PurchaseOrder();
 		this.purchaseOrder.setVendor(this.partner);
+		this.purchaseOrder.setPaymentAccount(this.paymentAccount);
 		this.purchaseOrder.setOrderDate(new Date());
 		this.purchaseOrder.setRequestedDeliveryDate(new Date());
 		this.purchaseOrder.addItem(this.purchaseOrderItem);
