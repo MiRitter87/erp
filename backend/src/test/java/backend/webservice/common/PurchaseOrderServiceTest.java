@@ -1236,7 +1236,7 @@ public class PurchaseOrderServiceTest {
 	@Test
 	/**
 	 * Tests if the balance of the payment account is decreased by the price of all ordered items
-	 * if the status of the sales order changes to 'invoice settled'.
+	 * if the status 'invoice settled' of the purchase order changes to 'active'.
 	 */
 	public void testAccountBalanceOnInvoiceSettled() {
 		PurchaseOrderService orderService = new PurchaseOrderService();
@@ -1264,10 +1264,45 @@ public class PurchaseOrderServiceTest {
 	}
 	
 	
+	@Test
+	/**
+	 * Tests if the balance of the payment account is increased by the price of all ordered items
+	 * if the status 'invoice settled' of the purchase order changes to 'inactive'.
+	 */
+	public void testAccountBalanceOnInvoiceSettledReverted() {
+		PurchaseOrderService orderService = new PurchaseOrderService();
+		BigDecimal accountBalanceBefore, accountBalanceAfter, expectedAccountBalanceAfter;
+		Account account;
+		
+		//Set the order to 'invoice settled'.
+		this.order2.setStatus(PurchaseOrderStatus.INVOICE_SETTLED, true);
+		orderService.updatePurchaseOrder(this.convertToWsOrder(this.order2));
+		
+		try {
+			//Get the balance of the payment account.
+			account = accountDAO.getAccount(this.paymentAccount.getId());			
+			accountBalanceBefore = account.getBalance();
+			
+			//Revert the status 'invoice settled'.
+			this.order2.setStatus(PurchaseOrderStatus.INVOICE_SETTLED, false);
+			orderService.updatePurchaseOrder(this.convertToWsOrder(this.order2));
+			
+			//Get the balance of the payment account.
+			account = accountDAO.getAccount(this.paymentAccount.getId());			
+			accountBalanceAfter = account.getBalance();
+			
+			//Check if the account balance has been increased by the total price of all ordered items.
+			expectedAccountBalanceAfter = accountBalanceBefore.add(this.order2.getPriceTotal());
+			assertTrue(accountBalanceAfter.compareTo(expectedAccountBalanceAfter) == 0);
+		} catch (Exception e) {
+			fail(e.getMessage());
+		}
+	}
+	
+	
 	/*
 	 * TODO Implement new unit tests for payment handling
 	 * 
-	 * testAccountBalanceOnInvoiceSettledReverted
 	 * testAccountBalanceOnInvoiceSettledDeleted
 	 * 
 	 * testPostingOnInvoiceSettled

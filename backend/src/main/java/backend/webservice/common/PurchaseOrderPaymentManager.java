@@ -30,6 +30,13 @@ public class PurchaseOrderPaymentManager {
 			this.reduceAccountBalance(purchaseOrder);
 			return;
 		}
+		
+		//If the purchase order status 'invoice settled' changes from inactive to active,
+		//a posting of payment receipt is created and the total price is added to the payment account.
+		if(databasePurchaseOrder.isStatusActive(PurchaseOrderStatus.INVOICE_SETTLED) && !purchaseOrder.isStatusActive(PurchaseOrderStatus.INVOICE_SETTLED)) {
+			this.increaseAccountBalance(purchaseOrder);
+			return;
+		}
 	}
 	
 	
@@ -45,6 +52,22 @@ public class PurchaseOrderPaymentManager {
 		Account paymentAccount = purchaseOrder.getPaymentAccount();
 		
 		paymentAccount.setBalance(purchaseOrder.getPaymentAccount().getBalance().subtract(purchaseOrder.getPriceTotal()));
+		accountDAO.updateAccount(paymentAccount);
+	}
+	
+	
+	/**
+	 * Increases the balance of the referenced payment account by the total price of the purchase order.
+	 * 
+	 * @param purchaseOrder The purchase order.
+	 * @throws Exception Update of the account failed.
+	 * @throws ObjectUnchangedException The account has not been changed.
+	 */
+	private void increaseAccountBalance(PurchaseOrder purchaseOrder) throws ObjectUnchangedException, Exception {
+		AccountDao accountDAO = DAOManager.getInstance().getAccountDAO();
+		Account paymentAccount = purchaseOrder.getPaymentAccount();
+		
+		paymentAccount.setBalance(purchaseOrder.getPaymentAccount().getBalance().add(purchaseOrder.getPriceTotal()));
 		accountDAO.updateAccount(paymentAccount);
 	}
 }
