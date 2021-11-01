@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.ResourceBundle;
+import java.util.Set;
 
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
@@ -28,6 +29,8 @@ import backend.dao.PurchaseOrderDao;
 import backend.exception.ObjectUnchangedException;
 import backend.model.Currency;
 import backend.model.account.Account;
+import backend.model.account.Posting;
+import backend.model.account.PostingType;
 import backend.model.businessPartner.BusinessPartner;
 import backend.model.businessPartner.BusinessPartnerType;
 import backend.model.material.Material;
@@ -1348,6 +1351,40 @@ public class PurchaseOrderServiceTest {
 			catch (Exception e) {
 				fail(e.getMessage());
 			}
+		}
+	}
+	
+	
+	@Test
+	/**
+	 * Tests if an account posting disbursal exists if the status of a purchase order is set to 'invoice settled'.
+	 */
+	public void testPostingOnInvoiceSettled() {
+		PurchaseOrderService orderService = new PurchaseOrderService();
+		Account account;
+		Set<Posting> postings;
+		Posting posting;
+		
+		//Set the order to 'invoice settled'.
+		this.order2.setStatus(PurchaseOrderStatus.INVOICE_SETTLED, true);
+		orderService.updatePurchaseOrder(this.convertToWsOrder(this.order2));
+		
+		try {
+			//Get payment account of purchase order.
+			account = accountDAO.getAccount(this.paymentAccount.getId());
+			
+			//Check if expected posting is referenced in the payment account.
+			postings = account.getPostings();
+			assertEquals(1, postings.size());
+			
+			posting = postings.iterator().next();
+			assertEquals(PostingType.DISBURSAL, posting.getType());
+			assertEquals(this.order2.getVendor(), posting.getCounterparty());
+			assertEquals(PurchaseOrderPaymentManager.getReferenceNumber(this.order2), posting.getReferenceNumber());
+			assertEquals(this.order2.getPriceTotal(), posting.getAmount());
+			assertEquals(this.order2.getPriceTotalCurrency(), posting.getCurrency());
+		} catch (Exception e) {
+			fail(e.getMessage());
 		}
 	}
 	
