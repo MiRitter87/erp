@@ -1300,10 +1300,60 @@ public class PurchaseOrderServiceTest {
 	}
 	
 	
+	@Test
+	/**
+	 * Tests if the balance of the payment account is increased by the price of all ordered items
+	 * if a purchase order is being deleted with active status 'invoice settled'.
+	 */
+	public void testAccountBalanceOnInvoiceSettledDeleted() {
+		PurchaseOrderService orderService = new PurchaseOrderService();
+		BigDecimal accountBalanceBefore, accountBalanceAfter, expectedAccountBalanceAfter;
+		Account account;
+		
+		//Set the order to 'invoice settled'.
+		this.order2.setStatus(PurchaseOrderStatus.INVOICE_SETTLED, true);
+		orderService.updatePurchaseOrder(this.convertToWsOrder(this.order2));
+		
+		try {
+			//Get the balance of the payment account.
+			account = accountDAO.getAccount(this.paymentAccount.getId());
+			accountBalanceBefore = account.getBalance();
+			
+			//Delete the finished purchase order.
+			orderService.deletePurchaseOrder(this.order2.getId());
+			
+			//Get the balance of the payment account.
+			account = accountDAO.getAccount(this.paymentAccount.getId());			
+			accountBalanceAfter = account.getBalance();
+						
+			//Check if the account balance has been increased by the total price of all ordered items.
+			expectedAccountBalanceAfter = accountBalanceBefore.add(this.order2.getPriceTotal());
+			assertTrue(accountBalanceAfter.compareTo(expectedAccountBalanceAfter) == 0);
+		} catch (Exception e) {
+			fail(e.getMessage());
+		}
+		finally {
+			//Restore old database state by adding the purchase order that has been deleted previously.
+			try {
+				this.order2.setId(null);
+				
+				//The items have to be re-initialized in order to prevent exception regarding orphan-removal.
+				//org.hibernate.HibernateException: Don't change the reference to a collection with delete-orphan enabled : backend.model.SalesOrder.items
+				this.order2.setItems(new ArrayList<PurchaseOrderItem>());
+				this.order2.addItem(this.orderItem21);
+				this.order2.addItem(this.orderItem22);
+				
+				orderDAO.insertPurchaseOrder(this.order2);
+			} 
+			catch (Exception e) {
+				fail(e.getMessage());
+			}
+		}
+	}
+	
+	
 	/*
 	 * TODO Implement new unit tests for payment handling
-	 * 
-	 * testAccountBalanceOnInvoiceSettledDeleted
 	 * 
 	 * testPostingOnInvoiceSettled
 	 * testPostingOnInvoiceSettledReverted

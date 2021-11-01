@@ -63,7 +63,7 @@ public class PurchaseOrderPaymentManager {
 	 * @throws Exception Update of the account failed.
 	 * @throws ObjectUnchangedException The account has not been changed.
 	 */
-	private void increaseAccountBalance(PurchaseOrder purchaseOrder) throws ObjectUnchangedException, Exception {
+	public void increaseAccountBalance(PurchaseOrder purchaseOrder) throws ObjectUnchangedException, Exception {
 		AccountDao accountDAO = DAOManager.getInstance().getAccountDAO();
 		Account paymentAccount = purchaseOrder.getPaymentAccount();
 		

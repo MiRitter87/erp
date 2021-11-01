@@ -176,7 +176,12 @@ public class PurchaseOrderService {
 			if(purchaseOrder != null) {
 				//Delete purchase order if exists.
 				this.purchaseOrderDAO.deletePurchaseOrder(purchaseOrder);
+				
 				this.inventoryManager.updateMaterialInventoryOnOrderDeletion(purchaseOrder);
+				
+				if(purchaseOrder.isStatusActive(PurchaseOrderStatus.INVOICE_SETTLED))
+					this.paymentManager.increaseAccountBalance(purchaseOrder);
+				
 				deletePurchaseOrderResult.addMessage(new WebServiceMessage(WebServiceMessageType.S, 
 						MessageFormat.format(this.resources.getString("purchaseOrder.deleteSuccess"), id)));
 			}
