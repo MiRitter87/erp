@@ -1342,7 +1342,7 @@ public class PurchaseOrderServiceTest {
 				this.order2.setId(null);
 				
 				//The items have to be re-initialized in order to prevent exception regarding orphan-removal.
-				//org.hibernate.HibernateException: Don't change the reference to a collection with delete-orphan enabled : backend.model.SalesOrder.items
+				//org.hibernate.HibernateException: Don't change the reference to a collection with delete-orphan enabled : backend.model.PurchaseOrder.items
 				this.order2.setItems(new ArrayList<PurchaseOrderItem>());
 				this.order2.addItem(this.orderItem21);
 				this.order2.addItem(this.orderItem22);
@@ -1436,11 +1436,66 @@ public class PurchaseOrderServiceTest {
 	}
 	
 	
-	/*
-	 * TODO Implement new unit tests for payment handling
-	 * 
-	 * testPostingOnInvoiceSettledDeleted
+	@Test
+	/**
+	 * Tests if an account posting receipt exists if a purchase order is deleted that is in status 'invoice settled'.
 	 */
+	public void testPostingOnInvoiceSettledDeleted() {
+		PurchaseOrderService orderService = new PurchaseOrderService();
+		Account account;
+		Set<Posting> postings;
+		Posting posting;
+		Iterator<Posting> postingIterator;
+		
+		//Set the order to 'invoice settled'.
+		this.order2.setStatus(PurchaseOrderStatus.INVOICE_SETTLED, true);
+		orderService.updatePurchaseOrder(this.convertToWsOrder(this.order2));
+		
+		try {
+			//Delete the finished purchase order.
+			orderService.deletePurchaseOrder(this.order2.getId());
+			
+			//Get payment account of sales order.
+			account = accountDAO.getAccount(this.paymentAccount.getId());
+			
+			//There should be two postings. One DISBURSAL for status 'invoice settled' of purchase order and one RECEIPT for purchase order deletion.
+			postings = account.getPostings();
+			assertEquals(2, postings.size());
+			
+			postingIterator = postings.iterator();
+			while(postingIterator.hasNext()) {
+				posting = postingIterator.next();
+				
+				if(posting.getType() == PostingType.DISBURSAL)
+					continue;
+								
+				assertEquals(PostingType.RECEIPT, posting.getType());
+				assertEquals(this.order2.getVendor(), posting.getCounterparty());
+				assertEquals(PurchaseOrderPaymentManager.getReferenceNumber(this.order2), posting.getReferenceNumber());
+				assertEquals(this.order2.getPriceTotal(), posting.getAmount());
+				assertEquals(this.order2.getPriceTotalCurrency(), posting.getCurrency());
+			}
+		} catch (Exception e) {
+			fail(e.getMessage());
+		}
+		finally {
+			//Restore old database state by adding the purchase order that has been deleted previously.
+			try {
+				this.order2.setId(null);
+				
+				//The items have to be re-initialized in order to prevent exception regarding orphan-removal.
+				//org.hibernate.HibernateException: Don't change the reference to a collection with delete-orphan enabled : backend.model.PurchaseOrder.items
+				this.order2.setItems(new ArrayList<PurchaseOrderItem>());
+				this.order2.addItem(this.orderItem21);
+				this.order2.addItem(this.orderItem22);
+				
+				orderDAO.insertPurchaseOrder(this.order2);
+			} 
+			catch (Exception e) {
+				fail(e.getMessage());
+			}
+		}
+	}
 	
 	
 	/**
