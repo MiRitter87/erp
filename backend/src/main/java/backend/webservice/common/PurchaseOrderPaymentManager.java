@@ -93,6 +93,7 @@ public class PurchaseOrderPaymentManager {
 		Account paymentAccount = purchaseOrder.getPaymentAccount();
 		
 		paymentAccount.setBalance(purchaseOrder.getPaymentAccount().getBalance().add(purchaseOrder.getPriceTotal()));
+		paymentAccount.getPostings().add(this.getPosting(purchaseOrder, PostingType.RECEIPT));
 		accountDAO.updateAccount(paymentAccount);
 	}
 	

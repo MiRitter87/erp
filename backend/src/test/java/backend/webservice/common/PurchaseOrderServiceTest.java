@@ -12,6 +12,7 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.Iterator;
 import java.util.ResourceBundle;
 import java.util.Set;
 
@@ -1389,11 +1390,55 @@ public class PurchaseOrderServiceTest {
 	}
 	
 	
+	@Test
+	/**
+	 * Tests if an account posting receipt exists if the 'invoice settled' status of the purchase order changes from 'active' to 'inactive'.
+	 */
+	public void testPostingOnInvoiceSettledReverted() {
+		PurchaseOrderService orderService = new PurchaseOrderService();
+		Account account;
+		Set<Posting> postings;
+		Posting posting;
+		Iterator<Posting> postingIterator;
+		
+		//Set the order to 'invoice settled'.
+		this.order2.setStatus(PurchaseOrderStatus.INVOICE_SETTLED, true);
+		orderService.updatePurchaseOrder(this.convertToWsOrder(this.order2));
+		
+		//Revert status 'invoice settled'.
+		this.order2.setStatus(PurchaseOrderStatus.INVOICE_SETTLED, false);
+		orderService.updatePurchaseOrder(this.convertToWsOrder(this.order2));
+		
+		try {
+			//Get payment account of purchase order.
+			account = accountDAO.getAccount(this.paymentAccount.getId());
+			
+			//There should be two postings. One DISBURSAL for settled invoice of purchase order and one receipt for the reversion of 'invoice settled'.
+			postings = account.getPostings();
+			assertEquals(2, postings.size());
+			
+			postingIterator = postings.iterator();
+			while(postingIterator.hasNext()) {
+				posting = postingIterator.next();
+				
+				if(posting.getType() == PostingType.DISBURSAL)
+					continue;
+								
+				assertEquals(PostingType.RECEIPT, posting.getType());
+				assertEquals(this.order2.getVendor(), posting.getCounterparty());
+				assertEquals(PurchaseOrderPaymentManager.getReferenceNumber(this.order2), posting.getReferenceNumber());
+				assertEquals(this.order2.getPriceTotal(), posting.getAmount());
+				assertEquals(this.order2.getPriceTotalCurrency(), posting.getCurrency());
+			}
+		} catch (Exception e) {
+			fail(e.getMessage());
+		}
+	}
+	
+	
 	/*
 	 * TODO Implement new unit tests for payment handling
 	 * 
-	 * testPostingOnInvoiceSettled
-	 * testPostingOnInvoiceSettledReverted
 	 * testPostingOnInvoiceSettledDeleted
 	 */
 	
