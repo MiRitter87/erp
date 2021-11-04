@@ -2,6 +2,18 @@ package backend.model.billOfMaterial;
 
 import java.util.List;
 
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
+
 import backend.model.material.Material;
 
 /**
@@ -9,30 +21,41 @@ import backend.model.material.Material;
  * 
  * @author Michael
  */
+@Table(name="BILL_OF_MATERIAL")
+@Entity
+@SequenceGenerator(name = "billOfMaterialSequence", initialValue = 1, allocationSize = 1)
 public class BillOfMaterial {
 	/**
 	 * The distinct identification number.
 	 */
+	@Id
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "billOfMaterialSequence")
+	@Column(name="BILL_OF_MATERIAL_ID")
 	private Integer id;
 	
 	/**
 	 * The name.
 	 */
+	@Column(name="NAME", length = 50)
 	private String name;
 	
 	/**
 	 * The description.
 	 */
+	@Column(name="DESCRIPTION", length = 250)
 	private String description;
 	
 	/**
 	 * The material whose parts are listed.
 	 */
+	@OneToOne
+	@JoinColumn(name="MATERIAL_ID")
 	private Material material;
 	
 	/**
 	 * The items needed to create a material.
 	 */
+	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "billOfMaterial")
 	private List<BillOfMaterialItem> items;
 	
 	

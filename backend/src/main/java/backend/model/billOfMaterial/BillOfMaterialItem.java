@@ -1,5 +1,17 @@
 package backend.model.billOfMaterial;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.Id;
+import javax.persistence.IdClass;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import backend.model.material.Material;
 
 /**
@@ -7,20 +19,37 @@ import backend.model.material.Material;
  * 
  * @author Michael
  */
+@Table(name="BILL_OF_MATERIAL_ITEM")
+@Entity
+@IdClass(BillOfMaterialItemId.class)
 public class BillOfMaterialItem {
 	/**
 	 * The distinct identification number.
 	 */
+	@Id
+	@Column(name="ITEM_ID")
 	private Integer id;
+	
+	/**
+	 * The BillOfMaterial to which the item belongs to.
+	 */
+	@Id
+	@JoinColumn(name = "BILL_OF_MATERIAL_ID")
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JsonIgnore
+	private BillOfMaterial billOfMaterial;
 	
 	/**
 	 * The material needed.
 	 */
+	@OneToOne
+	@JoinColumn(name="MATERIAL_ID")
 	private Material material;
 	
 	/**
 	 * The quantity of the material.
 	 */
+	@Column(name="QUANTITY")
 	private Integer quantity;
 	
 	
@@ -77,5 +106,21 @@ public class BillOfMaterialItem {
 	 */
 	public void setQuantity(Integer quantity) {
 		this.quantity = quantity;
+	}
+
+
+	/**
+	 * @return the billOfMaterial
+	 */
+	public BillOfMaterial getBillOfMaterial() {
+		return billOfMaterial;
+	}
+
+
+	/**
+	 * @param billOfMaterial the billOfMaterial to set
+	 */
+	public void setBillOfMaterial(BillOfMaterial billOfMaterial) {
+		this.billOfMaterial = billOfMaterial;
 	}
 }

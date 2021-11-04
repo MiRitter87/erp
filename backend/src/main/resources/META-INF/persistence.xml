@@ -18,6 +18,8 @@
         <class>backend.model.purchaseOrder.PurchaseOrderItem</class>
         <class>backend.model.account.Account</class>
         <class>backend.model.account.Posting</class>
+        <class>backend.model.billOfMaterial.BillOfMaterial</class>
+        <class>backend.model.billOfMaterial.BillOfMaterialItem</class>
         
         <!-- Several configuration properties -->
         <properties>
