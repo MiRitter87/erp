@@ -2,6 +2,7 @@ package backend.model.billOfMaterial;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -14,7 +15,15 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.validation.ConstraintViolation;
+import javax.validation.Validation;
+import javax.validation.Validator;
+import javax.validation.ValidatorFactory;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
+import backend.exception.NoItemsException;
 import backend.model.material.Material;
 
 /**
@@ -32,18 +41,22 @@ public class BillOfMaterial {
 	@Id
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "billOfMaterialSequence")
 	@Column(name="BILL_OF_MATERIAL_ID")
+	@Min(value = 1, message = "{billOfMaterial.id.min.message}")
 	private Integer id;
 	
 	/**
 	 * The name.
 	 */
 	@Column(name="NAME", length = 50)
+	@Size(min = 1, max = 50, message = "{billOfMaterial.name.size.message}")
+	@NotNull(message = "{billOfMaterial.name.notNull.message}")
 	private String name;
 	
 	/**
 	 * The description.
 	 */
 	@Column(name="DESCRIPTION", length = 250)
+	@Size(min = 0, max = 250, message = "{billOfMaterial.description.size.message}")
 	private String description;
 	
 	/**
@@ -51,6 +64,7 @@ public class BillOfMaterial {
 	 */
 	@OneToOne
 	@JoinColumn(name="MATERIAL_ID")
+	@NotNull(message = "{billOfMaterial.material.notNull.message}")
 	private Material material;
 	
 	/**
@@ -156,5 +170,53 @@ public class BillOfMaterial {
 	 */
 	public void setItems(List<BillOfMaterialItem> items) {
 		this.items = items;
+	}
+	
+	
+	/**
+	 * Validates the purchase order.
+	 * 
+	 * @throws Exception In case a general validation error occurred.
+	 */
+	public void validate() throws Exception {
+		this.validateAnnotations();
+		this.validateAdditionalCharacteristics();
+	}
+	
+	
+	/**
+	 * Validates the BillOfMaterial according to the annotations of the Validation Framework.
+	 * 
+	 * @exception Exception In case the validation failed.
+	 */
+	private void validateAnnotations() throws Exception {
+		ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
+		Validator validator = factory.getValidator();
+		Set<ConstraintViolation<BillOfMaterial>> violations = validator.validate(this);
+		
+		for(ConstraintViolation<BillOfMaterial> violation:violations) {
+			throw new Exception(violation.getMessage());
+		}
+	}
+	
+	
+	/**
+	 * Validates additional characteristics of the BillOfMaterial besides annotations.
+	 * 
+	 * @throws NoItemsException Indicates that the BillOfMaterial has no items defined.
+	 */
+	private void validateAdditionalCharacteristics() throws NoItemsException {
+		this.validateItemsDefined();
+	}
+	
+	
+	/**
+	 * Checks if items are defined.
+	 * 
+	 * @throws NoItemsException If no items are defined
+	 */
+	private void validateItemsDefined() throws NoItemsException {
+		if(this.items == null || this.items.size() == 0)
+			throw new NoItemsException();
 	}
 }

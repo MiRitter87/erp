@@ -443,7 +443,7 @@ public class PurchaseOrder {
 	
 	
 	/**
-	 * Validates the sales order according to the annotations of the Validation Framework.
+	 * Validates the purchase order according to the annotations of the Validation Framework.
 	 * 
 	 * @exception Exception In case the validation failed.
 	 */
