@@ -1,5 +1,6 @@
 package backend.model.billOfMaterial;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.CascadeType;
@@ -63,9 +64,20 @@ public class BillOfMaterial {
 	 * Default constructor.
 	 */
 	public BillOfMaterial() {
-		
+		this.items = new ArrayList<BillOfMaterialItem>();
 	}
 
+	
+	/**
+	 * Adds a BillOfMaterialItem to the BillOfMaterial.
+	 * 
+	 * @param item The BillOfMaterialItem.
+	 */
+	public void addItem(final BillOfMaterialItem item) {
+		item.setBillOfMaterial(this);
+		this.items.add(item);
+	}
+		
 
 	/**
 	 * @return the id
