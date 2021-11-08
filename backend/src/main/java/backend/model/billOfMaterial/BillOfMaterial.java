@@ -1,6 +1,7 @@
 package backend.model.billOfMaterial;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -23,6 +24,7 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import backend.exception.DuplicateIdentifierException;
 import backend.exception.NoItemsException;
 import backend.model.material.Material;
 
@@ -174,13 +176,18 @@ public class BillOfMaterial {
 	
 	
 	/**
-	 * Validates the purchase order.
+	 * Validates the BillOfMaterial.
 	 * 
+	 * @throws NoItemsException Indicates that the BillOfMaterial has no items defined.
+	 * @throws DuplicateIdentifierException Indicates that multiple items share the same id.
 	 * @throws Exception In case a general validation error occurred.
 	 */
-	public void validate() throws Exception {
+	public void validate() throws NoItemsException, DuplicateIdentifierException, Exception {
 		this.validateAnnotations();
 		this.validateAdditionalCharacteristics();
+		
+		for(BillOfMaterialItem item:this.items)
+			item.validate();
 	}
 	
 	
@@ -204,9 +211,11 @@ public class BillOfMaterial {
 	 * Validates additional characteristics of the BillOfMaterial besides annotations.
 	 * 
 	 * @throws NoItemsException Indicates that the BillOfMaterial has no items defined.
+	 * @throws DuplicateIdentifierException Indicates that multiple items share the same id.
 	 */
-	private void validateAdditionalCharacteristics() throws NoItemsException {
+	private void validateAdditionalCharacteristics() throws NoItemsException, DuplicateIdentifierException {
 		this.validateItemsDefined();
+		this.validateDistinctItemIds();
 	}
 	
 	
@@ -218,5 +227,24 @@ public class BillOfMaterial {
 	private void validateItemsDefined() throws NoItemsException {
 		if(this.items == null || this.items.size() == 0)
 			throw new NoItemsException();
+	}
+	
+	
+	/**
+	 * Checks if any item ID is used multiple times.
+	 * 
+	 * @throws DuplicateIdentifierException Indicates that an item ID is used multiple times.
+	 */
+	private void validateDistinctItemIds() throws DuplicateIdentifierException {
+		Set<Integer> usedIds = new HashSet<Integer>();
+		boolean isDistinctId;
+		
+		for(BillOfMaterialItem item:this.items) {
+			isDistinctId = usedIds.add(item.getId());
+			
+			if(!isDistinctId) {
+				throw new DuplicateIdentifierException(item.getId().toString());
+			}
+		}
 	}
 }

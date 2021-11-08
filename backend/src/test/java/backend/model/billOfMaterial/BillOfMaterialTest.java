@@ -9,6 +9,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import backend.exception.DuplicateIdentifierException;
 import backend.exception.NoItemsException;
 import backend.model.Currency;
 import backend.model.material.Material;
@@ -304,5 +305,46 @@ public class BillOfMaterialTest {
 		}
 		
 		assertEquals(expectedErrorMessage, actualErrorMessage);
+	}
+	
+	
+	@Test
+	/**
+	 * Tests validation of a BillOfMaterial having multiple items with the same ID.
+	 */
+	public void testDuplicateItemIds() {
+		BillOfMaterialItem secondItem;
+		
+		secondItem = new BillOfMaterialItem();
+		secondItem.setId(1);
+		secondItem.setMaterial(this.childMaterial);
+		secondItem.setQuantity(2000);
+		
+		this.billOfMaterial.addItem(secondItem);
+		
+		try {
+			this.billOfMaterial.validate();
+			fail("Validation should have failed because the BillOfMaterial has multiple items with the same ID defined.");
+		} catch (DuplicateIdentifierException expected) {
+			//All is well.
+		} catch (Exception e) {
+			fail("No general exception should have occurred. Just the DuplicateIdentifierException.");
+		}
+	}
+	
+	
+	@Test
+	/**
+	 * Tests validation of a BillOfMaterial having an invalid item defined.
+	 */
+	public void testItemInvalid() {
+		this.billOfMaterialItem.setId(0);
+		
+		try {
+			this.billOfMaterial.validate();
+			fail("Validation should have failed because the item ID is invalid.");
+		} catch (Exception e) {
+			//All is well.
+		}
 	}
 }
