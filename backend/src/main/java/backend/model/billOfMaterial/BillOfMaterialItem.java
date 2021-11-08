@@ -1,5 +1,7 @@
 package backend.model.billOfMaterial;
 
+import java.util.Set;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -9,6 +11,12 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import javax.validation.ConstraintViolation;
+import javax.validation.Validation;
+import javax.validation.Validator;
+import javax.validation.ValidatorFactory;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -28,6 +36,8 @@ public class BillOfMaterialItem {
 	 */
 	@Id
 	@Column(name="ITEM_ID")
+	@NotNull(message = "{billOfMaterialItem.id.notNull.message}")
+	@Min(value = 1, message = "{billOfMaterialItem.id.min.message}")
 	private Integer id;
 	
 	/**
@@ -44,12 +54,15 @@ public class BillOfMaterialItem {
 	 */
 	@OneToOne
 	@JoinColumn(name="MATERIAL_ID")
+	@NotNull(message = "{billOfMaterialItem.material.notNull.message}")
 	private Material material;
 	
 	/**
 	 * The quantity of the material.
 	 */
 	@Column(name="QUANTITY")
+	@NotNull(message = "{billOfMaterialItem.quantity.notNull.message}")
+	@Min(value = 1, message = "{billOfMaterialItem.quantity.min.message}")
 	private Integer quantity;
 	
 	
@@ -122,5 +135,31 @@ public class BillOfMaterialItem {
 	 */
 	public void setBillOfMaterial(BillOfMaterial billOfMaterial) {
 		this.billOfMaterial = billOfMaterial;
+	}
+	
+	
+	/**
+	 * Validates the BillOfMaterialItem.
+	 * 
+	 * @throws Exception In case a general validation error occurred.
+	 */
+	public void validate() throws Exception {
+		this.validateAnnotations();
+	}
+	
+	
+	/**
+	 * Validates the BillOfMaterialItem according to the annotations of the Validation Framework.
+	 * 
+	 * @exception Exception In case the validation failed.
+	 */
+	private void validateAnnotations() throws Exception {
+		ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
+		Validator validator = factory.getValidator();
+		Set<ConstraintViolation<BillOfMaterialItem>> violations = validator.validate(this);
+		
+		for(ConstraintViolation<BillOfMaterialItem> violation:violations) {
+			throw new Exception(violation.getMessage());
+		}
 	}
 }
