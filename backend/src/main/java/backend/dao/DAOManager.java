@@ -72,6 +72,11 @@ public class DAOManager implements Closeable {
 	 */
 	private NativeSqlDao nativeSqlDao;
 	
+	/**
+	 * DAO to manage BillOfMaterial data.
+	 */
+	private BillOfMaterialDao billOfMaterialDao;
+	
 	
 	/**
 	 * Initializes the DAOManager.
@@ -232,6 +237,19 @@ public class DAOManager implements Closeable {
 			this.nativeSqlDao = new NativeSqlHibernateDao(this.sessionFactory);
 		
 		return this.nativeSqlDao;
+	}
+	
+	
+	/**
+	 * Returns a DAO to manage BillOfMaterial data.
+	 * 
+	 * @return The BillOfMaterialDao.
+	 */
+	public BillOfMaterialDao getBillOfMaterialDAO() {
+		if(this.billOfMaterialDao == null)
+			this.billOfMaterialDao = new BillOfMaterialHibernateDao(this.sessionFactory);
+		
+		return this.billOfMaterialDao;
 	}
 
 	
