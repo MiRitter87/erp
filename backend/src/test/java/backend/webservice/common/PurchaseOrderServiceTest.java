@@ -174,7 +174,7 @@ public class PurchaseOrderServiceTest {
 	
 	
 	/**
-	 * Initializes the database with a dummy material.
+	 * Initializes the database with dummy materials.
 	 */
 	private void createDummyMaterials() {
 		this.rx570 = new Material();
