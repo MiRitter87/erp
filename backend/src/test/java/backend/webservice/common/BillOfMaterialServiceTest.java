@@ -129,7 +129,8 @@ public class BillOfMaterialServiceTest {
 	 * Tasks to be performed after each test has been run.
 	 */
 	private void tearDown() {
-		
+		this.deleteDummyBoms();
+		this.deleteDummyMaterials();
 	}
 	
 	
@@ -230,6 +231,35 @@ public class BillOfMaterialServiceTest {
 		try {
 			billOfMaterialDAO.insertBillOfMaterial(this.bom30mmScrewBox);
 			billOfMaterialDAO.insertBillOfMaterial(this.bom50mmScrewBox);
+		} catch (Exception e) {
+			fail(e.getMessage());
+		}
+	}
+	
+	
+	/**
+	 * Deletes the dummy materials from the database.
+	 */
+	private void deleteDummyMaterials() {
+		try {
+			materialDAO.deleteMaterial(this.boxedScrews50mm);
+			materialDAO.deleteMaterial(this.boxedScrews30mm);
+			materialDAO.deleteMaterial(this.box);
+			materialDAO.deleteMaterial(this.screw50mm);
+			materialDAO.deleteMaterial(this.screw30mm);
+		} catch (Exception e) {
+			fail(e.getMessage());
+		}
+	}
+	
+	
+	/**
+	 * Deletes the dummy BillOfMaterials from the database.
+	 */
+	private void deleteDummyBoms() {
+		try {
+			billOfMaterialDAO.deleteBillOfMaterial(this.bom50mmScrewBox);
+			billOfMaterialDAO.deleteBillOfMaterial(this.bom30mmScrewBox);
 		} catch (Exception e) {
 			fail(e.getMessage());
 		}
