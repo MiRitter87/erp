@@ -1,5 +1,7 @@
 package backend.webservice.common;
 
+import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.IOException;
@@ -9,6 +11,7 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import backend.dao.BillOfMaterialDao;
 import backend.dao.DAOManager;
@@ -18,6 +21,8 @@ import backend.model.billOfMaterial.BillOfMaterial;
 import backend.model.billOfMaterial.BillOfMaterialItem;
 import backend.model.material.Material;
 import backend.model.material.UnitOfMeasurement;
+import backend.model.webservice.WebServiceResult;
+import backend.tools.WebServiceTools;
 
 /**
  * Tests the BillOfMaterial service.
@@ -166,7 +171,7 @@ public class BillOfMaterialServiceTest {
 		this.boxedScrews30mm.setName("A package of screws. 100 pieces - 30mm length.");
 		this.boxedScrews30mm.setDescription("4mm thread. For wood");
 		this.boxedScrews30mm.setUnit(UnitOfMeasurement.ST);
-		this.boxedScrews30mm.setPricePerUnit(BigDecimal.valueOf(0,99));
+		this.boxedScrews30mm.setPricePerUnit(BigDecimal.valueOf(0.99));
 		this.boxedScrews30mm.setCurrency(Currency.EUR);
 		this.boxedScrews30mm.setInventory(Long.valueOf(100));
 		
@@ -174,7 +179,7 @@ public class BillOfMaterialServiceTest {
 		this.boxedScrews50mm.setName("A package of screws. 100 pieces - 50mm length.");
 		this.boxedScrews50mm.setDescription("4mm thread. For wood");
 		this.boxedScrews50mm.setUnit(UnitOfMeasurement.ST);
-		this.boxedScrews50mm.setPricePerUnit(BigDecimal.valueOf(0,99));
+		this.boxedScrews50mm.setPricePerUnit(BigDecimal.valueOf(0.99));
 		this.boxedScrews50mm.setCurrency(Currency.EUR);
 		this.boxedScrews50mm.setInventory(Long.valueOf(100));
 		
@@ -205,7 +210,7 @@ public class BillOfMaterialServiceTest {
 		this.bomItem30mmScrews.setQuantity(100);
 		
 		this.bom30mmScrewBox = new BillOfMaterial();
-		this.bom30mmScrewBox.setName("Bill of material - A box of 100 screws. 30mm length.");
+		this.bom30mmScrewBox.setName("BOM - A box of 100 screws. 30mm length.");
 		this.bom30mmScrewBox.setDescription("4mm thread. For wood");
 		this.bom30mmScrewBox.setMaterial(this.boxedScrews30mm);
 		this.bom30mmScrewBox.addItem(this.bomItem30mmBox);
@@ -222,7 +227,7 @@ public class BillOfMaterialServiceTest {
 		this.bomItem50mmScrews.setQuantity(100);
 		
 		this.bom50mmScrewBox = new BillOfMaterial();
-		this.bom50mmScrewBox.setName("Bill of material - A box of 100 screws. 50mm length.");
+		this.bom50mmScrewBox.setName("BOM - A box of 100 screws. 50mm length.");
 		this.bom50mmScrewBox.setDescription("4mm thread. For wood");
 		this.bom50mmScrewBox.setMaterial(this.boxedScrews50mm);
 		this.bom50mmScrewBox.addItem(this.bomItem50mmBox);
@@ -263,5 +268,48 @@ public class BillOfMaterialServiceTest {
 		} catch (Exception e) {
 			fail(e.getMessage());
 		}
+	}
+	
+	
+	@Test
+	/**
+	 * Tests the retrieval of a BillOfMaterial.
+	 */
+	public void testGetBillOfMaterial() {
+		WebServiceResult getBillOfMaterialResult;
+		BillOfMaterial billOfMaterial;
+		BillOfMaterialItem billOfMaterialItem;
+		
+		//Get the BillOfMaterial.
+		BillOfMaterialService service = new BillOfMaterialService();
+		getBillOfMaterialResult = service.getBillOfMaterial(this.bom30mmScrewBox.getId());
+		
+		//Assure no error message exists
+		assertTrue(WebServiceTools.resultContainsErrorMessage(getBillOfMaterialResult) == false);
+		
+		//Assure that a BillOfMaterial is returned
+		assertTrue(getBillOfMaterialResult.getData() instanceof BillOfMaterial);
+		
+		billOfMaterial = (BillOfMaterial) getBillOfMaterialResult.getData();
+		
+		//Check each attribute of the BillOfMaterial
+		assertEquals(this.bom30mmScrewBox.getId(), billOfMaterial.getId());
+		assertEquals(this.bom30mmScrewBox.getName(), billOfMaterial.getName());
+		assertEquals(this.bom30mmScrewBox.getDescription(), billOfMaterial.getDescription());
+		assertEquals(this.bom30mmScrewBox.getMaterial(), billOfMaterial.getMaterial());
+		
+		//The returned BillOfMaterial should have two items.
+		assertEquals(this.bom30mmScrewBox.getItems().size(), billOfMaterial.getItems().size());
+		
+		//Check the attributes of the purchase order items
+		billOfMaterialItem = billOfMaterial.getItems().get(0);
+		assertEquals(this.bomItem30mmBox.getId(), billOfMaterialItem.getId());
+		assertEquals(this.bomItem30mmBox.getMaterial(), billOfMaterialItem.getMaterial());
+		assertEquals(this.bomItem30mmBox.getQuantity(), billOfMaterialItem.getQuantity());
+	
+		billOfMaterialItem = billOfMaterial.getItems().get(1);
+		assertEquals(this.bomItem30mmScrews.getId(), billOfMaterialItem.getId());
+		assertEquals(this.bomItem30mmScrews.getMaterial(), billOfMaterialItem.getMaterial());
+		assertEquals(this.bomItem30mmScrews.getQuantity(), billOfMaterialItem.getQuantity());
 	}
 }
