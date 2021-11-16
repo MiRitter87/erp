@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
@@ -22,6 +23,7 @@ import backend.model.billOfMaterial.BillOfMaterialArray;
 import backend.model.billOfMaterial.BillOfMaterialItem;
 import backend.model.material.Material;
 import backend.model.material.UnitOfMeasurement;
+import backend.model.webservice.WebServiceMessageType;
 import backend.model.webservice.WebServiceResult;
 import backend.tools.WebServiceTools;
 
@@ -372,5 +374,54 @@ public class BillOfMaterialServiceTest {
 		assertEquals(this.bomItem50mmScrews.getId(), billOfMaterialItem.getId());
 		assertEquals(this.bomItem50mmScrews.getMaterial(), billOfMaterialItem.getMaterial());
 		assertEquals(this.bomItem50mmScrews.getQuantity(), billOfMaterialItem.getQuantity());
+	}
+	
+	
+	@Test
+	/**
+	 * Tests deletion of a BillOfMaterial.
+	 */
+	public void testDeleteBillOfMaterial() {
+		WebServiceResult deleteBillOfMaterialResult;
+		BillOfMaterial deletedBillOfMaterial;
+		
+		try {
+			//Delete BillOfMaterial "bom30mmScrewBox" using the service.
+			BillOfMaterialService service = new BillOfMaterialService();
+			deleteBillOfMaterialResult = service.deleteBillOfMaterial(this.bom30mmScrewBox.getId());
+			
+			//There should be no error messages
+			assertTrue(WebServiceTools.resultContainsErrorMessage(deleteBillOfMaterialResult) == false);
+			
+			//There should be a success message
+			assertTrue(deleteBillOfMaterialResult.getMessages().size() == 1);
+			assertTrue(deleteBillOfMaterialResult.getMessages().get(0).getType() == WebServiceMessageType.S);
+			
+			//Check if BillOfMaterial "bom30mmScrewBox" is missing using the DAO.
+			deletedBillOfMaterial = billOfMaterialDAO.getBillOfMaterial(this.bom30mmScrewBox.getId());
+			
+			if(deletedBillOfMaterial != null)
+				fail("BillOfMaterial 'bom30mmScrewBox' is still persisted but should have been deleted by the WebService operation 'deleteBillOfMaterial'.");
+		}
+		catch(Exception e) {
+			fail(e.getMessage());
+		}
+		finally {
+			//Restore old database state by adding the BillOfMaterial that has been deleted previously.
+			try {
+				this.bom30mmScrewBox.setId(null);
+				
+				//The items have to be re-initialized in order to prevent exception regarding orphan-removal.
+				//org.hibernate.HibernateException: Don't change the reference to a collection with delete-orphan enabled : backend.model.BillOfMaterial.items
+				this.bom30mmScrewBox.setItems(new ArrayList<BillOfMaterialItem>());
+				this.bom30mmScrewBox.addItem(this.bomItem30mmBox);
+				this.bom30mmScrewBox.addItem(this.bomItem30mmScrews);
+				
+				billOfMaterialDAO.insertBillOfMaterial(this.bom30mmScrewBox);
+			} 
+			catch (Exception e) {
+				fail(e.getMessage());
+			}
+		}
 	}
 }

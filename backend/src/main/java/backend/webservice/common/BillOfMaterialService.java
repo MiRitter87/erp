@@ -99,4 +99,41 @@ public class BillOfMaterialService {
 		
 		return getBillOfMaterialsResult;
 	}
+	
+	
+	/**
+	 * Deletes the BillOfMaterial with the given id.
+	 * 
+	 * @param id The id of the BillOfMaterial to be deleted.
+	 * @return The result of the delete function.
+	 */
+	public WebServiceResult deleteBillOfMaterial(final Integer id) {
+		BillOfMaterial billOfMaterial = null;
+		WebServiceResult deleteBillOfMaterialResult = new WebServiceResult(null);
+		
+		//Check if a BillOfMaterial with the given ID exists.
+		try {
+			billOfMaterial = this.billOfMaterialDao.getBillOfMaterial(id);
+			
+			if(billOfMaterial != null) {
+				//Delete BillOfMaterial if exists.
+				this.billOfMaterialDao.deleteBillOfMaterial(billOfMaterial);
+				deleteBillOfMaterialResult.addMessage(new WebServiceMessage(WebServiceMessageType.S, 
+						MessageFormat.format(this.resources.getString("billOfMaterial.deleteSuccess"), id)));
+			}
+			else {
+				//BillOfMaterial not found.
+				deleteBillOfMaterialResult.addMessage(new WebServiceMessage(WebServiceMessageType.E, 
+						MessageFormat.format(this.resources.getString("billOfMaterial.notFound"), id)));
+			}
+		}
+		catch(Exception e) {
+			deleteBillOfMaterialResult.addMessage(new WebServiceMessage(WebServiceMessageType.E,
+					MessageFormat.format(this.resources.getString("billOfMaterial.deleteError"), id)));
+			
+			logger.error(MessageFormat.format(this.resources.getString("billOfMaterial.deleteError"), id), e);
+		}
+		
+		return deleteBillOfMaterialResult;
+	}
 }
