@@ -18,6 +18,7 @@ import backend.dao.DAOManager;
 import backend.dao.MaterialDao;
 import backend.model.Currency;
 import backend.model.billOfMaterial.BillOfMaterial;
+import backend.model.billOfMaterial.BillOfMaterialArray;
 import backend.model.billOfMaterial.BillOfMaterialItem;
 import backend.model.material.Material;
 import backend.model.material.UnitOfMeasurement;
@@ -311,5 +312,65 @@ public class BillOfMaterialServiceTest {
 		assertEquals(this.bomItem30mmScrews.getId(), billOfMaterialItem.getId());
 		assertEquals(this.bomItem30mmScrews.getMaterial(), billOfMaterialItem.getMaterial());
 		assertEquals(this.bomItem30mmScrews.getQuantity(), billOfMaterialItem.getQuantity());
+	}
+	
+	
+	@Test
+	/**
+	 * Tests the retrieval of all BillOfMaterials.
+	 */
+	public void testGetAllBillOfMaterials() {
+		WebServiceResult getBillOfMaterialsResult;
+		BillOfMaterialArray billOfMaterials;
+		BillOfMaterial billOfMaterial;
+		BillOfMaterialItem billOfMaterialItem;
+		
+		//Get the BillOfMaterials.
+		BillOfMaterialService service = new BillOfMaterialService();
+		getBillOfMaterialsResult = service.getBillOfMaterials();
+		billOfMaterials = (BillOfMaterialArray) getBillOfMaterialsResult.getData();
+		
+		//Assure no error message exists
+		assertTrue(WebServiceTools.resultContainsErrorMessage(getBillOfMaterialsResult) == false);
+				
+		//Check if two BillOfMaterials are returned.
+		assertTrue(billOfMaterials.getBillOfMaterials().size() == 2);
+		
+		//Check both BillOfMaterials by each attribute
+		billOfMaterial = billOfMaterials.getBillOfMaterials().get(0);
+		assertEquals(this.bom30mmScrewBox.getId(), billOfMaterial.getId());
+		assertEquals(this.bom30mmScrewBox.getName(), billOfMaterial.getName());
+		assertEquals(this.bom30mmScrewBox.getDescription(), billOfMaterial.getDescription());
+		assertEquals(this.bom30mmScrewBox.getMaterial(), billOfMaterial.getMaterial());
+		
+		assertEquals(this.bom30mmScrewBox.getItems().size(), billOfMaterial.getItems().size());
+		
+		billOfMaterialItem = billOfMaterial.getItems().get(0);
+		assertEquals(this.bomItem30mmBox.getId(), billOfMaterialItem.getId());
+		assertEquals(this.bomItem30mmBox.getMaterial(), billOfMaterialItem.getMaterial());
+		assertEquals(this.bomItem30mmBox.getQuantity(), billOfMaterialItem.getQuantity());
+	
+		billOfMaterialItem = billOfMaterial.getItems().get(1);
+		assertEquals(this.bomItem30mmScrews.getId(), billOfMaterialItem.getId());
+		assertEquals(this.bomItem30mmScrews.getMaterial(), billOfMaterialItem.getMaterial());
+		assertEquals(this.bomItem30mmScrews.getQuantity(), billOfMaterialItem.getQuantity());
+		
+		billOfMaterial = billOfMaterials.getBillOfMaterials().get(1);
+		assertEquals(this.bom50mmScrewBox.getId(), billOfMaterial.getId());
+		assertEquals(this.bom50mmScrewBox.getName(), billOfMaterial.getName());
+		assertEquals(this.bom50mmScrewBox.getDescription(), billOfMaterial.getDescription());
+		assertEquals(this.bom50mmScrewBox.getMaterial(), billOfMaterial.getMaterial());
+		
+		assertEquals(this.bom50mmScrewBox.getItems().size(), billOfMaterial.getItems().size());
+		
+		billOfMaterialItem = billOfMaterial.getItems().get(0);
+		assertEquals(this.bomItem50mmBox.getId(), billOfMaterialItem.getId());
+		assertEquals(this.bomItem50mmBox.getMaterial(), billOfMaterialItem.getMaterial());
+		assertEquals(this.bomItem50mmBox.getQuantity(), billOfMaterialItem.getQuantity());
+	
+		billOfMaterialItem = billOfMaterial.getItems().get(1);
+		assertEquals(this.bomItem50mmScrews.getId(), billOfMaterialItem.getId());
+		assertEquals(this.bomItem50mmScrews.getMaterial(), billOfMaterialItem.getMaterial());
+		assertEquals(this.bomItem50mmScrews.getQuantity(), billOfMaterialItem.getQuantity());
 	}
 }

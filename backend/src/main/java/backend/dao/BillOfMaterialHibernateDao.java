@@ -7,6 +7,10 @@ import java.util.Map;
 import javax.persistence.EntityGraph;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
+import javax.persistence.TypedQuery;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
 
 import backend.exception.ObjectUnchangedException;
 import backend.model.billOfMaterial.BillOfMaterial;
@@ -82,8 +86,38 @@ public class BillOfMaterialHibernateDao implements BillOfMaterialDao {
 	
 	@Override
 	public List<BillOfMaterial> getBillOfMaterials() throws Exception {
-		// TODO Auto-generated method stub
-		return null;
+		List<BillOfMaterial> billOfMaterials = null;
+		EntityManager entityManager = this.sessionFactory.createEntityManager();
+		
+		//Use entity graphs to load data of referenced BillOfMaterialItem instances.
+		EntityGraph<BillOfMaterial> graph = entityManager.createEntityGraph(BillOfMaterial.class);
+		graph.addAttributeNodes("items");
+		
+		entityManager.getTransaction().begin();
+		
+		try {
+			CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+			CriteriaQuery<BillOfMaterial> criteriaQuery = criteriaBuilder.createQuery(BillOfMaterial.class);
+			Root<BillOfMaterial> criteria = criteriaQuery.from(BillOfMaterial.class);
+			criteriaQuery.select(criteria);
+			criteriaQuery.orderBy(criteriaBuilder.asc(criteria.get("id")));	//Order by id ascending
+			TypedQuery<BillOfMaterial> typedQuery = entityManager.createQuery(criteriaQuery);
+			typedQuery.setHint("javax.persistence.loadgraph", graph);	//Also fetch all item data.
+			billOfMaterials = typedQuery.getResultList();
+			
+			entityManager.getTransaction().commit();			
+		}
+		catch(Exception exception) {
+			//If something breaks a rollback is necessary.
+			if(entityManager.getTransaction().isActive())
+				entityManager.getTransaction().rollback();
+			throw exception;
+		}
+		finally {
+			entityManager.close();			
+		}
+		
+		return billOfMaterials;
 	}
 	
 

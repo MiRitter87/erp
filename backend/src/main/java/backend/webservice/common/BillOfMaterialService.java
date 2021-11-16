@@ -9,6 +9,7 @@ import org.apache.logging.log4j.Logger;
 import backend.dao.BillOfMaterialDao;
 import backend.dao.DAOManager;
 import backend.model.billOfMaterial.BillOfMaterial;
+import backend.model.billOfMaterial.BillOfMaterialArray;
 import backend.model.webservice.WebServiceMessage;
 import backend.model.webservice.WebServiceMessageType;
 import backend.model.webservice.WebServiceResult;
@@ -74,5 +75,28 @@ public class BillOfMaterialService {
 		}
 		
 		return getBillOfMaterialResult;
+	}
+	
+	
+	/**
+	 * Provides a list of all BillOfMaterials.
+	 * 
+	 * @return A list of all purchase orders.
+	 */
+	public WebServiceResult getBillOfMaterials() {
+		BillOfMaterialArray billOfMaterials = new BillOfMaterialArray();
+		WebServiceResult getBillOfMaterialsResult = new WebServiceResult(null);
+		
+		try {
+			billOfMaterials.setBillOfMaterials(this.billOfMaterialDao.getBillOfMaterials());
+			getBillOfMaterialsResult.setData(billOfMaterials);
+		} catch (Exception e) {
+			getBillOfMaterialsResult.addMessage(new WebServiceMessage(
+					WebServiceMessageType.E, this.resources.getString("billOfMaterial.getBillOfMaterialsError")));
+			
+			logger.error(this.resources.getString("billOfMaterial.getBillOfMaterialsError"), e);
+		}
+		
+		return getBillOfMaterialsResult;
 	}
 }
