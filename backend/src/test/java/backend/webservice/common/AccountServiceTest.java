@@ -348,7 +348,7 @@ public class AccountServiceTest {
 	/**
 	 * Tests updating an accout without changing any data.
 	 */
-	public void testUpdateUnchangedPurchaseOrder() {
+	public void testUpdateUnchangedAccount() {
 		WebServiceResult updateAccountResult;
 		AccountService service = new AccountService();
 		String actualErrorMessage, expectedErrorMessage;

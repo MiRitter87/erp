@@ -21,6 +21,8 @@ import backend.model.Currency;
 import backend.model.billOfMaterial.BillOfMaterial;
 import backend.model.billOfMaterial.BillOfMaterialArray;
 import backend.model.billOfMaterial.BillOfMaterialItem;
+import backend.model.billOfMaterial.BillOfMaterialItemWS;
+import backend.model.billOfMaterial.BillOfMaterialWS;
 import backend.model.material.Material;
 import backend.model.material.UnitOfMeasurement;
 import backend.model.webservice.WebServiceMessageType;
@@ -274,6 +276,34 @@ public class BillOfMaterialServiceTest {
 	}
 	
 	
+	/**
+	 * Converts a BillOfMaterial to the lean WebService representation.
+	 * 
+	 * @param billOfMaterial The BillOfMaterial to be converted.
+	 * @return The lean WebService representation of the BillOfMaterial.
+	 */
+	private BillOfMaterialWS convertToWsBOM(final BillOfMaterial billOfMaterial) {
+		BillOfMaterialWS wsBOM = new BillOfMaterialWS();
+		
+		//Head level
+		wsBOM.setBillOfMaterialId(billOfMaterial.getId());
+		wsBOM.setName(billOfMaterial.getName());
+		wsBOM.setDescription(billOfMaterial.getDescription());
+		wsBOM.setMaterialId(billOfMaterial.getMaterial().getId());
+		
+		//Item level
+		for(BillOfMaterialItem billOfMaterialItem:billOfMaterial.getItems()) {
+			BillOfMaterialItemWS wsBOMItem = new BillOfMaterialItemWS();
+			wsBOMItem.setId(billOfMaterialItem.getId());
+			wsBOMItem.setMaterialId(billOfMaterialItem.getMaterial().getId());
+			wsBOMItem.setQuantity(billOfMaterialItem.getQuantity());
+			wsBOM.addItem(wsBOMItem);
+		}
+		
+		return wsBOM;
+	}
+	
+	
 	@Test
 	/**
 	 * Tests the retrieval of a BillOfMaterial.
@@ -424,4 +454,48 @@ public class BillOfMaterialServiceTest {
 			}
 		}
 	}
+	
+	
+	@Test
+	/**
+	 * Tests updating a BillOfMaterial with valid data.
+	 */
+	public void testUpdateValidBillOfMaterial() {
+		WebServiceResult updateBillOfMaterialResult;
+		BillOfMaterial updatedBillOfMaterial;
+		BillOfMaterialService service = new BillOfMaterialService();
+		
+		//Update the description.
+		this.bom30mmScrewBox.setDescription("Description updated for unit test.");
+		updateBillOfMaterialResult = service.updateBillOfMaterial(this.convertToWsBOM(this.bom30mmScrewBox));
+		
+		//Assure no error message exists
+		assertTrue(WebServiceTools.resultContainsErrorMessage(updateBillOfMaterialResult) == false);
+		
+		//There should be a success message
+		assertTrue(updateBillOfMaterialResult.getMessages().size() == 1);
+		assertTrue(updateBillOfMaterialResult.getMessages().get(0).getType() == WebServiceMessageType.S);
+		
+		//Retrieve the updated BillOfMaterial and check if the changes have been persisted.
+		try {
+			updatedBillOfMaterial = billOfMaterialDAO.getBillOfMaterial(this.bom30mmScrewBox.getId());
+			assertEquals(this.bom30mmScrewBox.getDescription(), updatedBillOfMaterial.getDescription());
+		} catch (Exception e) {
+			fail(e.getMessage());
+		}
+	}
+	
+	
+	/*
+	 * TODO Add additional tests
+	 * 
+	 * testUpdateValidBillOfMaterialItem
+	 * testUpdateBillOfMaterialWithoutItems
+	 * testUpdateInvalidBillOfMaterial
+	 * testUpdateInvalidBillOfMaterialItem
+	 * testUpdateUnchangedBillOfMaterial
+	 * testUpdateWithDuplicateItemKey
+	 * testAddValidBillOfMaterial
+	 * testAddInvalidBillOfMaterial
+	 */
 }
