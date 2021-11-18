@@ -29,6 +29,7 @@ import backend.model.material.UnitOfMeasurement;
 import backend.model.webservice.WebServiceMessageType;
 import backend.model.webservice.WebServiceResult;
 import backend.tools.WebServiceTools;
+import backend.tools.test.ValidationMessageProvider;
 
 /**
  * Tests the BillOfMaterial service.
@@ -295,7 +296,9 @@ public class BillOfMaterialServiceTest {
 		wsBOM.setBillOfMaterialId(billOfMaterial.getId());
 		wsBOM.setName(billOfMaterial.getName());
 		wsBOM.setDescription(billOfMaterial.getDescription());
-		wsBOM.setMaterialId(billOfMaterial.getMaterial().getId());
+		
+		if(billOfMaterial.getMaterial() != null)
+			wsBOM.setMaterialId(billOfMaterial.getMaterial().getId());
 		
 		//Item level
 		for(BillOfMaterialItem billOfMaterialItem:billOfMaterial.getItems()) {
@@ -546,11 +549,59 @@ public class BillOfMaterialServiceTest {
 	}
 	
 	
+	@Test
+	/**
+	 * Tests updating a BillOfMaterial with invalid data.
+	 */
+	public void testUpdateInvalidBillOfMaterial() {
+		WebServiceResult updateBillOfMaterialResult;
+		BillOfMaterialService service = new BillOfMaterialService();
+		ValidationMessageProvider messageProvider = new ValidationMessageProvider();
+		String actualErrorMessage, expectedErrorMessage;
+		
+		//Remove the material.
+		this.bom30mmScrewBox.setMaterial(null);
+		updateBillOfMaterialResult = service.updateBillOfMaterial(this.convertToWsBOM(this.bom30mmScrewBox));
+		
+		//There should be a return message of type E.
+		assertTrue(updateBillOfMaterialResult.getMessages().size() == 1);
+		assertTrue(updateBillOfMaterialResult.getMessages().get(0).getType() == WebServiceMessageType.E);
+		
+		//A proper message should be provided.
+		expectedErrorMessage = messageProvider.getNotNullValidationMessage("billOfMaterial", "material");
+		actualErrorMessage = updateBillOfMaterialResult.getMessages().get(0).getText();
+		assertEquals(expectedErrorMessage, actualErrorMessage);
+	}
+	
+	
+	@Test
+	/**
+	 * Tests updating a BillOfMaterial item with invalid data.
+	 */
+	public void testUpdateInvalidBillOfMaterialItem() {
+		WebServiceResult updateBillOfMaterialResult;
+		BillOfMaterialService service = new BillOfMaterialService();
+		ValidationMessageProvider messageProvider = new ValidationMessageProvider();
+		String actualErrorMessage, expectedErrorMessage;
+		
+		//Update BillOfMaterial item with quantity of zero.
+		this.bom30mmScrewBox.getItems().get(0).setQuantity(0);
+		updateBillOfMaterialResult = service.updateBillOfMaterial(this.convertToWsBOM(this.bom30mmScrewBox));
+		
+		//There should be a return message of type E.
+		assertTrue(updateBillOfMaterialResult.getMessages().size() == 1);
+		assertTrue(updateBillOfMaterialResult.getMessages().get(0).getType() == WebServiceMessageType.E);
+		
+		//A proper message should be provided.
+		expectedErrorMessage = messageProvider.getMinValidationMessage("billOfMaterialItem", "quantity", "1");
+		actualErrorMessage = updateBillOfMaterialResult.getMessages().get(0).getText();
+		assertEquals(expectedErrorMessage, actualErrorMessage);
+	}
+	
+	
 	/*
 	 * TODO Add additional tests
 	 * 
-	 * testUpdateInvalidBillOfMaterial
-	 * testUpdateInvalidBillOfMaterialItem
 	 * testUpdateUnchangedBillOfMaterial
 	 * testUpdateWithDuplicateItemKey
 	 * testAddValidBillOfMaterial
