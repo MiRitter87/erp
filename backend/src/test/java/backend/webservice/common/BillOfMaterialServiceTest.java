@@ -7,6 +7,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.ResourceBundle;
 
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
@@ -35,6 +36,11 @@ import backend.tools.WebServiceTools;
  * @author Michael
  */
 public class BillOfMaterialServiceTest {
+	/**
+	 * Access to localized application resources.
+	 */
+	private ResourceBundle resources = ResourceBundle.getBundle("backend");	
+	
 	/**
 	 * DAO to access material data.
 	 */
@@ -486,11 +492,63 @@ public class BillOfMaterialServiceTest {
 	}
 	
 	
+	@Test
+	/**
+	 * Tests updating a BillOfMaterial with valid item data.
+	 */
+	public void testUpdateValidBillOfMaterialItem() {
+		WebServiceResult updateBillOfMaterialResult;
+		BillOfMaterial updatedBillOfMaterial;
+		BillOfMaterialService service = new BillOfMaterialService();
+		
+		//Update the quantity of an item.
+		this.bom30mmScrewBox.getItems().get(1).setQuantity(99);
+		updateBillOfMaterialResult = service.updateBillOfMaterial(this.convertToWsBOM(this.bom30mmScrewBox));
+		
+		//Assure no error message exists
+		assertTrue(WebServiceTools.resultContainsErrorMessage(updateBillOfMaterialResult) == false);
+		
+		//There should be a success message
+		assertTrue(updateBillOfMaterialResult.getMessages().size() == 1);
+		assertTrue(updateBillOfMaterialResult.getMessages().get(0).getType() == WebServiceMessageType.S);
+		
+		//Retrieve the updated BillOfMaterial and check if the changes have been persisted.
+		try {
+			updatedBillOfMaterial = billOfMaterialDAO.getBillOfMaterial(this.bom30mmScrewBox.getId());
+			assertEquals(this.bom30mmScrewBox.getItems().get(1).getQuantity(), updatedBillOfMaterial.getItems().get(1).getQuantity());
+		} catch (Exception e) {
+			fail(e.getMessage());
+		}
+	}
+	
+	
+	@Test
+	/**
+	 * Tests updating a BillOfMaterial without items.
+	 */
+	public void testUpdateBillOfMaterialWithoutItems() {
+		WebServiceResult updateBillOfMaterialResult;
+		BillOfMaterialService service = new BillOfMaterialService();
+		String actualErrorMessage, expectedErrorMessage;
+		
+		//Remove the item and try to update the BillOfMaterial.
+		this.bom30mmScrewBox.getItems().clear();
+		updateBillOfMaterialResult = service.updateBillOfMaterial(this.convertToWsBOM(this.bom30mmScrewBox));
+		
+		//There should be a return message of type E.
+		assertTrue(updateBillOfMaterialResult.getMessages().size() == 1);
+		assertTrue(updateBillOfMaterialResult.getMessages().get(0).getType() == WebServiceMessageType.E);
+		
+		//A proper message should be provided.
+		expectedErrorMessage = this.resources.getString("billOfMaterial.noItemsGiven");
+		actualErrorMessage = updateBillOfMaterialResult.getMessages().get(0).getText();
+		assertEquals(expectedErrorMessage, actualErrorMessage);
+	}
+	
+	
 	/*
 	 * TODO Add additional tests
 	 * 
-	 * testUpdateValidBillOfMaterialItem
-	 * testUpdateBillOfMaterialWithoutItems
 	 * testUpdateInvalidBillOfMaterial
 	 * testUpdateInvalidBillOfMaterialItem
 	 * testUpdateUnchangedBillOfMaterial

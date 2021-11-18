@@ -11,6 +11,7 @@ import org.apache.logging.log4j.Logger;
 import backend.dao.BillOfMaterialDao;
 import backend.dao.DAOManager;
 import backend.dao.MaterialDao;
+import backend.exception.NoItemsException;
 import backend.exception.ObjectUnchangedException;
 import backend.model.billOfMaterial.BillOfMaterial;
 import backend.model.billOfMaterial.BillOfMaterialArray;
@@ -20,6 +21,7 @@ import backend.model.billOfMaterial.BillOfMaterialWS;
 import backend.model.webservice.WebServiceMessage;
 import backend.model.webservice.WebServiceMessageType;
 import backend.model.webservice.WebServiceResult;
+import backend.tools.WebServiceTools;
 
 /**
  * Common implementation of the BillOfMaterial WebService that is used by the SOAP as well as the REST service.
@@ -165,7 +167,10 @@ public class BillOfMaterialService {
 			return updateBillOfMaterialResult;
 		}
 		
-		//TODO validate
+		updateBillOfMaterialResult = this.validate(convertedBillOfMaterial);
+		if(WebServiceTools.resultContainsErrorMessage(updateBillOfMaterialResult)) {
+			return updateBillOfMaterialResult;
+		}
 		
 		updateBillOfMaterialResult = this.update(convertedBillOfMaterial, updateBillOfMaterialResult);
 		
@@ -239,6 +244,31 @@ public class BillOfMaterialService {
 		}
 		
 		return billOfMaterialItems;
+	}
+	
+	
+	/**
+	 * Validates the BillOfMaterial.
+	 * 
+	 * @param billOfMaterial The BillOfMaterial to be validated.
+	 * @return The result of the validation.
+	 */
+	private WebServiceResult validate(final BillOfMaterial billOfMaterial) {
+		WebServiceResult webServiceResult = new WebServiceResult(null);
+		
+		try {
+			billOfMaterial.validate();
+		} 
+		catch(NoItemsException noItemsException) {
+			webServiceResult.addMessage(new WebServiceMessage(WebServiceMessageType.E, this.resources.getString("billOfMaterial.noItemsGiven")));
+			return webServiceResult;
+		}
+		catch (Exception validationException) {
+			webServiceResult.addMessage(new WebServiceMessage(WebServiceMessageType.E, validationException.getMessage()));
+			return webServiceResult;
+		}
+		
+		return webServiceResult;
 	}
 	
 	

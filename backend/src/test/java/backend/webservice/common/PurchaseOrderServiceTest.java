@@ -653,7 +653,7 @@ public class PurchaseOrderServiceTest {
 	
 	@Test
 	/**
-	 * Tests updating a sales order item with invalid data.
+	 * Tests updating a purchase order item with invalid data.
 	 */
 	public void testUpdateInvalidPurchaseOrderItem() {
 		WebServiceResult updatePurchaseOrderResult;
