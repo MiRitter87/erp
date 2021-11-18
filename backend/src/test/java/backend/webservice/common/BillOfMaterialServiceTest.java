@@ -610,7 +610,7 @@ public class BillOfMaterialServiceTest {
 		String actualErrorMessage, expectedErrorMessage;
 		
 		//Update BillOfMaterial without changing any data.
-		updateBillOfMaterialResult = service.updateBillOfMaterial(this.convertToWsBOM(this.bom30mmScrewBox));;
+		updateBillOfMaterialResult = service.updateBillOfMaterial(this.convertToWsBOM(this.bom30mmScrewBox));
 		
 		//There should be a return message of type I
 		assertTrue(updateBillOfMaterialResult.getMessages().size() == 1);
@@ -623,10 +623,34 @@ public class BillOfMaterialServiceTest {
 	}
 	
 	
+	@Test
+	/**
+	 * Tests updating a BillOfMaterial that has multiple items with the same item id.
+	 */
+	public void testUpdateWithDuplicateItemKey() {
+		WebServiceResult updateBillOfMaterialResult;
+		BillOfMaterialService service = new BillOfMaterialService();
+		String actualErrorMessage, expectedErrorMessage;
+		
+		//Change the ID of an existing resulting in two items with the same ID.
+		this.bomItem30mmScrews.setId(1);
+		updateBillOfMaterialResult = service.updateBillOfMaterial(this.convertToWsBOM(this.bom30mmScrewBox));
+		
+		//There should be a return message of type E.
+		assertTrue(updateBillOfMaterialResult.getMessages().size() == 1);
+		assertTrue(updateBillOfMaterialResult.getMessages().get(0).getType() == WebServiceMessageType.E);
+		
+		//A proper message should be provided.
+		expectedErrorMessage =  MessageFormat.format(this.resources.getString("billOfMaterial.duplicateItemKey"), 
+				this.bom30mmScrewBox.getId(), this.bomItem30mmScrews.getId());
+		actualErrorMessage = updateBillOfMaterialResult.getMessages().get(0).getText();
+		assertEquals(expectedErrorMessage, actualErrorMessage);
+	}
+	
+	
 	/*
 	 * TODO Add additional tests
 	 * 
-	 * testUpdateWithDuplicateItemKey
 	 * testAddValidBillOfMaterial
 	 * testAddInvalidBillOfMaterial
 	 */

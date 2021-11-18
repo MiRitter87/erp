@@ -11,6 +11,7 @@ import org.apache.logging.log4j.Logger;
 import backend.dao.BillOfMaterialDao;
 import backend.dao.DAOManager;
 import backend.dao.MaterialDao;
+import backend.exception.DuplicateIdentifierException;
 import backend.exception.NoItemsException;
 import backend.exception.ObjectUnchangedException;
 import backend.model.billOfMaterial.BillOfMaterial;
@@ -261,6 +262,12 @@ public class BillOfMaterialService {
 		} 
 		catch(NoItemsException noItemsException) {
 			webServiceResult.addMessage(new WebServiceMessage(WebServiceMessageType.E, this.resources.getString("billOfMaterial.noItemsGiven")));
+			return webServiceResult;
+		}
+		catch(DuplicateIdentifierException duplicateIdentifierException) {
+			webServiceResult.addMessage(new WebServiceMessage(WebServiceMessageType.E, 
+					MessageFormat.format(this.resources.getString("billOfMaterial.duplicateItemKey"), billOfMaterial.getId(), 
+							duplicateIdentifierException.getDuplicateIdentifier())));
 			return webServiceResult;
 		}
 		catch (Exception validationException) {
