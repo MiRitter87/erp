@@ -144,13 +144,27 @@ public class BillOfMaterialHibernateDao implements BillOfMaterialDao {
 	public void updateBillOfMaterial(BillOfMaterial billOfMaterial) throws ObjectUnchangedException, Exception {
 		EntityManager entityManager;
 		
-		//TODO check if changes exist
-		//this.checkBillOfMaterialDataChanged(billOfMaterial);
+		this.checkBillOfMaterialDataChanged(billOfMaterial);
 		
 		entityManager = this.sessionFactory.createEntityManager();
 		entityManager.getTransaction().begin();
 		entityManager.merge(billOfMaterial);
 		entityManager.getTransaction().commit();
 		entityManager.close();
+	}
+	
+	
+	/**
+	 * Checks if the data of the given BillOfMaterial differ from the BillOfMaterial that is persisted at database level.
+	 * 
+	 * @param billOfMaterial The BillOfMaterial to be checked.
+	 * @throws ObjectUnchangedException In case the BillOfMaterial has not been changed.
+	 * @throws Exception In case an error occurred during determination of the BillOfMaterial stored at the database.
+	 */
+	private void checkBillOfMaterialDataChanged(final BillOfMaterial billOfMaterial) throws ObjectUnchangedException, Exception {
+		BillOfMaterial databaseBillOfMaterial = this.getBillOfMaterial(billOfMaterial.getId());
+		
+		if(databaseBillOfMaterial.equals(billOfMaterial))
+			throw new ObjectUnchangedException();
 	}
 }

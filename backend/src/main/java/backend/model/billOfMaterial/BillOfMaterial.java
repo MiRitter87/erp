@@ -214,13 +214,6 @@ public class BillOfMaterial {
 		} else if (!id.equals(other.id)) {
 			return false;
 		}
-		if (items == null) {
-			if (other.items != null) {
-				return false;
-			}
-		} else if (!items.equals(other.items)) {
-			return false;
-		}
 		if (material == null) {
 			if (other.material != null) {
 				return false;

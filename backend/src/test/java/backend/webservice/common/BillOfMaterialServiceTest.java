@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
 
@@ -599,10 +600,32 @@ public class BillOfMaterialServiceTest {
 	}
 	
 	
+	@Test
+	/**
+	 * Tests updating a BillOfMaterial without changing any data.
+	 */
+	public void testUpdateUnchangedBillOfMaterial() {
+		WebServiceResult updateBillOfMaterialResult;
+		BillOfMaterialService service = new BillOfMaterialService();
+		String actualErrorMessage, expectedErrorMessage;
+		
+		//Update BillOfMaterial without changing any data.
+		updateBillOfMaterialResult = service.updateBillOfMaterial(this.convertToWsBOM(this.bom30mmScrewBox));;
+		
+		//There should be a return message of type I
+		assertTrue(updateBillOfMaterialResult.getMessages().size() == 1);
+		assertTrue(updateBillOfMaterialResult.getMessages().get(0).getType() == WebServiceMessageType.I);
+		
+		//A proper message should be provided.
+		expectedErrorMessage = MessageFormat.format(this.resources.getString("billOfMaterial.updateUnchanged"), this.bom30mmScrewBox.getId());
+		actualErrorMessage = updateBillOfMaterialResult.getMessages().get(0).getText();
+		assertEquals(expectedErrorMessage, actualErrorMessage);
+	}
+	
+	
 	/*
 	 * TODO Add additional tests
 	 * 
-	 * testUpdateUnchangedBillOfMaterial
 	 * testUpdateWithDuplicateItemKey
 	 * testAddValidBillOfMaterial
 	 * testAddInvalidBillOfMaterial
