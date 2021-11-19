@@ -1,6 +1,7 @@
 package backend.webservice.common;
 
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.fail;
@@ -718,9 +719,28 @@ public class BillOfMaterialServiceTest {
 	}
 	
 	
-	/*
-	 * TODO Add additional tests
-	 * 
-	 * testAddInvalidBillOfMaterial
+	@Test
+	/**
+	 * Tests adding of an invalid BillOfMaterial.
 	 */
+	public void testAddInvalidBillOfMaterial() {
+		BillOfMaterial newBillOfMaterial = new BillOfMaterial();
+		WebServiceResult addBillOfMaterialResult;
+		BillOfMaterialService service = new BillOfMaterialService();
+		
+		//Define the new BillOfMaterial without an item.
+		newBillOfMaterial.setName("Box");
+		newBillOfMaterial.setDescription("A simple box without content.");
+		newBillOfMaterial.setMaterial(this.box);
+		
+		//Add a new BillOfMaterial to the database via WebService
+		addBillOfMaterialResult = service.addBillOfMaterial(this.convertToWsBOM(newBillOfMaterial));
+		
+		//There should be a return message of type E.
+		assertTrue(addBillOfMaterialResult.getMessages().size() == 1);
+		assertTrue(addBillOfMaterialResult.getMessages().get(0).getType() == WebServiceMessageType.E);
+		
+		//The new BillOfMaterial should not have been persisted
+		assertNull(newBillOfMaterial.getId());
+	}
 }
