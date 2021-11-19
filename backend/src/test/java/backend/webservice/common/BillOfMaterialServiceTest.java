@@ -1,5 +1,6 @@
 package backend.webservice.common;
 
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.fail;
@@ -648,10 +649,78 @@ public class BillOfMaterialServiceTest {
 	}
 	
 	
+	@Test
+	/**
+	 * Tests adding of a new BillOfMaterial.
+	 */
+	public void testAddValidBillOfMaterial() {
+		BillOfMaterial newBillOfMaterial = new BillOfMaterial();
+		BillOfMaterialItem newBillOfMaterialItem = new BillOfMaterialItem();
+		BillOfMaterial addedBillOfMaterial;
+		BillOfMaterialItem addedBillOfMaterialItem;
+		WebServiceResult addBillOfMaterialResult;
+		BillOfMaterialService service = new BillOfMaterialService();
+		
+		//Define the new BillOfMaterial
+		newBillOfMaterialItem.setId(1);
+		newBillOfMaterialItem.setMaterial(this.box);
+		newBillOfMaterialItem.setQuantity(1);
+		
+		newBillOfMaterial.setName("Box");
+		newBillOfMaterial.setDescription("A simple box without content.");
+		newBillOfMaterial.setMaterial(this.box);
+		newBillOfMaterial.addItem(newBillOfMaterialItem);
+		
+		try {
+			//Add a new BillOfMaterial to the database via WebService
+			addBillOfMaterialResult = service.addBillOfMaterial(this.convertToWsBOM(newBillOfMaterial));
+			
+			//Assure no error message exists
+			assertTrue(WebServiceTools.resultContainsErrorMessage(addBillOfMaterialResult) == false);
+			
+			//There should be a success message
+			assertTrue(addBillOfMaterialResult.getMessages().size() == 1);
+			assertTrue(addBillOfMaterialResult.getMessages().get(0).getType() == WebServiceMessageType.S);
+			
+			//The ID of the newly created BillOfMaterial should be provided in the data part of the WebService return.
+			assertNotNull(addBillOfMaterialResult.getData());
+			assertTrue(addBillOfMaterialResult.getData() instanceof Integer);
+			newBillOfMaterial.setId((Integer) addBillOfMaterialResult.getData());
+			
+			//Read the persisted BillOfMaterial via DAO
+			addedBillOfMaterial = billOfMaterialDAO.getBillOfMaterial(newBillOfMaterial.getId());
+			
+			//Check if the BillOfMaterial read by the DAO equals the BillOfMaterial inserted using the WebService in each attribute.
+			assertEquals(newBillOfMaterial.getId(), addedBillOfMaterial.getId());
+			assertEquals(newBillOfMaterial.getName(), addedBillOfMaterial.getName());
+			assertEquals(newBillOfMaterial.getDescription(), addedBillOfMaterial.getDescription());
+			assertEquals(newBillOfMaterial.getMaterial(), addedBillOfMaterial.getMaterial());
+			
+			//Checks at item level.
+			assertEquals(newBillOfMaterial.getItems().size(), addedBillOfMaterial.getItems().size());
+			addedBillOfMaterialItem = addedBillOfMaterial.getItems().get(0);
+			assertEquals(newBillOfMaterialItem.getId(), addedBillOfMaterialItem.getId());
+			assertEquals(newBillOfMaterialItem.getMaterial(), addedBillOfMaterialItem.getMaterial());
+			assertEquals(newBillOfMaterialItem.getQuantity(), addedBillOfMaterialItem.getQuantity());
+		}
+		catch(Exception e) {
+			fail(e.getMessage());
+		}
+		finally {
+			//Delete the newly added BillOfMaterial.
+			try {
+				billOfMaterialDAO.deleteBillOfMaterial(newBillOfMaterial);
+			} 
+			catch (Exception e) {
+				fail(e.getMessage());
+			}
+		}
+	}
+	
+	
 	/*
 	 * TODO Add additional tests
 	 * 
-	 * testAddValidBillOfMaterial
 	 * testAddInvalidBillOfMaterial
 	 */
 }

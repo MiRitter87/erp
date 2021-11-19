@@ -740,7 +740,7 @@ public class PurchaseOrderServiceTest {
 		WebServiceResult addPurchaseOrderResult;
 		PurchaseOrderService orderService = new PurchaseOrderService();
 		
-		//Define the new salesOrder
+		//Define the new purchase order
 		newPurchaseOrderItem.setId(1);
 		newPurchaseOrderItem.setMaterial(this.g4560);
 		newPurchaseOrderItem.setQuantity(Long.valueOf(1));
@@ -749,7 +749,7 @@ public class PurchaseOrderServiceTest {
 		newPurchaseOrder.setPaymentAccount(this.paymentAccount);
 		newPurchaseOrder.addItem(newPurchaseOrderItem);
 		
-		//Add a new sales order to the database via WebService
+		//Add a new purchase order to the database via WebService
 		addPurchaseOrderResult = orderService.addPurchaseOrder(this.convertToWsOrder(newPurchaseOrder));
 		
 		//Assure no error message exists

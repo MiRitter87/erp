@@ -180,6 +180,38 @@ public class BillOfMaterialService {
 	
 	
 	/**
+	 * Adds a BillOfMaterial.
+	 * 
+	 * @param billOfMaterial The BillOfMaterial to be added.
+	 * @return The result of the add function.
+	 */
+	public WebServiceResult addBillOfMaterial(final BillOfMaterialWS billOfMaterial) {
+		BillOfMaterial convertedBillOfMaterial = new BillOfMaterial();
+		WebServiceResult addBillOfMaterialResult = new WebServiceResult();
+		
+		try {
+			convertedBillOfMaterial = this.convertBillOfMaterial(billOfMaterial);
+		}
+		catch(Exception exception) {
+			addBillOfMaterialResult.addMessage(new WebServiceMessage(
+					WebServiceMessageType.E, this.resources.getString("billOfMaterial.addError")));	
+			logger.error(this.resources.getString("billOfMaterial.addError"), exception);
+			return addBillOfMaterialResult;
+		}
+		
+		addBillOfMaterialResult = this.validate(convertedBillOfMaterial);
+		if(WebServiceTools.resultContainsErrorMessage(addBillOfMaterialResult)) {
+			return addBillOfMaterialResult;
+		}
+		
+		addBillOfMaterialResult = this.add(convertedBillOfMaterial, addBillOfMaterialResult);
+		addBillOfMaterialResult.setData(convertedBillOfMaterial.getId());
+		
+		return addBillOfMaterialResult;
+	}
+	
+	
+	/**
 	 * Converts the lean BillOfMaterial representation that is provided by the WebService to the internal data model for further processing.
 	 * 
 	 * @param billOfMaterialWS The lean BillOfMaterial representation provided by the WebService.
@@ -300,6 +332,28 @@ public class BillOfMaterialService {
 					MessageFormat.format(this.resources.getString("billOfMaterial.updateError"), billOfMaterial.getId())));
 			
 			logger.error(MessageFormat.format(this.resources.getString("billOfMaterial.updateError"), billOfMaterial.getId()), e);
+		}
+		
+		return webServiceResult;
+	}
+	
+	
+	/**
+	 * Inserts the given BillOfMaterial.
+	 * 
+	 * @param billOfMaterial The BillOfMaterial to be inserted.
+	 * @return The result of the insert function.
+	 */
+	private WebServiceResult add(final BillOfMaterial billOfMaterial, WebServiceResult webServiceResult) {		
+		try {
+			this.billOfMaterialDao.insertBillOfMaterial(billOfMaterial);
+			webServiceResult.addMessage(new WebServiceMessage(
+					WebServiceMessageType.S, this.resources.getString("billOfMaterial.addSuccess")));			
+		} catch (Exception e) {
+			webServiceResult.addMessage(new WebServiceMessage(
+					WebServiceMessageType.E, this.resources.getString("billOfMaterial.addError")));
+			
+			logger.error(this.resources.getString("billOfMaterial.addError"), e);
 		}
 		
 		return webServiceResult;
