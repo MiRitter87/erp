@@ -268,7 +268,7 @@ public class BillOfMaterialService {
 		for(BillOfMaterialItemWS itemWS:billOfMaterialWS.getItems()) {
 			BillOfMaterialItem billOfMaterialItem = new BillOfMaterialItem();
 			
-			billOfMaterialItem.setId(itemWS.getId());
+			billOfMaterialItem.setId(itemWS.getItemId());
 			billOfMaterialItem.setBillOfMaterial(billOfMaterial);
 			billOfMaterialItem.setMaterial(materialDAO.getMaterial(itemWS.getMaterialId()));
 			billOfMaterialItem.setQuantity(itemWS.getQuantity());

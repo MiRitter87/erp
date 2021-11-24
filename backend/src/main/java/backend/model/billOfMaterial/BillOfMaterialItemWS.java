@@ -10,7 +10,7 @@ public class BillOfMaterialItemWS {
 	/**
 	 * The distinct identification number.
 	 */
-	private Integer id;
+	private Integer itemId;
 	
 	/**
 	 * The ID of the material needed.
@@ -26,8 +26,8 @@ public class BillOfMaterialItemWS {
 	/**
 	 * @return the id
 	 */
-	public Integer getId() {
-		return id;
+	public Integer getItemId() {
+		return itemId;
 	}
 
 	
@@ -35,7 +35,7 @@ public class BillOfMaterialItemWS {
 	 * @param id the id to set
 	 */
 	public void setId(Integer id) {
-		this.id = id;
+		this.itemId = id;
 	}
 
 	
