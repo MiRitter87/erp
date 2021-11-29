@@ -24,6 +24,8 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import backend.exception.DuplicateIdentifierException;
 import backend.exception.NoItemsException;
 import backend.model.material.Material;
@@ -36,6 +38,7 @@ import backend.model.material.Material;
 @Table(name="BILL_OF_MATERIAL")
 @Entity
 @SequenceGenerator(name = "billOfMaterialSequence", initialValue = 1, allocationSize = 1)
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class BillOfMaterial {
 	/**
 	 * The distinct identification number.
