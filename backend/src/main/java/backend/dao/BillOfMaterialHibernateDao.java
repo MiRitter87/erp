@@ -12,8 +12,10 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 
+import backend.exception.EntityExistsException;
 import backend.exception.ObjectUnchangedException;
 import backend.model.billOfMaterial.BillOfMaterial;
+import backend.model.material.Material;
 
 /**
  * Provides access to BillOfMaterial database persistence using Hibernate.
@@ -38,8 +40,12 @@ public class BillOfMaterialHibernateDao implements BillOfMaterialDao {
 	
 	
 	@Override
-	public void insertBillOfMaterial(BillOfMaterial billOfMaterial) throws Exception {
-		EntityManager entityManager = this.sessionFactory.createEntityManager();
+	public void insertBillOfMaterial(BillOfMaterial billOfMaterial) throws EntityExistsException, Exception {
+		EntityManager entityManager;
+		
+		this.checkAnotherBomOfMaterialExists(billOfMaterial);
+		
+		entityManager = this.sessionFactory.createEntityManager();
 		entityManager.getTransaction().begin();
 		
 		try {
@@ -85,7 +91,7 @@ public class BillOfMaterialHibernateDao implements BillOfMaterialDao {
 
 	
 	@Override
-	public List<BillOfMaterial> getBillOfMaterials() throws Exception {
+	public List<BillOfMaterial> getBillOfMaterials(final Material material) throws Exception {
 		List<BillOfMaterial> billOfMaterials = null;
 		EntityManager entityManager = this.sessionFactory.createEntityManager();
 		
@@ -100,6 +106,7 @@ public class BillOfMaterialHibernateDao implements BillOfMaterialDao {
 			CriteriaQuery<BillOfMaterial> criteriaQuery = criteriaBuilder.createQuery(BillOfMaterial.class);
 			Root<BillOfMaterial> criteria = criteriaQuery.from(BillOfMaterial.class);
 			criteriaQuery.select(criteria);
+			this.applyBomMaterialQueryParameter(material, criteriaQuery, criteriaBuilder, criteria);
 			criteriaQuery.orderBy(criteriaBuilder.asc(criteria.get("id")));	//Order by id ascending
 			TypedQuery<BillOfMaterial> typedQuery = entityManager.createQuery(criteriaQuery);
 			typedQuery.setHint("javax.persistence.loadgraph", graph);	//Also fetch all item data.
@@ -155,6 +162,24 @@ public class BillOfMaterialHibernateDao implements BillOfMaterialDao {
 	
 	
 	/**
+	 * Applies the material query parameter to the BillOfMaterial query.
+	 * 
+	 * @param material The query parameter for BillOfMaterial material.
+	 * @param criteriaQuery The BillOfMaterial criteria query.
+	 * @param criteriaBuilder The builder of criterias.
+	 * @param criteria The root entity of the BillOfMaterial that is being queried.
+	 */
+	private void applyBomMaterialQueryParameter(final Material material, final CriteriaQuery<BillOfMaterial> criteriaQuery,
+			final CriteriaBuilder criteriaBuilder, final Root<BillOfMaterial> criteria) {
+		
+		if(material == null)
+			return;	//No further query restrictions needed.
+		
+		criteriaQuery.where(criteriaBuilder.equal(criteria.get("material"), material));
+	}
+	
+	
+	/**
 	 * Checks if the data of the given BillOfMaterial differ from the BillOfMaterial that is persisted at database level.
 	 * 
 	 * @param billOfMaterial The BillOfMaterial to be checked.
@@ -166,5 +191,31 @@ public class BillOfMaterialHibernateDao implements BillOfMaterialDao {
 		
 		if(databaseBillOfMaterial.equals(billOfMaterial))
 			throw new ObjectUnchangedException();
+	}
+	
+	
+	
+	
+	/**
+	 * Checks if another BillOfMaterial for the same material exists.
+	 * 
+	 * @param billOfMaterial The BillOfMaterial which the user tries to save or update.
+	 * @throws EntityExistsException Another BillOfMaterial with the same material exists.
+	 * @throws Exception Determination of BillOfMaterials with given material failed.
+	 */
+	private void checkAnotherBomOfMaterialExists(final BillOfMaterial billOfMaterial) throws EntityExistsException, Exception {
+		List<BillOfMaterial> billOfMaterials = null;
+		
+		billOfMaterials = this.getBillOfMaterials(billOfMaterial.getMaterial());
+		
+		for(BillOfMaterial databaseBillOfMaterial:billOfMaterials) {
+			//Ignore 'self'. Relevant when updating an existing BillOfMaterial.
+			if(databaseBillOfMaterial.getId() == billOfMaterial.getId())
+				continue;
+			
+			if(databaseBillOfMaterial.getMaterial().getId() == billOfMaterial.getMaterial().getId()) {
+				throw new EntityExistsException(databaseBillOfMaterial.getId());
+			}
+		}
 	}
 }

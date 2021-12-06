@@ -743,4 +743,46 @@ public class BillOfMaterialServiceTest {
 		//The new BillOfMaterial should not have been persisted
 		assertNull(newBillOfMaterial.getId());
 	}
+	
+	
+	@Test
+	/**
+	 * Tests adding a BillOfMaterial for a material for which another BillOfMaterial already exists.
+	 */
+	public void testAddMultipleBomsOfMaterial() {
+		BillOfMaterial newBillOfMaterial = new BillOfMaterial();
+		WebServiceResult addBillOfMaterialResult;
+		BillOfMaterialService service = new BillOfMaterialService();
+		String actualErrorMessage, expectedErrorMessage;
+		
+		//Define the new BillOfMaterial.
+		newBillOfMaterial = new BillOfMaterial();
+		newBillOfMaterial.setName("Duplicate material");
+		newBillOfMaterial.setDescription("There already exists a BillOfMaterial for this material");
+		newBillOfMaterial.setMaterial(this.boxedScrews30mm);
+		newBillOfMaterial.addItem(this.bomItem30mmBox);
+		newBillOfMaterial.addItem(this.bomItem30mmScrews);
+		
+		//Add a new BillOfMaterial to the database via WebService
+		addBillOfMaterialResult = service.addBillOfMaterial(this.convertToWsBOM(newBillOfMaterial));
+		
+		//There should be a return message of type E.
+		assertTrue(addBillOfMaterialResult.getMessages().size() == 1);
+		assertTrue(addBillOfMaterialResult.getMessages().get(0).getType() == WebServiceMessageType.E);
+		
+		////A proper message should be provided.
+		expectedErrorMessage = MessageFormat.format(this.resources.getString("billOfMaterial.BomForMaterialExists"), 
+				newBillOfMaterial.getMaterial().getId(), this.bom30mmScrewBox.getId());
+		actualErrorMessage = addBillOfMaterialResult.getMessages().get(0).getText();
+		assertEquals(expectedErrorMessage, actualErrorMessage);
+		
+		//The new BillOfMaterial should not have been persisted
+		assertNull(newBillOfMaterial.getId());
+	}
+	
+	/*
+	 * TODO
+	 * 
+	 * testUpdateMultipleBomsOfMaterial
+	 */
 }

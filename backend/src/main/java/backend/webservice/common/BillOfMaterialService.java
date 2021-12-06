@@ -12,6 +12,7 @@ import backend.dao.BillOfMaterialDao;
 import backend.dao.DAOManager;
 import backend.dao.MaterialDao;
 import backend.exception.DuplicateIdentifierException;
+import backend.exception.EntityExistsException;
 import backend.exception.NoItemsException;
 import backend.exception.ObjectUnchangedException;
 import backend.model.billOfMaterial.BillOfMaterial;
@@ -98,7 +99,7 @@ public class BillOfMaterialService {
 		WebServiceResult getBillOfMaterialsResult = new WebServiceResult(null);
 		
 		try {
-			billOfMaterials.setBillOfMaterials(this.billOfMaterialDao.getBillOfMaterials());
+			billOfMaterials.setBillOfMaterials(this.billOfMaterialDao.getBillOfMaterials(null));
 			getBillOfMaterialsResult.setData(billOfMaterials);
 		} catch (Exception e) {
 			getBillOfMaterialsResult.addMessage(new WebServiceMessage(
@@ -315,6 +316,7 @@ public class BillOfMaterialService {
 	 * Updates the given BillOfMaterial.
 	 * 
 	 * @param billOfMaterial The BillOfMaterial to be updated.
+	 * @param webServiceResult The WebServiceResult to which messages are added.
 	 * @return The result of the update function.
 	 */
 	private WebServiceResult update(final BillOfMaterial billOfMaterial, WebServiceResult webServiceResult) {
@@ -342,6 +344,7 @@ public class BillOfMaterialService {
 	 * Inserts the given BillOfMaterial.
 	 * 
 	 * @param billOfMaterial The BillOfMaterial to be inserted.
+	 * @param webServiceResult The WebServiceResult to which messages are added.
 	 * @return The result of the insert function.
 	 */
 	private WebServiceResult add(final BillOfMaterial billOfMaterial, WebServiceResult webServiceResult) {		
@@ -349,11 +352,17 @@ public class BillOfMaterialService {
 			this.billOfMaterialDao.insertBillOfMaterial(billOfMaterial);
 			webServiceResult.addMessage(new WebServiceMessage(
 					WebServiceMessageType.S, this.resources.getString("billOfMaterial.addSuccess")));			
-		} catch (Exception e) {
+		} 
+		catch(EntityExistsException entityExistsException) {
+			webServiceResult.addMessage(new WebServiceMessage(
+					WebServiceMessageType.E, MessageFormat.format(this.resources.getString("billOfMaterial.BomForMaterialExists"), 
+							billOfMaterial.getMaterial().getId(), entityExistsException.getId())));
+		}
+		catch (Exception exception) {
 			webServiceResult.addMessage(new WebServiceMessage(
 					WebServiceMessageType.E, this.resources.getString("billOfMaterial.addError")));
 			
-			logger.error(this.resources.getString("billOfMaterial.addError"), e);
+			logger.error(this.resources.getString("billOfMaterial.addError"), exception);
 		}
 		
 		return webServiceResult;

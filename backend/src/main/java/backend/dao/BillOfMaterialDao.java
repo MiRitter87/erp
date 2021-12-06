@@ -2,8 +2,10 @@ package backend.dao;
 
 import java.util.List;
 
+import backend.exception.EntityExistsException;
 import backend.exception.ObjectUnchangedException;
 import backend.model.billOfMaterial.BillOfMaterial;
+import backend.model.material.Material;
 
 /**
  * Interface for BillOfMaterial persistence.
@@ -15,9 +17,10 @@ public interface BillOfMaterialDao {
 	 * Inserts a BillOfMaterial.
 	 * 
 	 * @param billOfMaterial The BillOfMaterial to be inserted.
+	 * @throws EntityExistsException Another BillOfMaterial with the same material exists.
 	 * @throws Exception Insertion failed.
 	 */
-	void insertBillOfMaterial(final BillOfMaterial billOfMaterial) throws Exception;
+	void insertBillOfMaterial(final BillOfMaterial billOfMaterial) throws EntityExistsException, Exception;
 	
 	
 	/**
@@ -32,10 +35,11 @@ public interface BillOfMaterialDao {
 	/**
 	 * Gets all BillOfMaterials.
 	 * 
+	 * @param material The material on which the BillOfMaterial is based.
 	 * @return All BillOfMaterials.
 	 * @throws Exception BillOfMaterial retrieval failed.
 	 */
-	List<BillOfMaterial> getBillOfMaterials() throws Exception;
+	List<BillOfMaterial> getBillOfMaterials(final Material material) throws Exception;
 	
 	
 	/**
