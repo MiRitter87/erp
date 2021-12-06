@@ -57,7 +57,8 @@ public interface BillOfMaterialDao {
 	 * 
 	 * @param billOfMaterial The BillOfMaterial to be updated.
 	 * @throws ObjectUnchangedException The BillOfMaterial has not been changed.
+	 * Another BillOfMaterial with the same material exists.
 	 * @throws Exception BillOfMaterial update failed.
 	 */
-	void updateBillOfMaterial(final BillOfMaterial billOfMaterial) throws ObjectUnchangedException, Exception;
+	void updateBillOfMaterial(final BillOfMaterial billOfMaterial) throws ObjectUnchangedException, EntityExistsException, Exception;
 }

@@ -148,10 +148,11 @@ public class BillOfMaterialHibernateDao implements BillOfMaterialDao {
 	
 
 	@Override
-	public void updateBillOfMaterial(BillOfMaterial billOfMaterial) throws ObjectUnchangedException, Exception {
+	public void updateBillOfMaterial(BillOfMaterial billOfMaterial) throws ObjectUnchangedException, EntityExistsException, Exception {
 		EntityManager entityManager;
 		
 		this.checkBillOfMaterialDataChanged(billOfMaterial);
+		this.checkAnotherBomOfMaterialExists(billOfMaterial);
 		
 		entityManager = this.sessionFactory.createEntityManager();
 		entityManager.getTransaction().begin();

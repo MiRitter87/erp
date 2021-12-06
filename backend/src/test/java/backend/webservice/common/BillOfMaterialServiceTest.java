@@ -770,9 +770,9 @@ public class BillOfMaterialServiceTest {
 		assertTrue(addBillOfMaterialResult.getMessages().size() == 1);
 		assertTrue(addBillOfMaterialResult.getMessages().get(0).getType() == WebServiceMessageType.E);
 		
-		////A proper message should be provided.
+		//A proper message should be provided.
 		expectedErrorMessage = MessageFormat.format(this.resources.getString("billOfMaterial.BomForMaterialExists"), 
-				newBillOfMaterial.getMaterial().getId(), this.bom30mmScrewBox.getId());
+			newBillOfMaterial.getMaterial().getId(), this.bom30mmScrewBox.getId());
 		actualErrorMessage = addBillOfMaterialResult.getMessages().get(0).getText();
 		assertEquals(expectedErrorMessage, actualErrorMessage);
 		
@@ -780,9 +780,28 @@ public class BillOfMaterialServiceTest {
 		assertNull(newBillOfMaterial.getId());
 	}
 	
-	/*
-	 * TODO
-	 * 
-	 * testUpdateMultipleBomsOfMaterial
+	
+	@Test
+	/**
+	 * Tests updating a BillOfMaterial. The material is changed to a material that is already referenced by another BillOfMaterial.
 	 */
+	public void testUpdateMultipleBomsOfMaterial() {
+		WebServiceResult updateBillOfMaterialResult;
+		BillOfMaterialService service = new BillOfMaterialService();
+		String actualErrorMessage, expectedErrorMessage;
+		
+		//Set the material of the BOM to a material that is already referenced by another BOM.
+		this.bom30mmScrewBox.setMaterial(this.boxedScrews50mm);
+		updateBillOfMaterialResult = service.updateBillOfMaterial(this.convertToWsBOM(this.bom30mmScrewBox));
+		
+		//There should be a return message of type E.
+		assertTrue(updateBillOfMaterialResult.getMessages().size() == 1);
+		assertTrue(updateBillOfMaterialResult.getMessages().get(0).getType() == WebServiceMessageType.E);
+		
+		//A proper message should be provided.
+		expectedErrorMessage = MessageFormat.format(this.resources.getString("billOfMaterial.BomForMaterialExists"), 
+			this.boxedScrews50mm.getId(), this.bom50mmScrewBox.getId());
+		actualErrorMessage = updateBillOfMaterialResult.getMessages().get(0).getText();
+		assertEquals(expectedErrorMessage, actualErrorMessage);
+	}
 }

@@ -329,6 +329,11 @@ public class BillOfMaterialService {
 			webServiceResult.addMessage(new WebServiceMessage(WebServiceMessageType.I, 
 					MessageFormat.format(this.resources.getString("billOfMaterial.updateUnchanged"), billOfMaterial.getId())));
 		}
+		catch(EntityExistsException entityExistsException) {
+			webServiceResult.addMessage(new WebServiceMessage(WebServiceMessageType.E, 
+					MessageFormat.format(this.resources.getString("billOfMaterial.BomForMaterialExists"), 
+							billOfMaterial.getMaterial().getId(), entityExistsException.getId())));
+		}
 		catch (Exception e) {
 			webServiceResult.addMessage(new WebServiceMessage(WebServiceMessageType.E, 
 					MessageFormat.format(this.resources.getString("billOfMaterial.updateError"), billOfMaterial.getId())));
