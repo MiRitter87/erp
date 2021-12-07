@@ -787,7 +787,7 @@ public class BillOfMaterialServiceTest {
 	}
 	
 	
-	//@Test
+	@Test
 	/**
 	 * Tests adding a BillOfMaterial for a material for which another BillOfMaterial already exists.
 	 */
@@ -823,7 +823,7 @@ public class BillOfMaterialServiceTest {
 	}
 	
 	
-	//@Test
+	@Test
 	/**
 	 * Tests updating a BillOfMaterial. The material is changed to a material that is already referenced by another BillOfMaterial.
 	 */

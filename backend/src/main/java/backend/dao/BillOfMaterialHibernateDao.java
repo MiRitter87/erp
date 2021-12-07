@@ -195,8 +195,6 @@ public class BillOfMaterialHibernateDao implements BillOfMaterialDao {
 	}
 	
 	
-	
-	
 	/**
 	 * Checks if another BillOfMaterial for the same material exists.
 	 * 
@@ -211,10 +209,10 @@ public class BillOfMaterialHibernateDao implements BillOfMaterialDao {
 		
 		for(BillOfMaterial databaseBillOfMaterial:billOfMaterials) {
 			//Ignore 'self'. Relevant when updating an existing BillOfMaterial.
-			if(databaseBillOfMaterial.getId() == billOfMaterial.getId())
+			if(databaseBillOfMaterial.getId().equals(billOfMaterial.getId()))
 				continue;
 			
-			if(databaseBillOfMaterial.getMaterial().getId() == billOfMaterial.getMaterial().getId()) {
+			if(databaseBillOfMaterial.getMaterial().getId().equals(billOfMaterial.getMaterial().getId())) {
 				throw new EntityExistsException(databaseBillOfMaterial.getId());
 			}
 		}
