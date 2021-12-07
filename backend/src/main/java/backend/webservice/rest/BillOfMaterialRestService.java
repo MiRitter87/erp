@@ -45,7 +45,7 @@ public class BillOfMaterialRestService {
 	@Produces(MediaType.APPLICATION_JSON)
 	public WebServiceResult getBillOfMaterials() {
 		BillOfMaterialService billOfMaterialService = new BillOfMaterialService();
-		return billOfMaterialService.getBillOfMaterials();
+		return billOfMaterialService.getBillOfMaterials(null);
 	}
 	
 	

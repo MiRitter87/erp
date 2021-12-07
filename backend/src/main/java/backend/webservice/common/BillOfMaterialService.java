@@ -20,6 +20,7 @@ import backend.model.billOfMaterial.BillOfMaterialArray;
 import backend.model.billOfMaterial.BillOfMaterialItem;
 import backend.model.billOfMaterial.BillOfMaterialItemWS;
 import backend.model.billOfMaterial.BillOfMaterialWS;
+import backend.model.material.Material;
 import backend.model.webservice.WebServiceMessage;
 import backend.model.webservice.WebServiceMessageType;
 import backend.model.webservice.WebServiceResult;
@@ -92,14 +93,15 @@ public class BillOfMaterialService {
 	/**
 	 * Provides a list of all BillOfMaterials.
 	 * 
+	 * @param material The material on which the BillOfMaterial is based.
 	 * @return A list of all purchase orders.
 	 */
-	public WebServiceResult getBillOfMaterials() {
+	public WebServiceResult getBillOfMaterials(final Material material) {
 		BillOfMaterialArray billOfMaterials = new BillOfMaterialArray();
 		WebServiceResult getBillOfMaterialsResult = new WebServiceResult(null);
 		
 		try {
-			billOfMaterials.setBillOfMaterials(this.billOfMaterialDao.getBillOfMaterials(null));
+			billOfMaterials.setBillOfMaterials(this.billOfMaterialDao.getBillOfMaterials(material));
 			getBillOfMaterialsResult.setData(billOfMaterials);
 		} catch (Exception e) {
 			getBillOfMaterialsResult.addMessage(new WebServiceMessage(
