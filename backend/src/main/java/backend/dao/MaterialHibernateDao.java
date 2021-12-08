@@ -13,6 +13,7 @@ import javax.persistence.criteria.Root;
 
 import backend.exception.ObjectInUseException;
 import backend.exception.ObjectUnchangedException;
+import backend.model.billOfMaterial.BillOfMaterialItem;
 import backend.model.material.Material;
 import backend.model.purchaseOrder.PurchaseOrderItem;
 import backend.model.salesOrder.SalesOrderItem;
@@ -206,6 +207,7 @@ public class MaterialHibernateDao implements MaterialDao {
 	private void checkMaterialInUse(final Material material, final EntityManager entityManager) throws ObjectInUseException {		
 		this.checkMaterialUsedInSalesOrder(material, entityManager);
 		this.checkMaterialUsedInPurchaseOrder(material, entityManager);
+		this.checkMaterialUsedInBillOfMaterial(material, entityManager);
 	}
 	
 	
@@ -257,6 +259,55 @@ public class MaterialHibernateDao implements MaterialDao {
 		if(purchaseOrderItems.size() > 0) {
 			purchaseOrderItem = purchaseOrderItems.get(0);
 			throw new ObjectInUseException(material.getId(), purchaseOrderItem.getPurchaseOrder().getId(), purchaseOrderItem.getPurchaseOrder());
+		}
+	}
+	
+	
+	/**
+	 * Checks if the material is referenced in any BillOfMaterial.
+	 * 
+	 * @param material The material which is checked.
+	 * @throws ObjectInUseException In case the material is in use.
+	 */
+	private void checkMaterialUsedInBillOfMaterial(final Material material, final EntityManager entityManager) throws ObjectInUseException {
+		this.checkMaterialUsedInBomHead(material, entityManager);
+		this.checkMaterialUsedInBomItem(material, entityManager);
+	}
+	
+	
+	/**
+	 * Checks if the material is referenced in the head part of any BillOfMaterial.
+	 * 
+	 * @param material The material which is checked.
+	 * @throws ObjectInUseException In case the material is in use.
+	 */
+	private void checkMaterialUsedInBomHead(final Material material, final EntityManager entityManager) throws ObjectInUseException {
+		
+	}
+	
+	
+	/**
+	 * Checks if the material is referenced in the item part of any BillOfMaterial.
+	 * 
+	 * @param material The material which is checked.
+	 * @throws ObjectInUseException In case the material is in use.
+	 */
+	private void checkMaterialUsedInBomItem(final Material material, final EntityManager entityManager) throws ObjectInUseException {
+		BillOfMaterialItem billOfMaterialItem;
+		List<BillOfMaterialItem> billOfMaterialItems;		
+		CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+		CriteriaQuery<BillOfMaterialItem> criteriaQuery = criteriaBuilder.createQuery(BillOfMaterialItem.class);
+		
+		Root<BillOfMaterialItem> criteria = criteriaQuery.from(BillOfMaterialItem.class);
+		criteriaQuery.select(criteria).distinct(true);
+		criteriaQuery.where(criteriaBuilder.equal(criteria.get("material"), material));
+		
+		TypedQuery<BillOfMaterialItem> typedQuery = entityManager.createQuery(criteriaQuery);
+		billOfMaterialItems = typedQuery.getResultList();
+		
+		if(billOfMaterialItems.size() > 0) {
+			billOfMaterialItem = billOfMaterialItems.get(0);
+			throw new ObjectInUseException(material.getId(), billOfMaterialItem.getBillOfMaterial().getId(), billOfMaterialItem.getBillOfMaterial());
 		}
 	}
 }

@@ -11,6 +11,7 @@ import backend.dao.ImageDao;
 import backend.dao.MaterialDao;
 import backend.exception.ObjectInUseException;
 import backend.exception.ObjectUnchangedException;
+import backend.model.billOfMaterial.BillOfMaterial;
 import backend.model.material.Material;
 import backend.model.material.MaterialArray;
 import backend.model.material.MaterialWS;
@@ -182,6 +183,10 @@ public class MaterialService {
 			if(objectInUseException.getUsedByObject() instanceof PurchaseOrder) {
 				deleteMaterialResult.addMessage(new WebServiceMessage(WebServiceMessageType.E, 
 						MessageFormat.format(this.resources.getString("material.deleteUsedInPurchaseOrder"), id, objectInUseException.getUsedById())));
+			}
+			if(objectInUseException.getUsedByObject() instanceof BillOfMaterial) {
+				deleteMaterialResult.addMessage(new WebServiceMessage(WebServiceMessageType.E, 
+						MessageFormat.format(this.resources.getString("material.deleteUsedInBillOfMaterial"), id, objectInUseException.getUsedById())));
 			}
 		}
 		catch (Exception e) {

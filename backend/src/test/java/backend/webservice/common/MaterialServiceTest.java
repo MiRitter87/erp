@@ -20,6 +20,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import backend.dao.AccountDao;
+import backend.dao.BillOfMaterialDao;
 import backend.dao.BusinessPartnerDao;
 import backend.dao.DAOManager;
 import backend.dao.MaterialDao;
@@ -27,6 +28,8 @@ import backend.dao.PurchaseOrderDao;
 import backend.dao.SalesOrderDao;
 import backend.model.Currency;
 import backend.model.account.Account;
+import backend.model.billOfMaterial.BillOfMaterial;
+import backend.model.billOfMaterial.BillOfMaterialItem;
 import backend.model.businessPartner.BusinessPartner;
 import backend.model.businessPartner.BusinessPartnerType;
 import backend.model.material.Material;
@@ -74,6 +77,11 @@ public class MaterialServiceTest {
 	private static PurchaseOrderDao purchaseOrderDAO;
 	
 	/**
+	 * DAO to access BillOfMaterial data.
+	 */
+	private static BillOfMaterialDao billOfMaterialDAO;
+	
+	/**
 	 * DAO to access account data.
 	 */
 	private static AccountDao accountDAO;
@@ -104,6 +112,16 @@ public class MaterialServiceTest {
 	private PurchaseOrderItem purchaseOrderItem;
 	
 	/**
+	 * The BillOfMaterial that is used for certain test cases.
+	 */
+	private BillOfMaterial billOfMaterial;
+	
+	/**
+	 * The BillOfMaterial item under test.
+	 */
+	private BillOfMaterialItem billOfMaterialItem;
+	
+	/**
 	 * Test material: AMD RX570 GPU.
 	 */
 	protected Material rx570;
@@ -129,6 +147,7 @@ public class MaterialServiceTest {
 		accountDAO = DAOManager.getInstance().getAccountDAO();
 		salesOrderDAO = DAOManager.getInstance().getSalesOrderDAO();
 		purchaseOrderDAO = DAOManager.getInstance().getPurchaseOrderDAO();
+		billOfMaterialDAO = DAOManager.getInstance().getBillOfMaterialDAO();
 	}
 	
 	
@@ -352,6 +371,41 @@ public class MaterialServiceTest {
 	}
 	
 	
+	/**
+	 * Initializes the database with a dummy BillOfMaterial.
+	 */
+	private void createDummyBillOfMaterial() {
+		this.billOfMaterialItem = new BillOfMaterialItem();
+		this.billOfMaterialItem.setId(1);
+		this.billOfMaterialItem.setMaterial(this.rx570);
+		this.billOfMaterialItem.setQuantity(1);
+		
+		this.billOfMaterial = new BillOfMaterial();
+		this.billOfMaterial.setName("Dummy name");
+		this.billOfMaterial.setDescription("Dummy description");
+		this.billOfMaterial.setMaterial(this.g4560);
+		this.billOfMaterial.addItem(this.billOfMaterialItem);
+		
+		try {
+			billOfMaterialDAO.insertBillOfMaterial(this.billOfMaterial);
+		} catch (Exception e) {
+			fail(e.getMessage());
+		}
+	}
+	
+	
+	/**
+	 * Deletes the dummy BillOfMaterial from the database.
+	 */
+	private void deleteDummyBillOfMaterial() {
+		try {
+			billOfMaterialDAO.deleteBillOfMaterial(this.billOfMaterial);
+		} catch (Exception e) {
+			fail(e.getMessage());
+		}
+	}
+	
+	
 	@Test
 	/**
 	 * Tests adding of a new material.
@@ -541,6 +595,42 @@ public class MaterialServiceTest {
 			this.deleteDummyPurchaseOrder();
 			this.deleteDummyPartner();
 			this.deleteDummyAccount();
+		}
+	}
+	
+	
+	@Test
+	/**
+	 * Tests deletion of a material that is used in at least one BillOfMaterial item.
+	 */
+	public void testDeleteMaterialUsedInBomItem() {
+		String expectedErrorMessage, actualErrorMessage;
+		WebServiceResult deleteMaterialResult;
+		Material deletedMaterial = null;
+		MaterialService materialService = new MaterialService();
+		
+		try {
+			//Create the dummy BillOfMaterial that is used for this test case.
+			this.createDummyBillOfMaterial();
+			
+			//Try to delete the material used in the BillOfMaterial item.
+			deleteMaterialResult = materialService.deleteMaterial(this.rx570.getId());
+			
+			//There should be a return message of type E.
+			assertTrue(deleteMaterialResult.getMessages().size() == 1);
+			assertTrue(deleteMaterialResult.getMessages().get(0).getType() == WebServiceMessageType.E);
+			
+			expectedErrorMessage = MessageFormat.format(this.resources.getString("material.deleteUsedInBillOfMaterial"), 
+					this.rx570.getId(), this.billOfMaterial.getId());
+			actualErrorMessage = deleteMaterialResult.getMessages().get(0).getText();
+			assertEquals(expectedErrorMessage, actualErrorMessage);
+		}
+		catch (Exception e) {
+			fail(e.getMessage());
+		}
+		finally {
+			//Delete the dummy BillOfMaterial that is used for this test case.
+			this.deleteDummyBillOfMaterial();
 		}
 	}
 
