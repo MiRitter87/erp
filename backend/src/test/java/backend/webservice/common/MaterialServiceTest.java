@@ -624,6 +624,54 @@ public class MaterialServiceTest {
 					this.rx570.getId(), this.billOfMaterial.getId());
 			actualErrorMessage = deleteMaterialResult.getMessages().get(0).getText();
 			assertEquals(expectedErrorMessage, actualErrorMessage);
+			
+			//Try to read the material that is used in the BillOfMaterial.
+			deletedMaterial = materialDAO.getMaterial(this.rx570.getId());
+			
+			//Check if the material has not been deleted.
+			assertNotNull(deletedMaterial);
+		}
+		catch (Exception e) {
+			fail(e.getMessage());
+		}
+		finally {
+			//Delete the dummy BillOfMaterial that is used for this test case.
+			this.deleteDummyBillOfMaterial();
+		}
+	}
+	
+	
+	@Test
+	/**
+	 * Tests deletion of a material that is used in at least one BillOfMaterial at head level.
+	 */
+	public void testDeleteMaterialUsedInBomHead() {
+		String expectedErrorMessage, actualErrorMessage;
+		WebServiceResult deleteMaterialResult;
+		Material deletedMaterial = null;
+		MaterialService materialService = new MaterialService();
+		
+		try {
+			//Create the dummy BillOfMaterial that is used for this test case.
+			this.createDummyBillOfMaterial();
+			
+			//Try to delete the material used in the BillOfMaterial at head level.
+			deleteMaterialResult = materialService.deleteMaterial(this.g4560.getId());
+			
+			//There should be a return message of type E.
+			assertTrue(deleteMaterialResult.getMessages().size() == 1);
+			assertTrue(deleteMaterialResult.getMessages().get(0).getType() == WebServiceMessageType.E);
+			
+			expectedErrorMessage = MessageFormat.format(this.resources.getString("material.deleteUsedInBillOfMaterial"), 
+					this.g4560.getId(), this.billOfMaterial.getId());
+			actualErrorMessage = deleteMaterialResult.getMessages().get(0).getText();
+			assertEquals(expectedErrorMessage, actualErrorMessage);
+			
+			//Try to read the material that is used in the BillOfMaterial.
+			deletedMaterial = materialDAO.getMaterial(this.g4560.getId());
+			
+			//Check if the material has not been deleted.
+			assertNotNull(deletedMaterial);
 		}
 		catch (Exception e) {
 			fail(e.getMessage());

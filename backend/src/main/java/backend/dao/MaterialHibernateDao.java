@@ -13,6 +13,7 @@ import javax.persistence.criteria.Root;
 
 import backend.exception.ObjectInUseException;
 import backend.exception.ObjectUnchangedException;
+import backend.model.billOfMaterial.BillOfMaterial;
 import backend.model.billOfMaterial.BillOfMaterialItem;
 import backend.model.material.Material;
 import backend.model.purchaseOrder.PurchaseOrderItem;
@@ -282,7 +283,22 @@ public class MaterialHibernateDao implements MaterialDao {
 	 * @throws ObjectInUseException In case the material is in use.
 	 */
 	private void checkMaterialUsedInBomHead(final Material material, final EntityManager entityManager) throws ObjectInUseException {
+		BillOfMaterial billOfMaterial;
+		List<BillOfMaterial> billOfMaterials;		
+		CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+		CriteriaQuery<BillOfMaterial> criteriaQuery = criteriaBuilder.createQuery(BillOfMaterial.class);
 		
+		Root<BillOfMaterial> criteria = criteriaQuery.from(BillOfMaterial.class);
+		criteriaQuery.select(criteria).distinct(true);
+		criteriaQuery.where(criteriaBuilder.equal(criteria.get("material"), material));
+		
+		TypedQuery<BillOfMaterial> typedQuery = entityManager.createQuery(criteriaQuery);
+		billOfMaterials = typedQuery.getResultList();
+		
+		if(billOfMaterials.size() > 0) {
+			billOfMaterial = billOfMaterials.get(0);
+			throw new ObjectInUseException(material.getId(), billOfMaterial.getId(), billOfMaterial);
+		}
 	}
 	
 	
