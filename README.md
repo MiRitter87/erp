@@ -44,6 +44,3 @@ Weil kein Weg gefunden wurde, diesen Prozess per Maven zu automatisieren, wurde 
   -  Als letzter Parameter wird immer die WSDL-Datei übergeben. Diese kann lokal oder remote liegen
   
 Weil die Endpunkt-URLs in den generierten Klassen enthalten sind, müssen im Frontend auch dann neue Klassen generiert werden, wenn sich die URL der WebServices ändert.
-
-## Weitere Dokumentation
-Im Frontend befindet sich im Ordner *documentation* weitere Dokumentation. Dazu zählen auch MockUps für Bedienoberflächen.
