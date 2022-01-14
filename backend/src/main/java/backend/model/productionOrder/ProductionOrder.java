@@ -1,6 +1,8 @@
 package backend.model.productionOrder;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 /**
  * Represents an order to produce a certain amount of materials.
@@ -33,12 +35,29 @@ public class ProductionOrder {
 	 */
 	private ProductionOrderStatus status;
 	
+	/**
+	 * The items that are being produced.
+	 */
+	private List<ProductionOrderItem> items;
+	
 	
 	/**
 	 * Default constructor.
 	 */
 	public ProductionOrder() {
 		this.orderDate = new Date();
+		this.items = new ArrayList<ProductionOrderItem>();
+	}
+	
+	
+	/**
+	 * Adds a production order item to the production order.
+	 * 
+	 * @param item The production order item.
+	 */
+	public void addItem(final ProductionOrderItem item) {
+		item.setProductionOrder(this);
+		this.items.add(item);
 	}
 
 
@@ -119,5 +138,21 @@ public class ProductionOrder {
 	 */
 	public void setStatus(ProductionOrderStatus status) {
 		this.status = status;
+	}
+
+
+	/**
+	 * @return the items
+	 */
+	public List<ProductionOrderItem> getItems() {
+		return items;
+	}
+
+
+	/**
+	 * @param items the items to set
+	 */
+	public void setItems(List<ProductionOrderItem> items) {
+		this.items = items;
 	}
 }
