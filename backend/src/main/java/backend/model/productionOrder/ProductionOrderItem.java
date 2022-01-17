@@ -1,5 +1,15 @@
 package backend.model.productionOrder;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.Id;
+import javax.persistence.IdClass;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
+
 import backend.model.material.Material;
 
 /**
@@ -7,25 +17,36 @@ import backend.model.material.Material;
  * 
  * @author Michael
  */
+@Table(name="PRODUCTION_ORDER_ITEM")
+@Entity
+@IdClass(ProductionOrderItemId.class)
 public class ProductionOrderItem {
 	/**
 	 * The ID.
 	 */
+	@Id
+	@Column(name="ITEM_ID")
 	private Integer id;
 	
 	/**
 	 * The production order to which the item belongs to.
 	 */
+	@Id
+	@JoinColumn(name = "PRODUCTION_ORDER_ID")
+	@ManyToOne(fetch = FetchType.LAZY)
 	private ProductionOrder productionOrder;
 	
 	/**
 	 * The material that is being produced.
 	 */
+	@OneToOne
+	@JoinColumn(name="MATERIAL_ID")
 	private Material material;
 	
 	/**
 	 * The quantity that is being produced.
 	 */
+	@Column(name="QUANTITY")
 	private Long quantity;
 	
 	

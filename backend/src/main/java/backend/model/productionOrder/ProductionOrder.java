@@ -4,40 +4,64 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.OneToMany;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
+
 /**
  * Represents an order to produce a certain amount of materials.
  * 
  * @author Michael
  */
+@Table(name="PRODUCTION_ORDER")
+@Entity
+@SequenceGenerator(name = "productionOrderSequence", initialValue = 1, allocationSize = 1)
 public class ProductionOrder {
 	/**
 	 * The ID.
 	 */
+	@Id
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "productionOrderSequence")
+	@Column(name="PRODUCTION_ORDER_ID")
 	private Integer id;
 	
 	/**
 	 * The order date.
 	 */
+	@Column(name="ORDER_DATE")
 	private Date orderDate;
 	
 	/**
 	 * The planned execution date.
 	 */
+	@Column(name="PLANNED_EXECUTION_DATE")
 	private Date plannedExecutionDate;
 	
 	/**
-	 * The actual executionn date.
+	 * The actual execution date.
 	 */
+	@Column(name="EXECUTION_DATE")
 	private Date executionDate;
 	
 	/**
 	 * The status of the production order.
 	 */
+	@Column(name="STATUS", length = 10)
+	@Enumerated(EnumType.STRING)
 	private ProductionOrderStatus status;
 	
 	/**
 	 * The items that are being produced.
 	 */
+	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "productionOrder")
 	private List<ProductionOrderItem> items;
 	
 	

@@ -20,6 +20,8 @@
         <class>backend.model.account.Posting</class>
         <class>backend.model.billOfMaterial.BillOfMaterial</class>
         <class>backend.model.billOfMaterial.BillOfMaterialItem</class>
+        <class>backend.model.productionOrder.ProductionOrder</class>
+        <class>backend.model.productionOrder.ProductionOrderItem</class>
         
         <!-- Several configuration properties -->
         <properties>
