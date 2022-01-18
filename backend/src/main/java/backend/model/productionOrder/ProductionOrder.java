@@ -2,7 +2,9 @@ package backend.model.productionOrder;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -15,6 +17,15 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.validation.ConstraintViolation;
+import javax.validation.Validation;
+import javax.validation.Validator;
+import javax.validation.ValidatorFactory;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
+
+import backend.exception.DuplicateIdentifierException;
+import backend.exception.NoItemsException;
 
 /**
  * Represents an order to produce a certain amount of materials.
@@ -31,6 +42,7 @@ public class ProductionOrder {
 	@Id
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "productionOrderSequence")
 	@Column(name="PRODUCTION_ORDER_ID")
+	@Min(value = 1, message = "{productionOrder.id.min.message}")
 	private Integer id;
 	
 	/**
@@ -43,6 +55,7 @@ public class ProductionOrder {
 	 * The planned execution date.
 	 */
 	@Column(name="PLANNED_EXECUTION_DATE")
+	@NotNull(message = "{productionOrder.plannedExecutionDate.notNull.message}")
 	private Date plannedExecutionDate;
 	
 	/**
@@ -56,6 +69,7 @@ public class ProductionOrder {
 	 */
 	@Column(name="STATUS", length = 10)
 	@Enumerated(EnumType.STRING)
+	@NotNull(message = "{productionOrder.status.notNull.message}")
 	private ProductionOrderStatus status;
 	
 	/**
@@ -289,5 +303,76 @@ public class ProductionOrder {
 		}
 		
 		return null;
+	}
+	
+	
+	/**
+	 * Validates the production order.
+	 * 
+	 * @throws NoItemsException Indicates that the production order has no items defined.
+	 * @throws DuplicateIdentifierException Indicates that multiple items share the same id.
+	 * @throws Exception In case a general validation error occurred.
+	 */
+	public void validate() throws NoItemsException, DuplicateIdentifierException, Exception {
+		this.validateAnnotations();
+		this.validateAdditionalCharacteristics();
+	}
+	
+	
+	/**
+	 * Validates the production order according to the annotations of the Validation Framework.
+	 * 
+	 * @exception Exception In case the validation failed.
+	 */
+	private void validateAnnotations() throws Exception {
+		ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
+		Validator validator = factory.getValidator();
+		Set<ConstraintViolation<ProductionOrder>> violations = validator.validate(this);
+		
+		for(ConstraintViolation<ProductionOrder> violation:violations) {
+			throw new Exception(violation.getMessage());
+		}
+	}
+	
+	
+	/**
+	 * Validates additional characteristics of the production order besides annotations.
+	 * 
+	 * @throws NoItemsException Indicates that the production order has no items defined.
+	 * @throws DuplicateIdentifierException Indicates that multiple items share the same id.
+	 */
+	private void validateAdditionalCharacteristics() throws NoItemsException, DuplicateIdentifierException {
+		this.validateItemsDefined();
+		this.validateDistinctItemIds();
+	}
+	
+	
+	/**
+	 * Checks if items are defined.
+	 * 
+	 * @throws NoItemsException If no items are defined
+	 */
+	private void validateItemsDefined() throws NoItemsException {
+		if(this.items == null || this.items.size() == 0)
+			throw new NoItemsException();
+	}
+	
+	
+	/**
+	 * Checks if any item ID is used multiple times.
+	 * 
+	 * @throws DuplicateIdentifierException Indicates that an item ID is used multiple times.
+	 */
+	private void validateDistinctItemIds() throws DuplicateIdentifierException {
+		Set<Integer> usedIds = new HashSet<Integer>();
+		boolean isDistinctId;
+		
+		for(ProductionOrderItem item:this.items) {
+			isDistinctId = usedIds.add(item.getId());
+			
+			if(!isDistinctId) {
+				throw new DuplicateIdentifierException(item.getId().toString());
+			}
+		}
 	}
 }
