@@ -1,5 +1,7 @@
 package backend.model.productionOrder;
 
+import java.util.Set;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -9,6 +11,12 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import javax.validation.ConstraintViolation;
+import javax.validation.Validation;
+import javax.validation.Validator;
+import javax.validation.ValidatorFactory;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
 
 import backend.model.material.Material;
 
@@ -26,6 +34,8 @@ public class ProductionOrderItem {
 	 */
 	@Id
 	@Column(name="ITEM_ID")
+	@NotNull(message = "{productionOrderItem.id.notNull.message}")
+	@Min(value = 1, message = "{productionOrderItem.id.min.message}")
 	private Integer id;
 	
 	/**
@@ -41,12 +51,15 @@ public class ProductionOrderItem {
 	 */
 	@OneToOne
 	@JoinColumn(name="MATERIAL_ID")
+	@NotNull(message = "{productionOrderItem.material.notNull.message}")
 	private Material material;
 	
 	/**
 	 * The quantity that is being produced.
 	 */
 	@Column(name="QUANTITY")
+	@NotNull(message = "{productionOrderItem.quantity.notNull.message}")
+	@Min(value = 1, message = "{productionOrderItem.quantity.min.message}")
 	private Long quantity;
 	
 	
@@ -167,5 +180,31 @@ public class ProductionOrderItem {
 			return false;
 		}
 		return true;
+	}
+	
+	
+	/**
+	 * Validates the production order item.
+	 * 
+	 * @throws Exception In case a general validation error occurred.
+	 */
+	public void validate() throws Exception {
+		this.validateAnnotations();
+	}
+	
+	
+	/**
+	 * Validates the production order item according to the annotations of the Validation Framework.
+	 * 
+	 * @exception Exception In case the validation failed.
+	 */
+	private void validateAnnotations() throws Exception {
+		ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
+		Validator validator = factory.getValidator();
+		Set<ConstraintViolation<ProductionOrderItem>> violations = validator.validate(this);
+		
+		for(ConstraintViolation<ProductionOrderItem> violation:violations) {
+			throw new Exception(violation.getMessage());
+		}
 	}
 }
