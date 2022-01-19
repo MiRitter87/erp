@@ -77,6 +77,11 @@ public class DAOManager implements Closeable {
 	 */
 	private BillOfMaterialDao billOfMaterialDao;
 	
+	/**
+	 * DAO to manage ProductionOrder data.
+	 */
+	private ProductionOrderDao productionOrderDao;
+	
 	
 	/**
 	 * Initializes the DAOManager.
@@ -250,6 +255,19 @@ public class DAOManager implements Closeable {
 			this.billOfMaterialDao = new BillOfMaterialHibernateDao(this.sessionFactory);
 		
 		return this.billOfMaterialDao;
+	}
+	
+	
+	/**
+	 * Returns a DAO to manage ProductionOrder data.
+	 * 
+	 * @return The ProductionOrderDao.
+	 */
+	public ProductionOrderDao getProductionOrderDAO() {
+		if(this.productionOrderDao == null)
+			this.productionOrderDao = new ProductionOrderHibernateDao(this.sessionFactory);
+		
+		return this.productionOrderDao;
 	}
 
 	
