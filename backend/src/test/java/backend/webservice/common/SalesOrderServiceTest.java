@@ -245,7 +245,7 @@ public class SalesOrderServiceTest {
 
 	
 	/**
-	 * Initializes the database with a dummy sales order.
+	 * Initializes the database with dummy sales orders.
 	 */
 	private void createDummyOrders() {
 		GregorianCalendar tomorrow = new GregorianCalendar();
@@ -297,7 +297,7 @@ public class SalesOrderServiceTest {
 	
 	
 	/**
-	 * Deletes the dummy sales order from the database.
+	 * Deletes the dummy sales orders from the database.
 	 */
 	private void deleteDummyOrders() {
 		try {
@@ -334,7 +334,7 @@ public class SalesOrderServiceTest {
 	
 	
 	/**
-	 * Deletes the dummy material from the database.
+	 * Deletes the dummy materials from the database.
 	 */
 	private void deleteDummyMaterials() {
 		try {
