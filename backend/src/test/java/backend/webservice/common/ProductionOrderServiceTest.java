@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.text.MessageFormat;
 import java.util.GregorianCalendar;
 import java.util.ResourceBundle;
 
@@ -24,6 +25,7 @@ import backend.model.material.UnitOfMeasurement;
 import backend.model.productionOrder.ProductionOrder;
 import backend.model.productionOrder.ProductionOrderItem;
 import backend.model.productionOrder.ProductionOrderStatus;
+import backend.model.webservice.WebServiceMessageType;
 import backend.model.webservice.WebServiceResult;
 import backend.tools.WebServiceTools;
 
@@ -228,7 +230,7 @@ public class ProductionOrderServiceTest {
 	/**
 	 * Tests the retrieval of a production order.
 	 */
-	public void testGetSalesOrder() {
+	public void testGetProductionOrder() {
 		WebServiceResult getProductionOrderResult;
 		ProductionOrder productionOrder;
 		ProductionOrderItem productionOrderItem;
@@ -264,5 +266,29 @@ public class ProductionOrderServiceTest {
 		assertEquals( this.orderItem11.getId(), productionOrderItem.getId());
 		assertEquals( this.orderItem11.getMaterial(), productionOrderItem.getMaterial());
 		assertEquals( this.orderItem11.getQuantity(), productionOrderItem.getQuantity());
+	}
+	
+	
+	@Test
+	/**
+	 * Tests the retrieval of a production order with an unknown ID.
+	 */
+	public void testGetUnknownProductionOrder() {
+		WebServiceResult getProductionOrderResult;
+		ProductionOrderService service = new ProductionOrderService();
+		String actualErrorMessage, expectedErrorMessage;
+		Integer unknownId = 0;	//Production order IDs at database start at 1.
+		
+		//Try to get a production order with an unknown ID.
+		getProductionOrderResult = service.getProductionOrder(unknownId);
+		
+		//There should be a return message of type E.
+		assertTrue(getProductionOrderResult.getMessages().size() == 1);
+		assertTrue(getProductionOrderResult.getMessages().get(0).getType() == WebServiceMessageType.E);
+		
+		//A proper message should be provided.
+		expectedErrorMessage = MessageFormat.format(this.resources.getString("productionOrder.notFound"), unknownId);
+		actualErrorMessage = getProductionOrderResult.getMessages().get(0).getText();
+		assertEquals(expectedErrorMessage, actualErrorMessage);
 	}
 }

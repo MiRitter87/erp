@@ -9,7 +9,6 @@ import org.apache.logging.log4j.Logger;
 import backend.dao.DAOManager;
 import backend.dao.ProductionOrderDao;
 import backend.model.productionOrder.ProductionOrder;
-import backend.model.salesOrder.SalesOrder;
 import backend.model.webservice.WebServiceMessage;
 import backend.model.webservice.WebServiceMessageType;
 import backend.model.webservice.WebServiceResult;
@@ -64,15 +63,15 @@ public class ProductionOrderService {
 			}
 			else {
 				//Production order not found
-//				getSalesOrderResult.addMessage(new WebServiceMessage(WebServiceMessageType.E, 
-//						MessageFormat.format(this.resources.getString("salesOrder.notFound"), id)));
+				getProductionOrderResult.addMessage(new WebServiceMessage(WebServiceMessageType.E, 
+						MessageFormat.format(this.resources.getString("productionOrder.notFound"), id)));
 			}
 		}
 		catch (Exception e) {
-//			getSalesOrderResult.addMessage(new WebServiceMessage(WebServiceMessageType.E,
-//					MessageFormat.format(this.resources.getString("salesOrder.getError"), id)));
-//			
-//			logger.error(MessageFormat.format(this.resources.getString("salesOrder.getError"), id), e);
+			getProductionOrderResult.addMessage(new WebServiceMessage(WebServiceMessageType.E,
+					MessageFormat.format(this.resources.getString("productionOrder.getError"), id)));
+			
+			logger.error(MessageFormat.format(this.resources.getString("productionOrder.getError"), id), e);
 		}
 		
 		return getProductionOrderResult;
