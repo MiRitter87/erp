@@ -9,6 +9,7 @@ import org.apache.logging.log4j.Logger;
 import backend.dao.DAOManager;
 import backend.dao.ProductionOrderDao;
 import backend.model.productionOrder.ProductionOrder;
+import backend.model.productionOrder.ProductionOrderArray;
 import backend.model.webservice.WebServiceMessage;
 import backend.model.webservice.WebServiceMessageType;
 import backend.model.webservice.WebServiceResult;
@@ -75,5 +76,28 @@ public class ProductionOrderService {
 		}
 		
 		return getProductionOrderResult;
+	}
+	
+	
+	/**
+	 * Provides a list of all production orders.
+	 * 
+	 * @return A list of all production orders.
+	 */
+	public WebServiceResult getProductionOrders() {
+		WebServiceResult getProductionOrdersResult = new WebServiceResult(null);
+		ProductionOrderArray productionOrders = new ProductionOrderArray();
+		
+		try {
+			productionOrders.setProductionOrders(this.productionOrderDAO.getProductionOrders());
+			getProductionOrdersResult.setData(productionOrders);
+		} catch (Exception e) {
+			getProductionOrdersResult.addMessage(new WebServiceMessage(
+					WebServiceMessageType.E, this.resources.getString("productionOrder.getProductionOrdersError")));
+			
+			logger.error(this.resources.getString("productionOrder.getProductionOrdersError"), e);
+		}
+		
+		return getProductionOrdersResult;
 	}
 }

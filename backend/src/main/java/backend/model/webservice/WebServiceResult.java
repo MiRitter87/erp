@@ -13,6 +13,7 @@ import backend.model.businessPartner.BusinessPartnerArray;
 import backend.model.department.DepartmentArray;
 import backend.model.employee.EmployeeArray;
 import backend.model.material.MaterialArray;
+import backend.model.productionOrder.ProductionOrderArray;
 import backend.model.purchaseOrder.PurchaseOrderArray;
 import backend.model.salesOrder.SalesOrderArray;
 
@@ -24,7 +25,7 @@ import backend.model.salesOrder.SalesOrderArray;
  *
  */
 @XmlSeeAlso({EmployeeArray.class, DepartmentArray.class, MaterialArray.class, BusinessPartnerArray.class, SalesOrderArray.class, PurchaseOrderArray.class,
-				AccountArray.class, BillOfMaterialArray.class})
+				AccountArray.class, BillOfMaterialArray.class, ProductionOrderArray.class})
 public class WebServiceResult {
 	/**
 	 * A list of messages.
