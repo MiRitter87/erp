@@ -1,5 +1,6 @@
 package backend.webservice.common;
 
+import java.text.MessageFormat;
 import java.util.ResourceBundle;
 
 import org.apache.logging.log4j.LogManager;
@@ -7,6 +8,11 @@ import org.apache.logging.log4j.Logger;
 
 import backend.dao.DAOManager;
 import backend.dao.ProductionOrderDao;
+import backend.model.productionOrder.ProductionOrder;
+import backend.model.salesOrder.SalesOrder;
+import backend.model.webservice.WebServiceMessage;
+import backend.model.webservice.WebServiceMessageType;
+import backend.model.webservice.WebServiceResult;
 
 /**
  * Common implementation of the production order WebService that is used by the SOAP as well as the REST service.
@@ -36,5 +42,39 @@ public class ProductionOrderService {
 	 */
 	public ProductionOrderService() {
 		this.productionOrderDAO = DAOManager.getInstance().getProductionOrderDAO();
+	}
+	
+	
+	/**
+	 * Provides the production order with the given id.
+	 * 
+	 * @param id The id of the production order.
+	 * @return The production order with the given id, if found.
+	 */
+	public WebServiceResult getProductionOrder(final Integer id) {
+		ProductionOrder productionOrder = null;
+		WebServiceResult getProductionOrderResult = new WebServiceResult(null);
+		
+		try {
+			productionOrder = this.productionOrderDAO.getProductionOrder(id);
+			
+			if(productionOrder != null) {
+				//Production order found
+				getProductionOrderResult.setData(productionOrder);
+			}
+			else {
+				//Production order not found
+//				getSalesOrderResult.addMessage(new WebServiceMessage(WebServiceMessageType.E, 
+//						MessageFormat.format(this.resources.getString("salesOrder.notFound"), id)));
+			}
+		}
+		catch (Exception e) {
+//			getSalesOrderResult.addMessage(new WebServiceMessage(WebServiceMessageType.E,
+//					MessageFormat.format(this.resources.getString("salesOrder.getError"), id)));
+//			
+//			logger.error(MessageFormat.format(this.resources.getString("salesOrder.getError"), id), e);
+		}
+		
+		return getProductionOrderResult;
 	}
 }

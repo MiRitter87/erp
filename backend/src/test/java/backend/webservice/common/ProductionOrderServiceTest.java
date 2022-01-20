@@ -1,5 +1,7 @@
 package backend.webservice.common;
 
+import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.IOException;
@@ -11,6 +13,7 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import backend.dao.DAOManager;
 import backend.dao.MaterialDao;
@@ -21,6 +24,8 @@ import backend.model.material.UnitOfMeasurement;
 import backend.model.productionOrder.ProductionOrder;
 import backend.model.productionOrder.ProductionOrderItem;
 import backend.model.productionOrder.ProductionOrderStatus;
+import backend.model.webservice.WebServiceResult;
+import backend.tools.WebServiceTools;
 
 /**
  * Tests the production order service.
@@ -216,5 +221,48 @@ public class ProductionOrderServiceTest {
 		} catch (Exception e) {
 			fail(e.getMessage());
 		}
+	}
+	
+	
+	@Test
+	/**
+	 * Tests the retrieval of a production order.
+	 */
+	public void testGetSalesOrder() {
+		WebServiceResult getProductionOrderResult;
+		ProductionOrder productionOrder;
+		ProductionOrderItem productionOrderItem;
+		
+		//Get the production order.
+		ProductionOrderService service = new ProductionOrderService();
+		getProductionOrderResult = service.getProductionOrder(this.order1.getId());
+		
+		//Assure no error message exists
+		assertTrue(WebServiceTools.resultContainsErrorMessage(getProductionOrderResult) == false);
+		
+		//Assure that a production order is returned
+		assertTrue(getProductionOrderResult.getData() instanceof ProductionOrder);
+		
+		productionOrder = (ProductionOrder) getProductionOrderResult.getData();
+		
+		//Check each attribute of the production order
+		assertEquals(this.order1.getId(), productionOrder.getId());
+		assertEquals(this.order1.getOrderDate().getTime(), productionOrder.getOrderDate().getTime());
+		assertEquals(this.order1.getPlannedExecutionDate().getTime(), productionOrder.getPlannedExecutionDate().getTime());
+		assertEquals(this.order1.getExecutionDate(), productionOrder.getExecutionDate());
+		assertEquals(this.order1.getStatus(), productionOrder.getStatus());
+		
+		if(this.order1.getExecutionDate() != null && productionOrder.getExecutionDate() != null)
+			assertEquals(this.order1.getExecutionDate().getTime(), productionOrder.getExecutionDate().getTime());
+		
+		//The returned production order should have one item.
+		assertEquals(this.order1.getItems().size(), productionOrder.getItems().size());
+		
+		productionOrderItem = productionOrder.getItems().get(0);
+		
+		//Check the attributes of the production order item
+		assertEquals( this.orderItem11.getId(), productionOrderItem.getId());
+		assertEquals( this.orderItem11.getMaterial(), productionOrderItem.getMaterial());
+		assertEquals( this.orderItem11.getQuantity(), productionOrderItem.getQuantity());
 	}
 }
