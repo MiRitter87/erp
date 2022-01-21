@@ -26,7 +26,9 @@ import backend.model.material.UnitOfMeasurement;
 import backend.model.productionOrder.ProductionOrder;
 import backend.model.productionOrder.ProductionOrderArray;
 import backend.model.productionOrder.ProductionOrderItem;
+import backend.model.productionOrder.ProductionOrderItemWS;
 import backend.model.productionOrder.ProductionOrderStatus;
+import backend.model.productionOrder.ProductionOrderWS;
 import backend.model.webservice.WebServiceMessageType;
 import backend.model.webservice.WebServiceResult;
 import backend.tools.WebServiceTools;
@@ -413,5 +415,34 @@ public class ProductionOrderServiceTest {
 				fail(e.getMessage());
 			}
 		}
+	}
+	
+	
+	/**
+	 * Converts a production order to the lean WebService representation.
+	 * 
+	 * @param order The production order to be converted.
+	 * @return The lean WebService representation of the production order.
+	 */
+	private ProductionOrderWS convertToWsOrder(ProductionOrder order) {
+		ProductionOrderWS wsOrder = new ProductionOrderWS();
+		
+		//Head level
+		wsOrder.setProductionOrderId(order.getId());
+		wsOrder.setOrderDate(order.getOrderDate());
+		wsOrder.setPlannedExecutionDate(order.getPlannedExecutionDate());
+		wsOrder.setExecutionDate(order.getExecutionDate());
+		wsOrder.setStatus(order.getStatus());
+		
+		//Item level
+		for(ProductionOrderItem orderItem:order.getItems()) {
+			ProductionOrderItemWS wsOrderItem = new ProductionOrderItemWS();
+			wsOrderItem.setItemId(orderItem.getId());
+			wsOrderItem.setMaterialId(orderItem.getMaterial().getId());
+			wsOrderItem.setQuantity(orderItem.getQuantity());
+			wsOrder.addItem(wsOrderItem);
+		}
+		
+		return wsOrder;
 	}
 }
