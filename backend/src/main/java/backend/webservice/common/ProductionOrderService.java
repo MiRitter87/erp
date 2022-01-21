@@ -10,6 +10,7 @@ import backend.dao.DAOManager;
 import backend.dao.ProductionOrderDao;
 import backend.model.productionOrder.ProductionOrder;
 import backend.model.productionOrder.ProductionOrderArray;
+import backend.model.productionOrder.ProductionOrderWS;
 import backend.model.webservice.WebServiceMessage;
 import backend.model.webservice.WebServiceMessageType;
 import backend.model.webservice.WebServiceResult;
@@ -136,5 +137,36 @@ public class ProductionOrderService {
 		}
 		
 		return deleteProductionOrderResult;
+	}
+	
+	
+	/**
+	 * Updates an existing production order.
+	 * 
+	 * @param productionOrder The production order to be updated.
+	 * @return The result of the update function.
+	 */
+	public WebServiceResult updateProductionOrder(final ProductionOrderWS productionOrder) {
+		ProductionOrder convertedProductionOrder = new ProductionOrder();
+		WebServiceResult updateProductionOrderResult = new WebServiceResult(null);
+		
+//		try {
+//			convertedSalesOrder = this.convertSalesOrder(salesOrder);
+//		}
+//		catch(Exception exception) {
+//			updateSalesOrderResult.addMessage(new WebServiceMessage(
+//					WebServiceMessageType.E, MessageFormat.format(this.resources.getString("salesOrder.updateError"), convertedSalesOrder.getId())));	
+//			logger.error(MessageFormat.format(this.resources.getString("salesOrder.updateError"), convertedSalesOrder.getId()), exception);
+//			return updateSalesOrderResult;
+//		}
+//		
+//		updateSalesOrderResult = this.validate(convertedSalesOrder);
+//		if(WebServiceTools.resultContainsErrorMessage(updateSalesOrderResult)) {
+//			return updateSalesOrderResult;
+//		}
+//		
+//		updateSalesOrderResult = this.update(convertedSalesOrder, updateSalesOrderResult);
+
+		return updateProductionOrderResult;
 	}
 }

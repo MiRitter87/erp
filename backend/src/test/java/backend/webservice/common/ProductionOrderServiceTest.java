@@ -29,6 +29,7 @@ import backend.model.productionOrder.ProductionOrderItem;
 import backend.model.productionOrder.ProductionOrderItemWS;
 import backend.model.productionOrder.ProductionOrderStatus;
 import backend.model.productionOrder.ProductionOrderWS;
+import backend.model.salesOrder.SalesOrder;
 import backend.model.webservice.WebServiceMessageType;
 import backend.model.webservice.WebServiceResult;
 import backend.tools.WebServiceTools;
@@ -415,6 +416,38 @@ public class ProductionOrderServiceTest {
 				fail(e.getMessage());
 			}
 		}
+	}
+	
+	
+	@Test
+	/**
+	 * Tests updating a production order with valid data.
+	 */
+	public void testUpdateValidProductionOrder() {
+		WebServiceResult updateProductionOrderResult;
+		ProductionOrder updatedProductionOrder;
+		ProductionOrderService service = new ProductionOrderService();
+		
+		//Update the planned execution date.
+		GregorianCalendar calendar = new GregorianCalendar();
+		calendar.add(GregorianCalendar.DAY_OF_MONTH, 14);
+		this.order1.setPlannedExecutionDate(calendar.getTime());
+		updateProductionOrderResult = service.updateProductionOrder(this.convertToWsOrder(this.order1));
+		
+		//Assure no error message exists
+		assertTrue(WebServiceTools.resultContainsErrorMessage(updateProductionOrderResult) == false);
+		
+		//There should be a success message
+//		assertTrue(updateSalesOrderResult.getMessages().size() == 1);
+//		assertTrue(updateSalesOrderResult.getMessages().get(0).getType() == WebServiceMessageType.S);
+//		
+//		//Retrieve the updated sales order and check if the changes have been persisted.
+//		try {
+//			updatedSalesOrder = orderDAO.getSalesOrder(this.order1.getId());
+//			assertEquals(this.order1.getRequestedDeliveryDate().getTime(), updatedSalesOrder.getRequestedDeliveryDate().getTime());
+//		} catch (Exception e) {
+//			fail(e.getMessage());
+//		}
 	}
 	
 	
