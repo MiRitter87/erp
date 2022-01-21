@@ -100,4 +100,41 @@ public class ProductionOrderService {
 		
 		return getProductionOrdersResult;
 	}
+	
+	
+	/**
+	 * Deletes the production order with the given id.
+	 * 
+	 * @param id The id of the production order to be deleted.
+	 * @return The result of the delete function.
+	 */
+	public WebServiceResult deleteProductionOrder(final Integer id) {
+		ProductionOrder productionOrder = null;
+		WebServiceResult deleteProductionOrderResult = new WebServiceResult(null);
+		
+		//Check if a production order with the given id exists.
+		try {
+			productionOrder = this.productionOrderDAO.getProductionOrder(id);
+			
+			if(productionOrder != null) {
+				//Delete production order if exists.
+				this.productionOrderDAO.deleteProductionOrder(productionOrder);				
+				deleteProductionOrderResult.addMessage(new WebServiceMessage(WebServiceMessageType.S, 
+						MessageFormat.format(this.resources.getString("productionOrder.deleteSuccess"), id)));
+			}
+			else {
+				//Production order not found.
+				deleteProductionOrderResult.addMessage(new WebServiceMessage(WebServiceMessageType.E, 
+						MessageFormat.format(this.resources.getString("productionOrder.notFound"), id)));
+			}
+		}
+		catch (Exception e) {
+			deleteProductionOrderResult.addMessage(new WebServiceMessage(WebServiceMessageType.E,
+					MessageFormat.format(this.resources.getString("productionOrder.deleteError"), id)));
+			
+			logger.error(MessageFormat.format(this.resources.getString("productionOrder.deleteError"), id), e);
+		}
+		
+		return deleteProductionOrderResult;
+	}
 }

@@ -7,6 +7,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.GregorianCalendar;
 import java.util.ResourceBundle;
 
@@ -364,5 +365,53 @@ public class ProductionOrderServiceTest {
 		assertEquals( this.orderItem22.getId(), productionOrderItem.getId());
 		assertEquals( this.orderItem22.getMaterial(), productionOrderItem.getMaterial());
 		assertEquals( this.orderItem22.getQuantity(), productionOrderItem.getQuantity());
+	}
+	
+	
+	@Test
+	/**
+	 * Tests deletion of a production order.
+	 */
+	public void testDeleteProductionOrder() {
+		WebServiceResult deleteProductionOrderResult;
+		ProductionOrder deletedProductionOrder;
+		ProductionOrderService service = new ProductionOrderService();
+		
+		try {
+			//Delete production order 1 using the service.
+			deleteProductionOrderResult = service.deleteProductionOrder(this.order1.getId());
+			
+			//There should be no error messages
+			assertTrue(WebServiceTools.resultContainsErrorMessage(deleteProductionOrderResult) == false);
+			
+			//There should be a success message
+			assertTrue(deleteProductionOrderResult.getMessages().size() == 1);
+			assertTrue(deleteProductionOrderResult.getMessages().get(0).getType() == WebServiceMessageType.S);
+			
+			//Check if order 1 is missing using the DAO.
+			deletedProductionOrder = orderDAO.getProductionOrder(this.order1.getId());
+			
+			if(deletedProductionOrder != null)
+				fail("Production order 1 is still persisted but should have been deleted by the WebService operation 'deleteProductionOrder'.");
+		} 
+		catch (Exception e) {
+			fail(e.getMessage());
+		}
+		finally {
+			//Restore old database state by adding the production order that has been deleted previously.
+			try {
+				this.order1.setId(null);
+				
+				//The items have to be re-initialized in order to prevent exception regarding orphan-removal.
+				//org.hibernate.HibernateException: Don't change the reference to a collection with delete-orphan enabled : backend.model.SalesOrder.items
+				this.order1.setItems(new ArrayList<ProductionOrderItem>());
+				this.order1.addItem(this.orderItem11);
+				
+				orderDAO.insertProductionOrder(this.order1);
+			} 
+			catch (Exception e) {
+				fail(e.getMessage());
+			}
+		}
 	}
 }
