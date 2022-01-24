@@ -437,16 +437,16 @@ public class ProductionOrderServiceTest {
 		assertTrue(WebServiceTools.resultContainsErrorMessage(updateProductionOrderResult) == false);
 		
 		//There should be a success message
-//		assertTrue(updateProductionOrderResult.getMessages().size() == 1);
-//		assertTrue(updateProductionOrderResult.getMessages().get(0).getType() == WebServiceMessageType.S);
+		assertTrue(updateProductionOrderResult.getMessages().size() == 1);
+		assertTrue(updateProductionOrderResult.getMessages().get(0).getType() == WebServiceMessageType.S);
 		
-//		//Retrieve the updated sales order and check if the changes have been persisted.
-//		try {
-//			updatedSalesOrder = orderDAO.getSalesOrder(this.order1.getId());
-//			assertEquals(this.order1.getRequestedDeliveryDate().getTime(), updatedSalesOrder.getRequestedDeliveryDate().getTime());
-//		} catch (Exception e) {
-//			fail(e.getMessage());
-//		}
+		//Retrieve the updated production order and check if the changes have been persisted.
+		try {
+			updatedProductionOrder = orderDAO.getProductionOrder(this.order1.getId());
+			assertEquals(this.order1.getPlannedExecutionDate().getTime(), updatedProductionOrder.getPlannedExecutionDate().getTime());
+		} catch (Exception e) {
+			fail(e.getMessage());
+		}
 	}
 	
 	

@@ -11,6 +11,7 @@ import org.apache.logging.log4j.Logger;
 import backend.dao.DAOManager;
 import backend.dao.MaterialDao;
 import backend.dao.ProductionOrderDao;
+import backend.exception.ObjectUnchangedException;
 import backend.model.productionOrder.ProductionOrder;
 import backend.model.productionOrder.ProductionOrderArray;
 import backend.model.productionOrder.ProductionOrderItem;
@@ -170,7 +171,7 @@ public class ProductionOrderService {
 //			return updateSalesOrderResult;
 //		}
 		
-//		updateSalesOrderResult = this.update(convertedSalesOrder, updateSalesOrderResult);
+		updateProductionOrderResult = this.update(convertedProductionOrder, updateProductionOrderResult);
 
 		return updateProductionOrderResult;
 	}
@@ -236,5 +237,32 @@ public class ProductionOrderService {
 		}
 		
 		return orderItems;
+	}
+	
+	
+	/**
+	 * Updates the given production order.
+	 * 
+	 * @param productionOrder The production order to be updated.
+	 * @return The result of the update function.
+	 */
+	private WebServiceResult update(final ProductionOrder productionOrder, WebServiceResult webServiceResult) {	
+		try {
+			this.productionOrderDAO.updateProductionOrder(productionOrder);
+			webServiceResult.addMessage(new WebServiceMessage(WebServiceMessageType.S, 
+					MessageFormat.format(this.resources.getString("productionOrder.updateSuccess"), productionOrder.getId())));
+		} 
+		catch(ObjectUnchangedException objectUnchangedException) {
+//			webServiceResult.addMessage(new WebServiceMessage(WebServiceMessageType.I, 
+//					MessageFormat.format(this.resources.getString("salesOrder.updateUnchanged"), salesOrder.getId())));
+		}
+		catch (Exception e) {
+//			webServiceResult.addMessage(new WebServiceMessage(WebServiceMessageType.E, 
+//					MessageFormat.format(this.resources.getString("salesOrder.updateError"), salesOrder.getId())));
+//			
+//			logger.error(MessageFormat.format(this.resources.getString("salesOrder.updateError"), salesOrder.getId()), e);
+		}
+		
+		return webServiceResult;
 	}
 }
