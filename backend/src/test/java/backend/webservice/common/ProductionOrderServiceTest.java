@@ -29,7 +29,6 @@ import backend.model.productionOrder.ProductionOrderItem;
 import backend.model.productionOrder.ProductionOrderItemWS;
 import backend.model.productionOrder.ProductionOrderStatus;
 import backend.model.productionOrder.ProductionOrderWS;
-import backend.model.salesOrder.SalesOrder;
 import backend.model.webservice.WebServiceMessageType;
 import backend.model.webservice.WebServiceResult;
 import backend.tools.WebServiceTools;
@@ -438,9 +437,9 @@ public class ProductionOrderServiceTest {
 		assertTrue(WebServiceTools.resultContainsErrorMessage(updateProductionOrderResult) == false);
 		
 		//There should be a success message
-//		assertTrue(updateSalesOrderResult.getMessages().size() == 1);
-//		assertTrue(updateSalesOrderResult.getMessages().get(0).getType() == WebServiceMessageType.S);
-//		
+//		assertTrue(updateProductionOrderResult.getMessages().size() == 1);
+//		assertTrue(updateProductionOrderResult.getMessages().get(0).getType() == WebServiceMessageType.S);
+		
 //		//Retrieve the updated sales order and check if the changes have been persisted.
 //		try {
 //			updatedSalesOrder = orderDAO.getSalesOrder(this.order1.getId());

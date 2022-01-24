@@ -1,15 +1,20 @@
 package backend.webservice.common;
 
 import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.ResourceBundle;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import backend.dao.DAOManager;
+import backend.dao.MaterialDao;
 import backend.dao.ProductionOrderDao;
 import backend.model.productionOrder.ProductionOrder;
 import backend.model.productionOrder.ProductionOrderArray;
+import backend.model.productionOrder.ProductionOrderItem;
+import backend.model.productionOrder.ProductionOrderItemWS;
 import backend.model.productionOrder.ProductionOrderWS;
 import backend.model.webservice.WebServiceMessage;
 import backend.model.webservice.WebServiceMessageType;
@@ -150,23 +155,86 @@ public class ProductionOrderService {
 		ProductionOrder convertedProductionOrder = new ProductionOrder();
 		WebServiceResult updateProductionOrderResult = new WebServiceResult(null);
 		
-//		try {
-//			convertedSalesOrder = this.convertSalesOrder(salesOrder);
-//		}
-//		catch(Exception exception) {
-//			updateSalesOrderResult.addMessage(new WebServiceMessage(
-//					WebServiceMessageType.E, MessageFormat.format(this.resources.getString("salesOrder.updateError"), convertedSalesOrder.getId())));	
-//			logger.error(MessageFormat.format(this.resources.getString("salesOrder.updateError"), convertedSalesOrder.getId()), exception);
-//			return updateSalesOrderResult;
-//		}
-//		
+		try {
+			convertedProductionOrder = this.convertProductionOrder(productionOrder);
+		}
+		catch(Exception exception) {
+			updateProductionOrderResult.addMessage(new WebServiceMessage(
+					WebServiceMessageType.E, MessageFormat.format(this.resources.getString("productionOrder.updateError"), convertedProductionOrder.getId())));	
+			logger.error(MessageFormat.format(this.resources.getString("productionOrder.updateError"), convertedProductionOrder.getId()), exception);
+			return updateProductionOrderResult;
+		}
+		
 //		updateSalesOrderResult = this.validate(convertedSalesOrder);
 //		if(WebServiceTools.resultContainsErrorMessage(updateSalesOrderResult)) {
 //			return updateSalesOrderResult;
 //		}
-//		
+		
 //		updateSalesOrderResult = this.update(convertedSalesOrder, updateSalesOrderResult);
 
 		return updateProductionOrderResult;
+	}
+	
+	
+	/**
+	 * Converts the lean production order representation that is provided by the WebService to the internal data model for further processing.
+	 * 
+	 * @param productionOrderWS The lean production order representation provided by the WebService.
+	 * @return The ProductionOrder model that is used by the backend internally.
+	 * @throws Exception In case the conversion fails.
+	 */
+	private ProductionOrder convertProductionOrder(final ProductionOrderWS productionOrderWS) throws Exception {
+		ProductionOrder convertedProductionOrder;
+		
+		convertedProductionOrder = this.convertProductionOrderHead(productionOrderWS);
+		convertedProductionOrder.setItems(this.convertProductionOrderItems(productionOrderWS, convertedProductionOrder));
+		
+		return convertedProductionOrder;
+	}
+	
+	
+	/**
+	 * Converts the head data of the production order from the lean WebService representation to the internal data model of the backend.
+	 * 
+	 * @param productionOrderWS The lean production order representation provided by the WebService.
+	 * @return The ProductionOrder model that is used by the backend internally.
+	 * @throws Exception In case the conversion fails.
+	 */
+	private ProductionOrder convertProductionOrderHead(final ProductionOrderWS productionOrderWS) throws Exception {
+		ProductionOrder productionOrder = new ProductionOrder();
+		
+		//Basic object data that are copied as-is.
+		productionOrder.setId(productionOrderWS.getProductionOrderId());
+		productionOrder.setOrderDate(productionOrderWS.getOrderDate());
+		productionOrder.setPlannedExecutionDate(productionOrderWS.getPlannedExecutionDate());
+		productionOrder.setExecutionDate(productionOrderWS.getExecutionDate());
+		productionOrder.setStatus(productionOrderWS.getStatus());
+		
+		return productionOrder;
+	}
+	
+	
+	/**
+	 * Converts the item data of the production order from the lean WebService representation to the internal data model of the backend.
+	 * 
+	 * @param productionOrderWS The lean production order representation provided by the WebService.
+	 * @param productionOrder The converted production order that is build based on the WebService representation.
+	 * @return A list of item models that is used by the backend internally.
+	 * @throws Exception In case the conversion fails.
+	 */
+	private List<ProductionOrderItem> convertProductionOrderItems(final ProductionOrderWS productionOrderWS, final ProductionOrder productionOrder) throws Exception {
+		List<ProductionOrderItem> orderItems = new ArrayList<ProductionOrderItem>();
+		MaterialDao materialDAO = DAOManager.getInstance().getMaterialDAO();
+		
+		for(ProductionOrderItemWS itemWS:productionOrderWS.getItems()) {
+			ProductionOrderItem orderItem = new ProductionOrderItem();
+			orderItem.setId(itemWS.getItemId());
+			orderItem.setMaterial(materialDAO.getMaterial(itemWS.getMaterialId()));
+			orderItem.setQuantity(itemWS.getQuantity());
+			orderItem.setProductionOrder(productionOrder);
+			orderItems.add(orderItem);
+		}
+		
+		return orderItems;
 	}
 }
