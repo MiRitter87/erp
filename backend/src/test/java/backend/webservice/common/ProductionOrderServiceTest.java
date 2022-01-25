@@ -504,6 +504,35 @@ public class ProductionOrderServiceTest {
 	}
 	
 	
+	@Test
+	/**
+	 * Tests updating a production order that has multiple items with the same item id.
+	 */
+	public void testUpdateWithDuplicateItemKey() {
+		WebServiceResult updateProductionOrderResult;
+		ProductionOrderService service = new ProductionOrderService();
+		String actualErrorMessage, expectedErrorMessage;
+		ProductionOrderItem newItem = new ProductionOrderItem();;
+		
+		//Add a new item to the production order.
+		newItem.setId(this.orderItem11.getId());
+		newItem.setMaterial(this.g4560);
+		newItem.setQuantity(Long.valueOf(1));
+		this.order1.addItem(newItem);
+		updateProductionOrderResult = service.updateProductionOrder(this.convertToWsOrder(this.order1));
+		
+		//There should be a return message of type E.
+		assertTrue(updateProductionOrderResult.getMessages().size() == 1);
+		assertTrue(updateProductionOrderResult.getMessages().get(0).getType() == WebServiceMessageType.E);
+		
+		//A proper message should be provided.
+		expectedErrorMessage =  MessageFormat.format(this.resources.getString("productionOrder.duplicateItemKey"), 
+				this.order1.getId(), this.orderItem11.getId());
+		actualErrorMessage = updateProductionOrderResult.getMessages().get(0).getText();
+		assertEquals(expectedErrorMessage, actualErrorMessage);
+	}
+	
+	
 	/**
 	 * Converts a production order to the lean WebService representation.
 	 * 

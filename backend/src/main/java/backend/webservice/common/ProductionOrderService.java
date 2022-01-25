@@ -11,6 +11,7 @@ import org.apache.logging.log4j.Logger;
 import backend.dao.DAOManager;
 import backend.dao.MaterialDao;
 import backend.dao.ProductionOrderDao;
+import backend.exception.DuplicateIdentifierException;
 import backend.exception.NoItemsException;
 import backend.exception.ObjectUnchangedException;
 import backend.model.productionOrder.ProductionOrder;
@@ -258,12 +259,12 @@ public class ProductionOrderService {
 			webServiceResult.addMessage(new WebServiceMessage(WebServiceMessageType.E, this.resources.getString("productionOrder.noItemsGiven")));
 			return webServiceResult;
 		}
-//		catch(DuplicateIdentifierException duplicateIdentifierException) {
-//			webServiceResult.addMessage(new WebServiceMessage(WebServiceMessageType.E, 
-//					MessageFormat.format(this.resources.getString("salesOrder.duplicateItemKey"), salesOrder.getId(), 
-//							duplicateIdentifierException.getDuplicateIdentifier())));
-//			return webServiceResult;
-//		}
+		catch(DuplicateIdentifierException duplicateIdentifierException) {
+			webServiceResult.addMessage(new WebServiceMessage(WebServiceMessageType.E, 
+					MessageFormat.format(this.resources.getString("productionOrder.duplicateItemKey"), productionOrder.getId(), 
+							duplicateIdentifierException.getDuplicateIdentifier())));
+			return webServiceResult;
+		}
 		catch (Exception validationException) {
 			webServiceResult.addMessage(new WebServiceMessage(WebServiceMessageType.E, validationException.getMessage()));
 			return webServiceResult;
