@@ -287,8 +287,8 @@ public class ProductionOrderService {
 					MessageFormat.format(this.resources.getString("productionOrder.updateSuccess"), productionOrder.getId())));
 		} 
 		catch(ObjectUnchangedException objectUnchangedException) {
-//			webServiceResult.addMessage(new WebServiceMessage(WebServiceMessageType.I, 
-//					MessageFormat.format(this.resources.getString("salesOrder.updateUnchanged"), salesOrder.getId())));
+			webServiceResult.addMessage(new WebServiceMessage(WebServiceMessageType.I, 
+					MessageFormat.format(this.resources.getString("productionOrder.updateUnchanged"), productionOrder.getId())));
 		}
 		catch (Exception e) {
 //			webServiceResult.addMessage(new WebServiceMessage(WebServiceMessageType.E, 

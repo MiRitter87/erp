@@ -533,6 +533,29 @@ public class ProductionOrderServiceTest {
 	}
 	
 	
+	@Test
+	/**
+	 * Tests updating a production order without changing any data.
+	 */
+	public void testUpdateUnchangedProductionOrder() {
+		WebServiceResult updateProductionOrderResult;
+		ProductionOrderService service = new ProductionOrderService();
+		String actualErrorMessage, expectedErrorMessage;
+		
+		//Update production order without changing any data.
+		updateProductionOrderResult = service.updateProductionOrder(this.convertToWsOrder(this.order1));
+		
+		//There should be a return message of type I
+		assertTrue(updateProductionOrderResult.getMessages().size() == 1);
+		assertTrue(updateProductionOrderResult.getMessages().get(0).getType() == WebServiceMessageType.I);
+		
+		//A proper message should be provided.
+		expectedErrorMessage = MessageFormat.format(this.resources.getString("productionOrder.updateUnchanged"), this.order1.getId());
+		actualErrorMessage = updateProductionOrderResult.getMessages().get(0).getText();
+		assertEquals(expectedErrorMessage, actualErrorMessage);
+	}
+	
+	
 	/**
 	 * Converts a production order to the lean WebService representation.
 	 * 
