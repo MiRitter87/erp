@@ -29,6 +29,7 @@ import backend.model.productionOrder.ProductionOrderItem;
 import backend.model.productionOrder.ProductionOrderItemWS;
 import backend.model.productionOrder.ProductionOrderStatus;
 import backend.model.productionOrder.ProductionOrderWS;
+import backend.model.salesOrder.SalesOrder;
 import backend.model.webservice.WebServiceMessageType;
 import backend.model.webservice.WebServiceResult;
 import backend.tools.WebServiceTools;
@@ -444,6 +445,36 @@ public class ProductionOrderServiceTest {
 		try {
 			updatedProductionOrder = orderDAO.getProductionOrder(this.order1.getId());
 			assertEquals(this.order1.getPlannedExecutionDate().getTime(), updatedProductionOrder.getPlannedExecutionDate().getTime());
+		} catch (Exception e) {
+			fail(e.getMessage());
+		}
+	}
+	
+	
+	@Test
+	/**
+	 * Tests updating a production order with valid item data.
+	 */
+	public void testUpdateValidProductionOrderItem() {
+		WebServiceResult updateProductionOrderResult;
+		ProductionOrder updatedProductionOrder;
+		ProductionOrderService service = new ProductionOrderService();
+		
+		//Update the ordered quantity of an item.
+		this.order1.getItems().get(0).setQuantity(Long.valueOf(2));
+		updateProductionOrderResult = service.updateProductionOrder(this.convertToWsOrder(this.order1));
+		
+		//Assure no error message exists
+		assertTrue(WebServiceTools.resultContainsErrorMessage(updateProductionOrderResult) == false);
+		
+		//There should be a success message
+		assertTrue(updateProductionOrderResult.getMessages().size() == 1);
+		assertTrue(updateProductionOrderResult.getMessages().get(0).getType() == WebServiceMessageType.S);
+		
+		//Retrieve the updated production order and check if the changes have been persisted.
+		try {
+			updatedProductionOrder = orderDAO.getProductionOrder(this.order1.getId());
+			assertEquals(this.order1.getItems().get(0).getQuantity(), updatedProductionOrder.getItems().get(0).getQuantity());
 		} catch (Exception e) {
 			fail(e.getMessage());
 		}
