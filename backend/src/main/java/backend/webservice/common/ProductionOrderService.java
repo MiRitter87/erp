@@ -11,6 +11,7 @@ import org.apache.logging.log4j.Logger;
 import backend.dao.DAOManager;
 import backend.dao.MaterialDao;
 import backend.dao.ProductionOrderDao;
+import backend.exception.NoItemsException;
 import backend.exception.ObjectUnchangedException;
 import backend.model.productionOrder.ProductionOrder;
 import backend.model.productionOrder.ProductionOrderArray;
@@ -20,6 +21,7 @@ import backend.model.productionOrder.ProductionOrderWS;
 import backend.model.webservice.WebServiceMessage;
 import backend.model.webservice.WebServiceMessageType;
 import backend.model.webservice.WebServiceResult;
+import backend.tools.WebServiceTools;
 
 /**
  * Common implementation of the production order WebService that is used by the SOAP as well as the REST service.
@@ -166,10 +168,10 @@ public class ProductionOrderService {
 			return updateProductionOrderResult;
 		}
 		
-//		updateSalesOrderResult = this.validate(convertedSalesOrder);
-//		if(WebServiceTools.resultContainsErrorMessage(updateSalesOrderResult)) {
-//			return updateSalesOrderResult;
-//		}
+		updateProductionOrderResult = this.validate(convertedProductionOrder);
+		if(WebServiceTools.resultContainsErrorMessage(updateProductionOrderResult)) {
+			return updateProductionOrderResult;
+		}
 		
 		updateProductionOrderResult = this.update(convertedProductionOrder, updateProductionOrderResult);
 
@@ -237,6 +239,37 @@ public class ProductionOrderService {
 		}
 		
 		return orderItems;
+	}
+	
+	
+	/**
+	 * Validates the production order.
+	 * 
+	 * @param productionOrder The production order to be validated.
+	 * @return The result of the validation.
+	 */
+	private WebServiceResult validate(final ProductionOrder productionOrder) {
+		WebServiceResult webServiceResult = new WebServiceResult(null);
+		
+		try {
+			productionOrder.validate();
+		} 
+		catch(NoItemsException noItemsException) {
+			webServiceResult.addMessage(new WebServiceMessage(WebServiceMessageType.E, this.resources.getString("productionOrder.noItemsGiven")));
+			return webServiceResult;
+		}
+//		catch(DuplicateIdentifierException duplicateIdentifierException) {
+//			webServiceResult.addMessage(new WebServiceMessage(WebServiceMessageType.E, 
+//					MessageFormat.format(this.resources.getString("salesOrder.duplicateItemKey"), salesOrder.getId(), 
+//							duplicateIdentifierException.getDuplicateIdentifier())));
+//			return webServiceResult;
+//		}
+		catch (Exception validationException) {
+			webServiceResult.addMessage(new WebServiceMessage(WebServiceMessageType.E, validationException.getMessage()));
+			return webServiceResult;
+		}
+		
+		return webServiceResult;
 	}
 	
 	

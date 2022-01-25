@@ -29,7 +29,6 @@ import backend.model.productionOrder.ProductionOrderItem;
 import backend.model.productionOrder.ProductionOrderItemWS;
 import backend.model.productionOrder.ProductionOrderStatus;
 import backend.model.productionOrder.ProductionOrderWS;
-import backend.model.salesOrder.SalesOrder;
 import backend.model.webservice.WebServiceMessageType;
 import backend.model.webservice.WebServiceResult;
 import backend.tools.WebServiceTools;
@@ -478,6 +477,30 @@ public class ProductionOrderServiceTest {
 		} catch (Exception e) {
 			fail(e.getMessage());
 		}
+	}
+	
+	
+	@Test
+	/**
+	 * Tests updating a production order without items.
+	 */
+	public void testUpdateProductionOrderWithoutItems() {
+		WebServiceResult updateProductionOrderResult;
+		ProductionOrderService service = new ProductionOrderService();
+		String actualErrorMessage, expectedErrorMessage;
+		
+		//Remove the item and try to update the production order.
+		this.order1.getItems().clear();
+		updateProductionOrderResult = service.updateProductionOrder(this.convertToWsOrder(this.order1));
+		
+		//There should be a return message of type E.
+		assertTrue(updateProductionOrderResult.getMessages().size() == 1);
+		assertTrue(updateProductionOrderResult.getMessages().get(0).getType() == WebServiceMessageType.E);
+		
+		//A proper message should be provided.
+		expectedErrorMessage = this.resources.getString("productionOrder.noItemsGiven");
+		actualErrorMessage = updateProductionOrderResult.getMessages().get(0).getText();
+		assertEquals(expectedErrorMessage, actualErrorMessage);
 	}
 	
 	
