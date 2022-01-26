@@ -1,5 +1,6 @@
 package backend.webservice.common;
 
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.fail;
@@ -639,44 +640,40 @@ public class ProductionOrderServiceTest {
 		assertTrue(addProductionOrderResult.getMessages().size() == 1);
 		assertTrue(addProductionOrderResult.getMessages().get(0).getType() == WebServiceMessageType.S);
 		
-//		//The ID of the newly created sales order should be provided in the data part of the WebService return.
-//		assertNotNull(addSalesOrderResult.getData());
-//		assertTrue(addSalesOrderResult.getData() instanceof Integer);
-//		newSalesOrder.setId((Integer) addSalesOrderResult.getData());
-//		
-//		//Read the persisted sales order via DAO
-//		try {
-//			addedSalesOrder = orderDAO.getSalesOrder(newSalesOrder.getId());
-//			
-//			//Check if the sales order read by the DAO equals the sales order inserted using the WebService in each attribute.
-//			assertEquals(newSalesOrder.getId(), addedSalesOrder.getId());
-//			assertEquals(newSalesOrder.getOrderDate().getTime(), addedSalesOrder.getOrderDate().getTime());
-//			assertEquals(newSalesOrder.getRequestedDeliveryDate(), addedSalesOrder.getRequestedDeliveryDate());
-//			assertEquals(newSalesOrder.getSoldToParty(), addedSalesOrder.getSoldToParty());
-//			assertEquals(newSalesOrder.getShipToParty(), addedSalesOrder.getShipToParty());
-//			assertEquals(newSalesOrder.getBillToParty(), addedSalesOrder.getBillToParty());
-//			assertEquals(newSalesOrder.getPaymentAccount(), addedSalesOrder.getPaymentAccount());
-//			assertEquals(newSalesOrder.getStatus(), addedSalesOrder.getStatus());
-//			
-//			//Checks at item level.
-//			assertEquals(newSalesOrder.getItems().size(), addedSalesOrder.getItems().size());
-//			addedSalesOrderItem = addedSalesOrder.getItems().get(0);
-//			assertEquals(newSalesOrderItem.getId(), addedSalesOrderItem.getId());
-//			assertEquals(newSalesOrderItem.getMaterial().getId(), addedSalesOrderItem.getMaterial().getId());
-//			assertEquals(newSalesOrderItem.getQuantity(), addedSalesOrderItem.getQuantity());
-//			assertEquals(newSalesOrderItem.getPriceTotal(), addedSalesOrderItem.getPriceTotal());
-//		} catch (Exception e) {
-//			fail(e.getMessage());
-//		}
-//		finally {
-//			//Delete the newly added sales order.
-//			try {
-//				orderDAO.deleteSalesOrder(newSalesOrder);
-//			} 
-//			catch (Exception e) {
-//				fail(e.getMessage());
-//			}
-//		}
+		//The ID of the newly created production order should be provided in the data part of the WebService return.
+		assertNotNull(addProductionOrderResult.getData());
+		assertTrue(addProductionOrderResult.getData() instanceof Integer);
+		newProductionOrder.setId((Integer) addProductionOrderResult.getData());
+		
+		//Read the persisted production order via DAO
+		try {
+			addedProductionOrder = orderDAO.getProductionOrder(newProductionOrder.getId());
+			
+			//Check if the production order read by the DAO equals the production order inserted using the WebService in each attribute.
+			assertEquals(newProductionOrder.getId(), addedProductionOrder.getId());
+			assertEquals(newProductionOrder.getOrderDate().getTime(), addedProductionOrder.getOrderDate().getTime());
+			assertEquals(newProductionOrder.getPlannedExecutionDate().getTime(), addedProductionOrder.getPlannedExecutionDate().getTime());
+			assertEquals(newProductionOrder.getExecutionDate(), addedProductionOrder.getExecutionDate());
+			assertEquals(newProductionOrder.getStatus(), addedProductionOrder.getStatus());
+			
+			//Checks at item level.
+			assertEquals(newProductionOrder.getItems().size(), addedProductionOrder.getItems().size());
+			addedProductionOrderItem = addedProductionOrder.getItems().get(0);
+			assertEquals(newProductionOrderItem.getId(), addedProductionOrderItem.getId());
+			assertEquals(newProductionOrderItem.getMaterial().getId(), addedProductionOrderItem.getMaterial().getId());
+			assertEquals(newProductionOrderItem.getQuantity(), addedProductionOrderItem.getQuantity());
+		} catch (Exception e) {
+			fail(e.getMessage());
+		}
+		finally {
+			//Delete the newly added production order.
+			try {
+				orderDAO.deleteProductionOrder(newProductionOrder);
+			} 
+			catch (Exception e) {
+				fail(e.getMessage());
+			}
+		}
 	}
 	
 	

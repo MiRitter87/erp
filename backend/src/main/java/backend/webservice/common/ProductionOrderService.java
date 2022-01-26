@@ -190,10 +190,10 @@ public class ProductionOrderService {
 		ProductionOrder convertedProductionOrder = new ProductionOrder();
 		WebServiceResult addProductionOrderResult = new WebServiceResult();
 		
-//		try {
-//			convertedSalesOrder = this.convertSalesOrder(salesOrder);
-//		}
-//		catch(Exception exception) {
+		try {
+			convertedProductionOrder = this.convertProductionOrder(productionOrder);
+		}
+		catch(Exception exception) {
 //			addSalesOrderResult.addMessage(new WebServiceMessage(
 //					WebServiceMessageType.E, this.resources.getString("salesOrder.addError")));	
 //			logger.error(this.resources.getString("salesOrder.addError"), exception);
@@ -203,10 +203,10 @@ public class ProductionOrderService {
 //		addSalesOrderResult = this.validate(convertedSalesOrder);
 //		if(WebServiceTools.resultContainsErrorMessage(addSalesOrderResult)) {
 //			return addSalesOrderResult;
-//		}
-//	
+		}
+	
 		addProductionOrderResult = this.add(convertedProductionOrder, addProductionOrderResult);
-//		addSalesOrderResult.setData(convertedSalesOrder.getId());
+		addProductionOrderResult.setData(convertedProductionOrder.getId());
 		
 		return addProductionOrderResult;
 	}
@@ -341,15 +341,14 @@ public class ProductionOrderService {
 	 */
 	private WebServiceResult add(final ProductionOrder productionOrder, WebServiceResult webServiceResult) {		
 		try {
-//			this.salesOrderDAO.insertSalesOrder(salesOrder);
-//			this.inventoryManager.reduceMaterialInventory(salesOrder);
+			this.productionOrderDAO.insertProductionOrder(productionOrder);
 			webServiceResult.addMessage(new WebServiceMessage(
 					WebServiceMessageType.S, this.resources.getString("productionOrder.addSuccess")));			
 		} catch (Exception e) {
-//			webServiceResult.addMessage(new WebServiceMessage(
-//					WebServiceMessageType.E, this.resources.getString("salesOrder.addError")));
-//			
-//			logger.error(this.resources.getString("salesOrder.addError"), e);
+			webServiceResult.addMessage(new WebServiceMessage(
+					WebServiceMessageType.E, this.resources.getString("productionOrder.addError")));
+			
+			logger.error(this.resources.getString("productionOrder.addError"), e);
 		}
 		
 		return webServiceResult;
