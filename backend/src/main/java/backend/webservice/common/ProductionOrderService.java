@@ -181,6 +181,38 @@ public class ProductionOrderService {
 	
 	
 	/**
+	 * Adds a production order.
+	 * 
+	 * @param productionOrder The production order to be added.
+	 * @return The result of the add function.
+	 */
+	public WebServiceResult addProductionOrder(final ProductionOrderWS productionOrder) {
+		ProductionOrder convertedProductionOrder = new ProductionOrder();
+		WebServiceResult addProductionOrderResult = new WebServiceResult();
+		
+//		try {
+//			convertedSalesOrder = this.convertSalesOrder(salesOrder);
+//		}
+//		catch(Exception exception) {
+//			addSalesOrderResult.addMessage(new WebServiceMessage(
+//					WebServiceMessageType.E, this.resources.getString("salesOrder.addError")));	
+//			logger.error(this.resources.getString("salesOrder.addError"), exception);
+//			return addSalesOrderResult;
+//		}
+//			
+//		addSalesOrderResult = this.validate(convertedSalesOrder);
+//		if(WebServiceTools.resultContainsErrorMessage(addSalesOrderResult)) {
+//			return addSalesOrderResult;
+//		}
+//	
+		addProductionOrderResult = this.add(convertedProductionOrder, addProductionOrderResult);
+//		addSalesOrderResult.setData(convertedSalesOrder.getId());
+		
+		return addProductionOrderResult;
+	}
+	
+	
+	/**
 	 * Converts the lean production order representation that is provided by the WebService to the internal data model for further processing.
 	 * 
 	 * @param productionOrderWS The lean production order representation provided by the WebService.
@@ -295,6 +327,29 @@ public class ProductionOrderService {
 					MessageFormat.format(this.resources.getString("productionOrder.updateError"), productionOrder.getId())));
 			
 			logger.error(MessageFormat.format(this.resources.getString("productionOrder.updateError"), productionOrder.getId()), e);
+		}
+		
+		return webServiceResult;
+	}
+	
+	
+	/**
+	 * Inserts the given production order.
+	 * 
+	 * @param productionOrder The production order to be inserted.
+	 * @return The result of the insert function.
+	 */
+	private WebServiceResult add(final ProductionOrder productionOrder, WebServiceResult webServiceResult) {		
+		try {
+//			this.salesOrderDAO.insertSalesOrder(salesOrder);
+//			this.inventoryManager.reduceMaterialInventory(salesOrder);
+			webServiceResult.addMessage(new WebServiceMessage(
+					WebServiceMessageType.S, this.resources.getString("productionOrder.addSuccess")));			
+		} catch (Exception e) {
+//			webServiceResult.addMessage(new WebServiceMessage(
+//					WebServiceMessageType.E, this.resources.getString("salesOrder.addError")));
+//			
+//			logger.error(this.resources.getString("salesOrder.addError"), e);
 		}
 		
 		return webServiceResult;

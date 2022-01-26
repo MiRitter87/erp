@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.ResourceBundle;
 
@@ -604,6 +605,78 @@ public class ProductionOrderServiceTest {
 		expectedErrorMessage = messageProvider.getMinValidationMessage("productionOrderItem", "quantity", "1");
 		actualErrorMessage = updateProductionOrderResult.getMessages().get(0).getText();
 		assertEquals(expectedErrorMessage, actualErrorMessage);
+	}
+	
+	
+	@Test
+	/**
+	 * Tests adding of a new production order.
+	 */
+	public void testAddValidProductionOrder() {
+		ProductionOrder newProductionOrder = new ProductionOrder();
+		ProductionOrderItem newProductionOrderItem = new ProductionOrderItem();
+		ProductionOrder addedProductionOrder;
+		ProductionOrderItem addedProductionOrderItem;
+		WebServiceResult addProductionOrderResult;
+		ProductionOrderService service = new ProductionOrderService();
+		
+		//Define the new production order
+		newProductionOrderItem.setId(1);
+		newProductionOrderItem.setMaterial(this.g4560);
+		newProductionOrderItem.setQuantity(Long.valueOf(1));
+		
+		newProductionOrder.setPlannedExecutionDate(new Date());
+		newProductionOrder.setStatus(ProductionOrderStatus.OPEN);
+		newProductionOrder.addItem(newProductionOrderItem);
+		
+		//Add a new production order to the database via WebService
+		addProductionOrderResult = service.addProductionOrder(this.convertToWsOrder(newProductionOrder));
+		
+		//Assure no error message exists
+		assertTrue(WebServiceTools.resultContainsErrorMessage(addProductionOrderResult) == false);
+		
+		//There should be a success message
+		assertTrue(addProductionOrderResult.getMessages().size() == 1);
+		assertTrue(addProductionOrderResult.getMessages().get(0).getType() == WebServiceMessageType.S);
+		
+//		//The ID of the newly created sales order should be provided in the data part of the WebService return.
+//		assertNotNull(addSalesOrderResult.getData());
+//		assertTrue(addSalesOrderResult.getData() instanceof Integer);
+//		newSalesOrder.setId((Integer) addSalesOrderResult.getData());
+//		
+//		//Read the persisted sales order via DAO
+//		try {
+//			addedSalesOrder = orderDAO.getSalesOrder(newSalesOrder.getId());
+//			
+//			//Check if the sales order read by the DAO equals the sales order inserted using the WebService in each attribute.
+//			assertEquals(newSalesOrder.getId(), addedSalesOrder.getId());
+//			assertEquals(newSalesOrder.getOrderDate().getTime(), addedSalesOrder.getOrderDate().getTime());
+//			assertEquals(newSalesOrder.getRequestedDeliveryDate(), addedSalesOrder.getRequestedDeliveryDate());
+//			assertEquals(newSalesOrder.getSoldToParty(), addedSalesOrder.getSoldToParty());
+//			assertEquals(newSalesOrder.getShipToParty(), addedSalesOrder.getShipToParty());
+//			assertEquals(newSalesOrder.getBillToParty(), addedSalesOrder.getBillToParty());
+//			assertEquals(newSalesOrder.getPaymentAccount(), addedSalesOrder.getPaymentAccount());
+//			assertEquals(newSalesOrder.getStatus(), addedSalesOrder.getStatus());
+//			
+//			//Checks at item level.
+//			assertEquals(newSalesOrder.getItems().size(), addedSalesOrder.getItems().size());
+//			addedSalesOrderItem = addedSalesOrder.getItems().get(0);
+//			assertEquals(newSalesOrderItem.getId(), addedSalesOrderItem.getId());
+//			assertEquals(newSalesOrderItem.getMaterial().getId(), addedSalesOrderItem.getMaterial().getId());
+//			assertEquals(newSalesOrderItem.getQuantity(), addedSalesOrderItem.getQuantity());
+//			assertEquals(newSalesOrderItem.getPriceTotal(), addedSalesOrderItem.getPriceTotal());
+//		} catch (Exception e) {
+//			fail(e.getMessage());
+//		}
+//		finally {
+//			//Delete the newly added sales order.
+//			try {
+//				orderDAO.deleteSalesOrder(newSalesOrder);
+//			} 
+//			catch (Exception e) {
+//				fail(e.getMessage());
+//			}
+//		}
 	}
 	
 	

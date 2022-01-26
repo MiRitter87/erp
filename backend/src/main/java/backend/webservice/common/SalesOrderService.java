@@ -311,7 +311,7 @@ public class SalesOrderService {
 	 * Inserts the given sales order.
 	 * 
 	 * @param salesOrder The sales order to be inserted.
-	 * @return The result of the isnert function.
+	 * @return The result of the insert function.
 	 */
 	private WebServiceResult add(final SalesOrder salesOrder, WebServiceResult webServiceResult) {		
 		try {
