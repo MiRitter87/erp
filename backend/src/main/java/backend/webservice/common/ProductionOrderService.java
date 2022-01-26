@@ -291,10 +291,10 @@ public class ProductionOrderService {
 					MessageFormat.format(this.resources.getString("productionOrder.updateUnchanged"), productionOrder.getId())));
 		}
 		catch (Exception e) {
-//			webServiceResult.addMessage(new WebServiceMessage(WebServiceMessageType.E, 
-//					MessageFormat.format(this.resources.getString("salesOrder.updateError"), salesOrder.getId())));
-//			
-//			logger.error(MessageFormat.format(this.resources.getString("salesOrder.updateError"), salesOrder.getId()), e);
+			webServiceResult.addMessage(new WebServiceMessage(WebServiceMessageType.E, 
+					MessageFormat.format(this.resources.getString("productionOrder.updateError"), productionOrder.getId())));
+			
+			logger.error(MessageFormat.format(this.resources.getString("productionOrder.updateError"), productionOrder.getId()), e);
 		}
 		
 		return webServiceResult;

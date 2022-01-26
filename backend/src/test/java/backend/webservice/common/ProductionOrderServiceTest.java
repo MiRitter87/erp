@@ -32,6 +32,7 @@ import backend.model.productionOrder.ProductionOrderWS;
 import backend.model.webservice.WebServiceMessageType;
 import backend.model.webservice.WebServiceResult;
 import backend.tools.WebServiceTools;
+import backend.tools.test.ValidationMessageProvider;
 
 /**
  * Tests the production order service.
@@ -551,6 +552,56 @@ public class ProductionOrderServiceTest {
 		
 		//A proper message should be provided.
 		expectedErrorMessage = MessageFormat.format(this.resources.getString("productionOrder.updateUnchanged"), this.order1.getId());
+		actualErrorMessage = updateProductionOrderResult.getMessages().get(0).getText();
+		assertEquals(expectedErrorMessage, actualErrorMessage);
+	}
+	
+	
+	@Test
+	/**
+	 * Tests updating a production order with invalid data.
+	 */
+	public void testUpdateInvalidProductionOrder() {
+		WebServiceResult updateProductionOrderResult;
+		ProductionOrderService service = new ProductionOrderService();
+		ValidationMessageProvider messageProvider = new ValidationMessageProvider();
+		String actualErrorMessage, expectedErrorMessage;
+		
+		//Remove the planned execution date.
+		this.order1.setPlannedExecutionDate(null);
+		updateProductionOrderResult = service.updateProductionOrder(this.convertToWsOrder(this.order1));
+		
+		//There should be a return message of type E.
+		assertTrue(updateProductionOrderResult.getMessages().size() == 1);
+		assertTrue(updateProductionOrderResult.getMessages().get(0).getType() == WebServiceMessageType.E);
+		
+		//A proper message should be provided.
+		expectedErrorMessage = messageProvider.getNotNullValidationMessage("productionOrder", "plannedExecutionDate");
+		actualErrorMessage = updateProductionOrderResult.getMessages().get(0).getText();
+		assertEquals(expectedErrorMessage, actualErrorMessage);
+	}
+	
+	
+	@Test
+	/**
+	 * Tests updating a production order item with invalid data.
+	 */
+	public void testUpdateInvalidProductionOrderItem() {
+		WebServiceResult updateProductionOrderResult;
+		ProductionOrderService service = new ProductionOrderService();
+		ValidationMessageProvider messageProvider = new ValidationMessageProvider();
+		String actualErrorMessage, expectedErrorMessage;
+		
+		//Update order item with quantity of zero.
+		this.order1.getItems().get(0).setQuantity(Long.valueOf(0));
+		updateProductionOrderResult = service.updateProductionOrder(this.convertToWsOrder(this.order1));
+		
+		//There should be a return message of type E.
+		assertTrue(updateProductionOrderResult.getMessages().size() == 1);
+		assertTrue(updateProductionOrderResult.getMessages().get(0).getType() == WebServiceMessageType.E);
+		
+		//A proper message should be provided.
+		expectedErrorMessage = messageProvider.getMinValidationMessage("productionOrderItem", "quantity", "1");
 		actualErrorMessage = updateProductionOrderResult.getMessages().get(0).getText();
 		assertEquals(expectedErrorMessage, actualErrorMessage);
 	}

@@ -317,6 +317,9 @@ public class ProductionOrder {
 	public void validate() throws NoItemsException, DuplicateIdentifierException, Exception {
 		this.validateAnnotations();
 		this.validateAdditionalCharacteristics();
+		
+		for(ProductionOrderItem item:this.items)
+			item.validate();
 	}
 	
 	
