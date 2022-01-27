@@ -194,15 +194,15 @@ public class ProductionOrderService {
 			convertedProductionOrder = this.convertProductionOrder(productionOrder);
 		}
 		catch(Exception exception) {
-//			addSalesOrderResult.addMessage(new WebServiceMessage(
-//					WebServiceMessageType.E, this.resources.getString("salesOrder.addError")));	
-//			logger.error(this.resources.getString("salesOrder.addError"), exception);
-//			return addSalesOrderResult;
-//		}
-//			
-//		addSalesOrderResult = this.validate(convertedSalesOrder);
-//		if(WebServiceTools.resultContainsErrorMessage(addSalesOrderResult)) {
-//			return addSalesOrderResult;
+			addProductionOrderResult.addMessage(new WebServiceMessage(
+					WebServiceMessageType.E, this.resources.getString("productionOrder.addError")));	
+			logger.error(this.resources.getString("productionOrder.addError"), exception);
+			return addProductionOrderResult;
+		}
+			
+		addProductionOrderResult = this.validate(convertedProductionOrder);
+		if(WebServiceTools.resultContainsErrorMessage(addProductionOrderResult)) {
+			return addProductionOrderResult;
 		}
 	
 		addProductionOrderResult = this.add(convertedProductionOrder, addProductionOrderResult);

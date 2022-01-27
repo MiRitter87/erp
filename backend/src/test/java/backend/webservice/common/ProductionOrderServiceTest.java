@@ -1,6 +1,7 @@
 package backend.webservice.common;
 
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.fail;
@@ -674,6 +675,37 @@ public class ProductionOrderServiceTest {
 				fail(e.getMessage());
 			}
 		}
+	}
+	
+	
+	@Test
+	/**
+	 * Tests adding of an invalid production order.
+	 */
+	public void testAddInvalidProductionOrder() {
+		ProductionOrder newProductionOrder = new ProductionOrder();
+		WebServiceResult addProductionOrderResult;
+		ProductionOrderService service = new ProductionOrderService();
+		String actualErrorMessage, expectedErrorMessage;
+		
+		//Define the new production order without an item.
+		newProductionOrder.setPlannedExecutionDate(new Date());
+		newProductionOrder.setStatus(ProductionOrderStatus.OPEN);
+		
+		//Add a new production order to the database via WebService
+		addProductionOrderResult = service.addProductionOrder(this.convertToWsOrder(newProductionOrder));
+		
+		//There should be a return message of type E.
+		assertTrue(addProductionOrderResult.getMessages().size() == 1);
+		assertTrue(addProductionOrderResult.getMessages().get(0).getType() == WebServiceMessageType.E);
+		
+		//The new production order should not have been persisted
+		assertNull(newProductionOrder.getId());
+		
+		//A proper message should be provided.
+		expectedErrorMessage = this.resources.getString("productionOrder.noItemsGiven");
+		actualErrorMessage = addProductionOrderResult.getMessages().get(0).getText();
+		assertEquals(expectedErrorMessage, actualErrorMessage);
 	}
 	
 	
