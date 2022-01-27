@@ -22,6 +22,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import backend.controller.PurchaseOrderPaymentController;
 import backend.dao.AccountDao;
 import backend.dao.BusinessPartnerDao;
 import backend.dao.DAOManager;
@@ -1381,7 +1382,7 @@ public class PurchaseOrderServiceTest {
 			posting = postings.iterator().next();
 			assertEquals(PostingType.DISBURSAL, posting.getType());
 			assertEquals(this.order2.getVendor(), posting.getCounterparty());
-			assertEquals(PurchaseOrderPaymentManager.getReferenceNumber(this.order2), posting.getReferenceNumber());
+			assertEquals(PurchaseOrderPaymentController.getReferenceNumber(this.order2), posting.getReferenceNumber());
 			assertEquals(this.order2.getPriceTotal(), posting.getAmount());
 			assertEquals(this.order2.getPriceTotalCurrency(), posting.getCurrency());
 		} catch (Exception e) {
@@ -1426,7 +1427,7 @@ public class PurchaseOrderServiceTest {
 								
 				assertEquals(PostingType.RECEIPT, posting.getType());
 				assertEquals(this.order2.getVendor(), posting.getCounterparty());
-				assertEquals(PurchaseOrderPaymentManager.getReferenceNumber(this.order2), posting.getReferenceNumber());
+				assertEquals(PurchaseOrderPaymentController.getReferenceNumber(this.order2), posting.getReferenceNumber());
 				assertEquals(this.order2.getPriceTotal(), posting.getAmount());
 				assertEquals(this.order2.getPriceTotalCurrency(), posting.getCurrency());
 			}
@@ -1471,7 +1472,7 @@ public class PurchaseOrderServiceTest {
 								
 				assertEquals(PostingType.RECEIPT, posting.getType());
 				assertEquals(this.order2.getVendor(), posting.getCounterparty());
-				assertEquals(PurchaseOrderPaymentManager.getReferenceNumber(this.order2), posting.getReferenceNumber());
+				assertEquals(PurchaseOrderPaymentController.getReferenceNumber(this.order2), posting.getReferenceNumber());
 				assertEquals(this.order2.getPriceTotal(), posting.getAmount());
 				assertEquals(this.order2.getPriceTotalCurrency(), posting.getCurrency());
 			}

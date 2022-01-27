@@ -1,4 +1,4 @@
-package backend.webservice.common;
+package backend.controller;
 
 import backend.dao.AccountDao;
 import backend.dao.DAOManager;
@@ -17,7 +17,7 @@ import backend.model.salesOrder.SalesOrderStatus;
  * 
  * @author Michael
  */
-public class SalesOrderPaymentManager {
+public class SalesOrderPaymentController {
 	/**
 	 * Prefix of sales order reference numbers used in postings.
 	 */

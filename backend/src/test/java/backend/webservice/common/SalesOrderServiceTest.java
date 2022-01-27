@@ -25,6 +25,7 @@ import org.junit.jupiter.api.Test;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import backend.controller.SalesOrderPaymentController;
 import backend.dao.AccountDao;
 import backend.dao.BusinessPartnerDao;
 import backend.dao.DAOManager;
@@ -1368,7 +1369,7 @@ public class SalesOrderServiceTest {
 			posting = postings.iterator().next();
 			assertEquals(PostingType.RECEIPT, posting.getType());
 			assertEquals(this.order2.getBillToParty(), posting.getCounterparty());
-			assertEquals(SalesOrderPaymentManager.getReferenceNumber(this.order2), posting.getReferenceNumber());
+			assertEquals(SalesOrderPaymentController.getReferenceNumber(this.order2), posting.getReferenceNumber());
 			assertEquals(this.order2.getPriceTotal(), posting.getAmount());
 			assertEquals(this.order2.getPriceTotalCurrency(), posting.getCurrency());
 		} catch (Exception e) {
@@ -1413,7 +1414,7 @@ public class SalesOrderServiceTest {
 								
 				assertEquals(PostingType.DISBURSAL, posting.getType());
 				assertEquals(this.order2.getBillToParty(), posting.getCounterparty());
-				assertEquals(SalesOrderPaymentManager.getReferenceNumber(this.order2), posting.getReferenceNumber());
+				assertEquals(SalesOrderPaymentController.getReferenceNumber(this.order2), posting.getReferenceNumber());
 				assertEquals(this.order2.getPriceTotal(), posting.getAmount());
 				assertEquals(this.order2.getPriceTotalCurrency(), posting.getCurrency());
 			}
@@ -1458,7 +1459,7 @@ public class SalesOrderServiceTest {
 								
 				assertEquals(PostingType.DISBURSAL, posting.getType());
 				assertEquals(this.order2.getBillToParty(), posting.getCounterparty());
-				assertEquals(SalesOrderPaymentManager.getReferenceNumber(this.order2), posting.getReferenceNumber());
+				assertEquals(SalesOrderPaymentController.getReferenceNumber(this.order2), posting.getReferenceNumber());
 				assertEquals(this.order2.getPriceTotal(), posting.getAmount());
 				assertEquals(this.order2.getPriceTotalCurrency(), posting.getCurrency());
 			}

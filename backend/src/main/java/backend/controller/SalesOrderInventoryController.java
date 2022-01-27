@@ -1,4 +1,4 @@
-package backend.webservice.common;
+package backend.controller;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -18,7 +18,7 @@ import backend.model.salesOrder.SalesOrderStatus;
  * 
  * @author Michael
  */
-public class SalesOrderInventoryManager {
+public class SalesOrderInventoryController {
 	/**
 	 * Reduces the inventory of the materials that are ordered.
 	 * 

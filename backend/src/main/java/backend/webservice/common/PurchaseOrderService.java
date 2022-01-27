@@ -8,6 +8,8 @@ import java.util.ResourceBundle;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import backend.controller.PurchaseOrderInventoryController;
+import backend.controller.PurchaseOrderPaymentController;
 import backend.dao.AccountDao;
 import backend.dao.BusinessPartnerDao;
 import backend.dao.DAOManager;
@@ -39,14 +41,14 @@ public class PurchaseOrderService {
 	private PurchaseOrderDao purchaseOrderDAO;
 	
 	/**
-	 * Manager for material inventory.
+	 * Controller for material inventory.
 	 */
-	private PurchaseOrderInventoryManager inventoryManager;
+	private PurchaseOrderInventoryController inventoryController;
 	
 	/**
-	 * Manager for purchase order payments.
+	 * Controller for purchase order payments.
 	 */
-	private PurchaseOrderPaymentManager paymentManager;
+	private PurchaseOrderPaymentController paymentController;
 	
 	/**
 	 * Access to localized application resources.
@@ -64,8 +66,8 @@ public class PurchaseOrderService {
 	 */
 	public PurchaseOrderService() {
 		this.purchaseOrderDAO = DAOManager.getInstance().getPurchaseOrderDAO();
-		this.inventoryManager = new PurchaseOrderInventoryManager();
-		this.paymentManager = new PurchaseOrderPaymentManager();
+		this.inventoryController = new PurchaseOrderInventoryController();
+		this.paymentController = new PurchaseOrderPaymentController();
 	}
 	
 	
@@ -177,10 +179,10 @@ public class PurchaseOrderService {
 				//Delete purchase order if exists.
 				this.purchaseOrderDAO.deletePurchaseOrder(purchaseOrder);
 				
-				this.inventoryManager.updateMaterialInventoryOnOrderDeletion(purchaseOrder);
+				this.inventoryController.updateMaterialInventoryOnOrderDeletion(purchaseOrder);
 				
 				if(purchaseOrder.isStatusActive(PurchaseOrderStatus.INVOICE_SETTLED))
-					this.paymentManager.increaseAccountBalance(purchaseOrder);
+					this.paymentController.increaseAccountBalance(purchaseOrder);
 				
 				deletePurchaseOrderResult.addMessage(new WebServiceMessage(WebServiceMessageType.S, 
 						MessageFormat.format(this.resources.getString("purchaseOrder.deleteSuccess"), id)));
@@ -348,8 +350,8 @@ public class PurchaseOrderService {
 		try {
 			databasePurchaseOrder = this.purchaseOrderDAO.getPurchaseOrder(purchaseOrder.getId());
 			this.purchaseOrderDAO.updatePurchaseOrder(purchaseOrder);
-			this.inventoryManager.updateMaterialInventoryOnOrderUpdate(purchaseOrder, databasePurchaseOrder);
-			this.paymentManager.updatePurchaseOrderPayment(purchaseOrder, databasePurchaseOrder);
+			this.inventoryController.updateMaterialInventoryOnOrderUpdate(purchaseOrder, databasePurchaseOrder);
+			this.paymentController.updatePurchaseOrderPayment(purchaseOrder, databasePurchaseOrder);
 			webServiceResult.addMessage(new WebServiceMessage(WebServiceMessageType.S, 
 					MessageFormat.format(this.resources.getString("purchaseOrder.updateSuccess"), purchaseOrder.getId())));
 		} 

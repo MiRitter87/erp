@@ -9,6 +9,8 @@ import java.util.ResourceBundle;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import backend.controller.SalesOrderInventoryController;
+import backend.controller.SalesOrderPaymentController;
 import backend.dao.AccountDao;
 import backend.dao.BusinessPartnerDao;
 import backend.dao.DAOManager;
@@ -42,14 +44,14 @@ public class SalesOrderService {
 	private SalesOrderDao salesOrderDAO;
 	
 	/**
-	 * Manager for material inventory.
+	 * Controller for material inventory.
 	 */
-	private SalesOrderInventoryManager inventoryManager;
+	private SalesOrderInventoryController inventoryController;
 	
 	/**
-	 * Manager for sales order payments.
+	 * Controller for sales order payments.
 	 */
-	private SalesOrderPaymentManager paymentManager;
+	private SalesOrderPaymentController paymentController;
 	
 	/**
 	 * Access to localized application resources.
@@ -67,8 +69,8 @@ public class SalesOrderService {
 	 */
 	public SalesOrderService() {
 		this.salesOrderDAO = DAOManager.getInstance().getSalesOrderDAO();
-		this.inventoryManager = new SalesOrderInventoryManager();
-		this.paymentManager = new SalesOrderPaymentManager();
+		this.inventoryController = new SalesOrderInventoryController();
+		this.paymentController = new SalesOrderPaymentController();
 	}
 	
 	
@@ -180,10 +182,10 @@ public class SalesOrderService {
 				//Delete sales order if exists.
 				this.salesOrderDAO.deleteSalesOrder(salesOrder);
 				
-				this.inventoryManager.addMaterialInventoryForOrder(salesOrder);
+				this.inventoryController.addMaterialInventoryForOrder(salesOrder);
 				
 				if(salesOrder.getStatus() == SalesOrderStatus.FINISHED)
-					this.paymentManager.removePaymentFromAccount(salesOrder);
+					this.paymentController.removePaymentFromAccount(salesOrder);
 				
 				deleteSalesOrderResult.addMessage(new WebServiceMessage(WebServiceMessageType.S, 
 						MessageFormat.format(this.resources.getString("salesOrder.deleteSuccess"), id)));
@@ -287,8 +289,8 @@ public class SalesOrderService {
 		try {
 			databaseSalesOrder = this.salesOrderDAO.getSalesOrder(salesOrder.getId());
 			this.salesOrderDAO.updateSalesOrder(salesOrder);
-			this.inventoryManager.updateMaterialInventory(salesOrder, databaseSalesOrder);
-			this.paymentManager.updateSalesOrderPayment(salesOrder, databaseSalesOrder);
+			this.inventoryController.updateMaterialInventory(salesOrder, databaseSalesOrder);
+			this.paymentController.updateSalesOrderPayment(salesOrder, databaseSalesOrder);
 			webServiceResult.addMessage(new WebServiceMessage(WebServiceMessageType.S, 
 					MessageFormat.format(this.resources.getString("salesOrder.updateSuccess"), salesOrder.getId())));
 		} 
@@ -316,7 +318,7 @@ public class SalesOrderService {
 	private WebServiceResult add(final SalesOrder salesOrder, WebServiceResult webServiceResult) {		
 		try {
 			this.salesOrderDAO.insertSalesOrder(salesOrder);
-			this.inventoryManager.reduceMaterialInventory(salesOrder);
+			this.inventoryController.reduceMaterialInventory(salesOrder);
 			webServiceResult.addMessage(new WebServiceMessage(
 					WebServiceMessageType.S, this.resources.getString("salesOrder.addSuccess")));			
 		} catch (Exception e) {

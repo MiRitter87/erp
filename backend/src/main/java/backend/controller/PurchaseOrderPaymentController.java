@@ -1,4 +1,4 @@
-package backend.webservice.common;
+package backend.controller;
 
 import backend.dao.AccountDao;
 import backend.dao.DAOManager;
@@ -17,7 +17,7 @@ import backend.model.purchaseOrder.PurchaseOrderStatus;
  * 
  * @author Michael
  */
-public class PurchaseOrderPaymentManager {
+public class PurchaseOrderPaymentController {
 	/**
 	 * Prefix of purchase order reference numbers used in postings.
 	 */

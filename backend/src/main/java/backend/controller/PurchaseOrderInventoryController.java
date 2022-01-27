@@ -1,4 +1,4 @@
-package backend.webservice.common;
+package backend.controller;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -18,7 +18,7 @@ import backend.model.purchaseOrder.PurchaseOrderStatus;
  * 
  * @author Michael
  */
-public class PurchaseOrderInventoryManager {
+public class PurchaseOrderInventoryController {
 	/**
 	 * Updates the inventory of the materials when the purchase order is being updated.
 	 * 
