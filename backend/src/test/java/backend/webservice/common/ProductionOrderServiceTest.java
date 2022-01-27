@@ -709,6 +709,18 @@ public class ProductionOrderServiceTest {
 	}
 	
 	
+	/*
+	 * TODO Implement further test cases
+	 * 
+	 * testInventoryUpdatedOnFinishedActive	(unfinished -> finished)
+	 * testInventoryUpdatedOnFinishedInactive (finished -> unfinished)
+	 * testInventoryUpdatedOnFinishedDeleted (delete finished order)
+	 * testInventoryUpdatedOnFinishedCanceled (cancel finished order)
+	 * testChangeQuantityOfFinishedOrder (do not allow, check error message)
+	 * testChangeQuantityOfCanceledOrder (do not allow, check error message)
+	 */
+	
+	
 	/**
 	 * Converts a production order to the lean WebService representation.
 	 * 
