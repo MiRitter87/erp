@@ -166,29 +166,6 @@ public class ProductionOrderTest {
 	
 	@Test
 	/**
-	 * Tests validation of a production order whose ID is not given.
-	 */
-	public void testIdNotGiven() {
-		ValidationMessageProvider messageProvider = new ValidationMessageProvider();		
-		this.order.setId(null);
-		
-		String expectedErrorMessage = messageProvider.getNotNullValidationMessage("productionOrder", "id");
-		String errorMessage = "";
-		
-		try {
-			this.order.validate();
-			fail("Validation should have failed because ID is null.");
-		} 
-		catch (Exception expected) {
-			errorMessage = expected.getMessage();
-		}
-		
-		assertEquals(expectedErrorMessage, errorMessage);
-	}
-	
-	
-	@Test
-	/**
 	 * Tests validation of the production order whose ID is too low.
 	 */
 	public void testIdTooLow() {

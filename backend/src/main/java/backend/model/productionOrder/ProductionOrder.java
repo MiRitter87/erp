@@ -42,7 +42,6 @@ public class ProductionOrder {
 	@Id
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "productionOrderSequence")
 	@Column(name="PRODUCTION_ORDER_ID")
-	@NotNull(message = "{productionOrder.id.notNull.message}")
 	@Min(value = 1, message = "{productionOrder.id.min.message}")
 	private Integer id;
 	
