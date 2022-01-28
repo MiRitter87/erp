@@ -93,6 +93,21 @@ public class ProductionOrderServiceTest {
 	 */
 	private Material g4560;
 	
+	/**
+	 * A processor chip that is used as raw material for end-products.
+	 */
+	private Material processorChip;
+	
+	/**
+	 * A memory chip that is used as raw material for end-products.
+	 */
+	private Material memoryChip;
+	
+	/**
+	 * A display interface for graphic cards that is used in the production process.
+	 */
+	private Material displayInterface;
+	
 	
 	@BeforeAll
 	/**
@@ -157,9 +172,36 @@ public class ProductionOrderServiceTest {
 		this.g4560.setCurrency(Currency.EUR);
 		this.g4560.setInventory(Long.valueOf(25));
 		
+		this.processorChip = new Material();
+		this.processorChip.setName("Multi purpose processor chip");
+		this.processorChip.setDescription("A processing unit that can be used by GPUs as well as CPUs");
+		this.processorChip.setUnit(UnitOfMeasurement.ST);
+		this.processorChip.setPricePerUnit(BigDecimal.valueOf(Double.valueOf(12.89)));
+		this.processorChip.setCurrency(Currency.EUR);
+		this.processorChip.setInventory(Long.valueOf(150));
+		
+		this.memoryChip = new Material();
+		this.memoryChip.setName("Multi purpose memory chip");
+		this.memoryChip.setDescription("A memory chip that can be used by GPUs as well as CPUs");
+		this.memoryChip.setUnit(UnitOfMeasurement.ST);
+		this.memoryChip.setPricePerUnit(BigDecimal.valueOf(Double.valueOf(3.17)));
+		this.memoryChip.setCurrency(Currency.EUR);
+		this.memoryChip.setInventory(Long.valueOf(450));
+		
+		this.displayInterface = new Material();
+		this.displayInterface.setName("A display interface device");
+		this.displayInterface.setDescription("Hardware device to connect external devices like a monitor to the graphic adapter.");
+		this.displayInterface.setUnit(UnitOfMeasurement.ST);
+		this.displayInterface.setPricePerUnit(BigDecimal.valueOf(Double.valueOf(7.89)));
+		this.displayInterface.setCurrency(Currency.EUR);
+		this.displayInterface.setInventory(Long.valueOf(180));
+		
 		try {
 			materialDAO.insertMaterial(this.rx570);
 			materialDAO.insertMaterial(this.g4560);
+			materialDAO.insertMaterial(this.processorChip);
+			materialDAO.insertMaterial(this.memoryChip);
+			materialDAO.insertMaterial(this.displayInterface);
 		} catch (Exception e) {
 			fail(e.getMessage());
 		}
@@ -226,6 +268,9 @@ public class ProductionOrderServiceTest {
 	 */
 	private void deleteDummyMaterials() {
 		try {
+			materialDAO.deleteMaterial(this.displayInterface);
+			materialDAO.deleteMaterial(this.memoryChip);
+			materialDAO.deleteMaterial(this.processorChip);
 			materialDAO.deleteMaterial(this.g4560);
 			materialDAO.deleteMaterial(this.rx570);
 		} catch (Exception e) {
