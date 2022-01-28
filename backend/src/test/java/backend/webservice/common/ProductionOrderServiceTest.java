@@ -610,6 +610,25 @@ public class ProductionOrderServiceTest {
 	}
 	
 	
+//	@Test
+	/**
+	 * Tests updating a production order to status "IN_PROCESS" when at least one material without corresponding bill of material exists.
+	 */
+	public void testUpdateStatusWithoutBOM() {
+		WebServiceResult updateProductionOrderResult;
+		ProductionOrderService service = new ProductionOrderService();
+		String actualErrorMessage, expectedErrorMessage;
+		
+		//Update order status
+		this.order1.setStatus(ProductionOrderStatus.IN_PROCESS);
+		updateProductionOrderResult = service.updateProductionOrder(this.convertToWsOrder(this.order1));
+		
+		//There should be a return message of type E.
+		assertTrue(updateProductionOrderResult.getMessages().size() == 1);
+		assertTrue(updateProductionOrderResult.getMessages().get(0).getType() == WebServiceMessageType.E);
+	}
+	
+	
 	@Test
 	/**
 	 * Tests adding of a new production order.
@@ -709,8 +728,22 @@ public class ProductionOrderServiceTest {
 	}
 	
 	
+	/**
+	 * Tests if the material inventory is updated if the production order changes to status "FINISHED".
+	 * 
+	 * The quantity of the materials that are produced should be increased.
+	 * The quantity of the materials that are consumed by production should be decreased.
+	 */
+	public void testInventoryUpdatedOnFinishedActive() {
+		// TODO
+	}
+	
+	
 	/*
 	 * TODO Implement further test cases
+	 * 
+	 * testUpdateStatusWithoutBOM (error when no BOM exists)
+	 * testUpdateStatusWithBOM (should succeed without further message)
 	 * 
 	 * testInventoryUpdatedOnFinishedActive	(unfinished -> finished)
 	 * testInventoryUpdatedOnFinishedInactive (finished -> unfinished)

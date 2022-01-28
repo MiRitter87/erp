@@ -8,16 +8,19 @@ import java.util.ResourceBundle;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import backend.dao.BillOfMaterialDao;
 import backend.dao.DAOManager;
 import backend.dao.MaterialDao;
 import backend.dao.ProductionOrderDao;
 import backend.exception.DuplicateIdentifierException;
 import backend.exception.NoItemsException;
 import backend.exception.ObjectUnchangedException;
+import backend.model.billOfMaterial.BillOfMaterial;
 import backend.model.productionOrder.ProductionOrder;
 import backend.model.productionOrder.ProductionOrderArray;
 import backend.model.productionOrder.ProductionOrderItem;
 import backend.model.productionOrder.ProductionOrderItemWS;
+import backend.model.productionOrder.ProductionOrderStatus;
 import backend.model.productionOrder.ProductionOrderWS;
 import backend.model.webservice.WebServiceMessage;
 import backend.model.webservice.WebServiceMessageType;
@@ -170,6 +173,7 @@ public class ProductionOrderService {
 		}
 		
 		updateProductionOrderResult = this.validate(convertedProductionOrder);
+		//updateProductionOrderResult = this.validateUpdate(convertedProductionOrder);
 		if(WebServiceTools.resultContainsErrorMessage(updateProductionOrderResult)) {
 			return updateProductionOrderResult;
 		}
@@ -303,6 +307,52 @@ public class ProductionOrderService {
 		}
 		
 		return webServiceResult;
+	}
+	
+	
+	/**
+	 * Validations of the production order only relevant during update method.
+	 * 
+	 * @param productionOrder The production order to be validated.
+	 * @return The result of the validation.
+	 */
+	private WebServiceResult validateUpdate(final ProductionOrder productionOrder) {
+		WebServiceResult webServiceResult = new WebServiceResult(null);
+		
+		if((productionOrder.getStatus() == ProductionOrderStatus.IN_PROCESS || productionOrder.getStatus() == ProductionOrderStatus.FINISHED)) {
+			try {
+				if(!this.bomExistsForAllItems(productionOrder))
+					webServiceResult.addMessage(new WebServiceMessage(WebServiceMessageType.E, ""));
+			} catch (Exception e) {
+				webServiceResult.addMessage(new WebServiceMessage(WebServiceMessageType.E, 
+						MessageFormat.format(this.resources.getString("productionOrder.updateError"), productionOrder.getId())));
+				
+				logger.error(MessageFormat.format(this.resources.getString("productionOrder.updateError"), productionOrder.getId()), e);
+			}
+		}
+		
+		return webServiceResult;		
+	}
+	
+	
+	/**
+	 * Checks if a bill of material exists for each production order item.
+	 * 
+	 * @param productionOrder The production order to be validated.
+	 * @return The result of the validation.
+	 * @throws Exception In case the bill of material determination for the production order items fails.
+	 */
+	private boolean bomExistsForAllItems(final ProductionOrder productionOrder) throws Exception {
+		BillOfMaterialDao billOfMaterialDAO = DAOManager.getInstance().getBillOfMaterialDAO();
+		List<BillOfMaterial> billOfMaterials;
+		
+		for(ProductionOrderItem item:productionOrder.getItems()) {
+			billOfMaterials = billOfMaterialDAO.getBillOfMaterials(item.getMaterial());
+			if(billOfMaterials.size() == 0)
+				return false;
+		}
+
+		return true;
 	}
 	
 	
