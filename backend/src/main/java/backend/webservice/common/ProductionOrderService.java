@@ -173,7 +173,7 @@ public class ProductionOrderService {
 		}
 		
 		updateProductionOrderResult = this.validate(convertedProductionOrder);
-		//updateProductionOrderResult = this.validateUpdate(convertedProductionOrder);
+		updateProductionOrderResult = this.validateUpdate(convertedProductionOrder, updateProductionOrderResult);
 		if(WebServiceTools.resultContainsErrorMessage(updateProductionOrderResult)) {
 			return updateProductionOrderResult;
 		}
@@ -314,15 +314,19 @@ public class ProductionOrderService {
 	 * Validations of the production order only relevant during update method.
 	 * 
 	 * @param productionOrder The production order to be validated.
+	 * @param webServiceResult The WebService result with all messages that exist so far.
 	 * @return The result of the validation.
 	 */
-	private WebServiceResult validateUpdate(final ProductionOrder productionOrder) {
-		WebServiceResult webServiceResult = new WebServiceResult(null);
+	private WebServiceResult validateUpdate(final ProductionOrder productionOrder, WebServiceResult webServiceResult) {
+		Integer idOfMaterialWithoutBom = 0;
 		
+		//At the time the order is being processed or finished, there has to be a bill of material for all the materials that are going to be produced.
 		if((productionOrder.getStatus() == ProductionOrderStatus.IN_PROCESS || productionOrder.getStatus() == ProductionOrderStatus.FINISHED)) {
 			try {
-				if(!this.bomExistsForAllItems(productionOrder))
-					webServiceResult.addMessage(new WebServiceMessage(WebServiceMessageType.E, ""));
+				idOfMaterialWithoutBom = this.getIdOfMaterialWithoutBom(productionOrder);
+				if(idOfMaterialWithoutBom > 0)
+					webServiceResult.addMessage(new WebServiceMessage(WebServiceMessageType.E,
+						MessageFormat.format(this.resources.getString("productionOrder.updateNoBom"), idOfMaterialWithoutBom)));
 			} catch (Exception e) {
 				webServiceResult.addMessage(new WebServiceMessage(WebServiceMessageType.E, 
 						MessageFormat.format(this.resources.getString("productionOrder.updateError"), productionOrder.getId())));
@@ -337,22 +341,23 @@ public class ProductionOrderService {
 	
 	/**
 	 * Checks if a bill of material exists for each production order item.
+	 * If the production order uses a material where no corresponding BOM exists, the ID of the material is returned.
 	 * 
 	 * @param productionOrder The production order to be validated.
-	 * @return The result of the validation.
+	 * @return 0, if all materials have a BOM defined; the ID of the material without corresponding BOM.
 	 * @throws Exception In case the bill of material determination for the production order items fails.
 	 */
-	private boolean bomExistsForAllItems(final ProductionOrder productionOrder) throws Exception {
+	private Integer getIdOfMaterialWithoutBom(final ProductionOrder productionOrder) throws Exception {
 		BillOfMaterialDao billOfMaterialDAO = DAOManager.getInstance().getBillOfMaterialDAO();
 		List<BillOfMaterial> billOfMaterials;
 		
 		for(ProductionOrderItem item:productionOrder.getItems()) {
 			billOfMaterials = billOfMaterialDAO.getBillOfMaterials(item.getMaterial());
 			if(billOfMaterials.size() == 0)
-				return false;
+				return item.getMaterial().getId();
 		}
 
-		return true;
+		return 0;
 	}
 	
 	
@@ -360,6 +365,7 @@ public class ProductionOrderService {
 	 * Updates the given production order.
 	 * 
 	 * @param productionOrder The production order to be updated.
+	 * @param webServiceResult The WebService result with all messages that exist so far.
 	 * @return The result of the update function.
 	 */
 	private WebServiceResult update(final ProductionOrder productionOrder, WebServiceResult webServiceResult) {	

@@ -756,7 +756,7 @@ public class ProductionOrderServiceTest {
 	}
 	
 	
-//	@Test
+	@Test
 	/**
 	 * Tests updating a production order to status "IN_PROCESS" when at least one material without corresponding bill of material exists.
 	 */
@@ -765,13 +765,43 @@ public class ProductionOrderServiceTest {
 		ProductionOrderService service = new ProductionOrderService();
 		String actualErrorMessage, expectedErrorMessage;
 		
-		//Update order status
-		this.order1.setStatus(ProductionOrderStatus.IN_PROCESS);
-		updateProductionOrderResult = service.updateProductionOrder(this.convertToWsOrder(this.order1));
-		
-		//There should be a return message of type E.
-		assertTrue(updateProductionOrderResult.getMessages().size() == 1);
-		assertTrue(updateProductionOrderResult.getMessages().get(0).getType() == WebServiceMessageType.E);
+		try {
+			//Delete the bill of material of the material that is being produced in order1.
+			billOfMaterialDAO.deleteBillOfMaterial(this.bomRx570);
+			
+			//Update order status
+			this.order1.setStatus(ProductionOrderStatus.IN_PROCESS);
+			updateProductionOrderResult = service.updateProductionOrder(this.convertToWsOrder(this.order1));
+			
+			//There should be a return message of type E.
+			assertTrue(updateProductionOrderResult.getMessages().size() == 1);
+			assertTrue(updateProductionOrderResult.getMessages().get(0).getType() == WebServiceMessageType.E);
+			
+			//A proper message should be provided.
+			expectedErrorMessage = MessageFormat.format(this.resources.getString("productionOrder.updateNoBom"), this.rx570.getId());
+			actualErrorMessage = updateProductionOrderResult.getMessages().get(0).getText();
+			assertEquals(expectedErrorMessage, actualErrorMessage);
+		} catch (Exception e) {
+			fail(e.getMessage());
+		}
+		finally {
+			//Restore old database state by adding the bill of material that has been deleted previously.
+			try {
+				this.bomRx570.setId(null);
+				
+				//The items have to be re-initialized in order to prevent exception regarding orphan-removal.
+				//org.hibernate.HibernateException: Don't change the reference to a collection with delete-orphan enabled : backend.model.SalesOrder.items
+				this.bomRx570.setItems(new ArrayList<BillOfMaterialItem>());
+				this.bomRx570.addItem(this.bomItemRx570ProcessorChip);
+				this.bomRx570.addItem(this.bomItemRx570MemoryChip);
+				this.bomRx570.addItem(this.bomItemRx570DisplayInterface);
+				
+				billOfMaterialDAO.insertBillOfMaterial(this.bomRx570);
+			} 
+			catch (Exception e) {
+				fail(e.getMessage());
+			}
+		}
 	}
 	
 	
@@ -887,9 +917,6 @@ public class ProductionOrderServiceTest {
 	
 	/*
 	 * TODO Implement further test cases
-	 * 
-	 * testUpdateStatusWithoutBOM (error when no BOM exists)
-	 * testUpdateStatusWithBOM (should succeed without further message)
 	 * 
 	 * testInventoryUpdatedOnFinishedActive	(unfinished -> finished)
 	 * testInventoryUpdatedOnFinishedInactive (finished -> unfinished)
