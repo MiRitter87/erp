@@ -20,10 +20,13 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import backend.dao.BillOfMaterialDao;
 import backend.dao.DAOManager;
 import backend.dao.MaterialDao;
 import backend.dao.ProductionOrderDao;
 import backend.model.Currency;
+import backend.model.billOfMaterial.BillOfMaterial;
+import backend.model.billOfMaterial.BillOfMaterialItem;
 import backend.model.material.Material;
 import backend.model.material.UnitOfMeasurement;
 import backend.model.productionOrder.ProductionOrder;
@@ -57,6 +60,11 @@ public class ProductionOrderServiceTest {
 	 * DAO to access material data.
 	 */
 	private static MaterialDao materialDAO;
+	
+	/**
+	 * DAO to access bill of material data.
+	 */
+	private static BillOfMaterialDao billOfMaterialDAO;
 	
 	/**
 	 * The first production order under test.
@@ -108,6 +116,36 @@ public class ProductionOrderServiceTest {
 	 */
 	private Material displayInterface;
 	
+	/**
+	 * The bill of material of the rx570 material.
+	 */
+	private BillOfMaterial bomRx570;
+	
+	/**
+	 * The bill of material of the G4560 material.
+	 */
+	private BillOfMaterial bomG4560;
+
+	/**
+	 * Bill of material item: Processor chip of RX570.
+	 */
+	private BillOfMaterialItem bomItemRx570ProcessorChip;
+	
+	/**
+	 * Bill of material item: Memory chip of RX570.
+	 */
+	private BillOfMaterialItem bomItemRx570MemoryChip;
+	
+	/**
+	 * Bill of material item: Display interface of RX570.
+	 */
+	private BillOfMaterialItem bomItemRx570DisplayInterface;
+	
+	/**
+	 * Bill of material item: Processor chip of G4560.
+	 */
+	private BillOfMaterialItem bomItemG4560ProcessorChip;
+	
 	
 	@BeforeAll
 	/**
@@ -116,6 +154,7 @@ public class ProductionOrderServiceTest {
 	public static void setUpClass() {
 		materialDAO = DAOManager.getInstance().getMaterialDAO();
 		orderDAO = DAOManager.getInstance().getProductionOrderDAO();
+		billOfMaterialDAO = DAOManager.getInstance().getBillOfMaterialDAO();
 	}
 	
 	
@@ -139,6 +178,7 @@ public class ProductionOrderServiceTest {
 	private void setUp() {
 		this.createDummyMaterials();
 		this.createDummyOrders();
+		this.createDummyBillOfMaterials();
 	}
 	
 	
@@ -147,6 +187,7 @@ public class ProductionOrderServiceTest {
 	 * Tasks to be performed after each test has been run.
 	 */
 	private void tearDown() {
+		this.deleteDummyBillOfMaterials();
 		this.deleteDummyOrders();
 		this.deleteDummyMaterials();
 	}
@@ -251,6 +292,53 @@ public class ProductionOrderServiceTest {
 	
 	
 	/**
+	 * Initializes the database with dummy bill of materials.
+	 */
+	private void createDummyBillOfMaterials() {
+		this.bomItemG4560ProcessorChip = new BillOfMaterialItem();
+		this.bomItemG4560ProcessorChip.setId(1);
+		this.bomItemG4560ProcessorChip.setMaterial(this.processorChip);
+		this.bomItemG4560ProcessorChip.setQuantity(1);		
+		
+		this.bomG4560 = new BillOfMaterial();
+		this.bomG4560.setName("Pentium G4560");
+		this.bomG4560.setDescription("Bill of material for Pentium G4560 CPU.");
+		this.bomG4560.setMaterial(this.g4560);
+		this.bomG4560.addItem(this.bomItemG4560ProcessorChip);
+		
+		this.bomItemRx570ProcessorChip = new BillOfMaterialItem();
+		this.bomItemRx570ProcessorChip.setId(1);
+		this.bomItemRx570ProcessorChip.setMaterial(this.processorChip);
+		this.bomItemRx570ProcessorChip.setQuantity(1);
+		
+		this.bomItemRx570MemoryChip = new BillOfMaterialItem();
+		this.bomItemRx570MemoryChip.setId(2);
+		this.bomItemRx570MemoryChip.setMaterial(this.memoryChip);
+		this.bomItemRx570MemoryChip.setQuantity(2);
+		
+		this.bomItemRx570DisplayInterface = new BillOfMaterialItem();
+		this.bomItemRx570DisplayInterface.setId(3);
+		this.bomItemRx570DisplayInterface.setMaterial(this.displayInterface);
+		this.bomItemRx570DisplayInterface.setQuantity(1);
+		
+		this.bomRx570 = new BillOfMaterial();
+		this.bomRx570.setName("AMD Radeon RX570");
+		this.bomRx570.setDescription("Bill of material for AMD Radeon RX570.");
+		this.bomRx570.setMaterial(this.rx570);
+		this.bomRx570.addItem(this.bomItemRx570ProcessorChip);
+		this.bomRx570.addItem(this.bomItemRx570MemoryChip);
+		this.bomRx570.addItem(this.bomItemRx570DisplayInterface);
+		
+		try {
+			billOfMaterialDAO.insertBillOfMaterial(this.bomG4560);
+			billOfMaterialDAO.insertBillOfMaterial(this.bomRx570);
+		} catch (Exception e) {
+			fail(e.getMessage());
+		}
+	}
+	
+	
+	/**
 	 * Deletes the dummy production orders from the database.
 	 */
 	private void deleteDummyOrders() {
@@ -273,6 +361,19 @@ public class ProductionOrderServiceTest {
 			materialDAO.deleteMaterial(this.processorChip);
 			materialDAO.deleteMaterial(this.g4560);
 			materialDAO.deleteMaterial(this.rx570);
+		} catch (Exception e) {
+			fail(e.getMessage());
+		}
+	}
+	
+	
+	/**
+	 * Deletes the dummy bill of materials from the database.
+	 */
+	private void deleteDummyBillOfMaterials() {
+		try {
+			billOfMaterialDAO.deleteBillOfMaterial(this.bomRx570);
+			billOfMaterialDAO.deleteBillOfMaterial(this.bomG4560);
 		} catch (Exception e) {
 			fail(e.getMessage());
 		}
