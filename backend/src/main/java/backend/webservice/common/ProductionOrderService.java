@@ -8,6 +8,7 @@ import java.util.ResourceBundle;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import backend.controller.ProductionOrderInventoryController;
 import backend.dao.BillOfMaterialDao;
 import backend.dao.DAOManager;
 import backend.dao.MaterialDao;
@@ -40,6 +41,11 @@ public class ProductionOrderService {
 	private ProductionOrderDao productionOrderDAO;
 	
 	/**
+	 * Controller for material inventory.
+	 */
+	private ProductionOrderInventoryController inventoryController;
+	
+	/**
 	 * Access to localized application resources.
 	 */
 	private ResourceBundle resources = ResourceBundle.getBundle("backend");
@@ -55,6 +61,7 @@ public class ProductionOrderService {
 	 */
 	public ProductionOrderService() {
 		this.productionOrderDAO = DAOManager.getInstance().getProductionOrderDAO();
+		this.inventoryController = new ProductionOrderInventoryController();
 	}
 	
 	
@@ -368,9 +375,13 @@ public class ProductionOrderService {
 	 * @param webServiceResult The WebService result with all messages that exist so far.
 	 * @return The result of the update function.
 	 */
-	private WebServiceResult update(final ProductionOrder productionOrder, WebServiceResult webServiceResult) {	
+	private WebServiceResult update(final ProductionOrder productionOrder, WebServiceResult webServiceResult) {
+		ProductionOrder databaseProductionOrder;
+		
 		try {
+			databaseProductionOrder = this.productionOrderDAO.getProductionOrder(productionOrder.getId());
 			this.productionOrderDAO.updateProductionOrder(productionOrder);
+			this.inventoryController.updateMaterialInventoryOnOrderUpdate(productionOrder, databaseProductionOrder);
 			webServiceResult.addMessage(new WebServiceMessage(WebServiceMessageType.S, 
 					MessageFormat.format(this.resources.getString("productionOrder.updateSuccess"), productionOrder.getId())));
 		} 

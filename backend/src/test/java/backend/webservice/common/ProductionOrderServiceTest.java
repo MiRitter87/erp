@@ -35,7 +35,6 @@ import backend.model.productionOrder.ProductionOrderItem;
 import backend.model.productionOrder.ProductionOrderItemWS;
 import backend.model.productionOrder.ProductionOrderStatus;
 import backend.model.productionOrder.ProductionOrderWS;
-import backend.model.salesOrder.SalesOrderStatus;
 import backend.model.webservice.WebServiceMessageType;
 import backend.model.webservice.WebServiceResult;
 import backend.tools.WebServiceTools;
@@ -905,7 +904,7 @@ public class ProductionOrderServiceTest {
 	}
 	
 	
-	
+	@Test
 	/**
 	 * Tests if the material inventory is updated if the production order changes to status "FINISHED".
 	 * 
