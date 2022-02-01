@@ -35,6 +35,7 @@ import backend.model.productionOrder.ProductionOrderItem;
 import backend.model.productionOrder.ProductionOrderItemWS;
 import backend.model.productionOrder.ProductionOrderStatus;
 import backend.model.productionOrder.ProductionOrderWS;
+import backend.model.salesOrder.SalesOrderStatus;
 import backend.model.webservice.WebServiceMessageType;
 import backend.model.webservice.WebServiceResult;
 import backend.tools.WebServiceTools;
@@ -904,6 +905,7 @@ public class ProductionOrderServiceTest {
 	}
 	
 	
+	
 	/**
 	 * Tests if the material inventory is updated if the production order changes to status "FINISHED".
 	 * 
@@ -911,7 +913,51 @@ public class ProductionOrderServiceTest {
 	 * The quantity of the materials that are consumed by production should be decreased.
 	 */
 	public void testInventoryUpdatedOnFinishedActive() {
-		// TODO
+		ProductionOrderService service = new ProductionOrderService();
+		WebServiceResult updateProductionOrderResult;
+		Material rx570, processorChip, memoryChip, displayInterface;
+		Long rx570InventoryBefore = Long.valueOf(0), rx570InventoryAfter = Long.valueOf(0);
+		Long processorChipInventoryBefore = Long.valueOf(0), processorChipInventoryAfter = Long.valueOf(0);
+		Long memoryChipInventoryBefore = Long.valueOf(0), memoryChipInventoryAfter = Long.valueOf(0);
+		Long displayInterfaceInventoryBefore = Long.valueOf(0), displayInterfaceInventoryAfter = Long.valueOf(0);
+		
+		try {
+			//Get the material inventories before the order status is set to finished.
+			rx570InventoryBefore = this.rx570.getInventory();
+			processorChipInventoryBefore = this.processorChip.getInventory();
+			memoryChipInventoryBefore = this.memoryChip.getInventory();
+			displayInterfaceInventoryBefore = this.displayInterface.getInventory();
+			
+			//Update order with status 'FINISHED'
+			this.order1.setStatus(ProductionOrderStatus.FINISHED);
+			updateProductionOrderResult = service.updateProductionOrder(this.convertToWsOrder(this.order1));
+			
+			//Assure no error message exists
+			assertTrue(WebServiceTools.resultContainsErrorMessage(updateProductionOrderResult) == false);
+			
+			//There should be a success message
+			assertTrue(updateProductionOrderResult.getMessages().size() == 1);
+			assertTrue(updateProductionOrderResult.getMessages().get(0).getType() == WebServiceMessageType.S);
+			
+			//Get the material inventories after the order status has been set to finished.
+			rx570 = materialDAO.getMaterial(this.rx570.getId());
+			processorChip = materialDAO.getMaterial(this.processorChip.getId());
+			memoryChip = materialDAO.getMaterial(this.memoryChip.getId());
+			displayInterface = materialDAO.getMaterial(this.displayInterface.getId());
+			
+			rx570InventoryAfter = rx570.getInventory();
+			processorChipInventoryAfter = processorChip.getInventory();
+			memoryChipInventoryAfter = memoryChip.getInventory();
+			displayInterfaceInventoryAfter = displayInterface.getInventory();
+			
+			//Check if the produced quantity is added to the inventory.
+			assertTrue(rx570InventoryAfter == (rx570InventoryBefore + this.orderItem11.getQuantity()));
+			
+			//Check if the quantities used for production are removed from the inventory.
+			//assertTrue(g4560InventoryAfter == (g4560InventoryBefore + this.orderItem22.getQuantity()));
+		} catch (Exception e) {
+			fail(e.getMessage());
+		}
 	}
 	
 	
