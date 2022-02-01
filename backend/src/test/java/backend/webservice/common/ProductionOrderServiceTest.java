@@ -953,7 +953,9 @@ public class ProductionOrderServiceTest {
 			assertTrue(rx570InventoryAfter == (rx570InventoryBefore + this.orderItem11.getQuantity()));
 			
 			//Check if the quantities used for production are removed from the inventory.
-			//assertTrue(g4560InventoryAfter == (g4560InventoryBefore + this.orderItem22.getQuantity()));
+			assertTrue(processorChipInventoryAfter == (processorChipInventoryBefore - this.bomItemRx570ProcessorChip.getQuantity()));
+			assertTrue(memoryChipInventoryAfter == (memoryChipInventoryBefore - this.bomItemRx570MemoryChip.getQuantity()));
+			assertTrue(displayInterfaceInventoryAfter == (displayInterfaceInventoryBefore - this.bomItemRx570DisplayInterface.getQuantity()));
 		} catch (Exception e) {
 			fail(e.getMessage());
 		}
