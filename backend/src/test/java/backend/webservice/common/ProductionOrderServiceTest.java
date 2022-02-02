@@ -922,10 +922,15 @@ public class ProductionOrderServiceTest {
 		
 		try {
 			//Get the material inventories before the order status is set to finished.
-			rx570InventoryBefore = this.rx570.getInventory();
-			processorChipInventoryBefore = this.processorChip.getInventory();
-			memoryChipInventoryBefore = this.memoryChip.getInventory();
-			displayInterfaceInventoryBefore = this.displayInterface.getInventory();
+			rx570 = materialDAO.getMaterial(this.rx570.getId());
+			processorChip = materialDAO.getMaterial(this.processorChip.getId());
+			memoryChip = materialDAO.getMaterial(this.memoryChip.getId());
+			displayInterface = materialDAO.getMaterial(this.displayInterface.getId());
+			
+			rx570InventoryBefore = rx570.getInventory();
+			processorChipInventoryBefore = processorChip.getInventory();
+			memoryChipInventoryBefore = memoryChip.getInventory();
+			displayInterfaceInventoryBefore = displayInterface.getInventory();
 			
 			//Update order with status 'FINISHED'
 			this.order1.setStatus(ProductionOrderStatus.FINISHED);
@@ -962,13 +967,84 @@ public class ProductionOrderServiceTest {
 	}
 	
 	
+	@Test
+	/**
+	 * Tests if the material inventory is updated if the production order changes from status "FINISHED" to any other status.
+	 * 
+	 * The quantity of the materials that are produced should be reduced.
+	 * The quantity of the materials that are consumed by production should be increased.
+	 */
+	public void testInventoryUpdatedOnFinishedInactive() {
+		ProductionOrderService service = new ProductionOrderService();
+		WebServiceResult updateProductionOrderResult;
+		Material rx570, processorChip, memoryChip, displayInterface;
+		Long rx570InventoryBefore = Long.valueOf(0), rx570InventoryAfter = Long.valueOf(0);
+		Long processorChipInventoryBefore = Long.valueOf(0), processorChipInventoryAfter = Long.valueOf(0);
+		Long memoryChipInventoryBefore = Long.valueOf(0), memoryChipInventoryAfter = Long.valueOf(0);
+		Long displayInterfaceInventoryBefore = Long.valueOf(0), displayInterfaceInventoryAfter = Long.valueOf(0);
+		
+		try {
+			//Update order with status 'FINISHED'
+			this.order1.setStatus(ProductionOrderStatus.FINISHED);
+			updateProductionOrderResult = service.updateProductionOrder(this.convertToWsOrder(this.order1));
+			
+			//Assure no error message exists
+			assertTrue(WebServiceTools.resultContainsErrorMessage(updateProductionOrderResult) == false);
+			
+			//There should be a success message
+			assertTrue(updateProductionOrderResult.getMessages().size() == 1);
+			assertTrue(updateProductionOrderResult.getMessages().get(0).getType() == WebServiceMessageType.S);
+			
+			//Get the material inventories before the order status 'finished' is reverted.
+			rx570 = materialDAO.getMaterial(this.rx570.getId());
+			processorChip = materialDAO.getMaterial(this.processorChip.getId());
+			memoryChip = materialDAO.getMaterial(this.memoryChip.getId());
+			displayInterface = materialDAO.getMaterial(this.displayInterface.getId());
+			
+			rx570InventoryBefore = rx570.getInventory();
+			processorChipInventoryBefore = processorChip.getInventory();
+			memoryChipInventoryBefore = memoryChip.getInventory();
+			displayInterfaceInventoryBefore = displayInterface.getInventory();
+			
+			//Revert the status 'FINISHED'.
+			this.order1.setStatus(ProductionOrderStatus.OPEN);
+			updateProductionOrderResult = service.updateProductionOrder(this.convertToWsOrder(this.order1));
+			
+			//Assure no error message exists
+			assertTrue(WebServiceTools.resultContainsErrorMessage(updateProductionOrderResult) == false);
+			
+			//There should be a success message
+			assertTrue(updateProductionOrderResult.getMessages().size() == 1);
+			assertTrue(updateProductionOrderResult.getMessages().get(0).getType() == WebServiceMessageType.S);
+			
+			//Get the material inventories after the order status has been reverted.
+			rx570 = materialDAO.getMaterial(this.rx570.getId());
+			processorChip = materialDAO.getMaterial(this.processorChip.getId());
+			memoryChip = materialDAO.getMaterial(this.memoryChip.getId());
+			displayInterface = materialDAO.getMaterial(this.displayInterface.getId());
+			
+			rx570InventoryAfter = rx570.getInventory();
+			processorChipInventoryAfter = processorChip.getInventory();
+			memoryChipInventoryAfter = memoryChip.getInventory();
+			displayInterfaceInventoryAfter = displayInterface.getInventory();
+			
+			//Check if the produced quantity is removed from the inventory.
+			assertTrue(rx570InventoryAfter == (rx570InventoryBefore - this.orderItem11.getQuantity()));
+			
+			//Check if the quantities used for production are added to the inventory.
+			assertTrue(processorChipInventoryAfter == (processorChipInventoryBefore + this.bomItemRx570ProcessorChip.getQuantity()));
+			assertTrue(memoryChipInventoryAfter == (memoryChipInventoryBefore + this.bomItemRx570MemoryChip.getQuantity()));
+			assertTrue(displayInterfaceInventoryAfter == (displayInterfaceInventoryBefore + this.bomItemRx570DisplayInterface.getQuantity()));
+		} catch (Exception e) {
+			fail(e.getMessage());
+		}
+	}
+	
+	
 	/*
 	 * TODO Implement further test cases
 	 * 
-	 * testInventoryUpdatedOnFinishedActive	(unfinished -> finished)
-	 * testInventoryUpdatedOnFinishedInactive (finished -> unfinished)
 	 * testInventoryUpdatedOnFinishedDeleted (delete finished order)
-	 * testInventoryUpdatedOnFinishedCanceled (cancel finished order)
 	 * testChangeQuantityOfFinishedOrder (do not allow, check error message)
 	 * testChangeQuantityOfCanceledOrder (do not allow, check error message)
 	 */

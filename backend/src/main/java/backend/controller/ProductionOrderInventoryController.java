@@ -34,6 +34,12 @@ public class ProductionOrderInventoryController {
 			this.removeMaterialInventoryForBom(productionOrder);
 			return;
 		}
+		
+		if(databaseProductionOrder.getStatus() == ProductionOrderStatus.FINISHED && productionOrder.getStatus() != ProductionOrderStatus.FINISHED) {
+			this.removeMaterialInventoryForOrder(productionOrder);
+			this.addMaterialInventoryForBom(productionOrder);
+			return;
+		}
 	}
 	
 	
@@ -67,6 +73,24 @@ public class ProductionOrderInventoryController {
 	
 	
 	/**
+	 * Removes the material quantities of the whole production order from the material inventory.
+	 * 
+	 * @param productionOrder The production order of which the material quantities are removed from the inventory.
+	 * @throws Exception In case the update of the material inventory fails.
+	 */
+	private void removeMaterialInventoryForOrder(final ProductionOrder productionOrder) throws Exception {
+		MaterialDao materialDAO = DAOManager.getInstance().getMaterialDAO();
+		Material currentMaterial;
+		
+		for(ProductionOrderItem item:productionOrder.getItems()) {
+			currentMaterial = item.getMaterial();
+			currentMaterial.setInventory(currentMaterial.getInventory() - item.getQuantity());
+			materialDAO.updateMaterial(currentMaterial);
+		}			
+	}
+	
+	
+	/**
 	 * Removes the material from the inventory that is used for production.
 	 * 
 	 * @param productionOrder The production order of which the material quantities are removed from the inventory.
@@ -92,6 +116,38 @@ public class ProductionOrderInventoryController {
 			for(BillOfMaterialItem bomItem:billOfMaterial.getItems()) {
 				currentMaterial = bomItem.getMaterial();
 				currentMaterial.setInventory(currentMaterial.getInventory() - bomItem.getQuantity());
+				materialDAO.updateMaterial(currentMaterial);
+			}
+		}
+	}
+	
+	
+	/**
+	 * Adds the material to the inventory that is used for production.
+	 * 
+	 * @param productionOrder The production order of which the material quantities are added to the inventory.
+	 * @throws Exception In case the update of the material inventory fails.
+	 */
+	private void addMaterialInventoryForBom(final ProductionOrder productionOrder) throws Exception {
+		MaterialDao materialDAO = DAOManager.getInstance().getMaterialDAO();
+		BillOfMaterialDao billOfMaterialDAO = DAOManager.getInstance().getBillOfMaterialDAO();
+		Material currentMaterial;
+		List<BillOfMaterial> billOfMaterials;
+		BillOfMaterial billOfMaterial;
+		
+		for(ProductionOrderItem item:productionOrder.getItems()) {
+			//1. Get the bill of material of the produced order item. The bill of material defines which materials are used for production.
+			billOfMaterials = billOfMaterialDAO.getBillOfMaterials(item.getMaterial());
+			
+			if(billOfMaterials.size() == 0)
+				continue;	//Prevents null pointer errors; just in case. ProductionOrderService assures that a BOM exists when updating.
+			
+			billOfMaterial = billOfMaterials.get(0);
+			
+			//2. Increase the quantities of all materials that are used to produce the production order item.
+			for(BillOfMaterialItem bomItem:billOfMaterial.getItems()) {
+				currentMaterial = bomItem.getMaterial();
+				currentMaterial.setInventory(currentMaterial.getInventory() + bomItem.getQuantity());
 				materialDAO.updateMaterial(currentMaterial);
 			}
 		}
