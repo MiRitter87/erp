@@ -328,6 +328,21 @@ public class ProductionOrderService {
 	 * @return The result of the validation.
 	 */
 	private WebServiceResult validateUpdate(final ProductionOrder productionOrder, WebServiceResult webServiceResult) {
+		this.checkBomsExist(productionOrder, webServiceResult);
+		this.checkQuantityChangesForStatus(productionOrder, webServiceResult);
+		
+		return webServiceResult;
+	}
+	
+	
+	/**
+	 * Checks if a bill of material exists for all items to be produced.
+	 * 
+	 * @param productionOrder The production order to be validated.
+	 * @param webServiceResult The WebService result with all messages that exist so far.
+	 * @return The result of the validation.
+	 */
+	private WebServiceResult checkBomsExist(final ProductionOrder productionOrder, WebServiceResult webServiceResult) {
 		Integer idOfMaterialWithoutBom = 0;
 		
 		//At the time the order is being processed or finished, there has to be a bill of material for all the materials that are going to be produced.
@@ -345,7 +360,44 @@ public class ProductionOrderService {
 			}
 		}
 		
-		return webServiceResult;		
+		return webServiceResult;
+	}
+	
+	
+	/**
+	 * Checks if quantity changes are valid based on the current production order status.
+	 * 
+	 * @param productionOrder The production order to be validated.
+	 * @param webServiceResult The WebService result with all messages that exist so far.
+	 * @return The result of the validation.
+	 */
+	private WebServiceResult checkQuantityChangesForStatus(final ProductionOrder productionOrder, WebServiceResult webServiceResult) {
+		ProductionOrder databaseProductionOrder;
+		ProductionOrderItem databaseProductionOrderItem;
+		
+		//Quantity changes are only allowed in status 'OPEN' and 'IN_PROCESS'.
+		if(productionOrder.getStatus() == ProductionOrderStatus.OPEN || productionOrder.getStatus() == ProductionOrderStatus.IN_PROCESS)
+			return webServiceResult;	//No further checks needed.
+		
+		try {
+			databaseProductionOrder = this.productionOrderDAO.getProductionOrder(productionOrder.getId());
+			
+			for(ProductionOrderItem orderItem:productionOrder.getItems()) {
+				databaseProductionOrderItem = databaseProductionOrder.getItemWithId(orderItem.getId());
+				
+				//Compare the quantity of the order items. Database state and current state are compared.
+				if(databaseProductionOrderItem != null && orderItem.getQuantity() != databaseProductionOrderItem.getQuantity()) {
+					webServiceResult.addMessage(new WebServiceMessage(WebServiceMessageType.E, this.resources.getString("productionOrder.updateQuantityWrongStatus")));
+				}
+			}
+		} catch (Exception e) {
+			webServiceResult.addMessage(new WebServiceMessage(WebServiceMessageType.E, 
+					MessageFormat.format(this.resources.getString("productionOrder.updateError"), productionOrder.getId())));
+			
+			logger.error(MessageFormat.format(this.resources.getString("productionOrder.updateError"), productionOrder.getId()), e);
+		}
+		
+		return webServiceResult;
 	}
 	
 	

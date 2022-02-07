@@ -1122,11 +1122,47 @@ public class ProductionOrderServiceTest {
 	}
 	
 	
+	@Test
+	/**
+	 * Tests changing the quantity of a finished order.
+	 * 
+	 * This should not be allowed and a proper error message should be provided.
+	 */
+	public void testChangeQuantityOfFinishedOrder() {
+		ProductionOrderService service = new ProductionOrderService();
+		WebServiceResult updateProductionOrderResult;
+		String actualErrorMessage, expectedErrorMessage;
+		
+		//Update order with status 'FINISHED'.
+		this.order1.setStatus(ProductionOrderStatus.FINISHED);
+		updateProductionOrderResult = service.updateProductionOrder(this.convertToWsOrder(this.order1));
+		
+		//Assure no error message exists
+		assertTrue(WebServiceTools.resultContainsErrorMessage(updateProductionOrderResult) == false);
+		
+		//Try to change the quantity of the finished order.
+		this.orderItem11.setQuantity(Long.valueOf(2));
+		updateProductionOrderResult = service.updateProductionOrder(this.convertToWsOrder(this.order1));
+		
+		//There should be a return message of type E.
+		assertTrue(updateProductionOrderResult.getMessages().size() == 1);
+		assertTrue(updateProductionOrderResult.getMessages().get(0).getType() == WebServiceMessageType.E);
+		
+		//A proper message should be provided.
+		expectedErrorMessage = this.resources.getString("productionOrder.updateQuantityWrongStatus");
+		actualErrorMessage = updateProductionOrderResult.getMessages().get(0).getText();
+		assertEquals(expectedErrorMessage, actualErrorMessage);
+	}
+	
+	
 	/*
 	 * TODO Implement further test cases
 	 * 
-	 * testChangeQuantityOfFinishedOrder (do not allow, check error message)
 	 * testChangeQuantityOfCanceledOrder (do not allow, check error message)
+	 * testAddItemOnOrderFinished (do not allow, check error message)
+	 * testRemoveItemOnOrderFinished (do not allow, check error message)
+	 * testAddItemOnOrderCanceled (do not allow, check error message)
+	 * testRemoveItemOnOrderCanceled (do not allw, check error message)
 	 */
 	
 	
