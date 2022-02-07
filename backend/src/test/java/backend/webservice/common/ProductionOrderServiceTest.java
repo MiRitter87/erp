@@ -1041,10 +1041,90 @@ public class ProductionOrderServiceTest {
 	}
 	
 	
+	@Test
+	/**
+	 * Tests if the material inventory is updated if a production order of status 'FINISHED' is deleted.
+	 * 
+	 * The quantity of the materials that are produced should be reduced.
+	 * The quantity of the materials that are consumed by production should be increased.
+	 */
+	public void testInventoryUpdatedOnFinishedDeleted() {
+		ProductionOrderService service = new ProductionOrderService();
+		WebServiceResult updateProductionOrderResult;
+		Material rx570, processorChip, memoryChip, displayInterface;
+		Long rx570InventoryBefore = Long.valueOf(0), rx570InventoryAfter = Long.valueOf(0);
+		Long processorChipInventoryBefore = Long.valueOf(0), processorChipInventoryAfter = Long.valueOf(0);
+		Long memoryChipInventoryBefore = Long.valueOf(0), memoryChipInventoryAfter = Long.valueOf(0);
+		Long displayInterfaceInventoryBefore = Long.valueOf(0), displayInterfaceInventoryAfter = Long.valueOf(0);
+		
+		//Update order with status 'FINISHED'.
+		this.order1.setStatus(ProductionOrderStatus.FINISHED);
+		updateProductionOrderResult = service.updateProductionOrder(this.convertToWsOrder(this.order1));
+		
+		//Assure no error message exists
+		assertTrue(WebServiceTools.resultContainsErrorMessage(updateProductionOrderResult) == false);
+		
+		try {
+			//Get the material inventories before the 'FINISHED' order is deleted.
+			rx570 = materialDAO.getMaterial(this.rx570.getId());
+			processorChip = materialDAO.getMaterial(this.processorChip.getId());
+			memoryChip = materialDAO.getMaterial(this.memoryChip.getId());
+			displayInterface = materialDAO.getMaterial(this.displayInterface.getId());
+			
+			rx570InventoryBefore = rx570.getInventory();
+			processorChipInventoryBefore = processorChip.getInventory();
+			memoryChipInventoryBefore = memoryChip.getInventory();
+			displayInterfaceInventoryBefore = displayInterface.getInventory();
+			
+			//Delete the 'FINISHED' order.
+			updateProductionOrderResult = service.deleteProductionOrder(this.order1.getId());
+			
+			//Assure no error message exists
+			assertTrue(WebServiceTools.resultContainsErrorMessage(updateProductionOrderResult) == false);
+			
+			//Get the material inventories after the 'FINISHED' order has been deleted.
+			rx570 = materialDAO.getMaterial(this.rx570.getId());
+			processorChip = materialDAO.getMaterial(this.processorChip.getId());
+			memoryChip = materialDAO.getMaterial(this.memoryChip.getId());
+			displayInterface = materialDAO.getMaterial(this.displayInterface.getId());
+			
+			rx570InventoryAfter = rx570.getInventory();
+			processorChipInventoryAfter = processorChip.getInventory();
+			memoryChipInventoryAfter = memoryChip.getInventory();
+			displayInterfaceInventoryAfter = displayInterface.getInventory();
+			
+			//Check if the produced quantity is removed from the inventory.
+			assertTrue(rx570InventoryAfter == (rx570InventoryBefore - this.orderItem11.getQuantity()));
+			
+			//Check if the quantities used for production are added to the inventory.
+			assertTrue(processorChipInventoryAfter == (processorChipInventoryBefore + this.bomItemRx570ProcessorChip.getQuantity()));
+			assertTrue(memoryChipInventoryAfter == (memoryChipInventoryBefore + this.bomItemRx570MemoryChip.getQuantity()));
+			assertTrue(displayInterfaceInventoryAfter == (displayInterfaceInventoryBefore + this.bomItemRx570DisplayInterface.getQuantity()));
+		} catch (Exception e) {
+			fail(e.getMessage());
+		}
+		finally {
+			//Restore old database state by adding the production order that has been deleted previously.
+			try {
+				this.order1.setId(null);
+				
+				//The items have to be re-initialized in order to prevent exception regarding orphan-removal.
+				//org.hibernate.HibernateException: Don't change the reference to a collection with delete-orphan enabled : backend.model.SalesOrder.items
+				this.order1.setItems(new ArrayList<ProductionOrderItem>());
+				this.order1.addItem(this.orderItem11);
+				
+				orderDAO.insertProductionOrder(this.order1);
+			} 
+			catch (Exception e) {
+				fail(e.getMessage());
+			}
+		}
+	}
+	
+	
 	/*
 	 * TODO Implement further test cases
 	 * 
-	 * testInventoryUpdatedOnFinishedDeleted (delete finished order)
 	 * testChangeQuantityOfFinishedOrder (do not allow, check error message)
 	 * testChangeQuantityOfCanceledOrder (do not allow, check error message)
 	 */

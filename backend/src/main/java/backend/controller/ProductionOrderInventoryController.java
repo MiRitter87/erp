@@ -50,7 +50,10 @@ public class ProductionOrderInventoryController {
 	 * @throws Exception In case the update of the material inventory fails.
 	 */
 	public void updateMaterialInventoryOnOrderDeletion(final ProductionOrder productionOrder) throws Exception {
-		
+		if(productionOrder.getStatus() == ProductionOrderStatus.FINISHED) {
+			this.updateMaterialInventoryForOrder(productionOrder, false);
+			this.updateMaterialInventoryForBom(productionOrder, true);
+		}
 	}
 	
 	

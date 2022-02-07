@@ -138,7 +138,10 @@ public class ProductionOrderService {
 			
 			if(productionOrder != null) {
 				//Delete production order if exists.
-				this.productionOrderDAO.deleteProductionOrder(productionOrder);				
+				this.productionOrderDAO.deleteProductionOrder(productionOrder);
+				
+				this.inventoryController.updateMaterialInventoryOnOrderDeletion(productionOrder);
+				
 				deleteProductionOrderResult.addMessage(new WebServiceMessage(WebServiceMessageType.S, 
 						MessageFormat.format(this.resources.getString("productionOrder.deleteSuccess"), id)));
 			}
