@@ -1188,6 +1188,45 @@ public class ProductionOrderServiceTest {
 	}
 	
 	
+	@Test
+	/**
+	 * Tests adding an item to a finished production order.
+	 * 
+	 * This should not be allowed and a proper error message should be provided.
+	 */
+	public void testAddItemOnOrderFinished() {
+		ProductionOrderService service = new ProductionOrderService();
+		ProductionOrderItem newItem;
+		WebServiceResult updateProductionOrderResult;
+		String actualErrorMessage, expectedErrorMessage;
+		
+		//Update order with status 'FINISHED'.
+		this.order1.setStatus(ProductionOrderStatus.FINISHED);
+		updateProductionOrderResult = service.updateProductionOrder(this.convertToWsOrder(this.order1));
+		
+		//Assure no error message exists
+		assertTrue(WebServiceTools.resultContainsErrorMessage(updateProductionOrderResult) == false);
+		
+		//Add new item to finished order.
+		newItem = new ProductionOrderItem();
+		newItem.setId(2);
+		newItem.setMaterial(this.g4560);
+		newItem.setQuantity(Long.valueOf(1));
+		this.order1.addItem(newItem);
+		
+		updateProductionOrderResult = service.updateProductionOrder(this.convertToWsOrder(this.order1));
+		
+		//There should be a return message of type E.
+		assertTrue(updateProductionOrderResult.getMessages().size() == 1);
+		assertTrue(updateProductionOrderResult.getMessages().get(0).getType() == WebServiceMessageType.E);
+		
+		//A proper message should be provided.
+		expectedErrorMessage = this.resources.getString("productionOrder.updateItemWrongStatus");
+		actualErrorMessage = updateProductionOrderResult.getMessages().get(0).getText();
+		assertEquals(expectedErrorMessage, actualErrorMessage);
+	}
+	
+	
 	/*
 	 * TODO Implement further test cases
 	 * 
