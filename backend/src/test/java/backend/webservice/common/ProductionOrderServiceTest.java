@@ -1253,7 +1253,7 @@ public class ProductionOrderServiceTest {
 		assertTrue(updateProductionOrderResult.getMessages().get(0).getType() == WebServiceMessageType.E);
 		
 		//A proper message should be provided.
-		expectedErrorMessage = this.resources.getString("productionOrder.updateItemWrongStatus");
+		expectedErrorMessage = this.resources.getString("productionOrder.updateMaterialWrongStatus");
 		actualErrorMessage = updateProductionOrderResult.getMessages().get(0).getText();
 		assertEquals(expectedErrorMessage, actualErrorMessage);
 	}
