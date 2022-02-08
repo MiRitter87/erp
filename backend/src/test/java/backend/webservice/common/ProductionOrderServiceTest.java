@@ -1226,14 +1226,43 @@ public class ProductionOrderServiceTest {
 		assertEquals(expectedErrorMessage, actualErrorMessage);
 	}
 	
+	@Test
+	/**
+	 * Tests changing the material of an item of a finished production order.
+	 * 
+	 * This should not be allowed and a proper error message should be provided.
+	 */
+	public void testItemMaterialChangedOnOrderFinished() {
+		ProductionOrderService service = new ProductionOrderService();
+		WebServiceResult updateProductionOrderResult;
+		String actualErrorMessage, expectedErrorMessage;
+		
+		//Update order with status 'FINISHED'.
+		this.order1.setStatus(ProductionOrderStatus.FINISHED);
+		updateProductionOrderResult = service.updateProductionOrder(this.convertToWsOrder(this.order1));
+		
+		//Assure no error message exists
+		assertTrue(WebServiceTools.resultContainsErrorMessage(updateProductionOrderResult) == false);
+		
+		//Try to change the material of the finished order.
+		this.orderItem11.setMaterial(this.g4560);
+		updateProductionOrderResult = service.updateProductionOrder(this.convertToWsOrder(this.order1));
+		
+		//There should be a return message of type E.
+		assertTrue(updateProductionOrderResult.getMessages().size() == 1);
+		assertTrue(updateProductionOrderResult.getMessages().get(0).getType() == WebServiceMessageType.E);
+		
+		//A proper message should be provided.
+		expectedErrorMessage = this.resources.getString("productionOrder.updateItemWrongStatus");
+		actualErrorMessage = updateProductionOrderResult.getMessages().get(0).getText();
+		assertEquals(expectedErrorMessage, actualErrorMessage);
+	}
+	
 	
 	/*
-	 * TODO Implement further test cases
+	 * TODO Add additional test cases.
 	 * 
-	 * testAddItemOnOrderFinished (do not allow, check error message)
-	 * testRemoveItemOnOrderFinished (do not allow, check error message)
-	 * testAddItemOnOrderCanceled (do not allow, check error message)
-	 * testRemoveItemOnOrderCanceled (do not allw, check error message)
+	 * testItemIdDoesNotExistOnOrderFinished (The database has an order with item 4711 which does not exist anymore)
 	 */
 	
 	

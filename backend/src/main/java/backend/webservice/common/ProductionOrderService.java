@@ -395,6 +395,11 @@ public class ProductionOrderService {
 					continue;
 				}
 				
+				//Compare the material of the order items. Database state and current state are compared.
+				if(!orderItem.getMaterial().getId().equals(databaseProductionOrderItem.getMaterial().getId())) {
+					webServiceResult.addMessage(new WebServiceMessage(WebServiceMessageType.E, this.resources.getString("productionOrder.updateItemWrongStatus")));
+				}
+				
 				//Compare the quantity of the order items. Database state and current state are compared.
 				if(orderItem.getQuantity() != databaseProductionOrderItem.getQuantity()) {
 					webServiceResult.addMessage(new WebServiceMessage(WebServiceMessageType.E, this.resources.getString("productionOrder.updateQuantityWrongStatus")));
