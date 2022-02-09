@@ -1259,6 +1259,39 @@ public class ProductionOrderServiceTest {
 	}
 	
 	
+	@Test
+	/**
+	 * Tests updating a finished production order where the item IDs of the current state and the database state differ.
+	 * 
+	 * This should not be allowed and a proper error message should be provided.
+	 */
+	public void testItemIdDoesNotExistOnOrderFinished() {
+		ProductionOrderService service = new ProductionOrderService();
+		WebServiceResult updateProductionOrderResult;
+		String actualErrorMessage, expectedErrorMessage;
+		
+		//Update order with status 'FINISHED'.
+		this.order1.setStatus(ProductionOrderStatus.FINISHED);
+		updateProductionOrderResult = service.updateProductionOrder(this.convertToWsOrder(this.order1));
+		
+		//Assure no error message exists
+		assertTrue(WebServiceTools.resultContainsErrorMessage(updateProductionOrderResult) == false);
+		
+		//Try to change the material of the finished order.
+		this.orderItem11.setId(2);
+		updateProductionOrderResult = service.updateProductionOrder(this.convertToWsOrder(this.order1));
+		
+		//There should be a return message of type E.
+		assertTrue(updateProductionOrderResult.getMessages().size() == 1);
+		assertTrue(updateProductionOrderResult.getMessages().get(0).getType() == WebServiceMessageType.E);
+		
+		//A proper message should be provided.
+		expectedErrorMessage = this.resources.getString("productionOrder.updateItemWrongStatus");
+		actualErrorMessage = updateProductionOrderResult.getMessages().get(0).getText();
+		assertEquals(expectedErrorMessage, actualErrorMessage);
+	}
+	
+	
 	/*
 	 * TODO Add additional test cases.
 	 * 

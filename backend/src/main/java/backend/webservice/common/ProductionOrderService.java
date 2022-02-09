@@ -385,24 +385,28 @@ public class ProductionOrderService {
 			//The number of items has changed.
 			if(databaseProductionOrder.getItems().size() != productionOrder.getItems().size()) {
 				webServiceResult.addMessage(new WebServiceMessage(WebServiceMessageType.E, this.resources.getString("productionOrder.updateItemWrongStatus")));
+				return webServiceResult;
 			}
 			
 			for(ProductionOrderItem orderItem:productionOrder.getItems()) {
 				databaseProductionOrderItem = databaseProductionOrder.getItemWithId(orderItem.getId());
 				
+				//The production order has an item defined that did not exist before.
 				if(databaseProductionOrderItem == null) {
-					//TODO Add message
-					continue;
+					webServiceResult.addMessage(new WebServiceMessage(WebServiceMessageType.E, this.resources.getString("productionOrder.updateItemWrongStatus")));
+					return webServiceResult;
 				}
 				
 				//Compare the material of the order items. Database state and current state are compared.
 				if(!orderItem.getMaterial().getId().equals(databaseProductionOrderItem.getMaterial().getId())) {
 					webServiceResult.addMessage(new WebServiceMessage(WebServiceMessageType.E, this.resources.getString("productionOrder.updateMaterialWrongStatus")));
+					return webServiceResult;
 				}
 				
 				//Compare the quantity of the order items. Database state and current state are compared.
 				if(orderItem.getQuantity() != databaseProductionOrderItem.getQuantity()) {
 					webServiceResult.addMessage(new WebServiceMessage(WebServiceMessageType.E, this.resources.getString("productionOrder.updateQuantityWrongStatus")));
+					return webServiceResult;
 				}
 			}
 		} catch (Exception e) {
