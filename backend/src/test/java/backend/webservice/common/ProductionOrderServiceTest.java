@@ -1292,13 +1292,6 @@ public class ProductionOrderServiceTest {
 	}
 	
 	
-	/*
-	 * TODO Add additional test cases.
-	 * 
-	 * testItemIdDoesNotExistOnOrderFinished (The database has an order with item 4711 which does not exist anymore)
-	 */
-	
-	
 	/**
 	 * Converts a production order to the lean WebService representation.
 	 * 
