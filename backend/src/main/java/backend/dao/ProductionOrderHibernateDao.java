@@ -100,7 +100,8 @@ public class ProductionOrderHibernateDao implements ProductionOrderDao {
 			CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
 			CriteriaQuery<ProductionOrder> criteriaQuery = criteriaBuilder.createQuery(ProductionOrder.class);
 			Root<ProductionOrder> criteria = criteriaQuery.from(ProductionOrder.class);
-			criteriaQuery.select(criteria);		
+			criteriaQuery.select(criteria);
+			this.applyOrderStatusQueryParameter(orderStatusQuery, criteriaQuery, criteriaBuilder, criteria);
 			criteriaQuery.orderBy(criteriaBuilder.asc(criteria.get("id")));	//Order by id ascending
 			TypedQuery<ProductionOrder> typedQuery = entityManager.createQuery(criteriaQuery);
 			typedQuery.setHint("javax.persistence.loadgraph", graph);	//Also fetch all item data.
@@ -167,5 +168,23 @@ public class ProductionOrderHibernateDao implements ProductionOrderDao {
 		
 		if(databaseProductionOrder.equals(productionOrder))
 			throw new ObjectUnchangedException();
+	}
+	
+	
+	/**
+	 * Applies the order status query parameter to the production order query.
+	 * 
+	 * @param orderStatusQuery The query parameter for production order status.
+	 * @param orderCriteriaQuery The production order criteria query.
+	 * @param criteriaBuilder The builder of criterias.
+	 * @param criteria The root entity of the production order that is being queried.
+	 */
+	private void applyOrderStatusQueryParameter(final ProductionOrderStatus orderStatusQuery, final CriteriaQuery<ProductionOrder> orderCriteriaQuery, 
+			final CriteriaBuilder criteriaBuilder, final Root<ProductionOrder> criteria) {
+		
+		if(orderStatusQuery == null)
+			return;	//No further query restrictions needed.
+		
+		orderCriteriaQuery.where(criteriaBuilder.equal(criteria.get("status"), orderStatusQuery));
 	}
 }

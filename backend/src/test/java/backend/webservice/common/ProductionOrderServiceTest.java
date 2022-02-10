@@ -522,6 +522,58 @@ public class ProductionOrderServiceTest {
 	
 	@Test
 	/**
+	 * Tests the retrieval of all production orders that are in status "IN_PROCESS".
+	 */
+	public void testGetAllProductionOrdersInProcess() {
+		WebServiceResult getProductionOrdersResult;
+		ProductionOrderArray productionOrders;
+		ProductionOrder productionOrder;
+		ProductionOrderItem productionOrderItem;
+		ProductionOrderService service = new ProductionOrderService();
+		
+		//Get the production orders.
+		getProductionOrdersResult = service.getProductionOrders(ProductionOrderStatus.IN_PROCESS);
+		productionOrders = (ProductionOrderArray) getProductionOrdersResult.getData();
+		
+		//Assure no error message exists
+		assertTrue(WebServiceTools.resultContainsErrorMessage(getProductionOrdersResult) == false);
+		
+		//Check if one production order is returned.
+		assertTrue(productionOrders.getProductionOrders().size() == 1);
+		
+		//Check the production order in each attribute.
+		productionOrder = productionOrders.getProductionOrders().get(0);
+		
+		assertEquals(this.order2.getId(), productionOrder.getId());
+		assertEquals(this.order2.getOrderDate().getTime(), productionOrder.getOrderDate().getTime());
+		assertEquals(this.order2.getPlannedExecutionDate().getTime(), productionOrder.getPlannedExecutionDate().getTime());
+		assertEquals(this.order2.getExecutionDate(), productionOrder.getExecutionDate());
+		assertEquals(this.order2.getStatus(), productionOrder.getStatus());
+		
+		if(this.order2.getExecutionDate() != null && productionOrder.getExecutionDate() != null)
+			assertEquals(this.order2.getExecutionDate().getTime(), productionOrder.getExecutionDate().getTime());
+		
+		//The returned production order should have two items.
+		assertEquals(this.order2.getItems().size(), productionOrder.getItems().size());
+		
+		productionOrderItem = productionOrder.getItems().get(0);
+		
+		//Check the attributes of the production order item
+		assertEquals( this.orderItem21.getId(), productionOrderItem.getId());
+		assertEquals( this.orderItem21.getMaterial(), productionOrderItem.getMaterial());
+		assertEquals( this.orderItem21.getQuantity(), productionOrderItem.getQuantity());
+		
+		productionOrderItem = productionOrder.getItems().get(1);
+		
+		//Check the attributes of the production order item
+		assertEquals( this.orderItem22.getId(), productionOrderItem.getId());
+		assertEquals( this.orderItem22.getMaterial(), productionOrderItem.getMaterial());
+		assertEquals( this.orderItem22.getQuantity(), productionOrderItem.getQuantity());
+	}
+	
+	
+	@Test
+	/**
 	 * Tests deletion of a production order.
 	 */
 	public void testDeleteProductionOrder() {
