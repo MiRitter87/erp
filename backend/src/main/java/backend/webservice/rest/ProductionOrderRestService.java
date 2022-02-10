@@ -8,8 +8,10 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
+import backend.model.productionOrder.ProductionOrderStatus;
 import backend.model.productionOrder.ProductionOrderWS;
 import backend.model.webservice.WebServiceResult;
 import backend.webservice.common.ProductionOrderService;
@@ -39,13 +41,14 @@ public class ProductionOrderRestService {
 	/**
 	 * Provides a list of all production orders.
 	 * 
+	 * @param orderStatusQuery Specifies the production orders to be selected based on the status.
 	 * @return A list of all production orders.
 	 */
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
-	public WebServiceResult getProductionOrders() {
+	public WebServiceResult getProductionOrders(@QueryParam("orderStatusQuery") final ProductionOrderStatus orderStatusQuery) {
 		ProductionOrderService productionOrderService = new ProductionOrderService();
-		return productionOrderService.getProductionOrders();
+		return productionOrderService.getProductionOrders(orderStatusQuery);
 	}
 	
 	

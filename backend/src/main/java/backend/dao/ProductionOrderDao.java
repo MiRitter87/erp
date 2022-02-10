@@ -4,6 +4,7 @@ import java.util.List;
 
 import backend.exception.ObjectUnchangedException;
 import backend.model.productionOrder.ProductionOrder;
+import backend.model.productionOrder.ProductionOrderStatus;
 
 /**
  * Interface for production order persistence.
@@ -32,10 +33,11 @@ public interface ProductionOrderDao {
 	/**
 	 * Gets all production orders.
 	 * 
+	 * @param orderStatusQuery Specifies the production orders to be selected based on the status.
 	 * @return All production orders.
 	 * @throws Exception Production order retrieval failed.
 	 */
-	List<ProductionOrder> getProductionOrders() throws Exception;
+	List<ProductionOrder> getProductionOrders(final ProductionOrderStatus orderStatusQuery) throws Exception;
 	
 	
 	/**

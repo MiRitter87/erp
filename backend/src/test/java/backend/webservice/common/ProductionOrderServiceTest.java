@@ -459,7 +459,7 @@ public class ProductionOrderServiceTest {
 		ProductionOrderService service = new ProductionOrderService();
 		
 		//Get the production orders.
-		getProductionOrdersResult = service.getProductionOrders();
+		getProductionOrdersResult = service.getProductionOrders(null);
 		productionOrders = (ProductionOrderArray) getProductionOrdersResult.getData();
 		
 		//Assure no error message exists

@@ -102,14 +102,15 @@ public class ProductionOrderService {
 	/**
 	 * Provides a list of all production orders.
 	 * 
+	 * orderStatusQuery Specifies the production orders to be selected based on the status.
 	 * @return A list of all production orders.
 	 */
-	public WebServiceResult getProductionOrders() {
+	public WebServiceResult getProductionOrders(final ProductionOrderStatus orderStatusQuery) {
 		WebServiceResult getProductionOrdersResult = new WebServiceResult(null);
 		ProductionOrderArray productionOrders = new ProductionOrderArray();
 		
 		try {
-			productionOrders.setProductionOrders(this.productionOrderDAO.getProductionOrders());
+			productionOrders.setProductionOrders(this.productionOrderDAO.getProductionOrders(orderStatusQuery));
 			getProductionOrdersResult.setData(productionOrders);
 		} catch (Exception e) {
 			getProductionOrdersResult.addMessage(new WebServiceMessage(

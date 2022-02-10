@@ -14,6 +14,7 @@ import javax.persistence.criteria.Root;
 
 import backend.exception.ObjectUnchangedException;
 import backend.model.productionOrder.ProductionOrder;
+import backend.model.productionOrder.ProductionOrderStatus;
 
 /**
  * Provides access to production order database persistence using Hibernate.
@@ -85,7 +86,7 @@ public class ProductionOrderHibernateDao implements ProductionOrderDao {
 
 	
 	@Override
-	public List<ProductionOrder> getProductionOrders() throws Exception {
+	public List<ProductionOrder> getProductionOrders(final ProductionOrderStatus orderStatusQuery) throws Exception {
 		List<ProductionOrder> productionOrders = null;
 		EntityManager entityManager = this.sessionFactory.createEntityManager();
 		
