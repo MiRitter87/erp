@@ -20,6 +20,9 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import backend.dao.BillOfMaterialDao;
 import backend.dao.DAOManager;
 import backend.dao.MaterialDao;
@@ -1341,6 +1344,27 @@ public class ProductionOrderServiceTest {
 		expectedErrorMessage = this.resources.getString("productionOrder.updateItemWrongStatus");
 		actualErrorMessage = updateProductionOrderResult.getMessages().get(0).getText();
 		assertEquals(expectedErrorMessage, actualErrorMessage);
+	}
+	
+	
+	@Test
+	/**
+	 * Tests the serialization of the WebService result to JSON using the getProductionOrders operation of the REST service.
+	 */
+	public void testJSONSerializationOfGetProductionOrders() {
+		WebServiceResult getProductionOrdersResult;
+		ObjectMapper objectMapper = new ObjectMapper();
+		
+		//Get the production order.
+		ProductionOrderService service = new ProductionOrderService();
+		getProductionOrdersResult = service.getProductionOrders(null);
+		
+		//Serialize the result to JSON.
+		try {
+			objectMapper.writeValueAsString(getProductionOrdersResult);
+		} catch (JsonProcessingException e) {
+			fail(e.getMessage());
+		}
 	}
 	
 	

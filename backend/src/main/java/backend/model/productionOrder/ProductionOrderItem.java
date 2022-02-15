@@ -18,6 +18,8 @@ import javax.validation.ValidatorFactory;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import backend.model.material.Material;
 
 /**
@@ -44,6 +46,7 @@ public class ProductionOrderItem {
 	@Id
 	@JoinColumn(name = "PRODUCTION_ORDER_ID")
 	@ManyToOne(fetch = FetchType.LAZY)
+	@JsonIgnore
 	private ProductionOrder productionOrder;
 	
 	/**
