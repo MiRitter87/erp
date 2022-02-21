@@ -225,12 +225,13 @@ public class ProductionOrder {
 			return false;
 		}
 		ProductionOrder other = (ProductionOrder) obj;
-		if (executionDate == null) {
-			if (other.executionDate != null) {
-				return false;
-			}
-		} else if (executionDate.getTime() != other.executionDate.getTime()) {
+		if (executionDate == null && other.executionDate != null)
 			return false;
+		if (executionDate != null && other.executionDate == null)
+			return false;
+		if(executionDate != null && other.executionDate != null) {
+			if (executionDate.getTime() != other.executionDate.getTime())
+				return false;
 		}
 		if (id == null) {
 			if (other.id != null) {
@@ -390,5 +391,8 @@ public class ProductionOrder {
 	private void updateExecutionDate() {
 		if(this.executionDate == null && this.status == ProductionOrderStatus.FINISHED)
 			this.executionDate = new Date();
+		
+		if(this.executionDate != null && this.status != ProductionOrderStatus.FINISHED)
+			this.executionDate = null;
 	}
 }

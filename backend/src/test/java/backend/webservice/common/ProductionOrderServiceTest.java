@@ -1398,11 +1398,31 @@ public class ProductionOrderServiceTest {
 	}
 	
 	
-	/*
-	 * TODO Add additional test cases
-	 * 
-	 * testSetExecutionDateRevertedOnFinishedInactive
+	@Test
+	/**
+	 * Tests if the execution date is removed if the status 'FINISHED' is no longer active.
 	 */
+	public void testSetExecutionDateRevertedOnFinishedInactive() {
+		ProductionOrderService service = new ProductionOrderService();
+		WebServiceResult updateProductionOrderResult;
+		
+		//Set order to 'FINISHED'.
+		this.order1.setStatus(ProductionOrderStatus.FINISHED);
+		updateProductionOrderResult = service.updateProductionOrder(this.convertToWsOrder(this.order1));
+		
+		//Assure no error message exists
+		assertTrue(WebServiceTools.resultContainsErrorMessage(updateProductionOrderResult) == false);
+		
+		//Set order to state 'IN_PROCESS'.
+		this.order1.setStatus(ProductionOrderStatus.IN_PROCESS);
+		updateProductionOrderResult = service.updateProductionOrder(this.convertToWsOrder(this.order1));
+		
+		//Assure no error message exists
+		assertTrue(WebServiceTools.resultContainsErrorMessage(updateProductionOrderResult) == false);
+		
+		//Check if the execution date has been reset.
+		assertNull(this.order1.getExecutionDate());
+	}
 	
 	
 	/**
