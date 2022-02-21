@@ -240,19 +240,21 @@ public class ProductionOrder {
 		} else if (!id.equals(other.id)) {
 			return false;
 		}
-		if (orderDate == null) {
-			if (other.orderDate != null) {
-				return false;
-			}
-		} else if (orderDate.getTime() != other.orderDate.getTime()) {
+		if (orderDate == null && other.orderDate != null)
 			return false;
+		if (orderDate != null && other.orderDate == null)
+			return false;
+		if(orderDate != null && other.orderDate != null) {
+			if (orderDate.getTime() != other.orderDate.getTime())
+				return false;
 		}
-		if (plannedExecutionDate == null) {
-			if (other.plannedExecutionDate != null) {
-				return false;
-			}
-		} else if (plannedExecutionDate.getTime() != other.plannedExecutionDate.getTime()) {
+		if (plannedExecutionDate == null && other.plannedExecutionDate != null)
 			return false;
+		if (plannedExecutionDate != null && other.plannedExecutionDate == null)
+			return false;
+		if(plannedExecutionDate != null && other.plannedExecutionDate != null) {
+			if (plannedExecutionDate.getTime() != other.plannedExecutionDate.getTime())
+				return false;
 		}
 		if (status != other.status) {
 			return false;
