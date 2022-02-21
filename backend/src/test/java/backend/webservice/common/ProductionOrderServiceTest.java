@@ -9,6 +9,9 @@ import static org.junit.jupiter.api.Assertions.fail;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.text.MessageFormat;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -1366,6 +1369,40 @@ public class ProductionOrderServiceTest {
 			fail(e.getMessage());
 		}
 	}
+	
+	
+	@Test
+	/**
+	 * Tests if the execution date is set when the production order changes to status 'FINISHED'.
+	 */
+	public void testSetExecutionDateOnFinishedActive() {
+		ProductionOrderService service = new ProductionOrderService();
+		WebServiceResult updateProductionOrderResult;
+		LocalDate today = LocalDate.now();
+		LocalDate executionDate;
+		
+		//Check if the execution date is not yet set.
+		assertTrue(this.order1.getExecutionDate() == null);
+		
+		//Set order to 'FINISHED'.
+		this.order1.setStatus(ProductionOrderStatus.FINISHED);
+		updateProductionOrderResult = service.updateProductionOrder(this.convertToWsOrder(this.order1));
+		
+		//Assure no error message exists
+		assertTrue(WebServiceTools.resultContainsErrorMessage(updateProductionOrderResult) == false);
+		
+		//Check if the execution date has been set automatically.
+		assertNotNull(this.order1.getExecutionDate());
+		executionDate = Instant.ofEpochMilli(this.order1.getExecutionDate().getTime()).atZone(ZoneId.systemDefault()).toLocalDate();
+		assertEquals(today, executionDate);
+	}
+	
+	
+	/*
+	 * TODO Add additional test cases
+	 * 
+	 * testSetExecutionDateRevertedOnFinishedInactive
+	 */
 	
 	
 	/**

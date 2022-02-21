@@ -179,6 +179,7 @@ public class ProductionOrder {
 	 */
 	public void setStatus(ProductionOrderStatus status) {
 		this.status = status;
+		this.updateExecutionDate();
 	}
 
 
@@ -380,5 +381,14 @@ public class ProductionOrder {
 				throw new DuplicateIdentifierException(item.getId().toString());
 			}
 		}
+	}
+	
+	
+	/**
+	 * Updates the execution date based on the current status.
+	 */
+	private void updateExecutionDate() {
+		if(this.executionDate == null && this.status == ProductionOrderStatus.FINISHED)
+			this.executionDate = new Date();
 	}
 }
