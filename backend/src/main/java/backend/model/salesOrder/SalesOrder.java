@@ -321,12 +321,13 @@ public class SalesOrder {
 		} else if (!id.equals(other.id)) {
 			return false;
 		}
-		if (orderDate == null) {
-			if (other.orderDate != null) {
-				return false;
-			}
-		} else if (orderDate.getTime() != other.orderDate.getTime()) {
+		if (orderDate == null && other.orderDate != null)
 			return false;
+		if (orderDate != null && other.orderDate == null)
+			return false;
+		if(orderDate != null && other.orderDate != null) {
+			if (orderDate.getTime() != other.orderDate.getTime())
+				return false;
 		}
 		if (paymentAccount == null) {
 			if (other.paymentAccount != null) {
@@ -335,12 +336,13 @@ public class SalesOrder {
 		} else if (!paymentAccount.equals(other.paymentAccount)) {
 			return false;
 		}
-		if (requestedDeliveryDate == null) {
-			if (other.requestedDeliveryDate != null) {
-				return false;
-			}
-		} else if (requestedDeliveryDate.getTime() != other.requestedDeliveryDate.getTime()) {
+		if (requestedDeliveryDate == null && other.requestedDeliveryDate != null)
 			return false;
+		if (requestedDeliveryDate != null && other.requestedDeliveryDate == null)
+			return false;
+		if(requestedDeliveryDate != null && other.requestedDeliveryDate != null) {
+			if (requestedDeliveryDate.getTime() != other.requestedDeliveryDate.getTime())
+				return false;
 		}
 		if (shipToParty == null) {
 			if (other.shipToParty != null) {

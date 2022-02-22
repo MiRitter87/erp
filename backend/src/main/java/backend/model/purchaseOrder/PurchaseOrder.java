@@ -303,19 +303,21 @@ public class PurchaseOrder {
 		} else if (!id.equals(other.id)) {
 			return false;
 		}
-		if (orderDate == null) {
-			if (other.orderDate != null) {
-				return false;
-			}
-		} else if (orderDate.getTime() != other.orderDate.getTime()) {
+		if (orderDate == null && other.orderDate != null)
 			return false;
+		if (orderDate != null && other.orderDate == null)
+			return false;
+		if(orderDate != null && other.orderDate != null) {
+			if (orderDate.getTime() != other.orderDate.getTime())
+				return false;
 		}
-		if (requestedDeliveryDate == null) {
-			if (other.requestedDeliveryDate != null) {
-				return false;
-			}
-		} else if (requestedDeliveryDate.getTime() != other.requestedDeliveryDate.getTime()) {
+		if (requestedDeliveryDate == null && other.requestedDeliveryDate != null)
 			return false;
+		if (requestedDeliveryDate != null && other.requestedDeliveryDate == null)
+			return false;
+		if(requestedDeliveryDate != null && other.requestedDeliveryDate != null) {
+			if (requestedDeliveryDate.getTime() != other.requestedDeliveryDate.getTime())
+				return false;
 		}
 		if (status == null) {
 			if (other.status != null) {

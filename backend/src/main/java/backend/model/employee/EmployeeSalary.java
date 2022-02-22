@@ -140,13 +140,15 @@ public class EmployeeSalary {
 		if (monthlySalary != other.monthlySalary) {
 			return false;
 		}
-		if (salaryLastChange == null) {
-			if (other.salaryLastChange != null) {
-				return false;
-			}
-		} else if (!(salaryLastChange.getTime() == other.salaryLastChange.getTime())) {
+		if (salaryLastChange == null && other.salaryLastChange != null)
 			return false;
+		if (salaryLastChange != null && other.salaryLastChange == null)
+			return false;
+		if(salaryLastChange != null && other.salaryLastChange != null) {
+			if (salaryLastChange.getTime() != other.salaryLastChange.getTime())
+				return false;
 		}
+		
 		return true;
 	}
 }
