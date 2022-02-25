@@ -183,13 +183,13 @@ public class ProductionOrderService {
 			return updateProductionOrderResult;
 		}
 		
-		updateProductionOrderResult = this.validate(convertedProductionOrder);
-		updateProductionOrderResult = this.validateUpdate(convertedProductionOrder, updateProductionOrderResult);
+		updateProductionOrderResult.addMessages(this.validate(convertedProductionOrder));
+		updateProductionOrderResult.addMessages(this.validateUpdate(convertedProductionOrder));
 		if(WebServiceTools.resultContainsErrorMessage(updateProductionOrderResult)) {
 			return updateProductionOrderResult;
 		}
 		
-		updateProductionOrderResult = this.update(convertedProductionOrder, updateProductionOrderResult);
+		updateProductionOrderResult.addMessages(this.update(convertedProductionOrder));
 
 		return updateProductionOrderResult;
 	}
@@ -209,18 +209,17 @@ public class ProductionOrderService {
 			convertedProductionOrder = this.convertProductionOrder(productionOrder);
 		}
 		catch(Exception exception) {
-			addProductionOrderResult.addMessage(new WebServiceMessage(
-					WebServiceMessageType.E, this.resources.getString("productionOrder.addError")));	
+			addProductionOrderResult.addMessage(new WebServiceMessage(WebServiceMessageType.E, this.resources.getString("productionOrder.addError")));	
 			logger.error(this.resources.getString("productionOrder.addError"), exception);
 			return addProductionOrderResult;
 		}
 			
-		addProductionOrderResult = this.validate(convertedProductionOrder);
+		addProductionOrderResult.addMessages(this.validate(convertedProductionOrder));
 		if(WebServiceTools.resultContainsErrorMessage(addProductionOrderResult)) {
 			return addProductionOrderResult;
 		}
 	
-		addProductionOrderResult = this.add(convertedProductionOrder, addProductionOrderResult);
+		addProductionOrderResult.addMessages(this.add(convertedProductionOrder));
 		addProductionOrderResult.setData(convertedProductionOrder.getId());
 		
 		return addProductionOrderResult;
@@ -294,30 +293,30 @@ public class ProductionOrderService {
 	 * Validates the production order.
 	 * 
 	 * @param productionOrder The production order to be validated.
-	 * @return The result of the validation.
+	 * @return A list of potential messages that occurred during validation.
 	 */
-	private WebServiceResult validate(final ProductionOrder productionOrder) {
-		WebServiceResult webServiceResult = new WebServiceResult(null);
+	private List<WebServiceMessage> validate(final ProductionOrder productionOrder) {
+		List<WebServiceMessage> messages = new ArrayList<WebServiceMessage>();
 		
 		try {
 			productionOrder.validate();
 		} 
 		catch(NoItemsException noItemsException) {
-			webServiceResult.addMessage(new WebServiceMessage(WebServiceMessageType.E, this.resources.getString("productionOrder.noItemsGiven")));
-			return webServiceResult;
+			messages.add(new WebServiceMessage(WebServiceMessageType.E, this.resources.getString("productionOrder.noItemsGiven")));
+			return messages;
 		}
 		catch(DuplicateIdentifierException duplicateIdentifierException) {
-			webServiceResult.addMessage(new WebServiceMessage(WebServiceMessageType.E, 
+			messages.add(new WebServiceMessage(WebServiceMessageType.E, 
 					MessageFormat.format(this.resources.getString("productionOrder.duplicateItemKey"), productionOrder.getId(), 
 							duplicateIdentifierException.getDuplicateIdentifier())));
-			return webServiceResult;
+			return messages;
 		}
 		catch (Exception validationException) {
-			webServiceResult.addMessage(new WebServiceMessage(WebServiceMessageType.E, validationException.getMessage()));
-			return webServiceResult;
+			messages.add(new WebServiceMessage(WebServiceMessageType.E, validationException.getMessage()));
+			return messages;
 		}
 		
-		return webServiceResult;
+		return messages;
 	}
 	
 	
@@ -325,14 +324,15 @@ public class ProductionOrderService {
 	 * Validations of the production order only relevant during update method.
 	 * 
 	 * @param productionOrder The production order to be validated.
-	 * @param webServiceResult The WebService result with all messages that exist so far.
-	 * @return The result of the validation.
+	 * @return A list of potential messages that occurred during validation.
 	 */
-	private WebServiceResult validateUpdate(final ProductionOrder productionOrder, WebServiceResult webServiceResult) {
-		this.checkBomsExist(productionOrder, webServiceResult);
-		this.checkItemDataChangesForStatus(productionOrder, webServiceResult);
+	private List<WebServiceMessage> validateUpdate(final ProductionOrder productionOrder) {
+		List<WebServiceMessage> messages = new ArrayList<WebServiceMessage>();
 		
-		return webServiceResult;
+		messages.addAll(this.checkBomsExist(productionOrder));
+		messages.addAll(this.checkItemDataChangesForStatus(productionOrder));
+		
+		return messages;
 	}
 	
 	
@@ -340,10 +340,10 @@ public class ProductionOrderService {
 	 * Checks if a bill of material exists for all items to be produced.
 	 * 
 	 * @param productionOrder The production order to be validated.
-	 * @param webServiceResult The WebService result with all messages that exist so far.
-	 * @return The result of the validation.
+	 * @return A list of potential messages that occurred during check-up.
 	 */
-	private WebServiceResult checkBomsExist(final ProductionOrder productionOrder, WebServiceResult webServiceResult) {
+	private List<WebServiceMessage> checkBomsExist(final ProductionOrder productionOrder) {
+		List<WebServiceMessage> messages = new ArrayList<WebServiceMessage>();
 		Integer idOfMaterialWithoutBom = 0;
 		
 		//At the time the order is being processed or finished, there has to be a bill of material for all the materials that are going to be produced.
@@ -351,17 +351,17 @@ public class ProductionOrderService {
 			try {
 				idOfMaterialWithoutBom = this.getIdOfMaterialWithoutBom(productionOrder);
 				if(idOfMaterialWithoutBom > 0)
-					webServiceResult.addMessage(new WebServiceMessage(WebServiceMessageType.E,
+					messages.add(new WebServiceMessage(WebServiceMessageType.E,
 						MessageFormat.format(this.resources.getString("productionOrder.updateNoBom"), idOfMaterialWithoutBom)));
 			} catch (Exception e) {
-				webServiceResult.addMessage(new WebServiceMessage(WebServiceMessageType.E, 
+				messages.add(new WebServiceMessage(WebServiceMessageType.E, 
 						MessageFormat.format(this.resources.getString("productionOrder.updateError"), productionOrder.getId())));
 				
 				logger.error(MessageFormat.format(this.resources.getString("productionOrder.updateError"), productionOrder.getId()), e);
 			}
 		}
 		
-		return webServiceResult;
+		return messages;
 	}
 	
 	
@@ -369,24 +369,24 @@ public class ProductionOrderService {
 	 * Checks if item data changes are valid based on the current production order status.
 	 * 
 	 * @param productionOrder The production order to be validated.
-	 * @param webServiceResult The WebService result with all messages that exist so far.
-	 * @return The result of the validation.
+	 * @return A list of potential messages that occurred during check-up.
 	 */
-	private WebServiceResult checkItemDataChangesForStatus(final ProductionOrder productionOrder, WebServiceResult webServiceResult) {
+	private List<WebServiceMessage> checkItemDataChangesForStatus(final ProductionOrder productionOrder) {
+		List<WebServiceMessage> messages = new ArrayList<WebServiceMessage>();
 		ProductionOrder databaseProductionOrder;
 		ProductionOrderItem databaseProductionOrderItem;
 		
 		//Item data changes are only allowed in status 'OPEN' and 'IN_PROCESS'.
 		if(productionOrder.getStatus() == ProductionOrderStatus.OPEN || productionOrder.getStatus() == ProductionOrderStatus.IN_PROCESS)
-			return webServiceResult;	//No further checks needed.
+			return messages;	//No further checks needed.
 		
 		try {
 			databaseProductionOrder = this.productionOrderDAO.getProductionOrder(productionOrder.getId());
 			
 			//The number of items has changed.
 			if(databaseProductionOrder.getItems().size() != productionOrder.getItems().size()) {
-				webServiceResult.addMessage(new WebServiceMessage(WebServiceMessageType.E, this.resources.getString("productionOrder.updateItemWrongStatus")));
-				return webServiceResult;
+				messages.add(new WebServiceMessage(WebServiceMessageType.E, this.resources.getString("productionOrder.updateItemWrongStatus")));
+				return messages;
 			}
 			
 			for(ProductionOrderItem orderItem:productionOrder.getItems()) {
@@ -394,30 +394,30 @@ public class ProductionOrderService {
 				
 				//The production order has an item defined that did not exist before.
 				if(databaseProductionOrderItem == null) {
-					webServiceResult.addMessage(new WebServiceMessage(WebServiceMessageType.E, this.resources.getString("productionOrder.updateItemWrongStatus")));
-					return webServiceResult;
+					messages.add(new WebServiceMessage(WebServiceMessageType.E, this.resources.getString("productionOrder.updateItemWrongStatus")));
+					return messages;
 				}
 				
 				//Compare the material of the order items. Database state and current state are compared.
 				if(!orderItem.getMaterial().getId().equals(databaseProductionOrderItem.getMaterial().getId())) {
-					webServiceResult.addMessage(new WebServiceMessage(WebServiceMessageType.E, this.resources.getString("productionOrder.updateMaterialWrongStatus")));
-					return webServiceResult;
+					messages.add(new WebServiceMessage(WebServiceMessageType.E, this.resources.getString("productionOrder.updateMaterialWrongStatus")));
+					return messages;
 				}
 				
 				//Compare the quantity of the order items. Database state and current state are compared.
 				if(orderItem.getQuantity() != databaseProductionOrderItem.getQuantity()) {
-					webServiceResult.addMessage(new WebServiceMessage(WebServiceMessageType.E, this.resources.getString("productionOrder.updateQuantityWrongStatus")));
-					return webServiceResult;
+					messages.add(new WebServiceMessage(WebServiceMessageType.E, this.resources.getString("productionOrder.updateQuantityWrongStatus")));
+					return messages;
 				}
 			}
 		} catch (Exception e) {
-			webServiceResult.addMessage(new WebServiceMessage(WebServiceMessageType.E, 
+			messages.add(new WebServiceMessage(WebServiceMessageType.E, 
 					MessageFormat.format(this.resources.getString("productionOrder.updateError"), productionOrder.getId())));
 			
 			logger.error(MessageFormat.format(this.resources.getString("productionOrder.updateError"), productionOrder.getId()), e);
 		}
 		
-		return webServiceResult;
+		return messages;
 	}
 	
 	
@@ -447,31 +447,31 @@ public class ProductionOrderService {
 	 * Updates the given production order.
 	 * 
 	 * @param productionOrder The production order to be updated.
-	 * @param webServiceResult The WebService result with all messages that exist so far.
-	 * @return The result of the update function.
+	 * @return A list of potential messages that occurred during updating.
 	 */
-	private WebServiceResult update(final ProductionOrder productionOrder, WebServiceResult webServiceResult) {
+	private List<WebServiceMessage> update(final ProductionOrder productionOrder) {
+		List<WebServiceMessage> messages = new ArrayList<WebServiceMessage>();
 		ProductionOrder databaseProductionOrder;
 		
 		try {
 			databaseProductionOrder = this.productionOrderDAO.getProductionOrder(productionOrder.getId());
 			this.productionOrderDAO.updateProductionOrder(productionOrder);
 			this.inventoryController.updateMaterialInventoryOnOrderUpdate(productionOrder, databaseProductionOrder);
-			webServiceResult.addMessage(new WebServiceMessage(WebServiceMessageType.S, 
+			messages.add(new WebServiceMessage(WebServiceMessageType.S, 
 					MessageFormat.format(this.resources.getString("productionOrder.updateSuccess"), productionOrder.getId())));
 		} 
 		catch(ObjectUnchangedException objectUnchangedException) {
-			webServiceResult.addMessage(new WebServiceMessage(WebServiceMessageType.I, 
+			messages.add(new WebServiceMessage(WebServiceMessageType.I, 
 					MessageFormat.format(this.resources.getString("productionOrder.updateUnchanged"), productionOrder.getId())));
 		}
 		catch (Exception e) {
-			webServiceResult.addMessage(new WebServiceMessage(WebServiceMessageType.E, 
+			messages.add(new WebServiceMessage(WebServiceMessageType.E, 
 					MessageFormat.format(this.resources.getString("productionOrder.updateError"), productionOrder.getId())));
 			
 			logger.error(MessageFormat.format(this.resources.getString("productionOrder.updateError"), productionOrder.getId()), e);
 		}
 		
-		return webServiceResult;
+		return messages;
 	}
 	
 	
@@ -479,20 +479,19 @@ public class ProductionOrderService {
 	 * Inserts the given production order.
 	 * 
 	 * @param productionOrder The production order to be inserted.
-	 * @return The result of the insert function.
+	 * @return A list of potential messages that occurred during adding.
 	 */
-	private WebServiceResult add(final ProductionOrder productionOrder, WebServiceResult webServiceResult) {		
+	private List<WebServiceMessage> add(final ProductionOrder productionOrder) {	
+		List<WebServiceMessage> messages = new ArrayList<WebServiceMessage>();
+		
 		try {
 			this.productionOrderDAO.insertProductionOrder(productionOrder);
-			webServiceResult.addMessage(new WebServiceMessage(
-					WebServiceMessageType.S, this.resources.getString("productionOrder.addSuccess")));			
+			messages.add(new WebServiceMessage(WebServiceMessageType.S, this.resources.getString("productionOrder.addSuccess")));			
 		} catch (Exception e) {
-			webServiceResult.addMessage(new WebServiceMessage(
-					WebServiceMessageType.E, this.resources.getString("productionOrder.addError")));
-			
+			messages.add(new WebServiceMessage(WebServiceMessageType.E, this.resources.getString("productionOrder.addError")));
 			logger.error(this.resources.getString("productionOrder.addError"), e);
 		}
 		
-		return webServiceResult;
+		return messages;
 	}
 }

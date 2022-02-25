@@ -45,6 +45,7 @@ public class WebServiceResult {
 		this.messages = new ArrayList<WebServiceMessage>();
 	}
 	
+	
 	/**
 	 * Creates and initializes a new WebService result.
 	 * 
@@ -55,6 +56,7 @@ public class WebServiceResult {
 		this.messages = new ArrayList<WebServiceMessage>();
 	}
 	
+	
 	/**
 	 * Adds the given message to the message list of the WebService result.
 	 * 
@@ -64,20 +66,34 @@ public class WebServiceResult {
 		this.messages.add(message);
 	}
 	
+	
+	/**
+	 * Adds a list of messages to the message list of the WebService result.
+	 * 
+	 * @param messages A list of messages to be added.
+	 */
+	public void addMessages(final List<WebServiceMessage> messages) {
+		this.messages.addAll(messages);
+	}
+	
+	
 	@XmlElementWrapper(name="messages")
 	@XmlElement(name="message")
 	public List<WebServiceMessage> getMessages() {
 		return messages;
 	}
 
+	
 	public void setMessages(List<WebServiceMessage> messages) {
 		this.messages = messages;
 	}
 
+	
 	public Object getData() {
 		return data;
 	}
 
+	
 	public void setData(Object data) {
 		this.data = data;
 	}
