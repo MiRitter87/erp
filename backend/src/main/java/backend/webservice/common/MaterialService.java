@@ -117,8 +117,7 @@ public class MaterialService {
 			convertedMaterial = this.convertMaterial(material);			
 		}
 		catch(Exception exception) {
-			addMaterialResult.addMessage(new WebServiceMessage(
-					WebServiceMessageType.E, this.resources.getString("material.addError")));	
+			addMaterialResult.addMessage(new WebServiceMessage(WebServiceMessageType.E, this.resources.getString("material.addError")));	
 			logger.error(this.resources.getString("material.addError"), exception);
 			return addMaterialResult;
 		}

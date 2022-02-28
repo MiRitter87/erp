@@ -149,12 +149,12 @@ public class PurchaseOrderService {
 			return addPurchaseOrderResult;
 		}
 			
-		addPurchaseOrderResult = this.validate(convertedPurchaseOrder);
+		addPurchaseOrderResult.addMessages(this.validate(convertedPurchaseOrder));
 		if(WebServiceTools.resultContainsErrorMessage(addPurchaseOrderResult)) {
 			return addPurchaseOrderResult;
 		}
 	
-		addPurchaseOrderResult = this.add(convertedPurchaseOrder, addPurchaseOrderResult);
+		addPurchaseOrderResult.addMessages(this.add(convertedPurchaseOrder));
 		addPurchaseOrderResult.setData(convertedPurchaseOrder.getId());
 		
 		return addPurchaseOrderResult;
@@ -224,12 +224,12 @@ public class PurchaseOrderService {
 			return updatePurchaseOrderResult;
 		}
 		
-		updatePurchaseOrderResult = this.validate(convertedPurchaseOrder);
+		updatePurchaseOrderResult.addMessages(this.validate(convertedPurchaseOrder));
 		if(WebServiceTools.resultContainsErrorMessage(updatePurchaseOrderResult)) {
 			return updatePurchaseOrderResult;
 		}
 		
-		updatePurchaseOrderResult = this.update(convertedPurchaseOrder, updatePurchaseOrderResult);
+		updatePurchaseOrderResult.addMessages(this.update(convertedPurchaseOrder));
 		
 		return updatePurchaseOrderResult;
 	}
@@ -311,30 +311,27 @@ public class PurchaseOrderService {
 	 * Validates the purchase order.
 	 * 
 	 * @param purchaseOrder The purchase order to be validated.
-	 * @return The result of the validation.
+	 * @return A list of potential messages that occurred during validation.
 	 */
-	private WebServiceResult validate(final PurchaseOrder purchaseOrder) {
-		WebServiceResult webServiceResult = new WebServiceResult(null);
+	private List<WebServiceMessage> validate(final PurchaseOrder purchaseOrder) {
+		List<WebServiceMessage> messages = new ArrayList<WebServiceMessage>();
 		
 		try {
 			purchaseOrder.validate();
 		} 
 		catch(NoItemsException noItemsException) {
-			webServiceResult.addMessage(new WebServiceMessage(WebServiceMessageType.E, this.resources.getString("purchaseOrder.noItemsGiven")));
-			return webServiceResult;
+			messages.add(new WebServiceMessage(WebServiceMessageType.E, this.resources.getString("purchaseOrder.noItemsGiven")));
 		}
 		catch(DuplicateIdentifierException duplicateIdentifierException) {
-			webServiceResult.addMessage(new WebServiceMessage(WebServiceMessageType.E, 
+			messages.add(new WebServiceMessage(WebServiceMessageType.E, 
 					MessageFormat.format(this.resources.getString("purchaseOrder.duplicateItemKey"), purchaseOrder.getId(), 
 							duplicateIdentifierException.getDuplicateIdentifier())));
-			return webServiceResult;
 		}
 		catch (Exception validationException) {
-			webServiceResult.addMessage(new WebServiceMessage(WebServiceMessageType.E, validationException.getMessage()));
-			return webServiceResult;
+			messages.add(new WebServiceMessage(WebServiceMessageType.E, validationException.getMessage()));
 		}
 		
-		return webServiceResult;
+		return messages;
 	}
 	
 	
@@ -342,9 +339,10 @@ public class PurchaseOrderService {
 	 * Updates the given purchase order.
 	 * 
 	 * @param purchaseOrder The purchase order to be updated.
-	 * @return The result of the update function.
+	 * @return A list of potential messages that occurred during updating.
 	 */
-	private WebServiceResult update(final PurchaseOrder purchaseOrder, WebServiceResult webServiceResult) {
+	private List<WebServiceMessage> update(final PurchaseOrder purchaseOrder) {
+		List<WebServiceMessage> messages = new ArrayList<WebServiceMessage>();
 		PurchaseOrder databasePurchaseOrder;
 		
 		try {
@@ -352,21 +350,21 @@ public class PurchaseOrderService {
 			this.purchaseOrderDAO.updatePurchaseOrder(purchaseOrder);
 			this.inventoryController.updateMaterialInventoryOnOrderUpdate(purchaseOrder, databasePurchaseOrder);
 			this.paymentController.updatePurchaseOrderPayment(purchaseOrder, databasePurchaseOrder);
-			webServiceResult.addMessage(new WebServiceMessage(WebServiceMessageType.S, 
+			messages.add(new WebServiceMessage(WebServiceMessageType.S, 
 					MessageFormat.format(this.resources.getString("purchaseOrder.updateSuccess"), purchaseOrder.getId())));
 		} 
 		catch(ObjectUnchangedException objectUnchangedException) {
-			webServiceResult.addMessage(new WebServiceMessage(WebServiceMessageType.I, 
+			messages.add(new WebServiceMessage(WebServiceMessageType.I, 
 					MessageFormat.format(this.resources.getString("purchaseOrder.updateUnchanged"), purchaseOrder.getId())));
 		}
 		catch (Exception e) {
-			webServiceResult.addMessage(new WebServiceMessage(WebServiceMessageType.E, 
+			messages.add(new WebServiceMessage(WebServiceMessageType.E, 
 					MessageFormat.format(this.resources.getString("purchaseOrder.updateError"), purchaseOrder.getId())));
 			
 			logger.error(MessageFormat.format(this.resources.getString("purchaseOrder.updateError"), purchaseOrder.getId()), e);
 		}
 		
-		return webServiceResult;
+		return messages;
 	}
 	
 	
@@ -374,20 +372,20 @@ public class PurchaseOrderService {
 	 * Inserts the given purchase order.
 	 * 
 	 * @param purchaseOrder The purchase order to be inserted.
-	 * @return The result of the insert function.
+	 * @return A list of potential messages that occurred during adding.
 	 */
-	private WebServiceResult add(final PurchaseOrder purchaseOrder, WebServiceResult webServiceResult) {		
+	private List<WebServiceMessage> add(final PurchaseOrder purchaseOrder) {
+		List<WebServiceMessage> messages = new ArrayList<WebServiceMessage>();
+		
 		try {
 			this.purchaseOrderDAO.insertPurchaseOrder(purchaseOrder);
-			webServiceResult.addMessage(new WebServiceMessage(
-					WebServiceMessageType.S, this.resources.getString("purchaseOrder.addSuccess")));			
+			messages.add(new WebServiceMessage(WebServiceMessageType.S, this.resources.getString("purchaseOrder.addSuccess")));			
 		} catch (Exception e) {
-			webServiceResult.addMessage(new WebServiceMessage(
-					WebServiceMessageType.E, this.resources.getString("purchaseOrder.addError")));
+			messages.add(new WebServiceMessage(WebServiceMessageType.E, this.resources.getString("purchaseOrder.addError")));
 			
 			logger.error(this.resources.getString("purchaseOrder.addError"), e);
 		}
 		
-		return webServiceResult;
+		return messages;
 	}
 }

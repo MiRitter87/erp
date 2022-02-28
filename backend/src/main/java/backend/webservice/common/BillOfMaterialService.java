@@ -318,7 +318,7 @@ public class BillOfMaterialService {
 	 * Updates the given BillOfMaterial.
 	 * 
 	 * @param billOfMaterial The BillOfMaterial to be updated.
-	 * @return A list of potential messages that occurred during validation.
+	 * @return A list of potential messages that occurred during updating.
 	 */
 	private List<WebServiceMessage> update(final BillOfMaterial billOfMaterial) {
 		List<WebServiceMessage> messages = new ArrayList<WebServiceMessage>();
@@ -352,7 +352,7 @@ public class BillOfMaterialService {
 	 * Inserts the given BillOfMaterial.
 	 * 
 	 * @param billOfMaterial The BillOfMaterial to be inserted.
-	 * @return A list of potential messages that occurred during validation.
+	 * @return A list of potential messages that occurred during adding.
 	 */
 	private List<WebServiceMessage> add(final BillOfMaterial billOfMaterial) {
 		List<WebServiceMessage> messages = new ArrayList<WebServiceMessage>();
