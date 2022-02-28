@@ -171,12 +171,12 @@ public class BillOfMaterialService {
 			return updateBillOfMaterialResult;
 		}
 		
-		updateBillOfMaterialResult = this.validate(convertedBillOfMaterial);
+		updateBillOfMaterialResult.addMessages(this.validate(convertedBillOfMaterial));
 		if(WebServiceTools.resultContainsErrorMessage(updateBillOfMaterialResult)) {
 			return updateBillOfMaterialResult;
 		}
 		
-		updateBillOfMaterialResult = this.update(convertedBillOfMaterial, updateBillOfMaterialResult);
+		updateBillOfMaterialResult.addMessages(this.update(convertedBillOfMaterial));
 		
 		return updateBillOfMaterialResult;
 	}
@@ -202,12 +202,12 @@ public class BillOfMaterialService {
 			return addBillOfMaterialResult;
 		}
 		
-		addBillOfMaterialResult = this.validate(convertedBillOfMaterial);
+		addBillOfMaterialResult.addMessages(this.validate(convertedBillOfMaterial));
 		if(WebServiceTools.resultContainsErrorMessage(addBillOfMaterialResult)) {
 			return addBillOfMaterialResult;
 		}
 		
-		addBillOfMaterialResult = this.add(convertedBillOfMaterial, addBillOfMaterialResult);
+		addBillOfMaterialResult.addMessages(this.add(convertedBillOfMaterial));
 		addBillOfMaterialResult.setData(convertedBillOfMaterial.getId());
 		
 		return addBillOfMaterialResult;
@@ -287,30 +287,30 @@ public class BillOfMaterialService {
 	 * Validates the BillOfMaterial.
 	 * 
 	 * @param billOfMaterial The BillOfMaterial to be validated.
-	 * @return The result of the validation.
+	 * @return A list of potential messages that occurred during validation.
 	 */
-	private WebServiceResult validate(final BillOfMaterial billOfMaterial) {
-		WebServiceResult webServiceResult = new WebServiceResult(null);
+	private List<WebServiceMessage> validate(final BillOfMaterial billOfMaterial) {
+		List<WebServiceMessage> messages = new ArrayList<WebServiceMessage>();
 		
 		try {
 			billOfMaterial.validate();
 		} 
 		catch(NoItemsException noItemsException) {
-			webServiceResult.addMessage(new WebServiceMessage(WebServiceMessageType.E, this.resources.getString("billOfMaterial.noItemsGiven")));
-			return webServiceResult;
+			messages.add(new WebServiceMessage(WebServiceMessageType.E, this.resources.getString("billOfMaterial.noItemsGiven")));
+			return messages;
 		}
 		catch(DuplicateIdentifierException duplicateIdentifierException) {
-			webServiceResult.addMessage(new WebServiceMessage(WebServiceMessageType.E, 
+			messages.add(new WebServiceMessage(WebServiceMessageType.E, 
 					MessageFormat.format(this.resources.getString("billOfMaterial.duplicateItemKey"), billOfMaterial.getId(), 
 							duplicateIdentifierException.getDuplicateIdentifier())));
-			return webServiceResult;
+			return messages;
 		}
 		catch (Exception validationException) {
-			webServiceResult.addMessage(new WebServiceMessage(WebServiceMessageType.E, validationException.getMessage()));
-			return webServiceResult;
+			messages.add(new WebServiceMessage(WebServiceMessageType.E, validationException.getMessage()));
+			return messages;
 		}
 		
-		return webServiceResult;
+		return messages;
 	}
 	
 	
@@ -318,32 +318,33 @@ public class BillOfMaterialService {
 	 * Updates the given BillOfMaterial.
 	 * 
 	 * @param billOfMaterial The BillOfMaterial to be updated.
-	 * @param webServiceResult The WebServiceResult to which messages are added.
-	 * @return The result of the update function.
+	 * @return A list of potential messages that occurred during validation.
 	 */
-	private WebServiceResult update(final BillOfMaterial billOfMaterial, WebServiceResult webServiceResult) {
+	private List<WebServiceMessage> update(final BillOfMaterial billOfMaterial) {
+		List<WebServiceMessage> messages = new ArrayList<WebServiceMessage>();
+		
 		try {
 			this.billOfMaterialDao.updateBillOfMaterial(billOfMaterial);
-			webServiceResult.addMessage(new WebServiceMessage(WebServiceMessageType.S, 
+			messages.add(new WebServiceMessage(WebServiceMessageType.S, 
 					MessageFormat.format(this.resources.getString("billOfMaterial.updateSuccess"), billOfMaterial.getId())));
 		} 
 		catch(ObjectUnchangedException objectUnchangedException) {
-			webServiceResult.addMessage(new WebServiceMessage(WebServiceMessageType.I, 
+			messages.add(new WebServiceMessage(WebServiceMessageType.I, 
 					MessageFormat.format(this.resources.getString("billOfMaterial.updateUnchanged"), billOfMaterial.getId())));
 		}
 		catch(EntityExistsException entityExistsException) {
-			webServiceResult.addMessage(new WebServiceMessage(WebServiceMessageType.E, 
+			messages.add(new WebServiceMessage(WebServiceMessageType.E, 
 					MessageFormat.format(this.resources.getString("billOfMaterial.BomForMaterialExists"), 
 							billOfMaterial.getMaterial().getId(), entityExistsException.getId())));
 		}
 		catch (Exception e) {
-			webServiceResult.addMessage(new WebServiceMessage(WebServiceMessageType.E, 
+			messages.add(new WebServiceMessage(WebServiceMessageType.E, 
 					MessageFormat.format(this.resources.getString("billOfMaterial.updateError"), billOfMaterial.getId())));
 			
 			logger.error(MessageFormat.format(this.resources.getString("billOfMaterial.updateError"), billOfMaterial.getId()), e);
 		}
 		
-		return webServiceResult;
+		return messages;
 	}
 	
 	
@@ -351,27 +352,28 @@ public class BillOfMaterialService {
 	 * Inserts the given BillOfMaterial.
 	 * 
 	 * @param billOfMaterial The BillOfMaterial to be inserted.
-	 * @param webServiceResult The WebServiceResult to which messages are added.
-	 * @return The result of the insert function.
+	 * @return A list of potential messages that occurred during validation.
 	 */
-	private WebServiceResult add(final BillOfMaterial billOfMaterial, WebServiceResult webServiceResult) {		
+	private List<WebServiceMessage> add(final BillOfMaterial billOfMaterial) {
+		List<WebServiceMessage> messages = new ArrayList<WebServiceMessage>();
+		
 		try {
 			this.billOfMaterialDao.insertBillOfMaterial(billOfMaterial);
-			webServiceResult.addMessage(new WebServiceMessage(
+			messages.add(new WebServiceMessage(
 					WebServiceMessageType.S, this.resources.getString("billOfMaterial.addSuccess")));			
 		} 
 		catch(EntityExistsException entityExistsException) {
-			webServiceResult.addMessage(new WebServiceMessage(
+			messages.add(new WebServiceMessage(
 					WebServiceMessageType.E, MessageFormat.format(this.resources.getString("billOfMaterial.BomForMaterialExists"), 
 							billOfMaterial.getMaterial().getId(), entityExistsException.getId())));
 		}
 		catch (Exception exception) {
-			webServiceResult.addMessage(new WebServiceMessage(
+			messages.add(new WebServiceMessage(
 					WebServiceMessageType.E, this.resources.getString("billOfMaterial.addError")));
 			
 			logger.error(this.resources.getString("billOfMaterial.addError"), exception);
 		}
 		
-		return webServiceResult;
+		return messages;
 	}
 }
