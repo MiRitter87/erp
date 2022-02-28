@@ -152,12 +152,12 @@ public class SalesOrderService {
 			return addSalesOrderResult;
 		}
 			
-		addSalesOrderResult = this.validate(convertedSalesOrder);
+		addSalesOrderResult.addMessages(this.validate(convertedSalesOrder));
 		if(WebServiceTools.resultContainsErrorMessage(addSalesOrderResult)) {
 			return addSalesOrderResult;
 		}
 	
-		addSalesOrderResult = this.add(convertedSalesOrder, addSalesOrderResult);
+		addSalesOrderResult.addMessages(this.add(convertedSalesOrder));
 		addSalesOrderResult.setData(convertedSalesOrder.getId());
 		
 		return addSalesOrderResult;
@@ -227,12 +227,12 @@ public class SalesOrderService {
 			return updateSalesOrderResult;
 		}
 		
-		updateSalesOrderResult = this.validate(convertedSalesOrder);
+		updateSalesOrderResult.addMessages(this.validate(convertedSalesOrder));
 		if(WebServiceTools.resultContainsErrorMessage(updateSalesOrderResult)) {
 			return updateSalesOrderResult;
 		}
 		
-		updateSalesOrderResult = this.update(convertedSalesOrder, updateSalesOrderResult);
+		updateSalesOrderResult.addMessages(this.update(convertedSalesOrder));
 
 		return updateSalesOrderResult;
 	}
@@ -242,38 +242,34 @@ public class SalesOrderService {
 	 * Validates the sales order.
 	 * 
 	 * @param salesOrder The sales order to be validated.
-	 * @return The result of the validation.
+	 * @return A list of potential messages that occurred during validation.
 	 */
-	private WebServiceResult validate(final SalesOrder salesOrder) {
-		WebServiceResult webServiceResult = new WebServiceResult(null);
+	private List<WebServiceMessage> validate(final SalesOrder salesOrder) {
+		List<WebServiceMessage> messages = new ArrayList<WebServiceMessage>();
 		
 		try {
 			salesOrder.validate();
 		} 
 		catch(NoItemsException noItemsException) {
-			webServiceResult.addMessage(new WebServiceMessage(WebServiceMessageType.E, this.resources.getString("salesOrder.noItemsGiven")));
-			return webServiceResult;
+			messages.add(new WebServiceMessage(WebServiceMessageType.E, this.resources.getString("salesOrder.noItemsGiven")));
 		}
 		catch(DuplicateIdentifierException duplicateIdentifierException) {
-			webServiceResult.addMessage(new WebServiceMessage(WebServiceMessageType.E, 
+			messages.add(new WebServiceMessage(WebServiceMessageType.E, 
 					MessageFormat.format(this.resources.getString("salesOrder.duplicateItemKey"), salesOrder.getId(), 
 							duplicateIdentifierException.getDuplicateIdentifier())));
-			return webServiceResult;
 		}
 		catch(QuantityExceedsInventoryException quantityException) {
-			webServiceResult.addMessage(new WebServiceMessage(WebServiceMessageType.E, 
+			messages.add(new WebServiceMessage(WebServiceMessageType.E, 
 					MessageFormat.format(this.resources.getString("salesOrder.QuantityExceedsInventory"), 
 							quantityException.getSalesOrderItem().getMaterial().getId(),
 							quantityException.getSalesOrderItem().getMaterial().getInventory(),
 							quantityException.getSalesOrderItem().getMaterial().getUnit())));
-			return webServiceResult;
 		}
 		catch (Exception validationException) {
-			webServiceResult.addMessage(new WebServiceMessage(WebServiceMessageType.E, validationException.getMessage()));
-			return webServiceResult;
+			messages.add(new WebServiceMessage(WebServiceMessageType.E, validationException.getMessage()));
 		}
 		
-		return webServiceResult;
+		return messages;
 	}
 	
 	
@@ -281,9 +277,10 @@ public class SalesOrderService {
 	 * Updates the given sales order.
 	 * 
 	 * @param salesOrder The sales order to be updated.
-	 * @return The result of the update function.
+	 * @return A list of potential messages that occurred during updating.
 	 */
-	private WebServiceResult update(final SalesOrder salesOrder, WebServiceResult webServiceResult) {	
+	private List<WebServiceMessage> update(final SalesOrder salesOrder) {
+		List<WebServiceMessage> messages = new ArrayList<WebServiceMessage>();
 		SalesOrder databaseSalesOrder;
 		
 		try {
@@ -291,21 +288,21 @@ public class SalesOrderService {
 			this.salesOrderDAO.updateSalesOrder(salesOrder);
 			this.inventoryController.updateMaterialInventory(salesOrder, databaseSalesOrder);
 			this.paymentController.updateSalesOrderPayment(salesOrder, databaseSalesOrder);
-			webServiceResult.addMessage(new WebServiceMessage(WebServiceMessageType.S, 
+			messages.add(new WebServiceMessage(WebServiceMessageType.S, 
 					MessageFormat.format(this.resources.getString("salesOrder.updateSuccess"), salesOrder.getId())));
 		} 
 		catch(ObjectUnchangedException objectUnchangedException) {
-			webServiceResult.addMessage(new WebServiceMessage(WebServiceMessageType.I, 
+			messages.add(new WebServiceMessage(WebServiceMessageType.I, 
 					MessageFormat.format(this.resources.getString("salesOrder.updateUnchanged"), salesOrder.getId())));
 		}
 		catch (Exception e) {
-			webServiceResult.addMessage(new WebServiceMessage(WebServiceMessageType.E, 
+			messages.add(new WebServiceMessage(WebServiceMessageType.E, 
 					MessageFormat.format(this.resources.getString("salesOrder.updateError"), salesOrder.getId())));
 			
 			logger.error(MessageFormat.format(this.resources.getString("salesOrder.updateError"), salesOrder.getId()), e);
 		}
 		
-		return webServiceResult;
+		return messages;
 	}
 	
 	
@@ -313,22 +310,22 @@ public class SalesOrderService {
 	 * Inserts the given sales order.
 	 * 
 	 * @param salesOrder The sales order to be inserted.
-	 * @return The result of the insert function.
+	 * @return A list of potential messages that occurred during adding.
 	 */
-	private WebServiceResult add(final SalesOrder salesOrder, WebServiceResult webServiceResult) {		
+	private List<WebServiceMessage> add(final SalesOrder salesOrder) {
+		List<WebServiceMessage> messages = new ArrayList<WebServiceMessage>();
+		
 		try {
 			this.salesOrderDAO.insertSalesOrder(salesOrder);
 			this.inventoryController.reduceMaterialInventory(salesOrder);
-			webServiceResult.addMessage(new WebServiceMessage(
-					WebServiceMessageType.S, this.resources.getString("salesOrder.addSuccess")));			
+			messages.add(new WebServiceMessage(WebServiceMessageType.S, this.resources.getString("salesOrder.addSuccess")));			
 		} catch (Exception e) {
-			webServiceResult.addMessage(new WebServiceMessage(
-					WebServiceMessageType.E, this.resources.getString("salesOrder.addError")));
+			messages.add(new WebServiceMessage(WebServiceMessageType.E, this.resources.getString("salesOrder.addError")));
 			
 			logger.error(this.resources.getString("salesOrder.addError"), e);
 		}
 		
-		return webServiceResult;
+		return messages;
 	}
 	
 	

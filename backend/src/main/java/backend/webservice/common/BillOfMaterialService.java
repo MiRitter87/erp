@@ -297,17 +297,14 @@ public class BillOfMaterialService {
 		} 
 		catch(NoItemsException noItemsException) {
 			messages.add(new WebServiceMessage(WebServiceMessageType.E, this.resources.getString("billOfMaterial.noItemsGiven")));
-			return messages;
 		}
 		catch(DuplicateIdentifierException duplicateIdentifierException) {
 			messages.add(new WebServiceMessage(WebServiceMessageType.E, 
 					MessageFormat.format(this.resources.getString("billOfMaterial.duplicateItemKey"), billOfMaterial.getId(), 
 							duplicateIdentifierException.getDuplicateIdentifier())));
-			return messages;
 		}
 		catch (Exception validationException) {
 			messages.add(new WebServiceMessage(WebServiceMessageType.E, validationException.getMessage()));
-			return messages;
 		}
 		
 		return messages;

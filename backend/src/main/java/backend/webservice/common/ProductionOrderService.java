@@ -303,17 +303,14 @@ public class ProductionOrderService {
 		} 
 		catch(NoItemsException noItemsException) {
 			messages.add(new WebServiceMessage(WebServiceMessageType.E, this.resources.getString("productionOrder.noItemsGiven")));
-			return messages;
 		}
 		catch(DuplicateIdentifierException duplicateIdentifierException) {
 			messages.add(new WebServiceMessage(WebServiceMessageType.E, 
 					MessageFormat.format(this.resources.getString("productionOrder.duplicateItemKey"), productionOrder.getId(), 
 							duplicateIdentifierException.getDuplicateIdentifier())));
-			return messages;
 		}
 		catch (Exception validationException) {
 			messages.add(new WebServiceMessage(WebServiceMessageType.E, validationException.getMessage()));
-			return messages;
 		}
 		
 		return messages;
