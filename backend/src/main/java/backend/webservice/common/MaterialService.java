@@ -1,6 +1,8 @@
 package backend.webservice.common;
 
 import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.ResourceBundle;
 
 import org.apache.logging.log4j.LogManager;
@@ -15,6 +17,7 @@ import backend.model.billOfMaterial.BillOfMaterial;
 import backend.model.material.Material;
 import backend.model.material.MaterialArray;
 import backend.model.material.MaterialWS;
+import backend.model.productionOrder.ProductionOrder;
 import backend.model.purchaseOrder.PurchaseOrder;
 import backend.model.salesOrder.SalesOrder;
 import backend.model.webservice.WebServiceMessage;
@@ -164,28 +167,12 @@ public class MaterialService {
 			
 			if(material != null) {
 				//Delete material if exists.
-				this.materialDAO.deleteMaterial(material);
-				deleteMaterialResult.addMessage(new WebServiceMessage(WebServiceMessageType.S, 
-						MessageFormat.format(this.resources.getString("material.deleteSuccess"), id)));
+				deleteMaterialResult.addMessages(this.delete(material));
 			}
 			else {
 				//Material not found.
 				deleteMaterialResult.addMessage(new WebServiceMessage(WebServiceMessageType.E, 
 						MessageFormat.format(this.resources.getString("material.notFound"), id)));
-			}
-		}
-		catch(ObjectInUseException objectInUseException) {
-			if(objectInUseException.getUsedByObject() instanceof SalesOrder) {
-				deleteMaterialResult.addMessage(new WebServiceMessage(WebServiceMessageType.E, 
-						MessageFormat.format(this.resources.getString("material.deleteUsedInSalesOrder"), id, objectInUseException.getUsedById())));
-			}
-			if(objectInUseException.getUsedByObject() instanceof PurchaseOrder) {
-				deleteMaterialResult.addMessage(new WebServiceMessage(WebServiceMessageType.E, 
-						MessageFormat.format(this.resources.getString("material.deleteUsedInPurchaseOrder"), id, objectInUseException.getUsedById())));
-			}
-			if(objectInUseException.getUsedByObject() instanceof BillOfMaterial) {
-				deleteMaterialResult.addMessage(new WebServiceMessage(WebServiceMessageType.E, 
-						MessageFormat.format(this.resources.getString("material.deleteUsedInBillOfMaterial"), id, objectInUseException.getUsedById())));
 			}
 		}
 		catch (Exception e) {
@@ -246,6 +233,47 @@ public class MaterialService {
 		}
 		
 		return updateMaterialResult;
+	}
+	
+	
+	/**
+	 * Deletes the given material.
+	 * 
+	 * @param material The material to be deleted.
+	 * @return A list of potential messages that occurred during adding.
+	 */
+	private List<WebServiceMessage> delete(final Material material) {	
+		List<WebServiceMessage> messages = new ArrayList<WebServiceMessage>();
+		
+		try {
+			this.materialDAO.deleteMaterial(material);
+			messages.add(new WebServiceMessage(WebServiceMessageType.S, MessageFormat.format(this.resources.getString("material.deleteSuccess"), material.getId())));
+		}
+		catch(ObjectInUseException objectInUseException) {
+			if(objectInUseException.getUsedByObject() instanceof SalesOrder) {
+				messages.add(new WebServiceMessage(WebServiceMessageType.E, 
+						MessageFormat.format(this.resources.getString("material.deleteUsedInSalesOrder"), material.getId(), objectInUseException.getUsedById())));
+			}
+			if(objectInUseException.getUsedByObject() instanceof PurchaseOrder) {
+				messages.add(new WebServiceMessage(WebServiceMessageType.E, 
+						MessageFormat.format(this.resources.getString("material.deleteUsedInPurchaseOrder"), material.getId(), objectInUseException.getUsedById())));
+			}
+			if(objectInUseException.getUsedByObject() instanceof BillOfMaterial) {
+				messages.add(new WebServiceMessage(WebServiceMessageType.E, 
+						MessageFormat.format(this.resources.getString("material.deleteUsedInBillOfMaterial"), material.getId(), objectInUseException.getUsedById())));
+			}
+			if(objectInUseException.getUsedByObject() instanceof ProductionOrder) {
+				messages.add(new WebServiceMessage(WebServiceMessageType.E, 
+						MessageFormat.format(this.resources.getString("material.deleteUsedInProductionOrder"), material.getId(), objectInUseException.getUsedById())));
+			}
+		}
+		catch (Exception e) {
+			messages.add(new WebServiceMessage(WebServiceMessageType.E,	MessageFormat.format(this.resources.getString("material.deleteError"), material.getId())));
+			
+			logger.error(MessageFormat.format(this.resources.getString("material.deleteError"), material.getId()), e);
+		}
+		
+		return messages;
 	}
 	
 	

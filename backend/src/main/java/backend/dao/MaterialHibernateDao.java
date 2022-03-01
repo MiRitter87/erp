@@ -16,6 +16,7 @@ import backend.exception.ObjectUnchangedException;
 import backend.model.billOfMaterial.BillOfMaterial;
 import backend.model.billOfMaterial.BillOfMaterialItem;
 import backend.model.material.Material;
+import backend.model.productionOrder.ProductionOrderItem;
 import backend.model.purchaseOrder.PurchaseOrderItem;
 import backend.model.salesOrder.SalesOrderItem;
 
@@ -209,6 +210,7 @@ public class MaterialHibernateDao implements MaterialDao {
 		this.checkMaterialUsedInSalesOrder(material, entityManager);
 		this.checkMaterialUsedInPurchaseOrder(material, entityManager);
 		this.checkMaterialUsedInBillOfMaterial(material, entityManager);
+		this.checkMaterialUsedInProductionOrder(material, entityManager);
 	}
 	
 	
@@ -260,6 +262,32 @@ public class MaterialHibernateDao implements MaterialDao {
 		if(purchaseOrderItems.size() > 0) {
 			purchaseOrderItem = purchaseOrderItems.get(0);
 			throw new ObjectInUseException(material.getId(), purchaseOrderItem.getPurchaseOrder().getId(), purchaseOrderItem.getPurchaseOrder());
+		}
+	}
+	
+	
+	/**
+	 * Checks if the material is referenced in any production order.
+	 * 
+	 * @param material The material which is checked.
+	 * @throws ObjectInUseException In case the material is in use.
+	 */
+	private void checkMaterialUsedInProductionOrder(final Material material, final EntityManager entityManager) throws ObjectInUseException {
+		ProductionOrderItem productionOrderItem;
+		List<ProductionOrderItem> productionOrderItems;		
+		CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+		CriteriaQuery<ProductionOrderItem> criteriaQuery = criteriaBuilder.createQuery(ProductionOrderItem.class);
+		
+		Root<ProductionOrderItem> criteria = criteriaQuery.from(ProductionOrderItem.class);
+		criteriaQuery.select(criteria).distinct(true);
+		criteriaQuery.where(criteriaBuilder.equal(criteria.get("material"), material));
+		
+		TypedQuery<ProductionOrderItem> typedQuery = entityManager.createQuery(criteriaQuery);
+		productionOrderItems = typedQuery.getResultList();
+		
+		if(productionOrderItems.size() > 0) {
+			productionOrderItem = productionOrderItems.get(0);
+			throw new ObjectInUseException(material.getId(), productionOrderItem.getProductionOrder().getId(), productionOrderItem.getProductionOrder());
 		}
 	}
 	

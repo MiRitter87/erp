@@ -24,6 +24,7 @@ import backend.dao.BillOfMaterialDao;
 import backend.dao.BusinessPartnerDao;
 import backend.dao.DAOManager;
 import backend.dao.MaterialDao;
+import backend.dao.ProductionOrderDao;
 import backend.dao.PurchaseOrderDao;
 import backend.dao.SalesOrderDao;
 import backend.model.Currency;
@@ -35,6 +36,9 @@ import backend.model.businessPartner.BusinessPartnerType;
 import backend.model.material.Material;
 import backend.model.material.MaterialArray;
 import backend.model.material.UnitOfMeasurement;
+import backend.model.productionOrder.ProductionOrder;
+import backend.model.productionOrder.ProductionOrderItem;
+import backend.model.productionOrder.ProductionOrderStatus;
 import backend.model.purchaseOrder.PurchaseOrder;
 import backend.model.purchaseOrder.PurchaseOrderItem;
 import backend.model.salesOrder.SalesOrder;
@@ -87,6 +91,11 @@ public class MaterialServiceTest {
 	private static AccountDao accountDAO;
 	
 	/**
+	 * DAO to access production order data.
+	 */
+	private static ProductionOrderDao productionOrderDAO;
+	
+	/**
 	 * The sales order that is used for certain test cases.
 	 */
 	private SalesOrder salesOrder;
@@ -110,6 +119,16 @@ public class MaterialServiceTest {
 	 * The purchase order item under test.
 	 */
 	private PurchaseOrderItem purchaseOrderItem;
+	
+	/**
+	 * The production order that is used for certain test cases.
+	 */
+	private ProductionOrder productionOrder;
+	
+	/**
+	 * The production order item under test.
+	 */
+	private ProductionOrderItem productionOrderItem;
 	
 	/**
 	 * The BillOfMaterial that is used for certain test cases.
@@ -148,6 +167,7 @@ public class MaterialServiceTest {
 		salesOrderDAO = DAOManager.getInstance().getSalesOrderDAO();
 		purchaseOrderDAO = DAOManager.getInstance().getPurchaseOrderDAO();
 		billOfMaterialDAO = DAOManager.getInstance().getBillOfMaterialDAO();
+		productionOrderDAO = DAOManager.getInstance().getProductionOrderDAO();
 	}
 	
 	
@@ -406,6 +426,43 @@ public class MaterialServiceTest {
 	}
 	
 	
+	/**
+	 * Initializes the database with a dummy production order.
+	 */
+	private void createDummyProductionOrder() {
+		GregorianCalendar tomorrow = new GregorianCalendar();
+		tomorrow.add(GregorianCalendar.DAY_OF_MONTH, 1);
+		
+		this.productionOrderItem = new ProductionOrderItem();
+		this.productionOrderItem.setId(1);
+		this.productionOrderItem.setMaterial(this.rx570);
+		this.productionOrderItem.setQuantity(Long.valueOf(1));
+		
+		this.productionOrder = new ProductionOrder();
+		this.productionOrder.setPlannedExecutionDate(tomorrow.getTime());
+		this.productionOrder.setStatus(ProductionOrderStatus.OPEN);
+		this.productionOrder.addItem(this.productionOrderItem);
+		
+		try {
+			productionOrderDAO.insertProductionOrder(this.productionOrder);
+		} catch (Exception e) {
+			fail(e.getMessage());
+		}
+	}
+	
+	
+	/**
+	 * Deletes the dummy production order from the database.
+	 */
+	private void deleteDummyProductionOrder() {
+		try {
+			productionOrderDAO.deleteProductionOrder(this.productionOrder);
+		} catch (Exception e) {
+			fail(e.getMessage());
+		}
+	}
+	
+	
 	@Test
 	/**
 	 * Tests adding of a new material.
@@ -556,7 +613,7 @@ public class MaterialServiceTest {
 	/**
 	 * Tests deletion of a material that is used in at least one purchase order.
 	 */
-	public void testDeleteMaterialUsedInPo() {
+	public void testDeleteMaterialUsedInPurchaseOrder() {
 		String expectedErrorMessage, actualErrorMessage;
 		WebServiceResult deleteMaterialResult;
 		Material deletedMaterial = null;
@@ -679,6 +736,48 @@ public class MaterialServiceTest {
 		finally {
 			//Delete the dummy BillOfMaterial that is used for this test case.
 			this.deleteDummyBillOfMaterial();
+		}
+	}
+	
+	@Test
+	/**
+	 * Tests deletion of a material that is used in at least one production order.
+	 */
+	public void testDeleteMaterialUsedInProductionOrder() {
+		String expectedErrorMessage, actualErrorMessage;
+		WebServiceResult deleteMaterialResult;
+		Material deletedMaterial = null;
+		MaterialService materialService = new MaterialService();
+		
+		try {
+			//Create production order that is used for this test case.
+			this.createDummyProductionOrder();
+						
+			//Try to delete the material used in the production order.
+			deleteMaterialResult = materialService.deleteMaterial(this.rx570.getId());
+			
+			//There should be a return message of type E.
+			assertTrue(deleteMaterialResult.getMessages().size() == 1);
+			assertTrue(deleteMaterialResult.getMessages().get(0).getType() == WebServiceMessageType.E);
+			
+			//Check the correct error message.
+			expectedErrorMessage = MessageFormat.format(this.resources.getString("material.deleteUsedInProductionOrder"), 
+					this.rx570.getId(), this.productionOrder.getId());
+			actualErrorMessage = deleteMaterialResult.getMessages().get(0).getText();
+			assertEquals(expectedErrorMessage, actualErrorMessage);
+			
+			//Try to read the material that is used in the production order.
+			deletedMaterial = materialDAO.getMaterial(this.rx570.getId());
+			
+			//Check if the material has not been deleted.
+			assertNotNull(deletedMaterial);
+		}
+		catch (Exception e) {
+			fail(e.getMessage());
+		}
+		finally {
+			//Delete production order that is used for this test case.
+			this.deleteDummyProductionOrder();
 		}
 	}
 
