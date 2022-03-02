@@ -19,6 +19,7 @@
 		<jersey.version>2.32</jersey.version>
 		<hibernate.core.version>5.4.9.Final</hibernate.core.version>
 		<hibernate.validator.version>6.1.6.Final</hibernate.validator.version>
+		<spring.webmvc.version>5.3.16</spring.webmvc.version>
 	</properties>
   
 	<!-- External libraries of the project -->
@@ -75,7 +76,7 @@
 		<dependency>
 	  		<groupId>org.springframework</groupId>
 	   		<artifactId>spring-webmvc</artifactId>
-	   		<version>5.2.4.RELEASE</version>
+	   		<version>${spring.webmvc.version}</version>
 		</dependency>
 		
 		<!-- HSQL database for data storage -->
