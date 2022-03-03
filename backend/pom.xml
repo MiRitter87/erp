@@ -16,7 +16,7 @@
   	<properties>
 		<cxf.version>3.5.0</cxf.version>
 		<jaxws.ri.version>2.3.5</jaxws.ri.version>
-		<log4j2.version>2.12.1</log4j2.version>
+		<log4j2.version>2.17.2</log4j2.version>
 		<jersey.version>2.35</jersey.version>
 		<hibernate.core.version>5.4.9.Final</hibernate.core.version>
 		<hibernate.validator.version>6.1.6.Final</hibernate.validator.version>
