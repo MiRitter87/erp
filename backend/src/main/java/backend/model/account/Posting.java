@@ -19,6 +19,7 @@ import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
+import javax.validation.constraints.DecimalMin;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -79,7 +80,7 @@ public class Posting {
 	 */
 	@Column(name="AMOUNT")
 	@NotNull(message = "{posting.amount.notNull.message}")
-	@Min(value = 1, message = "{posting.amount.min.message}")
+	@DecimalMin(value = "0.01", inclusive = true, message = "{posting.amount.decimalMin.message}")
 	private BigDecimal amount;
 	
 	/**

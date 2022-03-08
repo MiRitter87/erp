@@ -166,4 +166,32 @@ public class ValidationMessageProvider {
 		
 		return message;
 	}
+	
+	
+	/**
+	 * Provides the localized validation message of the @DecimalMin annotation.
+	 * 
+	 * @param className The name of the model class.
+	 * @param attributeName The name of the attribute.
+	 * @param decimalMinValue The minimal value as defined in the annotation.
+	 * @return The localized validation message.
+	 */
+	public String getDecimalMinValidationMessage(final String className, final String attributeName, final String decimalMinValue) {
+		StringBuilder builder = new StringBuilder();
+		String message;
+		
+		//Build the property name for access.
+		builder.append(className);
+		builder.append(".");
+		builder.append(attributeName);
+		builder.append(".decimalMin.message");
+		
+		//Get the validation message.
+		message = resources.getString(builder.toString());
+		
+		//Substitute parameters of the validation message bei concrete values.
+		message = message.replace("{value}", decimalMinValue);
+		
+		return message;
+	}
 }

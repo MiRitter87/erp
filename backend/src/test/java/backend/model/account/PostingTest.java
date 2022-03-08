@@ -218,9 +218,9 @@ public class PostingTest {
 	 */
 	public void testAmountTooLow() {
 		ValidationMessageProvider messageProvider = new ValidationMessageProvider();		
-		this.posting.setAmount(BigDecimal.valueOf(Double.valueOf(0.9)));
+		this.posting.setAmount(BigDecimal.valueOf(Double.valueOf(0.009)));
 		
-		String expectedErrorMessage = messageProvider.getMinValidationMessage("posting", "amount", "1");
+		String expectedErrorMessage = messageProvider.getDecimalMinValidationMessage("posting", "amount", "0.01");
 		String errorMessage = "";
 		
 		try {
