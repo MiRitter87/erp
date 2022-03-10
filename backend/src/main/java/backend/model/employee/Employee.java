@@ -25,6 +25,9 @@ import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
+import org.hibernate.validator.HibernateValidator;
+import org.hibernate.validator.messageinterpolation.ExpressionLanguageFeatureLevel;
+
 import backend.exception.IdentifierMismatchException;
 import backend.model.department.Department;
 
@@ -173,8 +176,11 @@ public class Employee {
 	 * @exception Exception In case the validation failed.
 	 */
 	private void validateAnnotations() throws Exception {
-		ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
-		Validator validator = factory.getValidator();
+		ValidatorFactory validatorFactory = Validation.byProvider(HibernateValidator.class)   
+                .configure().constraintExpressionLanguageFeatureLevel(ExpressionLanguageFeatureLevel.BEAN_METHODS)
+                .buildValidatorFactory();
+
+		Validator validator = validatorFactory.getValidator();
 		Set<ConstraintViolation<Employee>> violations = validator.validate(this);
 		
 		for(ConstraintViolation<Employee> violation:violations) {

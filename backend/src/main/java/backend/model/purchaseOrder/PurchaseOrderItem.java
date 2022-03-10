@@ -19,6 +19,9 @@ import javax.validation.ValidatorFactory;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
+import org.hibernate.validator.HibernateValidator;
+import org.hibernate.validator.messageinterpolation.ExpressionLanguageFeatureLevel;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import backend.model.material.Material;
@@ -246,8 +249,11 @@ public class PurchaseOrderItem {
 	 * @exception Exception In case the validation failed.
 	 */
 	private void validateAnnotations() throws Exception {
-		ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
-		Validator validator = factory.getValidator();
+		ValidatorFactory validatorFactory = Validation.byProvider(HibernateValidator.class)   
+                .configure().constraintExpressionLanguageFeatureLevel(ExpressionLanguageFeatureLevel.BEAN_METHODS)
+                .buildValidatorFactory();
+
+		Validator validator = validatorFactory.getValidator();
 		Set<ConstraintViolation<PurchaseOrderItem>> violations = validator.validate(this);
 		
 		for(ConstraintViolation<PurchaseOrderItem> violation:violations) {

@@ -11,6 +11,9 @@ import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
 import javax.validation.constraints.Size;
 
+import org.hibernate.validator.HibernateValidator;
+import org.hibernate.validator.messageinterpolation.ExpressionLanguageFeatureLevel;
+
 
 /**
  * The metadata part of the image that is actually persisted as entity at database level.
@@ -92,8 +95,11 @@ public class ImageMetaData extends BaseImage {
 	 * @exception Exception In case the validation failed.
 	 */
 	private void validateAnnotations() throws Exception {
-		ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
-		Validator validator = factory.getValidator();
+		ValidatorFactory validatorFactory = Validation.byProvider(HibernateValidator.class)   
+                .configure().constraintExpressionLanguageFeatureLevel(ExpressionLanguageFeatureLevel.BEAN_METHODS)
+                .buildValidatorFactory();
+
+		Validator validator = validatorFactory.getValidator();
 		Set<ConstraintViolation<ImageMetaData>> violations = validator.validate(this);
 		
 		for(ConstraintViolation<ImageMetaData> violation:violations) {

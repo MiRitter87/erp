@@ -24,6 +24,9 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import org.hibernate.validator.HibernateValidator;
+import org.hibernate.validator.messageinterpolation.ExpressionLanguageFeatureLevel;
+
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import backend.exception.DuplicateIdentifierException;
@@ -307,8 +310,11 @@ public class BillOfMaterial {
 	 * @exception Exception In case the validation failed.
 	 */
 	private void validateAnnotations() throws Exception {
-		ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
-		Validator validator = factory.getValidator();
+		ValidatorFactory validatorFactory = Validation.byProvider(HibernateValidator.class)   
+                .configure().constraintExpressionLanguageFeatureLevel(ExpressionLanguageFeatureLevel.BEAN_METHODS)
+                .buildValidatorFactory();
+
+		Validator validator = validatorFactory.getValidator();
 		Set<ConstraintViolation<BillOfMaterial>> violations = validator.validate(this);
 		
 		for(ConstraintViolation<BillOfMaterial> violation:violations) {
