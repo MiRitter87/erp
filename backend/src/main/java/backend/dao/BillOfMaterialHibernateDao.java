@@ -136,7 +136,7 @@ public class BillOfMaterialHibernateDao implements BillOfMaterialDao {
 		EntityGraph<BillOfMaterial> graph = entityManager.createEntityGraph(BillOfMaterial.class);
 		graph.addAttributeNodes("items");
 		Map<String, Object> hints = new HashMap<String, Object>();
-		hints.put("javax.persistence.fetchgraph", graph);
+		hints.put("javax.persistence.loadgraph", graph);
 		
 		entityManager.getTransaction().begin();
 		BillOfMaterial billOfMaterial = entityManager.find(BillOfMaterial.class, id, hints);
