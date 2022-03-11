@@ -94,7 +94,7 @@ public class PurchaseOrder {
 	 */
 	@CollectionTable(name="PURCHASE_ORDER_STATUS", joinColumns = {@JoinColumn(name="PURCHASE_ORDER_ID")})
 	@Column(name="STATUS", length = 20)
-	@ElementCollection(targetClass = PurchaseOrderStatus.class, fetch = FetchType.EAGER)
+	@ElementCollection(targetClass = PurchaseOrderStatus.class, fetch = FetchType.LAZY)
 	@Enumerated(EnumType.STRING)
 	@NotEmpty(message = "{purchaseOrder.status.notEmpty.message}")
 	private Set<PurchaseOrderStatus> status;
