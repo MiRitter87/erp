@@ -3,8 +3,10 @@ package backend.webservice.common;
 
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.Set;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -389,8 +391,8 @@ public class SalesOrderService {
 	 * @return A list of item models that is used by the backend internally.
 	 * @throws Exception In case the conversion fails.
 	 */
-	private List<SalesOrderItem> convertSalesOrderItems(final SalesOrderWS salesOrderWS, final SalesOrder salesOrder) throws Exception {
-		List<SalesOrderItem> orderItems = new ArrayList<SalesOrderItem>();
+	private Set<SalesOrderItem> convertSalesOrderItems(final SalesOrderWS salesOrderWS, final SalesOrder salesOrder) throws Exception {
+		Set<SalesOrderItem> orderItems = new HashSet<SalesOrderItem>();
 		MaterialDao materialDAO = DAOManager.getInstance().getMaterialDAO();
 		
 		for(SalesOrderItemWS itemWS:salesOrderWS.getItems()) {

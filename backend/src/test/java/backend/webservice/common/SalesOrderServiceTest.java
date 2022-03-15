@@ -9,9 +9,9 @@ import static org.junit.jupiter.api.Assertions.fail;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.text.MessageFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.ResourceBundle;
 import java.util.Set;
@@ -381,7 +381,7 @@ public class SalesOrderServiceTest {
 		//The returned sales order should have one item.
 		assertEquals(salesOrder.getItems().size(), this.order1.getItems().size());
 		
-		salesOrderItem = salesOrder.getItems().get(0);
+		salesOrderItem = salesOrder.getItems().iterator().next();
 		
 		//Check the attributes of the sales order item
 		assertEquals(salesOrderItem.getId(), this.orderItem1.getId());
@@ -399,6 +399,7 @@ public class SalesOrderServiceTest {
 		SalesOrderArray salesOrders;
 		SalesOrder salesOrder;
 		SalesOrderItem salesOrderItem;
+		Iterator<SalesOrderItem> itemIterator;
 		
 		//Get the sales orders.
 		SalesOrderService service = new SalesOrderService();
@@ -423,7 +424,7 @@ public class SalesOrderServiceTest {
 		assertEquals(salesOrder.getStatus(), this.order1.getStatus());
 		
 		assertEquals(salesOrder.getItems().size(), this.order1.getItems().size());
-		salesOrderItem = salesOrder.getItems().get(0);
+		salesOrderItem = salesOrder.getItems().iterator().next();
 		assertEquals(salesOrderItem.getId(), this.orderItem1.getId());
 		assertEquals(salesOrderItem.getMaterial(), this.orderItem1.getMaterial());
 		assertEquals(salesOrderItem.getQuantity(), this.orderItem1.getQuantity());
@@ -440,17 +441,27 @@ public class SalesOrderServiceTest {
 		assertEquals(salesOrder.getStatus(), this.order2.getStatus());
 		
 		assertEquals(salesOrder.getItems().size(), this.order2.getItems().size());
-		salesOrderItem = salesOrder.getItems().get(0);
-		assertEquals(salesOrderItem.getId(), this.orderItem21.getId());
-		assertEquals(salesOrderItem.getMaterial(), this.orderItem21.getMaterial());
-		assertEquals(salesOrderItem.getQuantity(), this.orderItem21.getQuantity());
-		assertEquals(salesOrderItem.getPriceTotal(), this.orderItem21.getPriceTotal());
 		
-		salesOrderItem = salesOrder.getItems().get(1);
-		assertEquals(salesOrderItem.getId(), this.orderItem22.getId());
-		assertEquals(salesOrderItem.getMaterial(), this.orderItem22.getMaterial());
-		assertEquals(salesOrderItem.getQuantity(), this.orderItem22.getQuantity());
-		assertEquals(salesOrderItem.getPriceTotal(), this.orderItem22.getPriceTotal());
+		itemIterator = salesOrder.getItems().iterator();
+		while(itemIterator.hasNext()) {
+			salesOrderItem = itemIterator.next();
+			
+			if(salesOrderItem.getId() == this.orderItem21.getId()) {
+				assertEquals(salesOrderItem.getId(), this.orderItem21.getId());
+				assertEquals(salesOrderItem.getMaterial(), this.orderItem21.getMaterial());
+				assertEquals(salesOrderItem.getQuantity(), this.orderItem21.getQuantity());
+				assertEquals(salesOrderItem.getPriceTotal(), this.orderItem21.getPriceTotal());
+			}
+			else if(salesOrderItem.getId() == this.orderItem22.getId()) {
+				assertEquals(salesOrderItem.getId(), this.orderItem22.getId());
+				assertEquals(salesOrderItem.getMaterial(), this.orderItem22.getMaterial());
+				assertEquals(salesOrderItem.getQuantity(), this.orderItem22.getQuantity());
+				assertEquals(salesOrderItem.getPriceTotal(), this.orderItem22.getPriceTotal());
+			}
+			else {
+				fail("The sales order contains an unrelated item.");
+			}
+		}
 	}
 	
 	
@@ -518,12 +529,12 @@ public class SalesOrderServiceTest {
 				this.order1.setId(null);
 				//The items have to be re-initialized in order to prevent exception regarding orphan-removal.
 				//org.hibernate.HibernateException: Don't change the reference to a collection with delete-orphan enabled : backend.model.SalesOrder.items
-				this.order1.setItems(new ArrayList<SalesOrderItem>());
+				this.order1.setItems(new HashSet<SalesOrderItem>());
 				this.order1.addItem(this.orderItem1);
 				orderDAO.insertSalesOrder(this.order1);
 				
 				this.order2.setId(null);
-				this.order2.setItems(new ArrayList<SalesOrderItem>());
+				this.order2.setItems(new HashSet<SalesOrderItem>());
 				this.order2.addItem(this.orderItem21);
 				this.order2.addItem(this.orderItem22);
 				orderDAO.insertSalesOrder(this.order2);
@@ -570,7 +581,7 @@ public class SalesOrderServiceTest {
 				
 				//The items have to be re-initialized in order to prevent exception regarding orphan-removal.
 				//org.hibernate.HibernateException: Don't change the reference to a collection with delete-orphan enabled : backend.model.SalesOrder.items
-				this.order1.setItems(new ArrayList<SalesOrderItem>());
+				this.order1.setItems(new HashSet<SalesOrderItem>());
 				this.order1.addItem(this.orderItem1);
 				
 				orderDAO.insertSalesOrder(this.order1);
@@ -624,7 +635,7 @@ public class SalesOrderServiceTest {
 		SalesOrderService orderService = new SalesOrderService();
 		
 		//Update the ordered quantity of an item.
-		this.order1.getItems().get(0).setQuantity(Long.valueOf(2));
+		this.orderItem1.setQuantity(Long.valueOf(2));
 		updateSalesOrderResult = orderService.updateSalesOrder(this.convertToWsOrder(this.order1));
 		
 		//Assure no error message exists
@@ -637,7 +648,7 @@ public class SalesOrderServiceTest {
 		//Retrieve the updated sales order and check if the changes have been persisted.
 		try {
 			updatedSalesOrder = orderDAO.getSalesOrder(this.order1.getId());
-			assertEquals(this.order1.getItems().get(0).getQuantity(), updatedSalesOrder.getItems().get(0).getQuantity());
+			assertEquals(this.orderItem1.getQuantity(), updatedSalesOrder.getItems().iterator().next().getQuantity());
 		} catch (Exception e) {
 			fail(e.getMessage());
 		}
@@ -704,7 +715,7 @@ public class SalesOrderServiceTest {
 		String actualErrorMessage, expectedErrorMessage;
 		
 		//Update order item with quantity of zero.
-		this.order1.getItems().get(0).setQuantity(Long.valueOf(0));
+		this.orderItem1.setQuantity(Long.valueOf(0));
 		updateSalesOrderResult = orderService.updateSalesOrder(this.convertToWsOrder(this.order1));
 		
 		//There should be a return message of type E.
@@ -780,7 +791,7 @@ public class SalesOrderServiceTest {
 		String actualErrorMessage, expectedErrorMessage;
 		
 		//Update the quantity of the order.
-		this.order1.getItems().get(0).setQuantity(this.rx570.getInventory()+1);
+		this.orderItem1.setQuantity(this.rx570.getInventory()+1);
 		updateSalesOrderResult = orderService.updateSalesOrder(this.convertToWsOrder(this.order1));
 		
 		//There should be a return message of type E.
@@ -850,7 +861,7 @@ public class SalesOrderServiceTest {
 			
 			//Checks at item level.
 			assertEquals(newSalesOrder.getItems().size(), addedSalesOrder.getItems().size());
-			addedSalesOrderItem = addedSalesOrder.getItems().get(0);
+			addedSalesOrderItem = addedSalesOrder.getItems().iterator().next();
 			assertEquals(newSalesOrderItem.getId(), addedSalesOrderItem.getId());
 			assertEquals(newSalesOrderItem.getMaterial().getId(), addedSalesOrderItem.getMaterial().getId());
 			assertEquals(newSalesOrderItem.getQuantity(), addedSalesOrderItem.getQuantity());
@@ -1082,7 +1093,7 @@ public class SalesOrderServiceTest {
 				
 				//The items have to be re-initialized in order to prevent exception regarding orphan-removal.
 				//org.hibernate.HibernateException: Don't change the reference to a collection with delete-orphan enabled : backend.model.SalesOrder.items
-				this.order2.setItems(new ArrayList<SalesOrderItem>());
+				this.order2.setItems(new HashSet<SalesOrderItem>());
 				this.order2.addItem(this.orderItem21);
 				this.order2.addItem(this.orderItem22);
 				
@@ -1170,6 +1181,8 @@ public class SalesOrderServiceTest {
 		Material g4560;
 		Long g4560InventoryBefore = Long.valueOf(0), g4560InventoryAfter = Long.valueOf(0);
 		SalesOrderService orderService = new SalesOrderService();
+		Iterator<SalesOrderItem> itemIterator;
+		SalesOrderItem item;
 		
 		//Get material inventory before an item is removed from an existing sales order.
 		try {
@@ -1177,7 +1190,13 @@ public class SalesOrderServiceTest {
 			g4560InventoryBefore = g4560.getInventory();
 		
 			//Remove the item from an existing sales order
-			this.order2.getItems().remove(1);
+			itemIterator = this.order2.getItems().iterator();
+			while(itemIterator.hasNext()) {
+				item = itemIterator.next();
+				if(item.getId() == this.orderItem22.getId())
+					itemIterator.remove();
+			}
+			
 			orderService.updateSalesOrder(this.convertToWsOrder(this.order2));
 			
 			//Get material inventory after the item has been removed.
@@ -1331,7 +1350,7 @@ public class SalesOrderServiceTest {
 				
 				//The items have to be re-initialized in order to prevent exception regarding orphan-removal.
 				//org.hibernate.HibernateException: Don't change the reference to a collection with delete-orphan enabled : backend.model.SalesOrder.items
-				this.order2.setItems(new ArrayList<SalesOrderItem>());
+				this.order2.setItems(new HashSet<SalesOrderItem>());
 				this.order2.addItem(this.orderItem21);
 				this.order2.addItem(this.orderItem22);
 				
@@ -1473,7 +1492,7 @@ public class SalesOrderServiceTest {
 				
 				//The items have to be re-initialized in order to prevent exception regarding orphan-removal.
 				//org.hibernate.HibernateException: Don't change the reference to a collection with delete-orphan enabled : backend.model.SalesOrder.items
-				this.order2.setItems(new ArrayList<SalesOrderItem>());
+				this.order2.setItems(new HashSet<SalesOrderItem>());
 				this.order2.addItem(this.orderItem21);
 				this.order2.addItem(this.orderItem22);
 				

@@ -1,10 +1,8 @@
 package backend.model.salesOrder;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -111,7 +109,7 @@ public class SalesOrder {
 	 * The items that are being ordered.
 	 */
 	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "salesOrder")
-	private List<SalesOrderItem> items;
+	private Set<SalesOrderItem> items;
 	
 	
 	/**
@@ -119,7 +117,7 @@ public class SalesOrder {
 	 */
 	public SalesOrder() {
 		this.orderDate = new Date();
-		this.items = new ArrayList<SalesOrderItem>();
+		this.items = new HashSet<SalesOrderItem>();
 	}
 	
 	
@@ -249,7 +247,7 @@ public class SalesOrder {
 	/**
 	 * @return the items
 	 */
-	public List<SalesOrderItem> getItems() {
+	public Set<SalesOrderItem> getItems() {
 		return items;
 	}
 
@@ -257,7 +255,7 @@ public class SalesOrder {
 	/**
 	 * @param items the items to set
 	 */
-	public void setItems(List<SalesOrderItem> items) {
+	public void setItems(Set<SalesOrderItem> items) {
 		this.items = items;
 	}
 
