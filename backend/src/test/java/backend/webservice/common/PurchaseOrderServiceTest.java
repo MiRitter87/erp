@@ -9,9 +9,9 @@ import static org.junit.jupiter.api.Assertions.fail;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.text.MessageFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.ResourceBundle;
 import java.util.Set;
@@ -347,6 +347,7 @@ public class PurchaseOrderServiceTest {
 		WebServiceResult getPurchaseOrderResult;
 		PurchaseOrder purchaseOrder;
 		PurchaseOrderItem purchaseOrderItem;
+		Iterator<PurchaseOrderItem> itemIterator;
 		
 		//Get the purchase order.
 		PurchaseOrderService service = new PurchaseOrderService();
@@ -372,15 +373,24 @@ public class PurchaseOrderServiceTest {
 		assertEquals(purchaseOrder.getItems().size(), this.order2.getItems().size());
 				
 		//Check the attributes of the purchase order items
-		purchaseOrderItem = purchaseOrder.getItems().get(0);
-		assertEquals(purchaseOrderItem.getId(), this.orderItem21.getId());
-		assertEquals(purchaseOrderItem.getMaterial(), this.orderItem21.getMaterial());
-		assertEquals(purchaseOrderItem.getQuantity(), this.orderItem21.getQuantity());
-		
-		purchaseOrderItem = purchaseOrder.getItems().get(1);
-		assertEquals(purchaseOrderItem.getId(), this.orderItem22.getId());
-		assertEquals(purchaseOrderItem.getMaterial(), this.orderItem22.getMaterial());
-		assertEquals(purchaseOrderItem.getQuantity(), this.orderItem22.getQuantity());
+		itemIterator = purchaseOrder.getItems().iterator();
+		while(itemIterator.hasNext()) {
+			purchaseOrderItem = itemIterator.next();
+			
+			if(purchaseOrderItem.getId() == this.orderItem21.getId()) {
+				assertEquals(purchaseOrderItem.getId(), this.orderItem21.getId());
+				assertEquals(purchaseOrderItem.getMaterial(), this.orderItem21.getMaterial());
+				assertEquals(purchaseOrderItem.getQuantity(), this.orderItem21.getQuantity());
+			}
+			else if(purchaseOrderItem.getId() == this.orderItem22.getId()) {
+				assertEquals(purchaseOrderItem.getId(), this.orderItem22.getId());
+				assertEquals(purchaseOrderItem.getMaterial(), this.orderItem22.getMaterial());
+				assertEquals(purchaseOrderItem.getQuantity(), this.orderItem22.getQuantity());
+			}
+			else {
+				fail("The purchase order contains an unrelated item.");
+			}
+		}
 	}
 	
 	
@@ -393,6 +403,7 @@ public class PurchaseOrderServiceTest {
 		PurchaseOrderArray purchaseOrders;
 		PurchaseOrder purchaseOrder;
 		PurchaseOrderItem purchaseOrderItem;
+		Iterator<PurchaseOrderItem> itemIterator;
 		
 		//Get the purchase orders.
 		PurchaseOrderService service = new PurchaseOrderService();
@@ -415,7 +426,7 @@ public class PurchaseOrderServiceTest {
 		assertEquals(purchaseOrder.getStatus(), this.order1.getStatus());
 		
 		assertEquals(purchaseOrder.getItems().size(), this.order1.getItems().size());
-		purchaseOrderItem = purchaseOrder.getItems().get(0);
+		purchaseOrderItem = purchaseOrder.getItems().iterator().next();
 		assertEquals(purchaseOrderItem.getId(), this.orderItem1.getId());
 		assertEquals(purchaseOrderItem.getMaterial(), this.orderItem1.getMaterial());
 		assertEquals(purchaseOrderItem.getQuantity(), this.orderItem1.getQuantity());
@@ -430,17 +441,25 @@ public class PurchaseOrderServiceTest {
 		assertEquals(purchaseOrder.getStatus(), this.order2.getStatus());
 		
 		assertEquals(purchaseOrder.getItems().size(), this.order2.getItems().size());
-		purchaseOrderItem = purchaseOrder.getItems().get(0);
-		assertEquals(purchaseOrderItem.getId(), this.orderItem21.getId());
-		assertEquals(purchaseOrderItem.getMaterial(), this.orderItem21.getMaterial());
-		assertEquals(purchaseOrderItem.getQuantity(), this.orderItem21.getQuantity());
-		assertEquals(purchaseOrderItem.getPriceTotal(), this.orderItem21.getPriceTotal());
 		
-		purchaseOrderItem = purchaseOrder.getItems().get(1);
-		assertEquals(purchaseOrderItem.getId(), this.orderItem22.getId());
-		assertEquals(purchaseOrderItem.getMaterial(), this.orderItem22.getMaterial());
-		assertEquals(purchaseOrderItem.getQuantity(), this.orderItem22.getQuantity());
-		assertEquals(purchaseOrderItem.getPriceTotal(), this.orderItem22.getPriceTotal());
+		itemIterator = purchaseOrder.getItems().iterator();
+		while(itemIterator.hasNext()) {
+			purchaseOrderItem = itemIterator.next();
+			
+			if(purchaseOrderItem.getId() == this.orderItem21.getId()) {
+				assertEquals(purchaseOrderItem.getId(), this.orderItem21.getId());
+				assertEquals(purchaseOrderItem.getMaterial(), this.orderItem21.getMaterial());
+				assertEquals(purchaseOrderItem.getQuantity(), this.orderItem21.getQuantity());
+			}
+			else if(purchaseOrderItem.getId() == this.orderItem22.getId()) {
+				assertEquals(purchaseOrderItem.getId(), this.orderItem22.getId());
+				assertEquals(purchaseOrderItem.getMaterial(), this.orderItem22.getMaterial());
+				assertEquals(purchaseOrderItem.getQuantity(), this.orderItem22.getQuantity());
+			}
+			else {
+				fail("The purchase order contains an unrelated item.");
+			}
+		}
 	}
 	
 	
@@ -480,7 +499,7 @@ public class PurchaseOrderServiceTest {
 			assertEquals(purchaseOrder.getStatus(), this.order1.getStatus());
 			
 			assertEquals(purchaseOrder.getItems().size(), this.order1.getItems().size());
-			purchaseOrderItem = purchaseOrder.getItems().get(0);
+			purchaseOrderItem = purchaseOrder.getItems().iterator().next();
 			assertEquals(purchaseOrderItem.getId(), this.orderItem1.getId());
 			assertEquals(purchaseOrderItem.getMaterial(), this.orderItem1.getMaterial());
 			assertEquals(purchaseOrderItem.getQuantity(), this.orderItem1.getQuantity());
@@ -529,7 +548,7 @@ public class PurchaseOrderServiceTest {
 				
 				//The items have to be re-initialized in order to prevent exception regarding orphan-removal.
 				//org.hibernate.HibernateException: Don't change the reference to a collection with delete-orphan enabled : backend.model.PurchaseOrder.items
-				this.order1.setItems(new ArrayList<PurchaseOrderItem>());
+				this.order1.setItems(new HashSet<PurchaseOrderItem>());
 				this.order1.addItem(this.orderItem1);
 				
 				orderDAO.insertPurchaseOrder(this.order1);
@@ -583,7 +602,7 @@ public class PurchaseOrderServiceTest {
 		PurchaseOrderService orderService = new PurchaseOrderService();
 		
 		//Update the ordered quantity of an item.
-		this.order1.getItems().get(0).setQuantity(Long.valueOf(2));
+		this.orderItem1.setQuantity(Long.valueOf(2));
 		updatePurchaseOrderResult = orderService.updatePurchaseOrder(this.convertToWsOrder(this.order1));
 		
 		//Assure no error message exists
@@ -596,7 +615,7 @@ public class PurchaseOrderServiceTest {
 		//Retrieve the updated purchase order and check if the changes have been persisted.
 		try {
 			updatedPurchaseOrder = orderDAO.getPurchaseOrder(this.order1.getId());
-			assertEquals(this.order1.getItems().get(0).getQuantity(), updatedPurchaseOrder.getItems().get(0).getQuantity());
+			assertEquals(this.order1.getItems().iterator().next().getQuantity(), updatedPurchaseOrder.getItems().iterator().next().getQuantity());
 		} catch (Exception e) {
 			fail(e.getMessage());
 		}
@@ -663,7 +682,7 @@ public class PurchaseOrderServiceTest {
 		String actualErrorMessage, expectedErrorMessage;
 		
 		//Update order item with quantity of zero.
-		this.order1.getItems().get(0).setQuantity(Long.valueOf(0));
+		this.orderItem1.setQuantity(Long.valueOf(0));
 		updatePurchaseOrderResult = orderService.updatePurchaseOrder(this.convertToWsOrder(this.order1));
 		
 		//There should be a return message of type E.
@@ -779,7 +798,7 @@ public class PurchaseOrderServiceTest {
 			
 			//Checks at item level.
 			assertEquals(newPurchaseOrder.getItems().size(), addedPurchaseOrder.getItems().size());
-			addedPurchaseOrderItem = addedPurchaseOrder.getItems().get(0);
+			addedPurchaseOrderItem = addedPurchaseOrder.getItems().iterator().next();
 			assertEquals(newPurchaseOrderItem.getId(), addedPurchaseOrderItem.getId());
 			assertEquals(newPurchaseOrderItem.getMaterial().getId(), addedPurchaseOrderItem.getMaterial().getId());
 			assertEquals(newPurchaseOrderItem.getQuantity(), addedPurchaseOrderItem.getQuantity());
@@ -1036,7 +1055,7 @@ public class PurchaseOrderServiceTest {
 				
 				//The items have to be re-initialized in order to prevent exception regarding orphan-removal.
 				//org.hibernate.HibernateException: Don't change the reference to a collection with delete-orphan enabled : backend.model.PurchaseOrder.items
-				this.order2.setItems(new ArrayList<PurchaseOrderItem>());
+				this.order2.setItems(new HashSet<PurchaseOrderItem>());
 				this.order2.addItem(this.orderItem21);
 				this.order2.addItem(this.orderItem22);
 				
@@ -1110,6 +1129,8 @@ public class PurchaseOrderServiceTest {
 		Material g4560;
 		Long g4560InventoryBefore = Long.valueOf(0), g4560InventoryAfter = Long.valueOf(0);
 		PurchaseOrderService orderService = new PurchaseOrderService();
+		Iterator<PurchaseOrderItem> itemIterator;
+		PurchaseOrderItem item;
 		
 		try {
 			//At first set the GOODS_RECEIPT status to active to trigger inbound booking of material inventory.
@@ -1121,7 +1142,13 @@ public class PurchaseOrderServiceTest {
 			g4560InventoryBefore = g4560.getInventory();
 
 			//Delete the purchase order item.
-			this.order2.getItems().remove(1);
+			itemIterator = this.order2.getItems().iterator();
+			while(itemIterator.hasNext()) {
+				item = itemIterator.next();
+				if(item.getId() == this.orderItem22.getId())
+					itemIterator.remove();
+			}
+			
 			orderService.updatePurchaseOrder(this.convertToWsOrder(this.order2));
 			
 			//Get material inventory after the purchase order item has been deleted.
@@ -1344,7 +1371,7 @@ public class PurchaseOrderServiceTest {
 				
 				//The items have to be re-initialized in order to prevent exception regarding orphan-removal.
 				//org.hibernate.HibernateException: Don't change the reference to a collection with delete-orphan enabled : backend.model.PurchaseOrder.items
-				this.order2.setItems(new ArrayList<PurchaseOrderItem>());
+				this.order2.setItems(new HashSet<PurchaseOrderItem>());
 				this.order2.addItem(this.orderItem21);
 				this.order2.addItem(this.orderItem22);
 				
@@ -1486,7 +1513,7 @@ public class PurchaseOrderServiceTest {
 				
 				//The items have to be re-initialized in order to prevent exception regarding orphan-removal.
 				//org.hibernate.HibernateException: Don't change the reference to a collection with delete-orphan enabled : backend.model.PurchaseOrder.items
-				this.order2.setItems(new ArrayList<PurchaseOrderItem>());
+				this.order2.setItems(new HashSet<PurchaseOrderItem>());
 				this.order2.addItem(this.orderItem21);
 				this.order2.addItem(this.orderItem22);
 				

@@ -2,8 +2,10 @@ package backend.webservice.common;
 
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.Set;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -286,11 +288,11 @@ public class PurchaseOrderService {
 	 * 
 	 * @param purchaseOrderWS The lean purchase order representation provided by the WebService.
 	 * @param purchaseOrder The converted purchase order that is build based on the WebService representation.
-	 * @return A list of item models that is used by the backend internally.
+	 * @return A set of item models that is used by the backend internally.
 	 * @throws Exception In case the conversion fails.
 	 */
-	private List<PurchaseOrderItem> convertPurchaseOrderItems(final PurchaseOrderWS purchaseOrderWS, final PurchaseOrder purchaseOrder) throws Exception {
-		List<PurchaseOrderItem> orderItems = new ArrayList<PurchaseOrderItem>();
+	private Set<PurchaseOrderItem> convertPurchaseOrderItems(final PurchaseOrderWS purchaseOrderWS, final PurchaseOrder purchaseOrder) throws Exception {
+		Set<PurchaseOrderItem> orderItems = new HashSet<PurchaseOrderItem>();
 		MaterialDao materialDAO = DAOManager.getInstance().getMaterialDAO();
 		
 		for(PurchaseOrderItemWS itemWS:purchaseOrderWS.getItems()) {

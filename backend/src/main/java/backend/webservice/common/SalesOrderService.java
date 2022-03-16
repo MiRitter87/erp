@@ -388,7 +388,7 @@ public class SalesOrderService {
 	 * 
 	 * @param salesOrderWS The lean sales order representation provided by the WebService.
 	 * @param salesOrder The converted sales order that is build based on the WebService representation.
-	 * @return A list of item models that is used by the backend internally.
+	 * @return A set of item models that is used by the backend internally.
 	 * @throws Exception In case the conversion fails.
 	 */
 	private Set<SalesOrderItem> convertSalesOrderItems(final SalesOrderWS salesOrderWS, final SalesOrder salesOrder) throws Exception {

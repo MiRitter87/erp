@@ -1,10 +1,8 @@
 package backend.model.purchaseOrder;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -103,7 +101,7 @@ public class PurchaseOrder {
 	 * The items that are being ordered.
 	 */
 	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "purchaseOrder")
-	private List<PurchaseOrderItem> items;
+	private Set<PurchaseOrderItem> items;
 	
 	
 	/**
@@ -111,7 +109,7 @@ public class PurchaseOrder {
 	 */
 	public PurchaseOrder() {
 		this.orderDate = new Date();
-		this.items = new ArrayList<PurchaseOrderItem>();
+		this.items = new HashSet<PurchaseOrderItem>();
 		this.status = new HashSet<PurchaseOrderStatus>();
 		this.updateTransientStatus();
 	}
@@ -259,7 +257,7 @@ public class PurchaseOrder {
 	/**
 	 * @return the items
 	 */
-	public List<PurchaseOrderItem> getItems() {
+	public Set<PurchaseOrderItem> getItems() {
 		return items;
 	}
 
@@ -267,7 +265,7 @@ public class PurchaseOrder {
 	/**
 	 * @param items the items to set
 	 */
-	public void setItems(List<PurchaseOrderItem> items) {
+	public void setItems(Set<PurchaseOrderItem> items) {
 		this.items = items;
 	}
 	
