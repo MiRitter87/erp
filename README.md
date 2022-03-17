@@ -23,6 +23,7 @@ Im Unterordner *maven run configurations* des Parent Projekts *erp* befinden sic
 
   -  **ERP (clean install).launch** Führt Unit-Tests aus und baut bei Erfolg der Tests für das Backend eine deployable .war-Datei sowie eine .-jar Datei für das Frontend.
   -  **ERP (pmd).launch** Führt eine statische Codeanalyse und eine Copy/Paste Detection durch. Das Ergebnis kann als html-Dateien in *target/site* von backend und frontend eingesehen werden.
+  -  **ERP (tests only).launch** Führt sämtliche Unit-Tests von Frontend und Backend aus.
   
 ## Deployment
 Das Backend wird als .war-Datei auf einem Webserver deployed. Während der Entwicklung wurde Apache Tomcat verwendet.
