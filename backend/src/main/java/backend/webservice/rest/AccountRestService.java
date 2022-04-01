@@ -89,7 +89,7 @@ public class AccountRestService {
 	@Path("/{id}")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public WebServiceResult deleteSalesOrder(@PathParam("id") final Integer id) {
+	public WebServiceResult deleteAccount(@PathParam("id") final Integer id) {
 		AccountService accountService = new AccountService();
 		return accountService.deleteAccount(id);
 	}
