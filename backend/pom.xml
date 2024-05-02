@@ -14,6 +14,7 @@
 	<name>Enterprise Resource Planning - Backend</name>
   
   	<properties>
+  		<maven.war.version>3.4.0</maven.war.version>
 		<cxf.version>3.5.0</cxf.version>
 		<jaxws.ri.version>2.3.5</jaxws.ri.version>
 		<log4j2.version>2.17.2</log4j2.version>
@@ -160,4 +161,15 @@
   			<version>${commons.io.version}</version>
 		</dependency>
 	</dependencies>
+	
+	<build>
+		<plugins>
+			<!-- Builds a deployable war file -->
+			<plugin>
+    			<groupId>org.apache.maven.plugins</groupId>
+    			<artifactId>maven-war-plugin</artifactId>
+    			<version>${maven.war.version}</version>
+			</plugin>
+		</plugins>
+	</build>
 </project>
