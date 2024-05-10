@@ -3,7 +3,7 @@ package backend.dao;
 import backend.model.account.Posting;
 
 /**
- * Interface for posting persistence.
+ * Interface for Posting persistence.
  *
  * @author Michael
  */
