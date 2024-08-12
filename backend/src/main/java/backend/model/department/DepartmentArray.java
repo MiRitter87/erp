@@ -8,25 +8,29 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  * A list of departments.
- * 
+ *
  * @author Michael
  */
-@XmlRootElement(name="departments")
+@XmlRootElement(name = "departments")
 public class DepartmentArray {
-	/**
-	 * A list of departments.
-	 */
+    /**
+     * A list of departments.
+     */
     private List<Department> departments = null;
- 
-    
-    @XmlElementWrapper(name="departments")
-    @XmlElement(name="department")
+
+    /**
+     * @return the departments
+     */
+    @XmlElementWrapper(name = "departments")
+    @XmlElement(name = "department")
     public List<Department> getDepartments() {
         return departments;
     }
- 
-    
-    public void setDepartments(List<Department> departments) {
+
+    /**
+     * @param departments the departments to set
+     */
+    public void setDepartments(final List<Department> departments) {
         this.departments = departments;
     }
 }
