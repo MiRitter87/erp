@@ -8,23 +8,29 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  * A list of employees.
- * 
+ *
  * @author Michael
  */
-@XmlRootElement(name="employees")
+@XmlRootElement(name = "employees")
 public class EmployeeArray {
-	/**
-	 * A list of employees.
-	 */
+    /**
+     * A list of employees.
+     */
     private List<Employee> employees = null;
- 
-    @XmlElementWrapper(name="employees")
-    @XmlElement(name="employee")
+
+    /**
+     * @return the employees
+     */
+    @XmlElementWrapper(name = "employees")
+    @XmlElement(name = "employee")
     public List<Employee> getEmployees() {
         return employees;
     }
- 
-    public void setEmployees(List<Employee> employees) {
+
+    /**
+     * @param employees the employees to set
+     */
+    public void setEmployees(final List<Employee> employees) {
         this.employees = employees;
     }
 }
