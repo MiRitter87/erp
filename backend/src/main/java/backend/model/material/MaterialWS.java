@@ -5,177 +5,161 @@ import java.math.BigDecimal;
 import backend.model.Currency;
 
 /**
- * A lean version of a material that is used by the WebService to transfer object data.
- * The main difference to the regular Material is that IDs are used instead of object references.
- * 
+ * A lean version of a material that is used by the WebService to transfer object data. The main difference to the
+ * regular Material is that IDs are used instead of object references.
+ *
  * @author Michael
  */
 public class MaterialWS {
-	/**
-	 * The ID of the material.
-	 */
-	private Integer materialId;
-	
-	/**
-	 * The name.
-	 */
-	private String name;
-	
-	/**
-	 * The description.
-	 */
-	private String description;
-	
-	/**
-	 * The unit of measurement.
-	 */
-	private UnitOfMeasurement unit;
-	
-	/**
-	 * The price per unit.
-	 */
-	private BigDecimal pricePerUnit;
-	
-	/**
-	 * The currency of the price.
-	 */
-	private Currency currency;
-	
-	/**
-	 * The inventory measured in the unit of measurement.
-	 */
-	private Long inventory;
-	
-	/**
-	 * The ID of the image.
-	 */
-	private Integer imageId;
+    /**
+     * The ID of the material.
+     */
+    private Integer materialId;
 
-	
-	/**
-	 * @return the materialId
-	 */
-	public Integer getMaterialId() {
-		return materialId;
-	}
+    /**
+     * The name.
+     */
+    private String name;
 
-	
-	/**
-	 * @param materialId the materialId to set
-	 */
-	public void setMaterialId(Integer materialId) {
-		this.materialId = materialId;
-	}
+    /**
+     * The description.
+     */
+    private String description;
 
-	
-	/**
-	 * @return the name
-	 */
-	public String getName() {
-		return name;
-	}
+    /**
+     * The unit of measurement.
+     */
+    private UnitOfMeasurement unit;
 
-	
-	/**
-	 * @param name the name to set
-	 */
-	public void setName(String name) {
-		this.name = name;
-	}
+    /**
+     * The price per unit.
+     */
+    private BigDecimal pricePerUnit;
 
-	
-	/**
-	 * @return the description
-	 */
-	public String getDescription() {
-		return description;
-	}
+    /**
+     * The currency of the price.
+     */
+    private Currency currency;
 
-	
-	/**
-	 * @param description the description to set
-	 */
-	public void setDescription(String description) {
-		this.description = description;
-	}
+    /**
+     * The inventory measured in the unit of measurement.
+     */
+    private Long inventory;
 
-	
-	/**
-	 * @return the unit
-	 */
-	public UnitOfMeasurement getUnit() {
-		return unit;
-	}
+    /**
+     * The ID of the image.
+     */
+    private Integer imageId;
 
-	
-	/**
-	 * @param unit the unit to set
-	 */
-	public void setUnit(UnitOfMeasurement unit) {
-		this.unit = unit;
-	}
+    /**
+     * @return the materialId
+     */
+    public Integer getMaterialId() {
+        return materialId;
+    }
 
-	
-	/**
-	 * @return the pricePerUnit
-	 */
-	public BigDecimal getPricePerUnit() {
-		return pricePerUnit;
-	}
+    /**
+     * @param materialId the materialId to set
+     */
+    public void setMaterialId(final Integer materialId) {
+        this.materialId = materialId;
+    }
 
-	
-	/**
-	 * @param pricePerUnit the pricePerUnit to set
-	 */
-	public void setPricePerUnit(BigDecimal pricePerUnit) {
-		this.pricePerUnit = pricePerUnit;
-	}
+    /**
+     * @return the name
+     */
+    public String getName() {
+        return name;
+    }
 
-	
-	/**
-	 * @return the currency
-	 */
-	public Currency getCurrency() {
-		return currency;
-	}
+    /**
+     * @param name the name to set
+     */
+    public void setName(final String name) {
+        this.name = name;
+    }
 
-	
-	/**
-	 * @param currency the currency to set
-	 */
-	public void setCurrency(Currency currency) {
-		this.currency = currency;
-	}
+    /**
+     * @return the description
+     */
+    public String getDescription() {
+        return description;
+    }
 
-	
-	/**
-	 * @return the inventory
-	 */
-	public Long getInventory() {
-		return inventory;
-	}
+    /**
+     * @param description the description to set
+     */
+    public void setDescription(final String description) {
+        this.description = description;
+    }
 
-	
-	/**
-	 * @param inventory the inventory to set
-	 */
-	public void setInventory(Long inventory) {
-		this.inventory = inventory;
-	}
+    /**
+     * @return the unit
+     */
+    public UnitOfMeasurement getUnit() {
+        return unit;
+    }
 
-	
-	/**
-	 * @return the imageId
-	 */
-	public Integer getImageId() {
-		return imageId;
-	}
+    /**
+     * @param unit the unit to set
+     */
+    public void setUnit(final UnitOfMeasurement unit) {
+        this.unit = unit;
+    }
 
-	
-	/**
-	 * @param imageId the imageId to set
-	 */
-	public void setImageId(Integer imageId) {
-		this.imageId = imageId;
-	}
+    /**
+     * @return the pricePerUnit
+     */
+    public BigDecimal getPricePerUnit() {
+        return pricePerUnit;
+    }
+
+    /**
+     * @param pricePerUnit the pricePerUnit to set
+     */
+    public void setPricePerUnit(final BigDecimal pricePerUnit) {
+        this.pricePerUnit = pricePerUnit;
+    }
+
+    /**
+     * @return the currency
+     */
+    public Currency getCurrency() {
+        return currency;
+    }
+
+    /**
+     * @param currency the currency to set
+     */
+    public void setCurrency(final Currency currency) {
+        this.currency = currency;
+    }
+
+    /**
+     * @return the inventory
+     */
+    public Long getInventory() {
+        return inventory;
+    }
+
+    /**
+     * @param inventory the inventory to set
+     */
+    public void setInventory(final Long inventory) {
+        this.inventory = inventory;
+    }
+
+    /**
+     * @return the imageId
+     */
+    public Integer getImageId() {
+        return imageId;
+    }
+
+    /**
+     * @param imageId the imageId to set
+     */
+    public void setImageId(final Integer imageId) {
+        this.imageId = imageId;
+    }
 }
