@@ -1,72 +1,66 @@
 package backend.model.productionOrder;
 
 /**
- * A lean version of a production order item that is used by the WebService to transfer object data.
- * The main difference to the regular ProductionOrderItem is that IDs are used instead of object references.
- * 
+ * A lean version of a production order item that is used by the WebService to transfer object data. The main difference
+ * to the regular ProductionOrderItem is that IDs are used instead of object references.
+ *
  * @author Michael
  */
 public class ProductionOrderItemWS {
-	/**
-	 * The ID of the item.
-	 */
-	private Integer itemId;
-	
-	/**
-	 * The ID of the material that is being produced.
-	 */
-	private Integer materialId;
-	
-	/**
-	 * The quantity that is being produced.
-	 */
-	private Long quantity;
+    /**
+     * The ID of the item.
+     */
+    private Integer itemId;
 
-	
-	/**
-	 * @return the itemId
-	 */
-	public Integer getItemId() {
-		return itemId;
-	}
+    /**
+     * The ID of the material that is being produced.
+     */
+    private Integer materialId;
 
-	
-	/**
-	 * @param itemId the itemId to set
-	 */
-	public void setItemId(Integer itemId) {
-		this.itemId = itemId;
-	}
+    /**
+     * The quantity that is being produced.
+     */
+    private Long quantity;
 
-	
-	/**
-	 * @return the materialId
-	 */
-	public Integer getMaterialId() {
-		return materialId;
-	}
+    /**
+     * @return the itemId
+     */
+    public Integer getItemId() {
+        return itemId;
+    }
 
-	
-	/**
-	 * @param materialId the materialId to set
-	 */
-	public void setMaterialId(Integer materialId) {
-		this.materialId = materialId;
-	}
+    /**
+     * @param itemId the itemId to set
+     */
+    public void setItemId(final Integer itemId) {
+        this.itemId = itemId;
+    }
 
-	
-	/**
-	 * @return the quantity
-	 */
-	public Long getQuantity() {
-		return quantity;
-	}
+    /**
+     * @return the materialId
+     */
+    public Integer getMaterialId() {
+        return materialId;
+    }
 
-	
-	/**
-	 * @param quantity the quantity to set
-	 */
-	public void setQuantity(Long quantity) {
-		this.quantity = quantity;
-	}
+    /**
+     * @param materialId the materialId to set
+     */
+    public void setMaterialId(final Integer materialId) {
+        this.materialId = materialId;
+    }
+
+    /**
+     * @return the quantity
+     */
+    public Long getQuantity() {
+        return quantity;
+    }
+
+    /**
+     * @param quantity the quantity to set
+     */
+    public void setQuantity(final Long quantity) {
+        this.quantity = quantity;
+    }
 }
