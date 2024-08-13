@@ -42,12 +42,12 @@ public class Account {
     /**
      * The maximum description field length allowed.
      */
-    protected static final int MAX_DESCRIPTION_LENGTH = 100;
+    private static final int MAX_DESCRIPTION_LENGTH = 100;
 
     /**
      * The maximum currency field length allowed.
      */
-    protected static final int MAX_CURRENCY_LENGTH = 3;
+    private static final int MAX_CURRENCY_LENGTH = 3;
 
     /**
      * The distinct identification number.

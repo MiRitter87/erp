@@ -43,17 +43,17 @@ public class Posting {
     /**
      * The maximum type field length allowed.
      */
-    protected static final int MAX_TYPE_LENGTH = 10;
+    private static final int MAX_TYPE_LENGTH = 10;
 
     /**
      * The maximum reference number field length allowed.
      */
-    protected static final int MAX_REFERENCE_NUMBER_LENGTH = 54;
+    private static final int MAX_REFERENCE_NUMBER_LENGTH = 54;
 
     /**
      * The maximum currency field length allowed.
      */
-    protected static final int MAX_CURRENCY_LENGTH = 3;
+    private static final int MAX_CURRENCY_LENGTH = 3;
 
     /**
      * The distinct identification number.

@@ -40,47 +40,47 @@ public class BusinessPartner {
     /**
      * The maximum company name field length allowed.
      */
-    protected static final int MAX_COMPANY_NAME_LENGTH = 100;
+    private static final int MAX_COMPANY_NAME_LENGTH = 100;
 
     /**
      * The maximum first name field length allowed.
      */
-    protected static final int MAX_FIRST_NAME_LENGTH = 50;
+    private static final int MAX_FIRST_NAME_LENGTH = 50;
 
     /**
      * The maximum last name field length allowed.
      */
-    protected static final int MAX_LAST_NAME_LENGTH = 50;
+    private static final int MAX_LAST_NAME_LENGTH = 50;
 
     /**
      * The maximum street name field length allowed.
      */
-    protected static final int MAX_STREET_NAME_LENGTH = 100;
+    private static final int MAX_STREET_NAME_LENGTH = 100;
 
     /**
      * The maximum house number field length allowed.
      */
-    protected static final int MAX_HOUSE_NUMBER_LENGTH = 6;
+    private static final int MAX_HOUSE_NUMBER_LENGTH = 6;
 
     /**
      * The maximum zip code field length allowed.
      */
-    protected static final int MAX_ZIP_CODE_LENGTH = 5;
+    private static final int MAX_ZIP_CODE_LENGTH = 5;
 
     /**
      * The maximum city name field length allowed.
      */
-    protected static final int MAX_CITY_NAME_LENGTH = 100;
+    private static final int MAX_CITY_NAME_LENGTH = 100;
 
     /**
      * The maximum phone number field length allowed.
      */
-    protected static final int MAX_PHONE_NUMBER_LENGTH = 40;
+    private static final int MAX_PHONE_NUMBER_LENGTH = 40;
 
     /**
      * The maximum business partner type field length allowed.
      */
-    protected static final int MAX_BP_TYPE_LENGTH = 20;
+    private static final int MAX_BP_TYPE_LENGTH = 20;
 
     /**
      * The ID.

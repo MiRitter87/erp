@@ -46,12 +46,12 @@ public class BillOfMaterial {
     /**
      * The maximum name field length allowed.
      */
-    protected static final int MAX_NAME_LENGTH = 50;
+    private static final int MAX_NAME_LENGTH = 50;
 
     /**
      * The maximum description field length allowed.
      */
-    protected static final int MAX_DESCRIPTION_LENGTH = 250;
+    private static final int MAX_DESCRIPTION_LENGTH = 250;
 
     /**
      * The distinct identification number.

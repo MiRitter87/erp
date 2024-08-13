@@ -33,17 +33,17 @@ public class Department {
     /**
      * The maximum code field length allowed.
      */
-    protected static final int MAX_CODE_LENGTH = 5;
+    private static final int MAX_CODE_LENGTH = 5;
 
     /**
      * The maximum name field length allowed.
      */
-    protected static final int MAX_NAME_LENGTH = 50;
+    private static final int MAX_NAME_LENGTH = 50;
 
     /**
      * The maximum description field length allowed.
      */
-    protected static final int MAX_DESCRIPTION_LENGTH = 250;
+    private static final int MAX_DESCRIPTION_LENGTH = 250;
 
     /**
      * The department code.
