@@ -7,30 +7,28 @@ import javax.xml.bind.annotation.XmlElementWrapper;
 
 /**
  * A list of purchase orders.
- * 
+ *
  * @author Michael
  */
 public class PurchaseOrderArray {
-	/**
-	 * A list of purchase orders.
-	 */
-	private List<PurchaseOrder> purchaseOrders = null;
+    /**
+     * A list of purchase orders.
+     */
+    private List<PurchaseOrder> purchaseOrders = null;
 
-	
-	/**
-	 * @return the purchaseOrders
-	 */
-	@XmlElementWrapper(name="purchaseOrders")
-    @XmlElement(name="purchaseOrder")
-	public List<PurchaseOrder> getPurchaseOrders() {
-		return purchaseOrders;
-	}
+    /**
+     * @return the purchaseOrders
+     */
+    @XmlElementWrapper(name = "purchaseOrders")
+    @XmlElement(name = "purchaseOrder")
+    public List<PurchaseOrder> getPurchaseOrders() {
+        return purchaseOrders;
+    }
 
-	
-	/**
-	 * @param purchaseOrders the purchaseOrders to set
-	 */
-	public void setPurchaseOrders(List<PurchaseOrder> purchaseOrders) {
-		this.purchaseOrders = purchaseOrders;
-	}
+    /**
+     * @param purchaseOrders the purchaseOrders to set
+     */
+    public void setPurchaseOrders(final List<PurchaseOrder> purchaseOrders) {
+        this.purchaseOrders = purchaseOrders;
+    }
 }
