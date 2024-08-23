@@ -66,10 +66,10 @@ public class WebServiceResult {
     /**
      * Adds a list of messages to the message list of the WebService result.
      *
-     * @param messages A list of messages to be added.
+     * @param additionalMessages A list of messages to be added.
      */
-    public void addMessages(final List<WebServiceMessage> messages) {
-        this.messages.addAll(messages);
+    public void addMessages(final List<WebServiceMessage> additionalMessages) {
+        this.messages.addAll(additionalMessages);
     }
 
     /**
