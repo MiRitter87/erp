@@ -8,31 +8,29 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  * A list of sales orders.
- * 
+ *
  * @author Michael
  */
-@XmlRootElement(name="salesOrders")
+@XmlRootElement(name = "salesOrders")
 public class SalesOrderArray {
-	/**
-	 * A list of sales orders.
-	 */
-	private List<SalesOrder> salesOrders = null;
+    /**
+     * A list of sales orders.
+     */
+    private List<SalesOrder> salesOrders = null;
 
-	
-	/**
-	 * @return the salesOrders
-	 */
-	@XmlElementWrapper(name="salesOrders")
-    @XmlElement(name="salesOrder")
-	public List<SalesOrder> getSalesOrders() {
-		return salesOrders;
-	}
+    /**
+     * @return the salesOrders
+     */
+    @XmlElementWrapper(name = "salesOrders")
+    @XmlElement(name = "salesOrder")
+    public List<SalesOrder> getSalesOrders() {
+        return salesOrders;
+    }
 
-	
-	/**
-	 * @param salesOrders the salesOrders to set
-	 */
-	public void setSalesOrders(List<SalesOrder> salesOrders) {
-		this.salesOrders = salesOrders;
-	}
+    /**
+     * @param salesOrders the salesOrders to set
+     */
+    public void setSalesOrders(final List<SalesOrder> salesOrders) {
+        this.salesOrders = salesOrders;
+    }
 }
