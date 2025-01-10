@@ -8,47 +8,61 @@ import backend.webservice.common.DepartmentService;
 
 /**
  * WebService implementation for department access using SOAP technology.
- * 
+ *
  * @author Michael
  */
-@WebService(endpointInterface="backend.webservice.soap.DepartmentSoapService",
-serviceName = "departmentService")
+@WebService(endpointInterface = "backend.webservice.soap.DepartmentSoapService", serviceName = "departmentService")
 public class DepartmentSoapServiceImpl implements DepartmentSoapService {
-	/**
-	 * The interface-independent department service.
-	 */
-	private DepartmentService departmentService;
-	
-	/**
-	 * Initializes the Department Soap Service Implementation.
-	 */
-	public DepartmentSoapServiceImpl() {
-		this.departmentService = new DepartmentService();
-	}
-	
-	@Override
-	public WebServiceResult deleteDepartment(String code) {
-		return departmentService.deleteDepartment(code);
-	}
+    /**
+     * The interface-independent department service.
+     */
+    private DepartmentService departmentService;
 
-	@Override
-	public WebServiceResult getDepartment(String code) {
-		return departmentService.getDepartment(code);
-	}
+    /**
+     * Initializes the Department Soap Service Implementation.
+     */
+    public DepartmentSoapServiceImpl() {
+        this.departmentService = new DepartmentService();
+    }
 
-	@Override
-	public WebServiceResult getDepartments() {
-		return departmentService.getDepartments();
-	}
+    /**
+     * Deletes the department with the given code.
+     */
+    @Override
+    public WebServiceResult deleteDepartment(final String code) {
+        return departmentService.deleteDepartment(code);
+    }
 
-	@Override
-	public WebServiceResult addDepartment(Department department) {
-		return departmentService.addDepartment(department);
-	}
+    /**
+     * Provides the department with the given code.
+     */
+    @Override
+    public WebServiceResult getDepartment(final String code) {
+        return departmentService.getDepartment(code);
+    }
 
-	@Override
-	public WebServiceResult updateDepartment(Department department) {
-		return departmentService.updateDepartment(department);
-	}
+    /**
+     * Provides a list of all departments.
+     */
+    @Override
+    public WebServiceResult getDepartments() {
+        return departmentService.getDepartments();
+    }
+
+    /**
+     * Adds a department.
+     */
+    @Override
+    public WebServiceResult addDepartment(final Department department) {
+        return departmentService.addDepartment(department);
+    }
+
+    /**
+     * Updates an existing department.
+     */
+    @Override
+    public WebServiceResult updateDepartment(final Department department) {
+        return departmentService.updateDepartment(department);
+    }
 
 }
