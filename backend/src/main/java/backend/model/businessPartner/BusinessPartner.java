@@ -214,11 +214,27 @@ public class BusinessPartner {
             return false;
         }
         BusinessPartner other = (BusinessPartner) obj;
-        if (cityName == null) {
-            if (other.cityName != null) {
+        if (!this.areBasicAttributesEqual(other)) {
+            return false;
+        }
+        if (!this.isAddressEqual(other)) {
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * Indicates whether the basic attributes of some other BusinessPartner is "equal to" this one.
+     *
+     * @param other The other BusinessPartner.
+     * @return true if basic attributes are equal.
+     */
+    private boolean areBasicAttributesEqual(final BusinessPartner other) {
+        if (id == null) {
+            if (other.id != null) {
                 return false;
             }
-        } else if (!cityName.equals(other.cityName)) {
+        } else if (!id.equals(other.id)) {
             return false;
         }
         if (companyName == null) {
@@ -235,20 +251,6 @@ public class BusinessPartner {
         } else if (!firstName.equals(other.firstName)) {
             return false;
         }
-        if (houseNumber == null) {
-            if (other.houseNumber != null) {
-                return false;
-            }
-        } else if (!houseNumber.equals(other.houseNumber)) {
-            return false;
-        }
-        if (id == null) {
-            if (other.id != null) {
-                return false;
-            }
-        } else if (!id.equals(other.id)) {
-            return false;
-        }
         if (lastName == null) {
             if (other.lastName != null) {
                 return false;
@@ -263,11 +265,35 @@ public class BusinessPartner {
         } else if (!phoneNumber.equals(other.phoneNumber)) {
             return false;
         }
+        if (types == null) {
+            if (other.types != null) {
+                return false;
+            }
+        } else if (!types.equals(other.types)) {
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * Indicates whether the address of some other BusinessPartner is "equal to" this one.
+     *
+     * @param other The other BusinessPartner.
+     * @return true if address is equal.
+     */
+    private boolean isAddressEqual(final BusinessPartner other) {
         if (streetName == null) {
             if (other.streetName != null) {
                 return false;
             }
         } else if (!streetName.equals(other.streetName)) {
+            return false;
+        }
+        if (houseNumber == null) {
+            if (other.houseNumber != null) {
+                return false;
+            }
+        } else if (!houseNumber.equals(other.houseNumber)) {
             return false;
         }
         if (zipCode == null) {
@@ -277,11 +303,11 @@ public class BusinessPartner {
         } else if (!zipCode.equals(other.zipCode)) {
             return false;
         }
-        if (types == null) {
-            if (other.types != null) {
+        if (cityName == null) {
+            if (other.cityName != null) {
                 return false;
             }
-        } else if (!types.equals(other.types)) {
+        } else if (!cityName.equals(other.cityName)) {
             return false;
         }
         return true;
