@@ -21,16 +21,9 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-import javax.validation.ConstraintViolation;
-import javax.validation.Validation;
-import javax.validation.Validator;
-import javax.validation.ValidatorFactory;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
-
-import org.hibernate.validator.HibernateValidator;
-import org.hibernate.validator.messageinterpolation.ExpressionLanguageFeatureLevel;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
@@ -299,28 +292,6 @@ public class PurchaseOrder {
         } else if (!id.equals(other.id)) {
             return false;
         }
-        if (orderDate == null && other.orderDate != null) {
-            return false;
-        }
-        if (orderDate != null && other.orderDate == null) {
-            return false;
-        }
-        if (orderDate != null && other.orderDate != null) {
-            if (orderDate.getTime() != other.orderDate.getTime()) {
-                return false;
-            }
-        }
-        if (requestedDeliveryDate == null && other.requestedDeliveryDate != null) {
-            return false;
-        }
-        if (requestedDeliveryDate != null && other.requestedDeliveryDate == null) {
-            return false;
-        }
-        if (requestedDeliveryDate != null && other.requestedDeliveryDate != null) {
-            if (requestedDeliveryDate.getTime() != other.requestedDeliveryDate.getTime()) {
-                return false;
-            }
-        }
         if (status == null) {
             if (other.status != null) {
                 return false;
@@ -343,6 +314,9 @@ public class PurchaseOrder {
             return false;
         }
 
+        if (!this.areDatesEqual(other)) {
+            return false;
+        }
         if (!this.areItemsEqual(other)) {
             return false;
         }
@@ -377,6 +351,40 @@ public class PurchaseOrder {
             }
 
             if (!tempItem.equals(otherItem)) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * Checks if the dates are equal.
+     *
+     * @param other The other PurchaseOrder for comparison.
+     * @return true, if dates are equal; false otherwise.
+     */
+    private boolean areDatesEqual(final PurchaseOrder other) {
+        if (orderDate == null && other.orderDate != null) {
+            return false;
+        }
+        if (orderDate != null && other.orderDate == null) {
+            return false;
+        }
+        if (orderDate != null && other.orderDate != null) {
+            if (orderDate.getTime() != other.orderDate.getTime()) {
+                return false;
+            }
+        }
+
+        if (requestedDeliveryDate == null && other.requestedDeliveryDate != null) {
+            return false;
+        }
+        if (requestedDeliveryDate != null && other.requestedDeliveryDate == null) {
+            return false;
+        }
+        if (requestedDeliveryDate != null && other.requestedDeliveryDate != null) {
+            if (requestedDeliveryDate.getTime() != other.requestedDeliveryDate.getTime()) {
                 return false;
             }
         }
@@ -440,70 +448,8 @@ public class PurchaseOrder {
      * @throws Exception                    In case a general validation error occurred.
      */
     public void validate() throws NoItemsException, DuplicateIdentifierException, Exception {
-        this.validateAnnotations();
-        this.validateAdditionalCharacteristics();
-
-        for (PurchaseOrderItem item : this.items) {
-            item.validate();
-        }
-    }
-
-    /**
-     * Validates the purchase order according to the annotations of the Validation Framework.
-     *
-     * @exception Exception In case the validation failed.
-     */
-    private void validateAnnotations() throws Exception {
-        ValidatorFactory validatorFactory = Validation.byProvider(HibernateValidator.class).configure()
-                .constraintExpressionLanguageFeatureLevel(ExpressionLanguageFeatureLevel.BEAN_METHODS)
-                .buildValidatorFactory();
-
-        Validator validator = validatorFactory.getValidator();
-        Set<ConstraintViolation<PurchaseOrder>> violations = validator.validate(this);
-
-        for (ConstraintViolation<PurchaseOrder> violation : violations) {
-            throw new Exception(violation.getMessage());
-        }
-    }
-
-    /**
-     * Validates additional characteristics of the purchase order besides annotations.
-     *
-     * @throws NoItemsException             Indicates that the purchase order has no items defined.
-     * @throws DuplicateIdentifierException Indicates that multiple items share the same id.
-     */
-    private void validateAdditionalCharacteristics() throws NoItemsException, DuplicateIdentifierException {
-        this.validateItemsDefined();
-        this.validateDistinctItemIds();
-    }
-
-    /**
-     * Checks if items are defined.
-     *
-     * @throws NoItemsException If no items are defined
-     */
-    private void validateItemsDefined() throws NoItemsException {
-        if (this.items == null || this.items.size() == 0) {
-            throw new NoItemsException();
-        }
-    }
-
-    /**
-     * Checks if any item ID is used multiple times.
-     *
-     * @throws DuplicateIdentifierException Indicates that an item ID is used multiple times.
-     */
-    private void validateDistinctItemIds() throws DuplicateIdentifierException {
-        Set<Integer> usedIds = new HashSet<Integer>();
-        boolean isDistinctId;
-
-        for (PurchaseOrderItem item : this.items) {
-            isDistinctId = usedIds.add(item.getId());
-
-            if (!isDistinctId) {
-                throw new DuplicateIdentifierException(item.getId().toString());
-            }
-        }
+        PurchaseOrderValidator validator = new PurchaseOrderValidator(this);
+        validator.validate();
     }
 
     /**
