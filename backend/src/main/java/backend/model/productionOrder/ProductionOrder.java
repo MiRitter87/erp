@@ -220,17 +220,7 @@ public class ProductionOrder {
             return false;
         }
         ProductionOrder other = (ProductionOrder) obj;
-        if (executionDate == null && other.executionDate != null) {
-            return false;
-        }
-        if (executionDate != null && other.executionDate == null) {
-            return false;
-        }
-        if (executionDate != null && other.executionDate != null) {
-            if (executionDate.getTime() != other.executionDate.getTime()) {
-                return false;
-            }
-        }
+
         if (id == null) {
             if (other.id != null) {
                 return false;
@@ -238,29 +228,12 @@ public class ProductionOrder {
         } else if (!id.equals(other.id)) {
             return false;
         }
-        if (orderDate == null && other.orderDate != null) {
-            return false;
-        }
-        if (orderDate != null && other.orderDate == null) {
-            return false;
-        }
-        if (orderDate != null && other.orderDate != null) {
-            if (orderDate.getTime() != other.orderDate.getTime()) {
-                return false;
-            }
-        }
-        if (plannedExecutionDate == null && other.plannedExecutionDate != null) {
-            return false;
-        }
-        if (plannedExecutionDate != null && other.plannedExecutionDate == null) {
-            return false;
-        }
-        if (plannedExecutionDate != null && other.plannedExecutionDate != null) {
-            if (plannedExecutionDate.getTime() != other.plannedExecutionDate.getTime()) {
-                return false;
-            }
-        }
+
         if (status != other.status) {
+            return false;
+        }
+
+        if (!this.areDatesEqual(other)) {
             return false;
         }
 
@@ -274,7 +247,7 @@ public class ProductionOrder {
     /**
      * Checks if the list of items is equal.
      *
-     * @param other The other production order for comparison.
+     * @param other The other ProductionOrder for comparison.
      * @return true, if items are equal; false otherwise.
      */
     private boolean areItemsEqual(final ProductionOrder other) {
@@ -298,6 +271,52 @@ public class ProductionOrder {
             }
 
             if (!tempItem.equals(otherItem)) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * Checks if the dates are equal.
+     *
+     * @param other The other ProductionOrder for comparison.
+     * @return true, if dates are equal; false otherwise.
+     */
+    private boolean areDatesEqual(final ProductionOrder other) {
+        if (executionDate == null && other.executionDate != null) {
+            return false;
+        }
+        if (executionDate != null && other.executionDate == null) {
+            return false;
+        }
+        if (executionDate != null && other.executionDate != null) {
+            if (executionDate.getTime() != other.executionDate.getTime()) {
+                return false;
+            }
+        }
+
+        if (orderDate == null && other.orderDate != null) {
+            return false;
+        }
+        if (orderDate != null && other.orderDate == null) {
+            return false;
+        }
+        if (orderDate != null && other.orderDate != null) {
+            if (orderDate.getTime() != other.orderDate.getTime()) {
+                return false;
+            }
+        }
+
+        if (plannedExecutionDate == null && other.plannedExecutionDate != null) {
+            return false;
+        }
+        if (plannedExecutionDate != null && other.plannedExecutionDate == null) {
+            return false;
+        }
+        if (plannedExecutionDate != null && other.plannedExecutionDate != null) {
+            if (plannedExecutionDate.getTime() != other.plannedExecutionDate.getTime()) {
                 return false;
             }
         }

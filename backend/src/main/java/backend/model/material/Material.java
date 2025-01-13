@@ -325,6 +325,26 @@ public class Material {
             return false;
         }
         Material other = (Material) obj;
+        if (!this.areAttributesEqual(other)) {
+            return false;
+        }
+        if (image == null) {
+            if (other.image != null) {
+                return false;
+            }
+        } else if (!image.equals(other.image)) {
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * Indicates whether the attributes of some other Material is "equal to" this one.
+     *
+     * @param other The other Material.
+     * @return true if attributes are equal.
+     */
+    private boolean areAttributesEqual(final Material other) {
         if (currency != other.currency) {
             return false;
         }
@@ -361,13 +381,6 @@ public class Material {
                 return false;
             }
         } else if (!pricePerUnit.equals(other.pricePerUnit)) {
-            return false;
-        }
-        if (image == null) {
-            if (other.image != null) {
-                return false;
-            }
-        } else if (!image.equals(other.image)) {
             return false;
         }
         if (unit != other.unit) {
