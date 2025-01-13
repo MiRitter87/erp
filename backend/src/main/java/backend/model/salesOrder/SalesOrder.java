@@ -18,10 +18,6 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-import javax.validation.ConstraintViolation;
-import javax.validation.Validation;
-import javax.validation.Validator;
-import javax.validation.ValidatorFactory;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
@@ -294,30 +290,12 @@ public class SalesOrder {
             return false;
         }
         SalesOrder other = (SalesOrder) obj;
-        if (billToParty == null) {
-            if (other.billToParty != null) {
-                return false;
-            }
-        } else if (!billToParty.equals(other.billToParty)) {
-            return false;
-        }
         if (id == null) {
             if (other.id != null) {
                 return false;
             }
         } else if (!id.equals(other.id)) {
             return false;
-        }
-        if (orderDate == null && other.orderDate != null) {
-            return false;
-        }
-        if (orderDate != null && other.orderDate == null) {
-            return false;
-        }
-        if (orderDate != null && other.orderDate != null) {
-            if (orderDate.getTime() != other.orderDate.getTime()) {
-                return false;
-            }
         }
         if (paymentAccount == null) {
             if (other.paymentAccount != null) {
@@ -326,36 +304,19 @@ public class SalesOrder {
         } else if (!paymentAccount.equals(other.paymentAccount)) {
             return false;
         }
-        if (requestedDeliveryDate == null && other.requestedDeliveryDate != null) {
-            return false;
-        }
-        if (requestedDeliveryDate != null && other.requestedDeliveryDate == null) {
-            return false;
-        }
-        if (requestedDeliveryDate != null && other.requestedDeliveryDate != null) {
-            if (requestedDeliveryDate.getTime() != other.requestedDeliveryDate.getTime()) {
-                return false;
-            }
-        }
-        if (shipToParty == null) {
-            if (other.shipToParty != null) {
-                return false;
-            }
-        } else if (!shipToParty.equals(other.shipToParty)) {
-            return false;
-        }
-        if (soldToParty == null) {
-            if (other.soldToParty != null) {
-                return false;
-            }
-        } else if (!soldToParty.equals(other.soldToParty)) {
-            return false;
-        }
         if (status != other.status) {
             return false;
         }
 
         if (!this.areItemsEqual(other)) {
+            return false;
+        }
+
+        if (!this.areDatesEqual(other)) {
+            return false;
+        }
+
+        if (!this.areBusinessPartnersEqual(other)) {
             return false;
         }
 
@@ -397,6 +358,74 @@ public class SalesOrder {
     }
 
     /**
+     * Checks if the dates are equal.
+     *
+     * @param other The other SalesOrder for comparison.
+     * @return true, if dates are equal; false otherwise.
+     */
+    private boolean areDatesEqual(final SalesOrder other) {
+        if (orderDate == null && other.orderDate != null) {
+            return false;
+        }
+        if (orderDate != null && other.orderDate == null) {
+            return false;
+        }
+        if (orderDate != null && other.orderDate != null) {
+            if (orderDate.getTime() != other.orderDate.getTime()) {
+                return false;
+            }
+        }
+
+        if (requestedDeliveryDate == null && other.requestedDeliveryDate != null) {
+            return false;
+        }
+        if (requestedDeliveryDate != null && other.requestedDeliveryDate == null) {
+            return false;
+        }
+        if (requestedDeliveryDate != null && other.requestedDeliveryDate != null) {
+            if (requestedDeliveryDate.getTime() != other.requestedDeliveryDate.getTime()) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * Checks if the referenced business partners are equal.
+     *
+     * @param other The other SalesOrder for comparison.
+     * @return true, if business partners are equal; false otherwise.
+     */
+    private boolean areBusinessPartnersEqual(final SalesOrder other) {
+        if (billToParty == null) {
+            if (other.billToParty != null) {
+                return false;
+            }
+        } else if (!billToParty.equals(other.billToParty)) {
+            return false;
+        }
+
+        if (shipToParty == null) {
+            if (other.shipToParty != null) {
+                return false;
+            }
+        } else if (!shipToParty.equals(other.shipToParty)) {
+            return false;
+        }
+
+        if (soldToParty == null) {
+            if (other.soldToParty != null) {
+                return false;
+            }
+        } else if (!soldToParty.equals(other.soldToParty)) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
      * Validates the sales order.
      *
      * @throws NoItemsException                  Indicates that the sales order has no items defined.
@@ -406,67 +435,9 @@ public class SalesOrder {
      */
     public void validate()
             throws NoItemsException, DuplicateIdentifierException, QuantityExceedsInventoryException, Exception {
-        this.validateAnnotations();
-        this.validateAdditionalCharacteristics();
 
-        for (SalesOrderItem item : this.items) {
-            item.validate();
-        }
-    }
-
-    /**
-     * Validates the sales order according to the annotations of the Validation Framework.
-     *
-     * @exception Exception In case the validation failed.
-     */
-    private void validateAnnotations() throws Exception {
-        ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
-        Validator validator = factory.getValidator();
-        Set<ConstraintViolation<SalesOrder>> violations = validator.validate(this);
-
-        for (ConstraintViolation<SalesOrder> violation : violations) {
-            throw new Exception(violation.getMessage());
-        }
-    }
-
-    /**
-     * Validates additional characteristics of the sales order besides annotations.
-     *
-     * @throws NoItemsException             Indicates that the sales order has no items defined.
-     * @throws DuplicateIdentifierException Indicates that multiple items share the same id.
-     */
-    private void validateAdditionalCharacteristics() throws NoItemsException, DuplicateIdentifierException {
-        this.validateItemsDefined();
-        this.validateDistinctItemIds();
-    }
-
-    /**
-     * Checks if any item ID is used multiple times.
-     *
-     * @throws DuplicateIdentifierException Indicates that an item ID is used multiple times.
-     */
-    private void validateDistinctItemIds() throws DuplicateIdentifierException {
-        Set<Integer> usedIds = new HashSet<Integer>();
-        boolean isDistinctId;
-
-        for (SalesOrderItem item : this.items) {
-            isDistinctId = usedIds.add(item.getId());
-
-            if (!isDistinctId) {
-                throw new DuplicateIdentifierException(item.getId().toString());
-            }
-        }
-    }
-
-    /**
-     * Checks if items are defined.
-     *
-     * @throws NoItemsException If no items are defined
-     */
-    private void validateItemsDefined() throws NoItemsException {
-        if (this.items == null || this.items.size() == 0) {
-            throw new NoItemsException();
-        }
+        SalesOrderValidator validator = new SalesOrderValidator(this);
+        validator.validate();
     }
 
     /**
