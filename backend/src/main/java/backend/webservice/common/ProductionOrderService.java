@@ -345,7 +345,6 @@ public class ProductionOrderService {
             } catch (Exception e) {
                 messages.add(new WebServiceMessage(WebServiceMessageType.E, MessageFormat
                         .format(this.resources.getString("productionOrder.updateError"), productionOrder.getId())));
-
                 LOGGER.error(MessageFormat.format(this.resources.getString("productionOrder.updateError"),
                         productionOrder.getId()), e);
             }
@@ -383,37 +382,46 @@ public class ProductionOrderService {
 
             for (ProductionOrderItem orderItem : productionOrder.getItems()) {
                 databaseProductionOrderItem = databaseProductionOrder.getItemWithId(orderItem.getId());
-
-                // The production order has an item defined that did not exist before.
-                if (databaseProductionOrderItem == null) {
-                    messages.add(new WebServiceMessage(WebServiceMessageType.E,
-                            this.resources.getString("productionOrder.updateItemWrongStatus")));
-                    return messages;
-                }
-
-                // Compare the material of the order items. Database state and current state are compared.
-                if (!orderItem.getMaterial().getId().equals(databaseProductionOrderItem.getMaterial().getId())) {
-                    messages.add(new WebServiceMessage(WebServiceMessageType.E,
-                            this.resources.getString("productionOrder.updateMaterialWrongStatus")));
-                    return messages;
-                }
-
-                // Compare the quantity of the order items. Database state and current state are compared.
-                if (orderItem.getQuantity() != databaseProductionOrderItem.getQuantity()) {
-                    messages.add(new WebServiceMessage(WebServiceMessageType.E,
-                            this.resources.getString("productionOrder.updateQuantityWrongStatus")));
-                    return messages;
-                }
+                this.validateItemChanges(messages, orderItem, databaseProductionOrderItem);
             }
         } catch (Exception e) {
             messages.add(new WebServiceMessage(WebServiceMessageType.E, MessageFormat
                     .format(this.resources.getString("productionOrder.updateError"), productionOrder.getId())));
-
             LOGGER.error(MessageFormat.format(this.resources.getString("productionOrder.updateError"),
                     productionOrder.getId()), e);
         }
 
         return messages;
+    }
+
+    /**
+     * Validates changes of ProductionOrderItem data based on the current production order status.
+     *
+     * @param messages                    A List of potential validation messages.
+     * @param orderItem                   The updated ProductionOrderItem.
+     * @param databaseProductionOrderItem The current database state of the updated ProductionOrderItem.
+     */
+    private void validateItemChanges(final List<WebServiceMessage> messages, final ProductionOrderItem orderItem,
+            final ProductionOrderItem databaseProductionOrderItem) {
+        // The production order has an item defined that did not exist before.
+        if (databaseProductionOrderItem == null) {
+            messages.add(new WebServiceMessage(WebServiceMessageType.E,
+                    this.resources.getString("productionOrder.updateItemWrongStatus")));
+            return;
+        }
+
+        // Compare the material of the order items. Database state and current state are compared.
+        if (!orderItem.getMaterial().getId().equals(databaseProductionOrderItem.getMaterial().getId())) {
+            messages.add(new WebServiceMessage(WebServiceMessageType.E,
+                    this.resources.getString("productionOrder.updateMaterialWrongStatus")));
+            return;
+        }
+
+        // Compare the quantity of the order items. Database state and current state are compared.
+        if (orderItem.getQuantity() != databaseProductionOrderItem.getQuantity()) {
+            messages.add(new WebServiceMessage(WebServiceMessageType.E,
+                    this.resources.getString("productionOrder.updateQuantityWrongStatus")));
+        }
     }
 
     /**
