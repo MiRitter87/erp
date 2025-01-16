@@ -13,69 +13,81 @@ import frontend.model.Department;
 
 /**
  * Data Access Object that provides access to department data via WebService.
- * 
+ *
  * @author Michael
  */
 public class DepartmentWebServiceDao extends WebServiceDao implements DepartmentDao {
-	/**
-	 * WebService to access department data
-	 */
-	private DepartmentService departmentService;
-	
-	
-	/**
-	 * Initializes the DAO.
-	 * 
-	 * @throws WebServiceException In case the WebService is unavailable.
-	 */
-	public DepartmentWebServiceDao() throws WebServiceException {
-		this.departmentService = new DepartmentService_Service().getDepartmentSoapServiceImplPort();
-	}
-	
-	@Override
-	public void insertDepartment(Department department) throws Exception {
-		WebServiceResult webServiceResult;
+    /**
+     * WebService to access department data.
+     */
+    private DepartmentService departmentService;
 
-		webServiceResult = this.departmentService.addDepartment(department.getWebServiceDepartment());
-		this.raiseExceptionForErrors(webServiceResult.getMessages());
-	}
+    /**
+     * Initializes the DAO.
+     *
+     * @throws WebServiceException In case the WebService is unavailable.
+     */
+    public DepartmentWebServiceDao() throws WebServiceException {
+        this.departmentService = new DepartmentService_Service().getDepartmentSoapServiceImplPort();
+    }
 
-	@Override
-	public void deleteDepartment(Department department) throws Exception {
-		WebServiceResult webServiceResult;
-		
-		webServiceResult = this.departmentService.deleteDepartment(department.getCode());
-		this.raiseExceptionForErrors(webServiceResult.getMessages());
-	}
+    /**
+     * Inserts a department.
+     */
+    @Override
+    public void insertDepartment(final Department department) throws Exception {
+        WebServiceResult webServiceResult;
 
-	@Override
-	public List<Department> getDepartments() throws Exception {
-		WebServiceResult webServiceResult;
-		DepartmentArray departmentArray;
-		List<Department> departments = new ArrayList<Department>();
-		
-		webServiceResult = this.departmentService.getDepartments();
-		this.raiseExceptionForErrors(webServiceResult.getMessages());
-		
-		//Check WebService result data
-		if(webServiceResult.getData() instanceof DepartmentArray) {
-			departmentArray = (DepartmentArray) webServiceResult.getData();
-			
-			//Wrap WebService model of department to local model of department
-			for(frontend.generated.ws.soap.department.Department wsDepartment:departmentArray.getDepartments().getDepartment()) {
-				departments.add(new Department(wsDepartment));
-			}
-		}
-		
-		return departments;
-	}
+        webServiceResult = this.departmentService.addDepartment(department.getWebServiceDepartment());
+        this.raiseExceptionForErrors(webServiceResult.getMessages());
+    }
 
-	@Override
-	public void updateDepartment(Department department) throws Exception {
-		WebServiceResult webServiceResult;
-		
-		webServiceResult = this.departmentService.updateDepartment(department.getWebServiceDepartment());
-		this.raiseExceptionForErrors(webServiceResult.getMessages());
-	}
+    /**
+     * Deletes a department.
+     */
+    @Override
+    public void deleteDepartment(final Department department) throws Exception {
+        WebServiceResult webServiceResult;
+
+        webServiceResult = this.departmentService.deleteDepartment(department.getCode());
+        this.raiseExceptionForErrors(webServiceResult.getMessages());
+    }
+
+    /**
+     * Gets all departments.
+     */
+    @Override
+    public List<Department> getDepartments() throws Exception {
+        WebServiceResult webServiceResult;
+        DepartmentArray departmentArray;
+        List<Department> departments = new ArrayList<Department>();
+
+        webServiceResult = this.departmentService.getDepartments();
+        this.raiseExceptionForErrors(webServiceResult.getMessages());
+
+        // Check WebService result data
+        if (webServiceResult.getData() instanceof DepartmentArray) {
+            departmentArray = (DepartmentArray) webServiceResult.getData();
+
+            // Wrap WebService model of department to local model of department
+            for (frontend.generated.ws.soap.department.Department wsDepartment : departmentArray.getDepartments()
+                    .getDepartment()) {
+                departments.add(new Department(wsDepartment));
+            }
+        }
+
+        return departments;
+    }
+
+    /**
+     * Updates an existing department.
+     */
+    @Override
+    public void updateDepartment(final Department department) throws Exception {
+        WebServiceResult webServiceResult;
+
+        webServiceResult = this.departmentService.updateDepartment(department.getWebServiceDepartment());
+        this.raiseExceptionForErrors(webServiceResult.getMessages());
+    }
 
 }
