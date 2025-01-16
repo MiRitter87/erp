@@ -48,6 +48,11 @@
   <module name="BeforeExecutionExclusionFileFilter">
     <property name="fileNamePattern" value="module\-info\.java$"/>
   </module>
+  
+  	<!-- Excludes generated classes from checkstyle routine. -->
+	<module name="BeforeExecutionExclusionFileFilter">
+		<property name="fileNamePattern" value="[/\\]src[/\\]main[/\\]java[/\\]frontend[/\\]generated[/\\]ws[/\\]soap[/\\].*$"/>
+	</module>
 
   <!-- https://checkstyle.org/filters/suppressionfilter.html -->
   <module name="SuppressionFilter">
