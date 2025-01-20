@@ -69,6 +69,7 @@ public class CreateDepartmentView extends JPanel {
      *
      * @param createDepartmentController The controller of this view.
      */
+    @SuppressWarnings("checkstyle:MagicNumber")
     public CreateDepartmentView(final CreateDepartmentController createDepartmentController) {
         this.resources = ResourceBundle.getBundle("frontend");
         this.createDepartmentController = createDepartmentController;
