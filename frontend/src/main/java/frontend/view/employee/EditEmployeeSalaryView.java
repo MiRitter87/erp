@@ -22,147 +22,156 @@ import java.awt.event.ActionEvent;
 
 /**
  * This view allows the user to set, modify and delete salary data for an employee.
- * 
+ *
  * @author Michael
  */
 public class EditEmployeeSalaryView extends JPanel {
 
-	private static final long serialVersionUID = 1L;
-	
-	/**
-	 * Controller of this view.
-	 */
-	private EditEmployeeSalaryController editEmployeeSalaryController;
-	
-	/**
-	 * Access to localized application resources.
-	 */
-	private ResourceBundle resources;
-	
-	/**
-	 * Text field for salary data.
-	 */
-	private JTextField textFieldSalary;
-	
-	/**
-	 * The label displaying the date of the last salary change
-	 */
-	private JLabel lblLastChangeValue;
-	
+    private static final long serialVersionUID = 1L;
 
-	/**
-	 * Create the panel.
-	 * 
-	 * @param editEmployeeSalaryController The controller of the view.
-	 */
-	public EditEmployeeSalaryView(final EditEmployeeSalaryController editEmployeeSalaryController) {
-		this.resources = ResourceBundle.getBundle("frontend");
-		this.editEmployeeSalaryController = editEmployeeSalaryController;
-		
-		GridBagLayout gridBagLayout = new GridBagLayout();
-		gridBagLayout.columnWidths = new int[]{0, 0, 0};
-		gridBagLayout.rowHeights = new int[]{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-		gridBagLayout.columnWeights = new double[]{0.0, 1.0, Double.MIN_VALUE};
-		gridBagLayout.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
-		setLayout(gridBagLayout);
-		
-		JLabel textLabel = new JLabel(MessageFormat.format(this.resources.getString("gui.employee.salary.header"),
-				this.editEmployeeSalaryController.getSelectedEmployee().getFirstName(),
-				this.editEmployeeSalaryController.getSelectedEmployee().getLastName()));
-		textLabel.setFont(new Font("Tahoma", Font.BOLD, 13));
-		GridBagConstraints gbc_textLabel = new GridBagConstraints();
-		gbc_textLabel.gridwidth = 2;
-		gbc_textLabel.anchor = GridBagConstraints.WEST;
-		gbc_textLabel.insets = new Insets(5, 5, 5, 5);
-		gbc_textLabel.gridx = 0;
-		gbc_textLabel.gridy = 0;
-		add(textLabel, gbc_textLabel);
-		
-		JButton btnBack = new JButton(this.resources.getString("gui.general.back"));
-		btnBack.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				editEmployeeSalaryController.btnBackHandler(e);
-			}
-		});
-		
-		JLabel lblMonthlySalary = new JLabel(this.resources.getString("gui.employee.salary.monthlySalary"));
-		GridBagConstraints gbc_lblMonthlySalary = new GridBagConstraints();
-		gbc_lblMonthlySalary.anchor = GridBagConstraints.WEST;
-		gbc_lblMonthlySalary.insets = new Insets(0, 5, 5, 5);
-		gbc_lblMonthlySalary.gridx = 0;
-		gbc_lblMonthlySalary.gridy = 1;
-		add(lblMonthlySalary, gbc_lblMonthlySalary);
-		
-		textFieldSalary = new JTextField();
-		((AbstractDocument)textFieldSalary.getDocument()).setDocumentFilter(new ExtendedDocumentFilter(6, true));
-		GridBagConstraints gbc_textFieldSalary = new GridBagConstraints();
-		gbc_textFieldSalary.insets = new Insets(0, 50, 5, 0);
-		gbc_textFieldSalary.fill = GridBagConstraints.HORIZONTAL;
-		gbc_textFieldSalary.gridx = 1;
-		gbc_textFieldSalary.gridy = 1;
-		add(textFieldSalary, gbc_textFieldSalary);
-		textFieldSalary.setColumns(10);
-		
-		JLabel lblLastChange = new JLabel(this.resources.getString("gui.employee.salary.lastChange"));
-		GridBagConstraints gbc_lblLastChange = new GridBagConstraints();
-		gbc_lblLastChange.anchor = GridBagConstraints.WEST;
-		gbc_lblLastChange.insets = new Insets(0, 5, 5, 5);
-		gbc_lblLastChange.gridx = 0;
-		gbc_lblLastChange.gridy = 2;
-		add(lblLastChange, gbc_lblLastChange);
-		
-		lblLastChangeValue = new JLabel("");
-		GridBagConstraints gbc_lblLastChangeValue = new GridBagConstraints();
-		gbc_lblLastChangeValue.anchor = GridBagConstraints.WEST;
-		gbc_lblLastChangeValue.insets = new Insets(0, 50, 5, 0);
-		gbc_lblLastChangeValue.gridx = 1;
-		gbc_lblLastChangeValue.gridy = 2;
-		add(lblLastChangeValue, gbc_lblLastChangeValue);
-		
-		JLabel lblCurrency = new JLabel("€");
-		GridBagConstraints gbc_lblCurrency = new GridBagConstraints();
-		gbc_lblCurrency.insets = new Insets(0, 5, 5, 5);
-		gbc_lblCurrency.gridx = 2;
-		gbc_lblCurrency.gridy = 1;
-		add(lblCurrency, gbc_lblCurrency);
-		GridBagConstraints gbc_btnzurck = new GridBagConstraints();
-		gbc_btnzurck.anchor = GridBagConstraints.WEST;
-		gbc_btnzurck.insets = new Insets(0, 5, 0, 5);
-		gbc_btnzurck.gridx = 0;
-		gbc_btnzurck.gridy = 9;
-		add(btnBack, gbc_btnzurck);
-		
-		JButton btnSave = new JButton(this.resources.getString("gui.general.save"));
-		btnSave.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				editEmployeeSalaryController.saveSalaryHandler(e);
-			}
-		});
-		GridBagConstraints gbc_btnSave = new GridBagConstraints();
-		gbc_btnSave.anchor = GridBagConstraints.WEST;
-		gbc_btnSave.insets = new Insets(0, 50, 0, 5);
-		gbc_btnSave.gridx = 1;
-		gbc_btnSave.gridy = 9;
-		add(btnSave, gbc_btnSave);
-	}
+    /**
+     * Controller of this view.
+     */
+    private EditEmployeeSalaryController editEmployeeSalaryController;
 
+    /**
+     * Access to localized application resources.
+     */
+    private ResourceBundle resources;
 
-	public JTextField getTextFieldSalary() {
-		return textFieldSalary;
-	}
+    /**
+     * Text field for salary data.
+     */
+    private JTextField textFieldSalary;
 
+    /**
+     * The label displaying the date of the last salary change.
+     */
+    private JLabel lblLastChangeValue;
 
-	public void setTextFieldSalary(JTextField textFieldSalary) {
-		this.textFieldSalary = textFieldSalary;
-	}
+    /**
+     * Create the panel.
+     *
+     * @param editEmployeeSalaryController The controller of the view.
+     */
+    public EditEmployeeSalaryView(final EditEmployeeSalaryController editEmployeeSalaryController) {
+        this.resources = ResourceBundle.getBundle("frontend");
+        this.editEmployeeSalaryController = editEmployeeSalaryController;
 
+        GridBagLayout gridBagLayout = new GridBagLayout();
+        gridBagLayout.columnWidths = new int[] { 0, 0, 0 };
+        gridBagLayout.rowHeights = new int[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+        gridBagLayout.columnWeights = new double[] { 0.0, 1.0, Double.MIN_VALUE };
+        gridBagLayout.rowWeights = new double[] { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE };
+        setLayout(gridBagLayout);
 
-	public JLabel getLblLastChangeValue() {
-		return lblLastChangeValue;
-	}
+        JLabel textLabel = new JLabel(MessageFormat.format(this.resources.getString("gui.employee.salary.header"),
+                this.editEmployeeSalaryController.getSelectedEmployee().getFirstName(),
+                this.editEmployeeSalaryController.getSelectedEmployee().getLastName()));
+        textLabel.setFont(new Font("Tahoma", Font.BOLD, 13));
+        GridBagConstraints gbc_textLabel = new GridBagConstraints();
+        gbc_textLabel.gridwidth = 2;
+        gbc_textLabel.anchor = GridBagConstraints.WEST;
+        gbc_textLabel.insets = new Insets(5, 5, 5, 5);
+        gbc_textLabel.gridx = 0;
+        gbc_textLabel.gridy = 0;
+        add(textLabel, gbc_textLabel);
 
+        JButton btnBack = new JButton(this.resources.getString("gui.general.back"));
+        btnBack.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(final ActionEvent e) {
+                editEmployeeSalaryController.btnBackHandler(e);
+            }
+        });
 
-	public void setLblLastChangeValue(JLabel lblLastChangeValue) {
-		this.lblLastChangeValue = lblLastChangeValue;
-	}
+        JLabel lblMonthlySalary = new JLabel(this.resources.getString("gui.employee.salary.monthlySalary"));
+        GridBagConstraints gbc_lblMonthlySalary = new GridBagConstraints();
+        gbc_lblMonthlySalary.anchor = GridBagConstraints.WEST;
+        gbc_lblMonthlySalary.insets = new Insets(0, 5, 5, 5);
+        gbc_lblMonthlySalary.gridx = 0;
+        gbc_lblMonthlySalary.gridy = 1;
+        add(lblMonthlySalary, gbc_lblMonthlySalary);
+
+        textFieldSalary = new JTextField();
+        ((AbstractDocument) textFieldSalary.getDocument()).setDocumentFilter(new ExtendedDocumentFilter(6, true));
+        GridBagConstraints gbc_textFieldSalary = new GridBagConstraints();
+        gbc_textFieldSalary.insets = new Insets(0, 50, 5, 0);
+        gbc_textFieldSalary.fill = GridBagConstraints.HORIZONTAL;
+        gbc_textFieldSalary.gridx = 1;
+        gbc_textFieldSalary.gridy = 1;
+        add(textFieldSalary, gbc_textFieldSalary);
+        textFieldSalary.setColumns(10);
+
+        JLabel lblLastChange = new JLabel(this.resources.getString("gui.employee.salary.lastChange"));
+        GridBagConstraints gbc_lblLastChange = new GridBagConstraints();
+        gbc_lblLastChange.anchor = GridBagConstraints.WEST;
+        gbc_lblLastChange.insets = new Insets(0, 5, 5, 5);
+        gbc_lblLastChange.gridx = 0;
+        gbc_lblLastChange.gridy = 2;
+        add(lblLastChange, gbc_lblLastChange);
+
+        lblLastChangeValue = new JLabel("");
+        GridBagConstraints gbc_lblLastChangeValue = new GridBagConstraints();
+        gbc_lblLastChangeValue.anchor = GridBagConstraints.WEST;
+        gbc_lblLastChangeValue.insets = new Insets(0, 50, 5, 0);
+        gbc_lblLastChangeValue.gridx = 1;
+        gbc_lblLastChangeValue.gridy = 2;
+        add(lblLastChangeValue, gbc_lblLastChangeValue);
+
+        JLabel lblCurrency = new JLabel("€");
+        GridBagConstraints gbc_lblCurrency = new GridBagConstraints();
+        gbc_lblCurrency.insets = new Insets(0, 5, 5, 5);
+        gbc_lblCurrency.gridx = 2;
+        gbc_lblCurrency.gridy = 1;
+        add(lblCurrency, gbc_lblCurrency);
+        GridBagConstraints gbc_btnzurck = new GridBagConstraints();
+        gbc_btnzurck.anchor = GridBagConstraints.WEST;
+        gbc_btnzurck.insets = new Insets(0, 5, 0, 5);
+        gbc_btnzurck.gridx = 0;
+        gbc_btnzurck.gridy = 9;
+        add(btnBack, gbc_btnzurck);
+
+        JButton btnSave = new JButton(this.resources.getString("gui.general.save"));
+        btnSave.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(final ActionEvent e) {
+                editEmployeeSalaryController.saveSalaryHandler(e);
+            }
+        });
+        GridBagConstraints gbc_btnSave = new GridBagConstraints();
+        gbc_btnSave.anchor = GridBagConstraints.WEST;
+        gbc_btnSave.insets = new Insets(0, 50, 0, 5);
+        gbc_btnSave.gridx = 1;
+        gbc_btnSave.gridy = 9;
+        add(btnSave, gbc_btnSave);
+    }
+
+    /**
+     * @return the textFieldSalary
+     */
+    public JTextField getTextFieldSalary() {
+        return textFieldSalary;
+    }
+
+    /**
+     * @param textFieldSalary the textFieldSalary to set
+     */
+    public void setTextFieldSalary(final JTextField textFieldSalary) {
+        this.textFieldSalary = textFieldSalary;
+    }
+
+    /**
+     * @return the lblLastChangeValue
+     */
+    public JLabel getLblLastChangeValue() {
+        return lblLastChangeValue;
+    }
+
+    /**
+     * @param lblLastChangeValue the lblLastChangeValue to set
+     */
+    public void setLblLastChangeValue(final JLabel lblLastChangeValue) {
+        this.lblLastChangeValue = lblLastChangeValue;
+    }
 }
