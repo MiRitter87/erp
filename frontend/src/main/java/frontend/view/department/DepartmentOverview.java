@@ -52,6 +52,7 @@ public class DepartmentOverview extends JPanel {
      *
      * @param departmentOverviewController The controller of this view.
      */
+    @SuppressWarnings({ "checkstyle:MagicNumber", "checkstyle:MethodLength", "checkstyle:NoWhitespaceAfter" })
     public DepartmentOverview(final DepartmentOverviewController departmentOverviewController) {
         this.resources = ResourceBundle.getBundle("frontend");
         this.departmentOverviewController = departmentOverviewController;
@@ -65,21 +66,21 @@ public class DepartmentOverview extends JPanel {
 
         JLabel textLabel = new JLabel(this.resources.getString("gui.dept.header.overview"));
         textLabel.setFont(new Font("Tahoma", Font.BOLD, 13));
-        GridBagConstraints gbc_textLabel = new GridBagConstraints();
-        gbc_textLabel.anchor = GridBagConstraints.WEST;
-        gbc_textLabel.insets = new Insets(5, 5, 5, 5);
-        gbc_textLabel.gridx = 0;
-        gbc_textLabel.gridy = 0;
-        add(textLabel, gbc_textLabel);
+        GridBagConstraints gbcTextLabel = new GridBagConstraints();
+        gbcTextLabel.anchor = GridBagConstraints.WEST;
+        gbcTextLabel.insets = new Insets(5, 5, 5, 5);
+        gbcTextLabel.gridx = 0;
+        gbcTextLabel.gridy = 0;
+        add(textLabel, gbcTextLabel);
 
         JToolBar toolBar = new JToolBar();
         toolBar.setFloatable(false);
-        GridBagConstraints gbc_toolBar = new GridBagConstraints();
-        gbc_toolBar.anchor = GridBagConstraints.EAST;
-        gbc_toolBar.insets = new Insets(0, 0, 5, 5);
-        gbc_toolBar.gridx = 1;
-        gbc_toolBar.gridy = 1;
-        add(toolBar, gbc_toolBar);
+        GridBagConstraints gbcToolBar = new GridBagConstraints();
+        gbcToolBar.anchor = GridBagConstraints.EAST;
+        gbcToolBar.insets = new Insets(0, 0, 5, 5);
+        gbcToolBar.gridx = 1;
+        gbcToolBar.gridy = 1;
+        add(toolBar, gbcToolBar);
 
         URL imgDeleteURL = getClass().getResource("/icons/delete.png");
         JButton btnDeleteDepartment = new JButton("", new ImageIcon(imgDeleteURL));
@@ -93,13 +94,13 @@ public class DepartmentOverview extends JPanel {
         });
 
         JScrollPane scrollPaneTable = new JScrollPane();
-        GridBagConstraints gbc_scrollPaneTable = new GridBagConstraints();
-        gbc_scrollPaneTable.insets = new Insets(0, 5, 5, 5);
-        gbc_scrollPaneTable.gridwidth = 2;
-        gbc_scrollPaneTable.fill = GridBagConstraints.BOTH;
-        gbc_scrollPaneTable.gridx = 0;
-        gbc_scrollPaneTable.gridy = 2;
-        add(scrollPaneTable, gbc_scrollPaneTable);
+        GridBagConstraints gbcScrollPaneTable = new GridBagConstraints();
+        gbcScrollPaneTable.insets = new Insets(0, 5, 5, 5);
+        gbcScrollPaneTable.gridwidth = 2;
+        gbcScrollPaneTable.fill = GridBagConstraints.BOTH;
+        gbcScrollPaneTable.gridx = 0;
+        gbcScrollPaneTable.gridy = 2;
+        add(scrollPaneTable, gbcScrollPaneTable);
 
         this.tableDepartment = new JTable(3, 3);
         scrollPaneTable.setViewportView(tableDepartment);
@@ -112,12 +113,12 @@ public class DepartmentOverview extends JPanel {
                 departmentOverviewController.cancelHandler(e);
             }
         });
-        GridBagConstraints gbc_btnCancel = new GridBagConstraints();
-        gbc_btnCancel.anchor = GridBagConstraints.WEST;
-        gbc_btnCancel.insets = new Insets(0, 5, 5, 5);
-        gbc_btnCancel.gridx = 0;
-        gbc_btnCancel.gridy = 3;
-        add(btnCancel, gbc_btnCancel);
+        GridBagConstraints gbcBtnCancel = new GridBagConstraints();
+        gbcBtnCancel.anchor = GridBagConstraints.WEST;
+        gbcBtnCancel.insets = new Insets(0, 5, 5, 5);
+        gbcBtnCancel.gridx = 0;
+        gbcBtnCancel.gridy = 3;
+        add(btnCancel, gbcBtnCancel);
         this.tableDepartment.getColumnModel().getColumn(2).setCellRenderer(new ToolTipTableCellRenderer());
     }
 

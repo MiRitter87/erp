@@ -49,6 +49,7 @@ public class MainView extends JFrame {
      *
      * @param mainViewController The controller of this view
      */
+    @SuppressWarnings("checkstyle:MethodLength")
     public MainView(final MainViewController mainViewController) {
         this.resources = ResourceBundle.getBundle("frontend");
         this.mainViewController = mainViewController;
