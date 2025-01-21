@@ -50,6 +50,7 @@ public class EmployeeOverview extends JPanel {
      *
      * @param employeeOverviewController The controller of this view.
      */
+    @SuppressWarnings({ "checkstyle:MagicNumber", "checkstyle:MethodLength", "checkstyle:NoWhitespaceAfter" })
     public EmployeeOverview(final EmployeeOverviewController employeeOverviewController) {
         this.resources = ResourceBundle.getBundle("frontend");
         this.employeeOverviewController = employeeOverviewController;
@@ -63,21 +64,21 @@ public class EmployeeOverview extends JPanel {
 
         JLabel textLabel = new JLabel(this.resources.getString("gui.employee.header.overview"));
         textLabel.setFont(new Font("Tahoma", Font.BOLD, 13));
-        GridBagConstraints gbc_textLabel = new GridBagConstraints();
-        gbc_textLabel.anchor = GridBagConstraints.WEST;
-        gbc_textLabel.insets = new Insets(5, 5, 5, 5);
-        gbc_textLabel.gridx = 0;
-        gbc_textLabel.gridy = 0;
-        this.add(textLabel, gbc_textLabel);
+        GridBagConstraints gbcTextLabel = new GridBagConstraints();
+        gbcTextLabel.anchor = GridBagConstraints.WEST;
+        gbcTextLabel.insets = new Insets(5, 5, 5, 5);
+        gbcTextLabel.gridx = 0;
+        gbcTextLabel.gridy = 0;
+        this.add(textLabel, gbcTextLabel);
 
         JToolBar toolBar = new JToolBar();
         toolBar.setFloatable(false);
-        GridBagConstraints gbc_toolBar = new GridBagConstraints();
-        gbc_toolBar.anchor = GridBagConstraints.EAST;
-        gbc_toolBar.insets = new Insets(0, 0, 5, 5);
-        gbc_toolBar.gridx = 1;
-        gbc_toolBar.gridy = 1;
-        add(toolBar, gbc_toolBar);
+        GridBagConstraints gbcToolBar = new GridBagConstraints();
+        gbcToolBar.anchor = GridBagConstraints.EAST;
+        gbcToolBar.insets = new Insets(0, 0, 5, 5);
+        gbcToolBar.gridx = 1;
+        gbcToolBar.gridy = 1;
+        add(toolBar, gbcToolBar);
 
         URL imgMoneyURL = getClass().getResource("/icons/money.png");
         JButton btnSalary = new JButton("", new ImageIcon(imgMoneyURL));
@@ -102,13 +103,13 @@ public class EmployeeOverview extends JPanel {
         });
 
         JScrollPane scrollPane = new JScrollPane();
-        GridBagConstraints gbc_scrollPane = new GridBagConstraints();
-        gbc_scrollPane.insets = new Insets(0, 5, 5, 5);
-        gbc_scrollPane.gridwidth = 2;
-        gbc_scrollPane.fill = GridBagConstraints.BOTH;
-        gbc_scrollPane.gridx = 0;
-        gbc_scrollPane.gridy = 2;
-        this.add(scrollPane, gbc_scrollPane);
+        GridBagConstraints gbcScrollPane = new GridBagConstraints();
+        gbcScrollPane.insets = new Insets(0, 5, 5, 5);
+        gbcScrollPane.gridwidth = 2;
+        gbcScrollPane.fill = GridBagConstraints.BOTH;
+        gbcScrollPane.gridx = 0;
+        gbcScrollPane.gridy = 2;
+        this.add(scrollPane, gbcScrollPane);
 
         tableEmployee = new JTable(3, 3);
         scrollPane.setViewportView(tableEmployee);
@@ -121,12 +122,12 @@ public class EmployeeOverview extends JPanel {
                 employeeOverviewController.cancelHandler(arg0);
             }
         });
-        GridBagConstraints gbc_btnCancel = new GridBagConstraints();
-        gbc_btnCancel.anchor = GridBagConstraints.WEST;
-        gbc_btnCancel.insets = new Insets(0, 5, 5, 5);
-        gbc_btnCancel.gridx = 0;
-        gbc_btnCancel.gridy = 3;
-        add(btnCancel, gbc_btnCancel);
+        GridBagConstraints gbcBtnCancel = new GridBagConstraints();
+        gbcBtnCancel.anchor = GridBagConstraints.WEST;
+        gbcBtnCancel.insets = new Insets(0, 5, 5, 5);
+        gbcBtnCancel.gridx = 0;
+        gbcBtnCancel.gridy = 3;
+        add(btnCancel, gbcBtnCancel);
     }
 
     /**

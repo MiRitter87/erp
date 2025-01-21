@@ -54,6 +54,7 @@ public class DisplayEmployeeSalaryView extends JPanel {
      *
      * @param displayEmployeeSalaryController The controller of this view.
      */
+    @SuppressWarnings({ "checkstyle:MagicNumber", "checkstyle:MethodLength", "checkstyle:NoWhitespaceAfter" })
     public DisplayEmployeeSalaryView(final DisplayEmployeeSalaryController displayEmployeeSalaryController) {
         this.resources = ResourceBundle.getBundle("frontend");
         this.displayEmployeeSalaryController = displayEmployeeSalaryController;
@@ -69,54 +70,54 @@ public class DisplayEmployeeSalaryView extends JPanel {
                 this.displayEmployeeSalaryController.getSelectedEmployee().getFirstName(),
                 this.displayEmployeeSalaryController.getSelectedEmployee().getLastName()));
         textLabel.setFont(new Font("Tahoma", Font.BOLD, 13));
-        GridBagConstraints gbc_textLabel = new GridBagConstraints();
-        gbc_textLabel.gridwidth = 3;
-        gbc_textLabel.anchor = GridBagConstraints.WEST;
-        gbc_textLabel.insets = new Insets(5, 5, 5, 5);
-        gbc_textLabel.gridx = 0;
-        gbc_textLabel.gridy = 0;
-        add(textLabel, gbc_textLabel);
+        GridBagConstraints gbcTextLabel = new GridBagConstraints();
+        gbcTextLabel.gridwidth = 3;
+        gbcTextLabel.anchor = GridBagConstraints.WEST;
+        gbcTextLabel.insets = new Insets(5, 5, 5, 5);
+        gbcTextLabel.gridx = 0;
+        gbcTextLabel.gridy = 0;
+        add(textLabel, gbcTextLabel);
 
         JLabel lblMonthlySalary = new JLabel(this.resources.getString("gui.employee.salary.monthlySalary"));
-        GridBagConstraints gbc_lblMonthlySalary = new GridBagConstraints();
-        gbc_lblMonthlySalary.anchor = GridBagConstraints.WEST;
-        gbc_lblMonthlySalary.insets = new Insets(0, 5, 5, 5);
-        gbc_lblMonthlySalary.gridx = 0;
-        gbc_lblMonthlySalary.gridy = 1;
-        add(lblMonthlySalary, gbc_lblMonthlySalary);
+        GridBagConstraints gbcLblMonthlySalary = new GridBagConstraints();
+        gbcLblMonthlySalary.anchor = GridBagConstraints.WEST;
+        gbcLblMonthlySalary.insets = new Insets(0, 5, 5, 5);
+        gbcLblMonthlySalary.gridx = 0;
+        gbcLblMonthlySalary.gridy = 1;
+        add(lblMonthlySalary, gbcLblMonthlySalary);
 
         JLabel lblCurrency = new JLabel("€");
-        GridBagConstraints gbc_lblCurrency = new GridBagConstraints();
-        gbc_lblCurrency.anchor = GridBagConstraints.WEST;
-        gbc_lblCurrency.insets = new Insets(0, 0, 5, 5);
-        gbc_lblCurrency.gridx = 2;
-        gbc_lblCurrency.gridy = 1;
-        add(lblCurrency, gbc_lblCurrency);
+        GridBagConstraints gbcLblCurrency = new GridBagConstraints();
+        gbcLblCurrency.anchor = GridBagConstraints.WEST;
+        gbcLblCurrency.insets = new Insets(0, 0, 5, 5);
+        gbcLblCurrency.gridx = 2;
+        gbcLblCurrency.gridy = 1;
+        add(lblCurrency, gbcLblCurrency);
 
         lblMonthlySalaryContent = new JLabel("");
         lblMonthlySalaryContent.setHorizontalAlignment(SwingConstants.LEFT);
-        GridBagConstraints gbc_lblMonthlySalaryContent = new GridBagConstraints();
-        gbc_lblMonthlySalaryContent.insets = new Insets(0, 50, 5, 0);
-        gbc_lblMonthlySalaryContent.fill = GridBagConstraints.HORIZONTAL;
-        gbc_lblMonthlySalaryContent.gridx = 1;
-        gbc_lblMonthlySalaryContent.gridy = 1;
-        add(lblMonthlySalaryContent, gbc_lblMonthlySalaryContent);
+        GridBagConstraints gbcLblMonthlySalaryContent = new GridBagConstraints();
+        gbcLblMonthlySalaryContent.insets = new Insets(0, 50, 5, 0);
+        gbcLblMonthlySalaryContent.fill = GridBagConstraints.HORIZONTAL;
+        gbcLblMonthlySalaryContent.gridx = 1;
+        gbcLblMonthlySalaryContent.gridy = 1;
+        add(lblMonthlySalaryContent, gbcLblMonthlySalaryContent);
 
         JLabel lblLastChange = new JLabel(this.resources.getString("gui.employee.salary.lastChange"));
-        GridBagConstraints gbc_lblLastChange = new GridBagConstraints();
-        gbc_lblLastChange.anchor = GridBagConstraints.WEST;
-        gbc_lblLastChange.insets = new Insets(0, 5, 5, 5);
-        gbc_lblLastChange.gridx = 0;
-        gbc_lblLastChange.gridy = 2;
-        add(lblLastChange, gbc_lblLastChange);
+        GridBagConstraints gbcLblLastChange = new GridBagConstraints();
+        gbcLblLastChange.anchor = GridBagConstraints.WEST;
+        gbcLblLastChange.insets = new Insets(0, 5, 5, 5);
+        gbcLblLastChange.gridx = 0;
+        gbcLblLastChange.gridy = 2;
+        add(lblLastChange, gbcLblLastChange);
 
         lblLastChangeValue = new JLabel("");
         lblLastChangeValue.setHorizontalAlignment(SwingConstants.LEFT);
-        GridBagConstraints gbc_lblLastChangeValue = new GridBagConstraints();
-        gbc_lblLastChangeValue.insets = new Insets(0, 50, 5, 5);
-        gbc_lblLastChangeValue.gridx = 1;
-        gbc_lblLastChangeValue.gridy = 2;
-        add(lblLastChangeValue, gbc_lblLastChangeValue);
+        GridBagConstraints gbcLblLastChangeValue = new GridBagConstraints();
+        gbcLblLastChangeValue.insets = new Insets(0, 50, 5, 5);
+        gbcLblLastChangeValue.gridx = 1;
+        gbcLblLastChangeValue.gridy = 2;
+        add(lblLastChangeValue, gbcLblLastChangeValue);
 
         JButton btnBack = new JButton(this.resources.getString("gui.general.back"));
         btnBack.addActionListener(new ActionListener() {
@@ -125,12 +126,12 @@ public class DisplayEmployeeSalaryView extends JPanel {
                 displayEmployeeSalaryController.btnBackHandler(e);
             }
         });
-        GridBagConstraints gbc_btnBack = new GridBagConstraints();
-        gbc_btnBack.anchor = GridBagConstraints.WEST;
-        gbc_btnBack.insets = new Insets(0, 5, 0, 5);
-        gbc_btnBack.gridx = 0;
-        gbc_btnBack.gridy = 9;
-        add(btnBack, gbc_btnBack);
+        GridBagConstraints gbcBtnBack = new GridBagConstraints();
+        gbcBtnBack.anchor = GridBagConstraints.WEST;
+        gbcBtnBack.insets = new Insets(0, 5, 0, 5);
+        gbcBtnBack.gridx = 0;
+        gbcBtnBack.gridy = 9;
+        add(btnBack, gbcBtnBack);
 
     }
 

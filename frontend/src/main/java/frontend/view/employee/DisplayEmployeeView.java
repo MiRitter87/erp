@@ -66,6 +66,7 @@ public class DisplayEmployeeView extends JPanel {
      *
      * @param displayEmployeeController The controller of this view.
      */
+    @SuppressWarnings({ "checkstyle:MagicNumber", "checkstyle:MethodLength", "checkstyle:NoWhitespaceAfter" })
     public DisplayEmployeeView(final DisplayEmployeeController displayEmployeeController) {
         this.resources = ResourceBundle.getBundle("frontend");
         this.displayEmployeeController = displayEmployeeController;
@@ -79,87 +80,87 @@ public class DisplayEmployeeView extends JPanel {
 
         JLabel lblHeader = new JLabel(this.resources.getString("gui.employee.header.display"));
         lblHeader.setFont(new Font("Tahoma", Font.BOLD, 13));
-        GridBagConstraints gbc_lblHeader = new GridBagConstraints();
-        gbc_lblHeader.gridwidth = 2;
-        gbc_lblHeader.anchor = GridBagConstraints.WEST;
-        gbc_lblHeader.insets = new Insets(5, 5, 5, 5);
-        gbc_lblHeader.gridx = 0;
-        gbc_lblHeader.gridy = 0;
-        add(lblHeader, gbc_lblHeader);
+        GridBagConstraints gbcLblHeader = new GridBagConstraints();
+        gbcLblHeader.gridwidth = 2;
+        gbcLblHeader.anchor = GridBagConstraints.WEST;
+        gbcLblHeader.insets = new Insets(5, 5, 5, 5);
+        gbcLblHeader.gridx = 0;
+        gbcLblHeader.gridy = 0;
+        add(lblHeader, gbcLblHeader);
 
         JLabel lblEmployee = new JLabel(this.resources.getString("gui.employee"));
-        GridBagConstraints gbc_lblEmployee = new GridBagConstraints();
-        gbc_lblEmployee.anchor = GridBagConstraints.WEST;
-        gbc_lblEmployee.insets = new Insets(0, 5, 5, 5);
-        gbc_lblEmployee.gridx = 0;
-        gbc_lblEmployee.gridy = 1;
-        add(lblEmployee, gbc_lblEmployee);
+        GridBagConstraints gbcLblEmployee = new GridBagConstraints();
+        gbcLblEmployee.anchor = GridBagConstraints.WEST;
+        gbcLblEmployee.insets = new Insets(0, 5, 5, 5);
+        gbcLblEmployee.gridx = 0;
+        gbcLblEmployee.gridy = 1;
+        add(lblEmployee, gbcLblEmployee);
 
         cbEmployee = new JComboBox<ComboBoxItem>();
         cbEmployee.addItemListener(displayEmployeeController::cbEmployeeItemStateChanged);
-        GridBagConstraints gbc_cbEmployee = new GridBagConstraints();
-        gbc_cbEmployee.insets = new Insets(0, 50, 5, 5);
-        gbc_cbEmployee.fill = GridBagConstraints.HORIZONTAL;
-        gbc_cbEmployee.gridx = 1;
-        gbc_cbEmployee.gridy = 1;
-        add(cbEmployee, gbc_cbEmployee);
+        GridBagConstraints gbcCbEmployee = new GridBagConstraints();
+        gbcCbEmployee.insets = new Insets(0, 50, 5, 5);
+        gbcCbEmployee.fill = GridBagConstraints.HORIZONTAL;
+        gbcCbEmployee.gridx = 1;
+        gbcCbEmployee.gridy = 1;
+        add(cbEmployee, gbcCbEmployee);
 
         JSeparator separator = new JSeparator();
-        GridBagConstraints gbc_separator = new GridBagConstraints();
-        gbc_separator.insets = new Insets(0, 0, 5, 0);
-        gbc_separator.gridwidth = 2;
-        gbc_separator.fill = GridBagConstraints.HORIZONTAL;
-        gbc_separator.gridx = 0;
-        gbc_separator.gridy = 2;
-        add(separator, gbc_separator);
+        GridBagConstraints gbcSeparator = new GridBagConstraints();
+        gbcSeparator.insets = new Insets(0, 0, 5, 0);
+        gbcSeparator.gridwidth = 2;
+        gbcSeparator.fill = GridBagConstraints.HORIZONTAL;
+        gbcSeparator.gridx = 0;
+        gbcSeparator.gridy = 2;
+        add(separator, gbcSeparator);
 
         JLabel lblFirstName = new JLabel(this.resources.getString("gui.employee.firstName"));
-        GridBagConstraints gbc_lblFirstName = new GridBagConstraints();
-        gbc_lblFirstName.anchor = GridBagConstraints.WEST;
-        gbc_lblFirstName.insets = new Insets(0, 5, 5, 5);
-        gbc_lblFirstName.gridx = 0;
-        gbc_lblFirstName.gridy = 3;
-        add(lblFirstName, gbc_lblFirstName);
+        GridBagConstraints gbcLblFirstName = new GridBagConstraints();
+        gbcLblFirstName.anchor = GridBagConstraints.WEST;
+        gbcLblFirstName.insets = new Insets(0, 5, 5, 5);
+        gbcLblFirstName.gridx = 0;
+        gbcLblFirstName.gridy = 3;
+        add(lblFirstName, gbcLblFirstName);
 
         lblFirstNameContent = new JLabel("");
-        GridBagConstraints gbc_lblFirstNameContent = new GridBagConstraints();
-        gbc_lblFirstNameContent.insets = new Insets(0, 50, 5, 0);
-        gbc_lblFirstNameContent.fill = GridBagConstraints.HORIZONTAL;
-        gbc_lblFirstNameContent.gridx = 1;
-        gbc_lblFirstNameContent.gridy = 3;
-        add(lblFirstNameContent, gbc_lblFirstNameContent);
+        GridBagConstraints gbcLblFirstNameContent = new GridBagConstraints();
+        gbcLblFirstNameContent.insets = new Insets(0, 50, 5, 0);
+        gbcLblFirstNameContent.fill = GridBagConstraints.HORIZONTAL;
+        gbcLblFirstNameContent.gridx = 1;
+        gbcLblFirstNameContent.gridy = 3;
+        add(lblFirstNameContent, gbcLblFirstNameContent);
 
         JLabel lblLastName = new JLabel(this.resources.getString("gui.employee.lastName"));
-        GridBagConstraints gbc_lblLastName = new GridBagConstraints();
-        gbc_lblLastName.anchor = GridBagConstraints.WEST;
-        gbc_lblLastName.insets = new Insets(0, 5, 5, 5);
-        gbc_lblLastName.gridx = 0;
-        gbc_lblLastName.gridy = 4;
-        add(lblLastName, gbc_lblLastName);
+        GridBagConstraints gbcLblLastName = new GridBagConstraints();
+        gbcLblLastName.anchor = GridBagConstraints.WEST;
+        gbcLblLastName.insets = new Insets(0, 5, 5, 5);
+        gbcLblLastName.gridx = 0;
+        gbcLblLastName.gridy = 4;
+        add(lblLastName, gbcLblLastName);
 
         lblLastNameContent = new JLabel("");
-        GridBagConstraints gbc_lblLastNameContent = new GridBagConstraints();
-        gbc_lblLastNameContent.insets = new Insets(0, 50, 5, 0);
-        gbc_lblLastNameContent.fill = GridBagConstraints.HORIZONTAL;
-        gbc_lblLastNameContent.gridx = 1;
-        gbc_lblLastNameContent.gridy = 4;
-        add(lblLastNameContent, gbc_lblLastNameContent);
+        GridBagConstraints gbcLblLastNameContent = new GridBagConstraints();
+        gbcLblLastNameContent.insets = new Insets(0, 50, 5, 0);
+        gbcLblLastNameContent.fill = GridBagConstraints.HORIZONTAL;
+        gbcLblLastNameContent.gridx = 1;
+        gbcLblLastNameContent.gridy = 4;
+        add(lblLastNameContent, gbcLblLastNameContent);
 
         JLabel lblGender = new JLabel(this.resources.getString("gui.employee.gender"));
-        GridBagConstraints gbc_lblGender = new GridBagConstraints();
-        gbc_lblGender.anchor = GridBagConstraints.WEST;
-        gbc_lblGender.insets = new Insets(0, 5, 5, 5);
-        gbc_lblGender.gridx = 0;
-        gbc_lblGender.gridy = 5;
-        add(lblGender, gbc_lblGender);
+        GridBagConstraints gbcLblGender = new GridBagConstraints();
+        gbcLblGender.anchor = GridBagConstraints.WEST;
+        gbcLblGender.insets = new Insets(0, 5, 5, 5);
+        gbcLblGender.gridx = 0;
+        gbcLblGender.gridy = 5;
+        add(lblGender, gbcLblGender);
 
         lblGenderContent = new JLabel("");
-        GridBagConstraints gbc_lblGenderContent = new GridBagConstraints();
-        gbc_lblGenderContent.insets = new Insets(0, 50, 5, 0);
-        gbc_lblGenderContent.fill = GridBagConstraints.HORIZONTAL;
-        gbc_lblGenderContent.gridx = 1;
-        gbc_lblGenderContent.gridy = 5;
-        add(lblGenderContent, gbc_lblGenderContent);
+        GridBagConstraints gbcLblGenderContent = new GridBagConstraints();
+        gbcLblGenderContent.insets = new Insets(0, 50, 5, 0);
+        gbcLblGenderContent.fill = GridBagConstraints.HORIZONTAL;
+        gbcLblGenderContent.gridx = 1;
+        gbcLblGenderContent.gridy = 5;
+        add(lblGenderContent, gbcLblGenderContent);
 
         JButton btnCancel = new JButton(this.resources.getString("gui.general.cancel"));
         btnCancel.addActionListener(new ActionListener() {
@@ -168,12 +169,12 @@ public class DisplayEmployeeView extends JPanel {
                 displayEmployeeController.cancelHandler(arg0);
             }
         });
-        GridBagConstraints gbc_btnCancel = new GridBagConstraints();
-        gbc_btnCancel.anchor = GridBagConstraints.WEST;
-        gbc_btnCancel.insets = new Insets(0, 5, 0, 5);
-        gbc_btnCancel.gridx = 0;
-        gbc_btnCancel.gridy = 6;
-        add(btnCancel, gbc_btnCancel);
+        GridBagConstraints gbcBtnCancel = new GridBagConstraints();
+        gbcBtnCancel.anchor = GridBagConstraints.WEST;
+        gbcBtnCancel.insets = new Insets(0, 5, 0, 5);
+        gbcBtnCancel.gridx = 0;
+        gbcBtnCancel.gridy = 6;
+        add(btnCancel, gbcBtnCancel);
 
         JButton btnSalary = new JButton(this.resources.getString("gui.employee.salary.toolTip"));
         btnSalary.addActionListener(new ActionListener() {
@@ -182,12 +183,12 @@ public class DisplayEmployeeView extends JPanel {
                 displayEmployeeController.btnSalaryDataHandler(e);
             }
         });
-        GridBagConstraints gbc_btnSalary = new GridBagConstraints();
-        gbc_btnSalary.anchor = GridBagConstraints.WEST;
-        gbc_btnSalary.insets = new Insets(0, 50, 0, 5);
-        gbc_btnSalary.gridx = 1;
-        gbc_btnSalary.gridy = 6;
-        add(btnSalary, gbc_btnSalary);
+        GridBagConstraints gbcBtnSalary = new GridBagConstraints();
+        gbcBtnSalary.anchor = GridBagConstraints.WEST;
+        gbcBtnSalary.insets = new Insets(0, 50, 0, 5);
+        gbcBtnSalary.gridx = 1;
+        gbcBtnSalary.gridy = 6;
+        add(btnSalary, gbcBtnSalary);
 
     }
 
