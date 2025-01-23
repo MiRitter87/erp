@@ -1,7 +1,7 @@
 package backend.webservice.soap;
 
-import javax.jws.WebParam;
-import javax.jws.WebService;
+import jakarta.jws.WebParam;
+import jakarta.jws.WebService;
 
 import backend.model.department.Department;
 import backend.model.webservice.WebServiceResult;

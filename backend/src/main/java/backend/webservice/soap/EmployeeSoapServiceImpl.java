@@ -1,6 +1,6 @@
 package backend.webservice.soap;
 
-import javax.jws.WebService;
+import jakarta.jws.WebService;
 
 import backend.model.employee.Employee;
 import backend.model.employee.EmployeeHeadQueryParameter;
