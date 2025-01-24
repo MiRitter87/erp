@@ -4,13 +4,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.persistence.EntityGraph;
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.TypedQuery;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Root;
+import jakarta.persistence.EntityGraph;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityManagerFactory;
+import jakarta.persistence.TypedQuery;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Root;
 
 import backend.exception.ObjectUnchangedException;
 import backend.model.salesOrder.SalesOrder;
@@ -107,7 +107,7 @@ public class SalesOrderHibernateDao implements SalesOrderDao {
             this.applyOrderStatusQueryParameter(orderStatusQuery, criteriaQuery, criteriaBuilder, criteria);
             criteriaQuery.orderBy(criteriaBuilder.asc(criteria.get("id"))); // Order by id ascending
             TypedQuery<SalesOrder> typedQuery = entityManager.createQuery(criteriaQuery);
-            typedQuery.setHint("javax.persistence.loadgraph", graph); // Also fetch all item data.
+            typedQuery.setHint("jakarta.persistence.loadgraph", graph); // Also fetch all item data.
             salesOrders = typedQuery.getResultList();
 
             entityManager.getTransaction().commit();
@@ -135,7 +135,7 @@ public class SalesOrderHibernateDao implements SalesOrderDao {
         EntityGraph<SalesOrder> graph = entityManager.createEntityGraph(SalesOrder.class);
         graph.addAttributeNodes("items");
         Map<String, Object> hints = new HashMap<String, Object>();
-        hints.put("javax.persistence.loadgraph", graph);
+        hints.put("jakarta.persistence.loadgraph", graph);
 
         entityManager.getTransaction().begin();
         SalesOrder salesOrder = entityManager.find(SalesOrder.class, id, hints);

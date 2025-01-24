@@ -5,19 +5,20 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
-import javax.persistence.SequenceGenerator;
-import javax.persistence.Table;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.SequenceGenerator;
+import jakarta.persistence.Table;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
@@ -57,7 +58,7 @@ public class SalesOrder {
     /**
      * The purchaser.
      */
-    @OneToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "SOLD_TO_ID")
     @NotNull(message = "{salesOrder.soldToParty.notNull.message}")
     private BusinessPartner soldToParty;
@@ -65,7 +66,7 @@ public class SalesOrder {
     /**
      * The goods recipient.
      */
-    @OneToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "SHIP_TO_ID")
     @NotNull(message = "{salesOrder.shipToParty.notNull.message}")
     private BusinessPartner shipToParty;
@@ -73,7 +74,7 @@ public class SalesOrder {
     /**
      * The invoice recipient.
      */
-    @OneToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "BILL_TO_ID")
     @NotNull(message = "{salesOrder.billToParty.notNull.message}")
     private BusinessPartner billToParty;
@@ -81,7 +82,7 @@ public class SalesOrder {
     /**
      * The account on which the bill has to be settled.
      */
-    @OneToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "PAYMENT_ACCOUNT_ID")
     @NotNull(message = "{salesOrder.paymentAccount.notNull.message}")
     private Account paymentAccount;

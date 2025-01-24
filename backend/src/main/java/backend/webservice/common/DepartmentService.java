@@ -3,7 +3,7 @@ package backend.webservice.common;
 import java.text.MessageFormat;
 import java.util.ResourceBundle;
 
-import javax.persistence.EntityExistsException;
+import jakarta.persistence.EntityExistsException;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;

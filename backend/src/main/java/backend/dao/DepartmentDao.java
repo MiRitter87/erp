@@ -2,7 +2,7 @@ package backend.dao;
 
 import java.util.List;
 
-import javax.persistence.EntityExistsException;
+import jakarta.persistence.EntityExistsException;
 
 import backend.exception.ObjectUnchangedException;
 import backend.model.department.Department;
