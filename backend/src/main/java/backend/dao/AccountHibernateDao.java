@@ -1,16 +1,18 @@
 package backend.dao;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import backend.exception.ObjectUnchangedException;
+import backend.model.account.Account;
+import jakarta.persistence.EntityGraph;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.TypedQuery;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Root;
-
-import backend.exception.ObjectUnchangedException;
-import backend.model.account.Account;
 
 /**
  * Provides access to account database persistence using Hibernate.
@@ -120,8 +122,15 @@ public class AccountHibernateDao implements AccountDao {
     public Account getAccount(final Integer id) throws Exception {
         EntityManager entityManager = this.sessionFactory.createEntityManager();
 
+        // Use entity graphs to load data of referenced Posting instances.
+        EntityGraph<Account> graph = entityManager.createEntityGraph(Account.class);
+        graph.addAttributeNodes("postings");
+        graph.addSubgraph("postings").addAttributeNodes("counterparty");
+        Map<String, Object> hints = new HashMap<String, Object>();
+        hints.put("jakarta.persistence.loadgraph", graph);
+
         entityManager.getTransaction().begin();
-        Account account = entityManager.find(Account.class, id);
+        Account account = entityManager.find(Account.class, id, hints);
         entityManager.getTransaction().commit();
         entityManager.close();
 

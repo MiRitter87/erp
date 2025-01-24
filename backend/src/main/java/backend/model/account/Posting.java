@@ -4,17 +4,6 @@ import java.math.BigDecimal;
 import java.util.Date;
 import java.util.Set;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.OneToOne;
-import jakarta.persistence.SequenceGenerator;
-import jakarta.persistence.Table;
 import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
 import javax.validation.Validator;
@@ -29,6 +18,18 @@ import org.hibernate.validator.messageinterpolation.ExpressionLanguageFeatureLev
 
 import backend.model.Currency;
 import backend.model.businessPartner.BusinessPartner;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.SequenceGenerator;
+import jakarta.persistence.Table;
 
 /**
  * A posting represents a payment to or from an account.
@@ -81,7 +82,7 @@ public class Posting {
     /**
      * The counterparty.
      */
-    @OneToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "COUNTERPARTY_ID")
     @NotNull(message = "{posting.counterparty.notNull.message}")
     private BusinessPartner counterparty;
