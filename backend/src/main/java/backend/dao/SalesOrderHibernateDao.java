@@ -95,7 +95,8 @@ public class SalesOrderHibernateDao implements SalesOrderDao {
 
         // Use entity graphs to load data of referenced SalesOrderItem instances.
         EntityGraph<SalesOrder> graph = entityManager.createEntityGraph(SalesOrder.class);
-        graph.addAttributeNodes("items");
+        graph.addAttributeNodes("items", "soldToParty", "shipToParty", "billToParty", "paymentAccount");
+        graph.addSubgraph("items").addAttributeNodes("material");
 
         entityManager.getTransaction().begin();
 
@@ -133,7 +134,8 @@ public class SalesOrderHibernateDao implements SalesOrderDao {
 
         // Use entity graphs to load data of referenced SalesOrderItem instances.
         EntityGraph<SalesOrder> graph = entityManager.createEntityGraph(SalesOrder.class);
-        graph.addAttributeNodes("items");
+        graph.addAttributeNodes("items", "soldToParty", "shipToParty", "billToParty", "paymentAccount");
+        graph.addSubgraph("items").addAttributeNodes("material");
         Map<String, Object> hints = new HashMap<String, Object>();
         hints.put("jakarta.persistence.loadgraph", graph);
 
