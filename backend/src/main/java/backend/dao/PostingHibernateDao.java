@@ -1,9 +1,12 @@
 package backend.dao;
 
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.EntityManagerFactory;
+import java.util.HashMap;
+import java.util.Map;
 
 import backend.model.account.Posting;
+import jakarta.persistence.EntityGraph;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityManagerFactory;
 
 /**
  * Provides access to posting database persistence using Hibernate.
@@ -81,8 +84,14 @@ public class PostingHibernateDao implements PostingDao {
     public Posting getPosting(final Integer id) throws Exception {
         EntityManager entityManager = this.sessionFactory.createEntityManager();
 
+        // Use entity graphs to load data of referenced Posting instances.
+        EntityGraph<Posting> graph = entityManager.createEntityGraph(Posting.class);
+        graph.addAttributeNodes("counterparty");
+        Map<String, Object> hints = new HashMap<String, Object>();
+        hints.put("jakarta.persistence.loadgraph", graph);
+
         entityManager.getTransaction().begin();
-        Posting posting = entityManager.find(Posting.class, id);
+        Posting posting = entityManager.find(Posting.class, id, hints);
         entityManager.getTransaction().commit();
         entityManager.close();
 
