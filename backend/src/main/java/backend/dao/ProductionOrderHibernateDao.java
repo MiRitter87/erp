@@ -96,6 +96,7 @@ public class ProductionOrderHibernateDao implements ProductionOrderDao {
         // Use entity graphs to load data of referenced ProductionOrderItem instances.
         EntityGraph<ProductionOrder> graph = entityManager.createEntityGraph(ProductionOrder.class);
         graph.addAttributeNodes("items");
+        graph.addSubgraph("items").addAttributeNodes("material");
 
         entityManager.getTransaction().begin();
 
@@ -134,6 +135,7 @@ public class ProductionOrderHibernateDao implements ProductionOrderDao {
         // Use entity graphs to load data of referenced ProductionOrderItem instances.
         EntityGraph<ProductionOrder> graph = entityManager.createEntityGraph(ProductionOrder.class);
         graph.addAttributeNodes("items");
+        graph.addSubgraph("items").addAttributeNodes("material");
         Map<String, Object> hints = new HashMap<String, Object>();
         hints.put("javax.persistence.loadgraph", graph);
 
