@@ -2,15 +2,6 @@ package backend.model.billOfMaterial;
 
 import java.util.Set;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.Id;
-import jakarta.persistence.IdClass;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToOne;
-import jakarta.persistence.Table;
 import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
 import javax.validation.Validator;
@@ -24,6 +15,14 @@ import org.hibernate.validator.messageinterpolation.ExpressionLanguageFeatureLev
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import backend.model.material.Material;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.Id;
+import jakarta.persistence.IdClass;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 
 /**
  * A bill of material item defines a material in a specific quantity that is needed for creation of another material.
@@ -55,7 +54,7 @@ public class BillOfMaterialItem {
     /**
      * The material needed.
      */
-    @OneToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "MATERIAL_ID")
     @NotNull(message = "{billOfMaterialItem.material.notNull.message}")
     private Material material;

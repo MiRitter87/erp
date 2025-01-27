@@ -101,6 +101,7 @@ public class BillOfMaterialHibernateDao implements BillOfMaterialDao {
         // Use entity graphs to load data of referenced BillOfMaterialItem instances.
         EntityGraph<BillOfMaterial> graph = entityManager.createEntityGraph(BillOfMaterial.class);
         graph.addAttributeNodes("items");
+        graph.addSubgraph("items").addAttributeNodes("material");
 
         entityManager.getTransaction().begin();
 
@@ -139,6 +140,7 @@ public class BillOfMaterialHibernateDao implements BillOfMaterialDao {
         // Use entity graphs to load data of referenced BillOfMaterialItem instances.
         EntityGraph<BillOfMaterial> graph = entityManager.createEntityGraph(BillOfMaterial.class);
         graph.addAttributeNodes("items");
+        graph.addSubgraph("items").addAttributeNodes("material");
         Map<String, Object> hints = new HashMap<String, Object>();
         hints.put("javax.persistence.loadgraph", graph);
 
