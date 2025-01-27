@@ -97,8 +97,7 @@ public class PurchaseOrderHibernateDao implements PurchaseOrderDao {
 
         // Use entity graphs to load data of referenced PurchaseOrderItem instances.
         EntityGraph<PurchaseOrder> graph = entityManager.createEntityGraph(PurchaseOrder.class);
-        graph.addAttributeNodes("items");
-        graph.addAttributeNodes("status");
+        graph.addAttributeNodes("items", "status", "vendor", "paymentAccount");
 
         entityManager.getTransaction().begin();
 
@@ -136,8 +135,7 @@ public class PurchaseOrderHibernateDao implements PurchaseOrderDao {
 
         // Use entity graphs to load data of referenced PurchaseOrderItem instances.
         EntityGraph<PurchaseOrder> graph = entityManager.createEntityGraph(PurchaseOrder.class);
-        graph.addAttributeNodes("items");
-        graph.addAttributeNodes("status");
+        graph.addAttributeNodes("items", "status", "vendor", "paymentAccount");
         Map<String, Object> hints = new HashMap<String, Object>();
         hints.put("javax.persistence.loadgraph", graph);
 

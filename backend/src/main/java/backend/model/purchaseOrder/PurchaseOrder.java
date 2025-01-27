@@ -5,6 +5,17 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+import backend.exception.DuplicateIdentifierException;
+import backend.exception.NoItemsException;
+import backend.model.Currency;
+import backend.model.account.Account;
+import backend.model.businessPartner.BusinessPartner;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
@@ -17,21 +28,10 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
-import jakarta.persistence.OneToOne;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
-
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-
-import backend.exception.DuplicateIdentifierException;
-import backend.exception.NoItemsException;
-import backend.model.Currency;
-import backend.model.account.Account;
-import backend.model.businessPartner.BusinessPartner;
 
 /**
  * Represents an order of goods from a vendor.
@@ -60,7 +60,7 @@ public class PurchaseOrder {
     /**
      * The vendor.
      */
-    @OneToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "VENDOR_ID")
     @NotNull(message = "{purchaseOrder.vendor.notNull.message}")
     private BusinessPartner vendor;
@@ -68,7 +68,7 @@ public class PurchaseOrder {
     /**
      * The account on which the bill has to be settled.
      */
-    @OneToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "PAYMENT_ACCOUNT_ID")
     @NotNull(message = "{purchaseOrder.paymentAccount.notNull.message}")
     private Account paymentAccount;

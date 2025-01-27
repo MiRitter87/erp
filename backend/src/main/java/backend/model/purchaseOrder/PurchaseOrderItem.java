@@ -3,15 +3,6 @@ package backend.model.purchaseOrder;
 import java.math.BigDecimal;
 import java.util.Set;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.Id;
-import jakarta.persistence.IdClass;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToOne;
-import jakarta.persistence.Table;
 import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
 import javax.validation.Validator;
@@ -25,6 +16,14 @@ import org.hibernate.validator.messageinterpolation.ExpressionLanguageFeatureLev
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import backend.model.material.Material;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.Id;
+import jakarta.persistence.IdClass;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 
 /**
  * An item of a purchase order representing a product in a certain quantity.
@@ -56,7 +55,7 @@ public class PurchaseOrderItem {
     /**
      * The material that is being ordered.
      */
-    @OneToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "MATERIAL_ID")
     @NotNull(message = "{purchaseOrderItem.material.notNull.message}")
     private Material material;
