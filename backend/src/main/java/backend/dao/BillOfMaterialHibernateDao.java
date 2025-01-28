@@ -113,7 +113,7 @@ public class BillOfMaterialHibernateDao implements BillOfMaterialDao {
             this.applyBomMaterialQueryParameter(material, criteriaQuery, criteriaBuilder, criteria);
             criteriaQuery.orderBy(criteriaBuilder.asc(criteria.get("id"))); // Order by id ascending
             TypedQuery<BillOfMaterial> typedQuery = entityManager.createQuery(criteriaQuery);
-            typedQuery.setHint("javax.persistence.loadgraph", graph); // Also fetch all item data.
+            typedQuery.setHint("jakarta.persistence.loadgraph", graph); // Also fetch all item data.
             billOfMaterials = typedQuery.getResultList();
 
             entityManager.getTransaction().commit();
@@ -142,7 +142,7 @@ public class BillOfMaterialHibernateDao implements BillOfMaterialDao {
         graph.addAttributeNodes("items");
         graph.addSubgraph("items").addAttributeNodes("material");
         Map<String, Object> hints = new HashMap<String, Object>();
-        hints.put("javax.persistence.loadgraph", graph);
+        hints.put("jakarta.persistence.loadgraph", graph);
 
         entityManager.getTransaction().begin();
         BillOfMaterial billOfMaterial = entityManager.find(BillOfMaterial.class, id, hints);

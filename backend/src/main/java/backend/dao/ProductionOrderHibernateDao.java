@@ -108,7 +108,7 @@ public class ProductionOrderHibernateDao implements ProductionOrderDao {
             this.applyOrderStatusQueryParameter(orderStatusQuery, criteriaQuery, criteriaBuilder, criteria);
             criteriaQuery.orderBy(criteriaBuilder.asc(criteria.get("id"))); // Order by id ascending
             TypedQuery<ProductionOrder> typedQuery = entityManager.createQuery(criteriaQuery);
-            typedQuery.setHint("javax.persistence.loadgraph", graph); // Also fetch all item data.
+            typedQuery.setHint("jakarta.persistence.loadgraph", graph); // Also fetch all item data.
             productionOrders = typedQuery.getResultList();
 
             entityManager.getTransaction().commit();
@@ -137,7 +137,7 @@ public class ProductionOrderHibernateDao implements ProductionOrderDao {
         graph.addAttributeNodes("items");
         graph.addSubgraph("items").addAttributeNodes("material");
         Map<String, Object> hints = new HashMap<String, Object>();
-        hints.put("javax.persistence.loadgraph", graph);
+        hints.put("jakarta.persistence.loadgraph", graph);
 
         entityManager.getTransaction().begin();
         ProductionOrder productionOrder = entityManager.find(ProductionOrder.class, id, hints);

@@ -109,7 +109,7 @@ public class PurchaseOrderHibernateDao implements PurchaseOrderDao {
             this.applyOrderStatusQueryParameter(orderStatusQuery, criteriaQuery, criteriaBuilder, criteria);
             criteriaQuery.orderBy(criteriaBuilder.asc(criteria.get("id"))); // Order by id ascending
             TypedQuery<PurchaseOrder> typedQuery = entityManager.createQuery(criteriaQuery);
-            typedQuery.setHint("javax.persistence.loadgraph", graph); // Also fetch all item data.
+            typedQuery.setHint("jakarta.persistence.loadgraph", graph); // Also fetch all item data.
             purchaseOrders = typedQuery.getResultList();
 
             entityManager.getTransaction().commit();
@@ -137,7 +137,7 @@ public class PurchaseOrderHibernateDao implements PurchaseOrderDao {
         EntityGraph<PurchaseOrder> graph = entityManager.createEntityGraph(PurchaseOrder.class);
         graph.addAttributeNodes("items", "status", "vendor", "paymentAccount");
         Map<String, Object> hints = new HashMap<String, Object>();
-        hints.put("javax.persistence.loadgraph", graph);
+        hints.put("jakarta.persistence.loadgraph", graph);
 
         entityManager.getTransaction().begin();
         PurchaseOrder purchaseOrder = entityManager.find(PurchaseOrder.class, id, hints);
