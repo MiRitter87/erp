@@ -2,18 +2,15 @@ package backend.dao;
 
 import java.util.List;
 
+import backend.exception.ObjectUnchangedException;
+import backend.model.employee.Employee;
+import backend.model.employee.EmployeeHeadQueryParameter;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.TypedQuery;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Root;
-import jakarta.persistence.criteria.Subquery;
-
-import backend.exception.ObjectUnchangedException;
-import backend.model.department.Department;
-import backend.model.employee.Employee;
-import backend.model.employee.EmployeeHeadQueryParameter;
 
 /**
  * Provides access to employee database persistence using Hibernate.
@@ -175,33 +172,18 @@ public class EmployeeHibernateDao implements EmployeeDao {
     private void applyEmployeeHeadQueryParameter(final EmployeeHeadQueryParameter employeeHeadQuery,
             final CriteriaQuery<Employee> employeeCriteriaQuery, final Root<Employee> employeeCriteria) {
 
-        Subquery<Department> subQuery;
-        Root<Department> subRoot;
-
         if (employeeHeadQuery == EmployeeHeadQueryParameter.ALL || employeeHeadQuery == null) {
             return; // No further query restrictions needed.
         }
 
         if (employeeHeadQuery == EmployeeHeadQueryParameter.NO_HEAD_ONLY) {
-            // Use SubQuery: Get all departments - each department has to have a head.
-            subQuery = employeeCriteriaQuery.subquery(Department.class);
-            subRoot = subQuery.from(Department.class);
-            subQuery.select(subRoot.get("head"));
-
-            // Select only those employees whose head is not in the set of all existing heads -> Employee has no head
-            // defined.
-            employeeCriteriaQuery.where(employeeCriteria.get("headOfDepartment").in(subQuery).not());
+            // Select only those employees that have no head defined.
+            employeeCriteriaQuery.where(employeeCriteria.get("headOfDepartment").isNull());
         }
 
         if (employeeHeadQuery == EmployeeHeadQueryParameter.HEAD_ONLY) {
-            // Use SubQuery: Get all departments - each department has to have a head.
-
-            subQuery = employeeCriteriaQuery.subquery(Department.class);
-            subRoot = subQuery.from(Department.class);
-            subQuery.select(subRoot.get("head"));
-
-            // Select only those employees whose head is not in the set of all existing heads.
-            employeeCriteriaQuery.where(employeeCriteria.get("headOfDepartment").in(subQuery));
+            // Select only those employees that are head of any department.
+            employeeCriteriaQuery.where(employeeCriteria.get("headOfDepartment").isNotNull());
         }
     }
 }
