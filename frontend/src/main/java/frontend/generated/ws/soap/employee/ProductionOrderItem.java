@@ -1,16 +1,16 @@
 
 package frontend.generated.ws.soap.employee;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlType;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java-Klasse für productionOrderItem complex type.
- * 
+ * <p>Java-Klasse fï¿½r productionOrderItem complex type.
+ *
  * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.
- * 
+ *
  * <pre>
  * &lt;complexType name="productionOrderItem">
  *   &lt;complexContent>
@@ -25,8 +25,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "productionOrderItem", propOrder = {
@@ -44,11 +44,11 @@ public class ProductionOrderItem {
 
     /**
      * Ruft den Wert der id-Eigenschaft ab.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Integer }
-     *     
+     *
      */
     public Integer getId() {
         return id;
@@ -56,11 +56,11 @@ public class ProductionOrderItem {
 
     /**
      * Legt den Wert der id-Eigenschaft fest.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Integer }
-     *     
+     *
      */
     public void setId(Integer value) {
         this.id = value;
@@ -68,11 +68,11 @@ public class ProductionOrderItem {
 
     /**
      * Ruft den Wert der material-Eigenschaft ab.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Material }
-     *     
+     *
      */
     public Material getMaterial() {
         return material;
@@ -80,11 +80,11 @@ public class ProductionOrderItem {
 
     /**
      * Legt den Wert der material-Eigenschaft fest.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Material }
-     *     
+     *
      */
     public void setMaterial(Material value) {
         this.material = value;
@@ -92,11 +92,11 @@ public class ProductionOrderItem {
 
     /**
      * Ruft den Wert der productionOrder-Eigenschaft ab.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link ProductionOrder }
-     *     
+     *
      */
     public ProductionOrder getProductionOrder() {
         return productionOrder;
@@ -104,11 +104,11 @@ public class ProductionOrderItem {
 
     /**
      * Legt den Wert der productionOrder-Eigenschaft fest.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link ProductionOrder }
-     *     
+     *
      */
     public void setProductionOrder(ProductionOrder value) {
         this.productionOrder = value;
@@ -116,11 +116,11 @@ public class ProductionOrderItem {
 
     /**
      * Ruft den Wert der quantity-Eigenschaft ab.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Long }
-     *     
+     *
      */
     public Long getQuantity() {
         return quantity;
@@ -128,11 +128,11 @@ public class ProductionOrderItem {
 
     /**
      * Legt den Wert der quantity-Eigenschaft fest.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Long }
-     *     
+     *
      */
     public void setQuantity(Long value) {
         this.quantity = value;

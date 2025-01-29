@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 
-import javax.xml.ws.WebServiceException;
+import jakarta.xml.ws.WebServiceException;
 
 import frontend.controller.MainViewController;
 import frontend.dao.DepartmentWebServiceDao;

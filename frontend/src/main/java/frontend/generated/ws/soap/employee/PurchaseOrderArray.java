@@ -3,16 +3,16 @@ package frontend.generated.ws.soap.employee;
 
 import java.util.ArrayList;
 import java.util.List;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlType;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java-Klasse für purchaseOrderArray complex type.
- * 
+ * <p>Java-Klasse fï¿½r purchaseOrderArray complex type.
+ *
  * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.
- * 
+ *
  * <pre>
  * &lt;complexType name="purchaseOrderArray">
  *   &lt;complexContent>
@@ -34,8 +34,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "purchaseOrderArray", propOrder = {
@@ -47,11 +47,11 @@ public class PurchaseOrderArray {
 
     /**
      * Ruft den Wert der purchaseOrders-Eigenschaft ab.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link PurchaseOrderArray.PurchaseOrders }
-     *     
+     *
      */
     public PurchaseOrderArray.PurchaseOrders getPurchaseOrders() {
         return purchaseOrders;
@@ -59,11 +59,11 @@ public class PurchaseOrderArray {
 
     /**
      * Legt den Wert der purchaseOrders-Eigenschaft fest.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link PurchaseOrderArray.PurchaseOrders }
-     *     
+     *
      */
     public void setPurchaseOrders(PurchaseOrderArray.PurchaseOrders value) {
         this.purchaseOrders = value;
@@ -71,10 +71,10 @@ public class PurchaseOrderArray {
 
 
     /**
-     * <p>Java-Klasse für anonymous complex type.
-     * 
+     * <p>Java-Klasse fï¿½r anonymous complex type.
+     *
      * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.
-     * 
+     *
      * <pre>
      * &lt;complexType>
      *   &lt;complexContent>
@@ -86,8 +86,8 @@ public class PurchaseOrderArray {
      *   &lt;/complexContent>
      * &lt;/complexType>
      * </pre>
-     * 
-     * 
+     *
+     *
      */
     @XmlAccessorType(XmlAccessType.FIELD)
     @XmlType(name = "", propOrder = {
@@ -99,25 +99,25 @@ public class PurchaseOrderArray {
 
         /**
          * Gets the value of the purchaseOrder property.
-         * 
+         *
          * <p>
          * This accessor method returns a reference to the live list,
          * not a snapshot. Therefore any modification you make to the
          * returned list will be present inside the JAXB object.
          * This is why there is not a <CODE>set</CODE> method for the purchaseOrder property.
-         * 
+         *
          * <p>
          * For example, to add a new item, do as follows:
          * <pre>
          *    getPurchaseOrder().add(newItem);
          * </pre>
-         * 
-         * 
+         *
+         *
          * <p>
          * Objects of the following type(s) are allowed in the list
          * {@link PurchaseOrder }
-         * 
-         * 
+         *
+         *
          */
         public List<PurchaseOrder> getPurchaseOrder() {
             if (purchaseOrder == null) {

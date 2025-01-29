@@ -1,16 +1,16 @@
 
 package frontend.generated.ws.soap.employee;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlType;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java-Klasse für imageMetaData complex type.
- * 
+ * <p>Java-Klasse fï¿½r imageMetaData complex type.
+ *
  * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.
- * 
+ *
  * <pre>
  * &lt;complexType name="imageMetaData">
  *   &lt;complexContent>
@@ -22,8 +22,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "imageMetaData", propOrder = {
@@ -37,11 +37,11 @@ public class ImageMetaData
 
     /**
      * Ruft den Wert der mimeType-Eigenschaft ab.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getMimeType() {
         return mimeType;
@@ -49,11 +49,11 @@ public class ImageMetaData
 
     /**
      * Legt den Wert der mimeType-Eigenschaft fest.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setMimeType(String value) {
         this.mimeType = value;

@@ -3,16 +3,16 @@ package frontend.generated.ws.soap.employee;
 
 import java.util.ArrayList;
 import java.util.List;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlType;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java-Klasse für salesOrderArray complex type.
- * 
+ * <p>Java-Klasse fï¿½r salesOrderArray complex type.
+ *
  * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.
- * 
+ *
  * <pre>
  * &lt;complexType name="salesOrderArray">
  *   &lt;complexContent>
@@ -34,8 +34,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "salesOrderArray", propOrder = {
@@ -47,11 +47,11 @@ public class SalesOrderArray {
 
     /**
      * Ruft den Wert der salesOrders-Eigenschaft ab.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link SalesOrderArray.SalesOrders }
-     *     
+     *
      */
     public SalesOrderArray.SalesOrders getSalesOrders() {
         return salesOrders;
@@ -59,11 +59,11 @@ public class SalesOrderArray {
 
     /**
      * Legt den Wert der salesOrders-Eigenschaft fest.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link SalesOrderArray.SalesOrders }
-     *     
+     *
      */
     public void setSalesOrders(SalesOrderArray.SalesOrders value) {
         this.salesOrders = value;
@@ -71,10 +71,10 @@ public class SalesOrderArray {
 
 
     /**
-     * <p>Java-Klasse für anonymous complex type.
-     * 
+     * <p>Java-Klasse fï¿½r anonymous complex type.
+     *
      * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.
-     * 
+     *
      * <pre>
      * &lt;complexType>
      *   &lt;complexContent>
@@ -86,8 +86,8 @@ public class SalesOrderArray {
      *   &lt;/complexContent>
      * &lt;/complexType>
      * </pre>
-     * 
-     * 
+     *
+     *
      */
     @XmlAccessorType(XmlAccessType.FIELD)
     @XmlType(name = "", propOrder = {
@@ -99,25 +99,25 @@ public class SalesOrderArray {
 
         /**
          * Gets the value of the salesOrder property.
-         * 
+         *
          * <p>
          * This accessor method returns a reference to the live list,
          * not a snapshot. Therefore any modification you make to the
          * returned list will be present inside the JAXB object.
          * This is why there is not a <CODE>set</CODE> method for the salesOrder property.
-         * 
+         *
          * <p>
          * For example, to add a new item, do as follows:
          * <pre>
          *    getSalesOrder().add(newItem);
          * </pre>
-         * 
-         * 
+         *
+         *
          * <p>
          * Objects of the following type(s) are allowed in the list
          * {@link SalesOrder }
-         * 
-         * 
+         *
+         *
          */
         public List<SalesOrder> getSalesOrder() {
             if (salesOrder == null) {

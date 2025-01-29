@@ -3,7 +3,7 @@ package frontend.dao;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.xml.ws.WebServiceException;
+import jakarta.xml.ws.WebServiceException;
 
 import frontend.generated.ws.soap.employee.EmployeeArray;
 import frontend.generated.ws.soap.employee.EmployeeHeadQueryParameter;

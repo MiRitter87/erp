@@ -2,16 +2,16 @@
 package frontend.generated.ws.soap.employee;
 
 import java.math.BigDecimal;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlType;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java-Klasse für purchaseOrderItem complex type.
- * 
+ * <p>Java-Klasse fï¿½r purchaseOrderItem complex type.
+ *
  * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.
- * 
+ *
  * <pre>
  * &lt;complexType name="purchaseOrderItem">
  *   &lt;complexContent>
@@ -27,8 +27,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "purchaseOrderItem", propOrder = {
@@ -48,11 +48,11 @@ public class PurchaseOrderItem {
 
     /**
      * Ruft den Wert der id-Eigenschaft ab.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Integer }
-     *     
+     *
      */
     public Integer getId() {
         return id;
@@ -60,11 +60,11 @@ public class PurchaseOrderItem {
 
     /**
      * Legt den Wert der id-Eigenschaft fest.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Integer }
-     *     
+     *
      */
     public void setId(Integer value) {
         this.id = value;
@@ -72,11 +72,11 @@ public class PurchaseOrderItem {
 
     /**
      * Ruft den Wert der material-Eigenschaft ab.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Material }
-     *     
+     *
      */
     public Material getMaterial() {
         return material;
@@ -84,11 +84,11 @@ public class PurchaseOrderItem {
 
     /**
      * Legt den Wert der material-Eigenschaft fest.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Material }
-     *     
+     *
      */
     public void setMaterial(Material value) {
         this.material = value;
@@ -96,11 +96,11 @@ public class PurchaseOrderItem {
 
     /**
      * Ruft den Wert der priceTotal-Eigenschaft ab.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link BigDecimal }
-     *     
+     *
      */
     public BigDecimal getPriceTotal() {
         return priceTotal;
@@ -108,11 +108,11 @@ public class PurchaseOrderItem {
 
     /**
      * Legt den Wert der priceTotal-Eigenschaft fest.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link BigDecimal }
-     *     
+     *
      */
     public void setPriceTotal(BigDecimal value) {
         this.priceTotal = value;
@@ -120,11 +120,11 @@ public class PurchaseOrderItem {
 
     /**
      * Ruft den Wert der purchaseOrder-Eigenschaft ab.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link PurchaseOrder }
-     *     
+     *
      */
     public PurchaseOrder getPurchaseOrder() {
         return purchaseOrder;
@@ -132,11 +132,11 @@ public class PurchaseOrderItem {
 
     /**
      * Legt den Wert der purchaseOrder-Eigenschaft fest.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link PurchaseOrder }
-     *     
+     *
      */
     public void setPurchaseOrder(PurchaseOrder value) {
         this.purchaseOrder = value;
@@ -144,11 +144,11 @@ public class PurchaseOrderItem {
 
     /**
      * Ruft den Wert der quantity-Eigenschaft ab.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Long }
-     *     
+     *
      */
     public Long getQuantity() {
         return quantity;
@@ -156,11 +156,11 @@ public class PurchaseOrderItem {
 
     /**
      * Legt den Wert der quantity-Eigenschaft fest.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Long }
-     *     
+     *
      */
     public void setQuantity(Long value) {
         this.quantity = value;

@@ -3,19 +3,19 @@ package frontend.generated.ws.soap.employee;
 
 import java.util.ArrayList;
 import java.util.List;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlSchemaType;
-import javax.xml.bind.annotation.XmlType;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlSchemaType;
+import jakarta.xml.bind.annotation.XmlType;
 import javax.xml.datatype.XMLGregorianCalendar;
 
 
 /**
- * <p>Java-Klasse für purchaseOrder complex type.
- * 
+ * <p>Java-Klasse fï¿½r purchaseOrder complex type.
+ *
  * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.
- * 
+ *
  * <pre>
  * &lt;complexType name="purchaseOrder">
  *   &lt;complexContent>
@@ -33,8 +33,8 @@ import javax.xml.datatype.XMLGregorianCalendar;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "purchaseOrder", propOrder = {
@@ -63,11 +63,11 @@ public class PurchaseOrder {
 
     /**
      * Ruft den Wert der id-Eigenschaft ab.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Integer }
-     *     
+     *
      */
     public Integer getId() {
         return id;
@@ -75,11 +75,11 @@ public class PurchaseOrder {
 
     /**
      * Legt den Wert der id-Eigenschaft fest.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Integer }
-     *     
+     *
      */
     public void setId(Integer value) {
         this.id = value;
@@ -87,25 +87,25 @@ public class PurchaseOrder {
 
     /**
      * Gets the value of the items property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the items property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getItems().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link PurchaseOrderItem }
-     * 
-     * 
+     *
+     *
      */
     public List<PurchaseOrderItem> getItems() {
         if (items == null) {
@@ -116,11 +116,11 @@ public class PurchaseOrder {
 
     /**
      * Ruft den Wert der orderDate-Eigenschaft ab.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link XMLGregorianCalendar }
-     *     
+     *
      */
     public XMLGregorianCalendar getOrderDate() {
         return orderDate;
@@ -128,11 +128,11 @@ public class PurchaseOrder {
 
     /**
      * Legt den Wert der orderDate-Eigenschaft fest.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link XMLGregorianCalendar }
-     *     
+     *
      */
     public void setOrderDate(XMLGregorianCalendar value) {
         this.orderDate = value;
@@ -140,11 +140,11 @@ public class PurchaseOrder {
 
     /**
      * Ruft den Wert der paymentAccount-Eigenschaft ab.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Account }
-     *     
+     *
      */
     public Account getPaymentAccount() {
         return paymentAccount;
@@ -152,11 +152,11 @@ public class PurchaseOrder {
 
     /**
      * Legt den Wert der paymentAccount-Eigenschaft fest.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Account }
-     *     
+     *
      */
     public void setPaymentAccount(Account value) {
         this.paymentAccount = value;
@@ -164,11 +164,11 @@ public class PurchaseOrder {
 
     /**
      * Ruft den Wert der requestedDeliveryDate-Eigenschaft ab.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link XMLGregorianCalendar }
-     *     
+     *
      */
     public XMLGregorianCalendar getRequestedDeliveryDate() {
         return requestedDeliveryDate;
@@ -176,11 +176,11 @@ public class PurchaseOrder {
 
     /**
      * Legt den Wert der requestedDeliveryDate-Eigenschaft fest.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link XMLGregorianCalendar }
-     *     
+     *
      */
     public void setRequestedDeliveryDate(XMLGregorianCalendar value) {
         this.requestedDeliveryDate = value;
@@ -188,25 +188,25 @@ public class PurchaseOrder {
 
     /**
      * Gets the value of the status property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the status property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getStatus().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link PurchaseOrderStatus }
-     * 
-     * 
+     *
+     *
      */
     public List<PurchaseOrderStatus> getStatus() {
         if (status == null) {
@@ -217,11 +217,11 @@ public class PurchaseOrder {
 
     /**
      * Ruft den Wert der vendor-Eigenschaft ab.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link BusinessPartner }
-     *     
+     *
      */
     public BusinessPartner getVendor() {
         return vendor;
@@ -229,11 +229,11 @@ public class PurchaseOrder {
 
     /**
      * Legt den Wert der vendor-Eigenschaft fest.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link BusinessPartner }
-     *     
+     *
      */
     public void setVendor(BusinessPartner value) {
         this.vendor = value;

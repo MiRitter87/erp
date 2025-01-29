@@ -5,7 +5,7 @@ import java.util.ResourceBundle;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
-import javax.xml.ws.WebServiceException;
+import jakarta.xml.ws.WebServiceException;
 
 import frontend.controller.employee.EditEmployeeController;
 import frontend.controller.employee.EditEmployeeSalaryController;

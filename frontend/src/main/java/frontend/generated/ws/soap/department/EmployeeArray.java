@@ -3,16 +3,16 @@ package frontend.generated.ws.soap.department;
 
 import java.util.ArrayList;
 import java.util.List;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlType;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java-Klasse für employeeArray complex type.
- * 
+ * <p>Java-Klasse fï¿½r employeeArray complex type.
+ *
  * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.
- * 
+ *
  * <pre>
  * &lt;complexType name="employeeArray">
  *   &lt;complexContent>
@@ -34,8 +34,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "employeeArray", propOrder = {
@@ -47,11 +47,11 @@ public class EmployeeArray {
 
     /**
      * Ruft den Wert der employees-Eigenschaft ab.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link EmployeeArray.Employees }
-     *     
+     *
      */
     public EmployeeArray.Employees getEmployees() {
         return employees;
@@ -59,11 +59,11 @@ public class EmployeeArray {
 
     /**
      * Legt den Wert der employees-Eigenschaft fest.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link EmployeeArray.Employees }
-     *     
+     *
      */
     public void setEmployees(EmployeeArray.Employees value) {
         this.employees = value;
@@ -71,10 +71,10 @@ public class EmployeeArray {
 
 
     /**
-     * <p>Java-Klasse für anonymous complex type.
-     * 
+     * <p>Java-Klasse fï¿½r anonymous complex type.
+     *
      * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.
-     * 
+     *
      * <pre>
      * &lt;complexType>
      *   &lt;complexContent>
@@ -86,8 +86,8 @@ public class EmployeeArray {
      *   &lt;/complexContent>
      * &lt;/complexType>
      * </pre>
-     * 
-     * 
+     *
+     *
      */
     @XmlAccessorType(XmlAccessType.FIELD)
     @XmlType(name = "", propOrder = {
@@ -99,25 +99,25 @@ public class EmployeeArray {
 
         /**
          * Gets the value of the employee property.
-         * 
+         *
          * <p>
          * This accessor method returns a reference to the live list,
          * not a snapshot. Therefore any modification you make to the
          * returned list will be present inside the JAXB object.
          * This is why there is not a <CODE>set</CODE> method for the employee property.
-         * 
+         *
          * <p>
          * For example, to add a new item, do as follows:
          * <pre>
          *    getEmployee().add(newItem);
          * </pre>
-         * 
-         * 
+         *
+         *
          * <p>
          * Objects of the following type(s) are allowed in the list
          * {@link Employee }
-         * 
-         * 
+         *
+         *
          */
         public List<Employee> getEmployee() {
             if (employee == null) {

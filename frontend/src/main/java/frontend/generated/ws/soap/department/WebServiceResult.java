@@ -3,16 +3,16 @@ package frontend.generated.ws.soap.department;
 
 import java.util.ArrayList;
 import java.util.List;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlType;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java-Klasse für webServiceResult complex type.
- * 
+ * <p>Java-Klasse fï¿½r webServiceResult complex type.
+ *
  * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.
- * 
+ *
  * <pre>
  * &lt;complexType name="webServiceResult">
  *   &lt;complexContent>
@@ -35,8 +35,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "webServiceResult", propOrder = {
@@ -50,11 +50,11 @@ public class WebServiceResult {
 
     /**
      * Ruft den Wert der data-Eigenschaft ab.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Object }
-     *     
+     *
      */
     public Object getData() {
         return data;
@@ -62,11 +62,11 @@ public class WebServiceResult {
 
     /**
      * Legt den Wert der data-Eigenschaft fest.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Object }
-     *     
+     *
      */
     public void setData(Object value) {
         this.data = value;
@@ -74,11 +74,11 @@ public class WebServiceResult {
 
     /**
      * Ruft den Wert der messages-Eigenschaft ab.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link WebServiceResult.Messages }
-     *     
+     *
      */
     public WebServiceResult.Messages getMessages() {
         return messages;
@@ -86,11 +86,11 @@ public class WebServiceResult {
 
     /**
      * Legt den Wert der messages-Eigenschaft fest.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link WebServiceResult.Messages }
-     *     
+     *
      */
     public void setMessages(WebServiceResult.Messages value) {
         this.messages = value;
@@ -98,10 +98,10 @@ public class WebServiceResult {
 
 
     /**
-     * <p>Java-Klasse für anonymous complex type.
-     * 
+     * <p>Java-Klasse fï¿½r anonymous complex type.
+     *
      * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.
-     * 
+     *
      * <pre>
      * &lt;complexType>
      *   &lt;complexContent>
@@ -113,8 +113,8 @@ public class WebServiceResult {
      *   &lt;/complexContent>
      * &lt;/complexType>
      * </pre>
-     * 
-     * 
+     *
+     *
      */
     @XmlAccessorType(XmlAccessType.FIELD)
     @XmlType(name = "", propOrder = {
@@ -126,25 +126,25 @@ public class WebServiceResult {
 
         /**
          * Gets the value of the message property.
-         * 
+         *
          * <p>
          * This accessor method returns a reference to the live list,
          * not a snapshot. Therefore any modification you make to the
          * returned list will be present inside the JAXB object.
          * This is why there is not a <CODE>set</CODE> method for the message property.
-         * 
+         *
          * <p>
          * For example, to add a new item, do as follows:
          * <pre>
          *    getMessage().add(newItem);
          * </pre>
-         * 
-         * 
+         *
+         *
          * <p>
          * Objects of the following type(s) are allowed in the list
          * {@link WebServiceMessage }
-         * 
-         * 
+         *
+         *
          */
         public List<WebServiceMessage> getMessage() {
             if (message == null) {

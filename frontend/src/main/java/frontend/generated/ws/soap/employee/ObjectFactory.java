@@ -1,25 +1,25 @@
 
 package frontend.generated.ws.soap.employee;
 
-import javax.xml.bind.JAXBElement;
-import javax.xml.bind.annotation.XmlElementDecl;
-import javax.xml.bind.annotation.XmlRegistry;
+import jakarta.xml.bind.JAXBElement;
+import jakarta.xml.bind.annotation.XmlElementDecl;
+import jakarta.xml.bind.annotation.XmlRegistry;
 import javax.xml.namespace.QName;
 
 
 /**
- * This object contains factory methods for each 
- * Java content interface and Java element interface 
- * generated in the frontend.generated.ws.soap.employee package. 
- * <p>An ObjectFactory allows you to programatically 
- * construct new instances of the Java representation 
- * for XML content. The Java representation of XML 
- * content can consist of schema derived interfaces 
- * and classes representing the binding of schema 
- * type definitions, element declarations and model 
- * groups.  Factory methods for each of these are 
+ * This object contains factory methods for each
+ * Java content interface and Java element interface
+ * generated in the frontend.generated.ws.soap.employee package.
+ * <p>An ObjectFactory allows you to programatically
+ * construct new instances of the Java representation
+ * for XML content. The Java representation of XML
+ * content can consist of schema derived interfaces
+ * and classes representing the binding of schema
+ * type definitions, element declarations and model
+ * groups.  Factory methods for each of these are
  * provided in this class.
- * 
+ *
  */
 @XmlRegistry
 public class ObjectFactory {
@@ -42,14 +42,14 @@ public class ObjectFactory {
 
     /**
      * Create a new ObjectFactory that can be used to create new instances of schema derived classes for package: frontend.generated.ws.soap.employee
-     * 
+     *
      */
     public ObjectFactory() {
     }
 
     /**
      * Create an instance of {@link WebServiceResult }
-     * 
+     *
      */
     public WebServiceResult createWebServiceResult() {
         return new WebServiceResult();
@@ -57,7 +57,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link EmployeeArray }
-     * 
+     *
      */
     public EmployeeArray createEmployeeArray() {
         return new EmployeeArray();
@@ -65,7 +65,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link DepartmentArray }
-     * 
+     *
      */
     public DepartmentArray createDepartmentArray() {
         return new DepartmentArray();
@@ -73,7 +73,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link GetEmployees }
-     * 
+     *
      */
     public GetEmployees createGetEmployees() {
         return new GetEmployees();
@@ -81,7 +81,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link AddEmployeeResponse }
-     * 
+     *
      */
     public AddEmployeeResponse createAddEmployeeResponse() {
         return new AddEmployeeResponse();
@@ -89,7 +89,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link Employee }
-     * 
+     *
      */
     public Employee createEmployee() {
         return new Employee();
@@ -97,7 +97,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link EmployeeSalary }
-     * 
+     *
      */
     public EmployeeSalary createEmployeeSalary() {
         return new EmployeeSalary();
@@ -105,7 +105,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link GetEmployeeResponse }
-     * 
+     *
      */
     public GetEmployeeResponse createGetEmployeeResponse() {
         return new GetEmployeeResponse();
@@ -113,7 +113,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link DeleteEmployeeResponse }
-     * 
+     *
      */
     public DeleteEmployeeResponse createDeleteEmployeeResponse() {
         return new DeleteEmployeeResponse();
@@ -121,7 +121,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link UpdateEmployee }
-     * 
+     *
      */
     public UpdateEmployee createUpdateEmployee() {
         return new UpdateEmployee();
@@ -129,7 +129,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link GetEmployee }
-     * 
+     *
      */
     public GetEmployee createGetEmployee() {
         return new GetEmployee();
@@ -137,7 +137,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link Department }
-     * 
+     *
      */
     public Department createDepartment() {
         return new Department();
@@ -145,7 +145,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link DeleteEmployee }
-     * 
+     *
      */
     public DeleteEmployee createDeleteEmployee() {
         return new DeleteEmployee();
@@ -153,7 +153,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link UpdateEmployeeResponse }
-     * 
+     *
      */
     public UpdateEmployeeResponse createUpdateEmployeeResponse() {
         return new UpdateEmployeeResponse();
@@ -161,7 +161,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link GetEmployeesResponse }
-     * 
+     *
      */
     public GetEmployeesResponse createGetEmployeesResponse() {
         return new GetEmployeesResponse();
@@ -169,7 +169,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link AddEmployee }
-     * 
+     *
      */
     public AddEmployee createAddEmployee() {
         return new AddEmployee();
@@ -177,7 +177,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link WebServiceMessage }
-     * 
+     *
      */
     public WebServiceMessage createWebServiceMessage() {
         return new WebServiceMessage();
@@ -185,7 +185,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link WebServiceResult.Messages }
-     * 
+     *
      */
     public WebServiceResult.Messages createWebServiceResultMessages() {
         return new WebServiceResult.Messages();
@@ -193,7 +193,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link EmployeeArray.Employees }
-     * 
+     *
      */
     public EmployeeArray.Employees createEmployeeArrayEmployees() {
         return new EmployeeArray.Employees();
@@ -201,7 +201,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link DepartmentArray.Departments }
-     * 
+     *
      */
     public DepartmentArray.Departments createDepartmentArrayDepartments() {
         return new DepartmentArray.Departments();
@@ -209,7 +209,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link DeleteEmployeeResponse }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://soap.webservice.backend/", name = "deleteEmployeeResponse")
     public JAXBElement<DeleteEmployeeResponse> createDeleteEmployeeResponse(DeleteEmployeeResponse value) {
@@ -218,7 +218,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link UpdateEmployee }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://soap.webservice.backend/", name = "updateEmployee")
     public JAXBElement<UpdateEmployee> createUpdateEmployee(UpdateEmployee value) {
@@ -227,7 +227,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link GetEmployee }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://soap.webservice.backend/", name = "getEmployee")
     public JAXBElement<GetEmployee> createGetEmployee(GetEmployee value) {
@@ -236,7 +236,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link DepartmentArray }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://soap.webservice.backend/", name = "departments")
     public JAXBElement<DepartmentArray> createDepartments(DepartmentArray value) {
@@ -245,7 +245,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link Department }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://soap.webservice.backend/", name = "department")
     public JAXBElement<Department> createDepartment(Department value) {
@@ -254,7 +254,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link EmployeeArray }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://soap.webservice.backend/", name = "employees")
     public JAXBElement<EmployeeArray> createEmployees(EmployeeArray value) {
@@ -263,7 +263,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link DeleteEmployee }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://soap.webservice.backend/", name = "deleteEmployee")
     public JAXBElement<DeleteEmployee> createDeleteEmployee(DeleteEmployee value) {
@@ -272,7 +272,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link UpdateEmployeeResponse }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://soap.webservice.backend/", name = "updateEmployeeResponse")
     public JAXBElement<UpdateEmployeeResponse> createUpdateEmployeeResponse(UpdateEmployeeResponse value) {
@@ -281,7 +281,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link GetEmployeesResponse }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://soap.webservice.backend/", name = "getEmployeesResponse")
     public JAXBElement<GetEmployeesResponse> createGetEmployeesResponse(GetEmployeesResponse value) {
@@ -290,7 +290,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link AddEmployee }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://soap.webservice.backend/", name = "addEmployee")
     public JAXBElement<AddEmployee> createAddEmployee(AddEmployee value) {
@@ -299,7 +299,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link GetEmployees }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://soap.webservice.backend/", name = "getEmployees")
     public JAXBElement<GetEmployees> createGetEmployees(GetEmployees value) {
@@ -308,7 +308,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link AddEmployeeResponse }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://soap.webservice.backend/", name = "addEmployeeResponse")
     public JAXBElement<AddEmployeeResponse> createAddEmployeeResponse(AddEmployeeResponse value) {
@@ -317,7 +317,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link Employee }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://soap.webservice.backend/", name = "employee")
     public JAXBElement<Employee> createEmployee(Employee value) {
@@ -326,7 +326,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link EmployeeSalary }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://soap.webservice.backend/", name = "salary")
     public JAXBElement<EmployeeSalary> createSalary(EmployeeSalary value) {
@@ -335,7 +335,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link GetEmployeeResponse }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://soap.webservice.backend/", name = "getEmployeeResponse")
     public JAXBElement<GetEmployeeResponse> createGetEmployeeResponse(GetEmployeeResponse value) {

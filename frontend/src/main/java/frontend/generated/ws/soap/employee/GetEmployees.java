@@ -1,17 +1,17 @@
 
 package frontend.generated.ws.soap.employee;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlSchemaType;
-import javax.xml.bind.annotation.XmlType;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlSchemaType;
+import jakarta.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java-Klasse für getEmployees complex type.
- * 
+ * <p>Java-Klasse fï¿½r getEmployees complex type.
+ *
  * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.
- * 
+ *
  * <pre>
  * &lt;complexType name="getEmployees">
  *   &lt;complexContent>
@@ -23,8 +23,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "getEmployees", propOrder = {
@@ -37,11 +37,11 @@ public class GetEmployees {
 
     /**
      * Ruft den Wert der employeeHeadQuery-Eigenschaft ab.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link EmployeeHeadQueryParameter }
-     *     
+     *
      */
     public EmployeeHeadQueryParameter getEmployeeHeadQuery() {
         return employeeHeadQuery;
@@ -49,11 +49,11 @@ public class GetEmployees {
 
     /**
      * Legt den Wert der employeeHeadQuery-Eigenschaft fest.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link EmployeeHeadQueryParameter }
-     *     
+     *
      */
     public void setEmployeeHeadQuery(EmployeeHeadQueryParameter value) {
         this.employeeHeadQuery = value;

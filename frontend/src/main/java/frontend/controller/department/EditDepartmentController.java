@@ -6,7 +6,7 @@ import java.text.MessageFormat;
 import java.util.List;
 
 import javax.swing.JOptionPane;
-import javax.xml.ws.WebServiceException;
+import jakarta.xml.ws.WebServiceException;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;

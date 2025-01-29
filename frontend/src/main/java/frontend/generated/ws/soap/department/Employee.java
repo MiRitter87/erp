@@ -1,17 +1,17 @@
 
 package frontend.generated.ws.soap.department;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlSchemaType;
-import javax.xml.bind.annotation.XmlType;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlSchemaType;
+import jakarta.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java-Klasse für employee complex type.
- * 
+ * <p>Java-Klasse fï¿½r employee complex type.
+ *
  * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.
- * 
+ *
  * <pre>
  * &lt;complexType name="employee">
  *   &lt;complexContent>
@@ -27,8 +27,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "employee", propOrder = {
@@ -49,11 +49,11 @@ public class Employee {
 
     /**
      * Ruft den Wert der firstName-Eigenschaft ab.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getFirstName() {
         return firstName;
@@ -61,11 +61,11 @@ public class Employee {
 
     /**
      * Legt den Wert der firstName-Eigenschaft fest.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setFirstName(String value) {
         this.firstName = value;
@@ -73,11 +73,11 @@ public class Employee {
 
     /**
      * Ruft den Wert der gender-Eigenschaft ab.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Gender }
-     *     
+     *
      */
     public Gender getGender() {
         return gender;
@@ -85,11 +85,11 @@ public class Employee {
 
     /**
      * Legt den Wert der gender-Eigenschaft fest.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Gender }
-     *     
+     *
      */
     public void setGender(Gender value) {
         this.gender = value;
@@ -97,11 +97,11 @@ public class Employee {
 
     /**
      * Ruft den Wert der id-Eigenschaft ab.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Integer }
-     *     
+     *
      */
     public Integer getId() {
         return id;
@@ -109,11 +109,11 @@ public class Employee {
 
     /**
      * Legt den Wert der id-Eigenschaft fest.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Integer }
-     *     
+     *
      */
     public void setId(Integer value) {
         this.id = value;
@@ -121,11 +121,11 @@ public class Employee {
 
     /**
      * Ruft den Wert der lastName-Eigenschaft ab.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getLastName() {
         return lastName;
@@ -133,11 +133,11 @@ public class Employee {
 
     /**
      * Legt den Wert der lastName-Eigenschaft fest.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setLastName(String value) {
         this.lastName = value;
@@ -145,11 +145,11 @@ public class Employee {
 
     /**
      * Ruft den Wert der salaryData-Eigenschaft ab.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link EmployeeSalary }
-     *     
+     *
      */
     public EmployeeSalary getSalaryData() {
         return salaryData;
@@ -157,11 +157,11 @@ public class Employee {
 
     /**
      * Legt den Wert der salaryData-Eigenschaft fest.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link EmployeeSalary }
-     *     
+     *
      */
     public void setSalaryData(EmployeeSalary value) {
         this.salaryData = value;

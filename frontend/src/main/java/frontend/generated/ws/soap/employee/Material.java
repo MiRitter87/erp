@@ -2,17 +2,17 @@
 package frontend.generated.ws.soap.employee;
 
 import java.math.BigDecimal;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlSchemaType;
-import javax.xml.bind.annotation.XmlType;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlSchemaType;
+import jakarta.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java-Klasse für material complex type.
- * 
+ * <p>Java-Klasse fï¿½r material complex type.
+ *
  * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.
- * 
+ *
  * <pre>
  * &lt;complexType name="material">
  *   &lt;complexContent>
@@ -31,8 +31,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "material", propOrder = {
@@ -60,11 +60,11 @@ public class Material {
 
     /**
      * Ruft den Wert der currency-Eigenschaft ab.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Currency }
-     *     
+     *
      */
     public Currency getCurrency() {
         return currency;
@@ -72,11 +72,11 @@ public class Material {
 
     /**
      * Legt den Wert der currency-Eigenschaft fest.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Currency }
-     *     
+     *
      */
     public void setCurrency(Currency value) {
         this.currency = value;
@@ -84,11 +84,11 @@ public class Material {
 
     /**
      * Ruft den Wert der description-Eigenschaft ab.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getDescription() {
         return description;
@@ -96,11 +96,11 @@ public class Material {
 
     /**
      * Legt den Wert der description-Eigenschaft fest.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setDescription(String value) {
         this.description = value;
@@ -108,11 +108,11 @@ public class Material {
 
     /**
      * Ruft den Wert der id-Eigenschaft ab.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Integer }
-     *     
+     *
      */
     public Integer getId() {
         return id;
@@ -120,11 +120,11 @@ public class Material {
 
     /**
      * Legt den Wert der id-Eigenschaft fest.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Integer }
-     *     
+     *
      */
     public void setId(Integer value) {
         this.id = value;
@@ -132,11 +132,11 @@ public class Material {
 
     /**
      * Ruft den Wert der image-Eigenschaft ab.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link ImageMetaData }
-     *     
+     *
      */
     public ImageMetaData getImage() {
         return image;
@@ -144,11 +144,11 @@ public class Material {
 
     /**
      * Legt den Wert der image-Eigenschaft fest.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link ImageMetaData }
-     *     
+     *
      */
     public void setImage(ImageMetaData value) {
         this.image = value;
@@ -156,11 +156,11 @@ public class Material {
 
     /**
      * Ruft den Wert der inventory-Eigenschaft ab.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Long }
-     *     
+     *
      */
     public Long getInventory() {
         return inventory;
@@ -168,11 +168,11 @@ public class Material {
 
     /**
      * Legt den Wert der inventory-Eigenschaft fest.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Long }
-     *     
+     *
      */
     public void setInventory(Long value) {
         this.inventory = value;
@@ -180,11 +180,11 @@ public class Material {
 
     /**
      * Ruft den Wert der name-Eigenschaft ab.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getName() {
         return name;
@@ -192,11 +192,11 @@ public class Material {
 
     /**
      * Legt den Wert der name-Eigenschaft fest.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setName(String value) {
         this.name = value;
@@ -204,11 +204,11 @@ public class Material {
 
     /**
      * Ruft den Wert der pricePerUnit-Eigenschaft ab.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link BigDecimal }
-     *     
+     *
      */
     public BigDecimal getPricePerUnit() {
         return pricePerUnit;
@@ -216,11 +216,11 @@ public class Material {
 
     /**
      * Legt den Wert der pricePerUnit-Eigenschaft fest.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link BigDecimal }
-     *     
+     *
      */
     public void setPricePerUnit(BigDecimal value) {
         this.pricePerUnit = value;
@@ -228,11 +228,11 @@ public class Material {
 
     /**
      * Ruft den Wert der unit-Eigenschaft ab.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link UnitOfMeasurement }
-     *     
+     *
      */
     public UnitOfMeasurement getUnit() {
         return unit;
@@ -240,11 +240,11 @@ public class Material {
 
     /**
      * Legt den Wert der unit-Eigenschaft fest.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link UnitOfMeasurement }
-     *     
+     *
      */
     public void setUnit(UnitOfMeasurement value) {
         this.unit = value;
