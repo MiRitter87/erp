@@ -67,7 +67,7 @@ public class ImageCleanupController {
         try {
             imagesInUse = this.getAllImageIdsReferencedByMaterial();
             this.deleteImages(imagesInUse);
-            this.executeCheckpointCommand();
+            //this.executeCheckpointCommand();
         } catch (Exception exception) {
             LOGGER.error("imageCleanupController.cleanupFailed", exception.getMessage());
         }
@@ -117,11 +117,18 @@ public class ImageCleanupController {
     /**
      * Executes the HSQL "CHECKPOINT" command to remove obsolete data from the *.lobs file where image data are stored.
      *
-     * @see http://hsqldb.org/doc/gui+de/management-chapt.html#mtc_large_objects
+     * @see https://hsqldb.org/doc/guide/management-chapt.html#mtc_large_objects
+     * @see https://stackoverflow.com/questions/13921277/hsqldb-and-lobs-file-size
+     * @see https://stackoverflow.com/questions/55944703/hsqldb-automatically-perform-checkpoint-after-delete
      *
      * @throws Exception In case the SQL checkpoint command execution fails.
      */
+    @SuppressWarnings("unused")
     private void executeCheckpointCommand() throws Exception {
+        /*
+         * This command causes connection leaks.
+         * Since HSQLDB automatically reuses space of deleted lobs, this command is considered obsolete.
+         */
         this.nativeSqlDAO.executeStatement("CHECKPOINT;");
     }
 }
