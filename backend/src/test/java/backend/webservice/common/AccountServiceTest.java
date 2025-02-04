@@ -288,7 +288,7 @@ public class AccountServiceTest {
 
         // Read data of the referenced Posting
         posting = account.getPostingWithId(this.posting.getId());
-        assertEquals(this.posting.getCounterparty().getId(), posting.getCounterparty().getId());
+        assertEquals(this.posting.getCounterparty().getCityName(), posting.getCounterparty().getCityName());
     }
 
     @Test
@@ -325,6 +325,7 @@ public class AccountServiceTest {
         WebServiceResult getAccountsResult;
         AccountArray accounts;
         Account account;
+        Posting posting;
 
         // Get the accounts.
         AccountService service = new AccountService();
@@ -349,6 +350,10 @@ public class AccountServiceTest {
         assertEquals(account.getDescription(), this.account2.getDescription());
         assertTrue(account.getBalance().compareTo(this.account2.getBalance()) == 0);
         assertEquals(account.getCurrency(), this.account2.getCurrency());
+
+        // Read data of the referenced Posting
+        posting = account.getPostingWithId(this.posting.getId());
+        assertEquals(this.posting.getCounterparty().getCityName(), posting.getCounterparty().getCityName());
     }
 
     @Test

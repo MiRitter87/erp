@@ -90,6 +90,14 @@ public class AccountHibernateDao implements AccountDao {
     public List<Account> getAccounts() throws Exception {
         List<Account> accounts = null;
         EntityManager entityManager = this.sessionFactory.createEntityManager();
+
+        // Use entity graphs to load data of referenced Posting instances.
+        EntityGraph<Account> graph = entityManager.createEntityGraph(Account.class);
+        graph.addAttributeNodes("postings");
+        graph.addSubgraph("postings").addAttributeNodes("counterparty");
+        Map<String, Object> hints = new HashMap<String, Object>();
+        hints.put("jakarta.persistence.loadgraph", graph);
+
         entityManager.getTransaction().begin();
 
         try {
@@ -99,6 +107,7 @@ public class AccountHibernateDao implements AccountDao {
             criteriaQuery.select(criteria);
             criteriaQuery.orderBy(criteriaBuilder.asc(criteria.get("id"))); // Order by id ascending
             TypedQuery<Account> typedQuery = entityManager.createQuery(criteriaQuery);
+            typedQuery.setHint("jakarta.persistence.loadgraph", graph); // Also fetch all posting data.
             accounts = typedQuery.getResultList();
 
             entityManager.getTransaction().commit();
