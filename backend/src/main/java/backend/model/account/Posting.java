@@ -2,6 +2,7 @@ package backend.model.account;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.Objects;
 import java.util.Set;
 
 import jakarta.validation.ConstraintViolation;
@@ -240,5 +241,46 @@ public class Posting {
      */
     public void setCurrency(final Currency currency) {
         this.currency = currency;
+    }
+
+    /**
+     * Calculates the hashCode of a Posting.
+     */
+    @Override
+    public int hashCode() {
+        return Objects.hash(amount, counterparty, currency, id, referenceNumber, timestamp, type);
+    }
+
+    /**
+     * Indicates whether some other Posting is "equal to" this one.
+     */
+    @Override
+    public boolean equals(final Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        Posting other = (Posting) obj;
+
+        if (timestamp == null && other.timestamp != null) {
+            return false;
+        }
+        if (timestamp != null && other.timestamp == null) {
+            return false;
+        }
+        if (timestamp != null && other.timestamp != null) {
+            if (timestamp.getTime() != other.timestamp.getTime()) {
+                return false;
+            }
+        }
+
+        return Objects.equals(amount, other.amount) && Objects.equals(counterparty, other.counterparty)
+                && currency == other.currency && Objects.equals(id, other.id)
+                && Objects.equals(referenceNumber, other.referenceNumber) && type == other.type;
     }
 }
