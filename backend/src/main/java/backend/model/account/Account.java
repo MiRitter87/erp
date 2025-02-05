@@ -296,7 +296,7 @@ public class Account {
      */
     public Posting getPostingWithId(final Integer postingId) {
         for (Posting tempPosting : this.postings) {
-            if (tempPosting.getId() == postingId) {
+            if (tempPosting.getId().equals(postingId)) {
                 return tempPosting;
             }
         }
