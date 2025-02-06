@@ -98,6 +98,8 @@ public class PurchaseOrderHibernateDao implements PurchaseOrderDao {
         // Use entity graphs to load data of referenced PurchaseOrderItem instances.
         EntityGraph<PurchaseOrder> graph = entityManager.createEntityGraph(PurchaseOrder.class);
         graph.addAttributeNodes("items", "status", "vendor", "paymentAccount");
+        graph.addSubgraph("paymentAccount").addAttributeNodes("postings");
+        graph.addSubgraph("paymentAccount").addSubgraph("postings").addAttributeNodes("counterparty");
 
         entityManager.getTransaction().begin();
 
