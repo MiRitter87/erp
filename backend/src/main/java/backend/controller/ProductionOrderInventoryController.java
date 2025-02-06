@@ -117,9 +117,11 @@ public class ProductionOrderInventoryController {
                 currentMaterial = bomItem.getMaterial();
 
                 if (add) {
-                    currentMaterial.setInventory(currentMaterial.getInventory() + bomItem.getQuantity());
+                    currentMaterial.setInventory(
+                            currentMaterial.getInventory() + (bomItem.getQuantity() * item.getQuantity()));
                 } else {
-                    currentMaterial.setInventory(currentMaterial.getInventory() - bomItem.getQuantity());
+                    currentMaterial.setInventory(
+                            currentMaterial.getInventory() - (bomItem.getQuantity() * item.getQuantity()));
                 }
 
                 materialDAO.updateMaterial(currentMaterial);
